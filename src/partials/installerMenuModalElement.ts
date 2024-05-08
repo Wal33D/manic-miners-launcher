@@ -1,3 +1,5 @@
+import path from 'path';
+const lms = path.join(__dirname, './assets/lms.png');
 export const installerMenuModalElement = `
 <!-- Modal -->
 <div class="modal fade not-draggable" id="navbarModal" tabindex="-1" aria-labelledby="navbarModalLabel"

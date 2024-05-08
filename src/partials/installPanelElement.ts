@@ -26,12 +26,3 @@ export const installPanelHtml = `
         <hr>
     </div>
   `;
-const container = document.getElementById('install-pane-container');
-if (container) {
-  container.innerHTML = installPanelHtml;
-  document
-    .getElementById('installButton')
-    .addEventListener('click', function () {
-      console.log('Install button clicked!');
-    });
-}
