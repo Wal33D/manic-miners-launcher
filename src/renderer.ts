@@ -28,8 +28,7 @@
 
 import './index.css';
 import { installPaneHtml } from './installPaneHtml.js';
-const f = require('./bottomNavbar.partial_html');
-
+import { all } from './bottomNavbar.js';
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('install-pane-container');
   if (container) {
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const footer = document.getElementById('bottom-navbar-container');
   if (footer) {
-    footer.innerHTML = f;
+    footer.innerHTML = all;
     document
       .getElementById('installButton')
       .addEventListener('click', function () {

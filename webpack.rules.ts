@@ -29,7 +29,7 @@ export const rules: Required<ModuleOptions>['rules'] = [
     },
   },
   {
-    test: /\.html_partial$/,
+    test: /\.partial_html$/,
     use: ['html-loader'],
   },
   // Other loaders...
