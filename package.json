@@ -40,11 +40,15 @@
   },
   "keywords": [],
   "author": {
-    "name": "Waleed Gudah",
-    "email": "aquataze@yahoo.com"
+    "name": "Waleed Judah",
+    "email": "waleed@glitchgaming.us"
   },
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wal33D/manic-miners-launcher.git"
   }
 }

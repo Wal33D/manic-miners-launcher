@@ -1,7 +1,282 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+  background: url('../assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  height: 100vh;
+  overflow: hidden;
+}
+
+input[type='text'],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+input[type='text'],
+select {
+  color: black;
+}
+
+textarea {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid hsl(120, 61%, 50%);
+  color: white !important;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small !important;
+  overflow: hidden;
+  max-height: 30%;
+}
+
+.container {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.highlight,
+.btn-success,
+.progress-bar,
+.form-check-input:checked {
+  background-color: #32cd32;
+}
+
+.progress {
+  position: relative;
+  height: 40px; /* Adjust height to fit your design */
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #fff; /* White text color for better visibility */
+  font-size: 16px; /* Adjust font size as necessary */
+  transition: width 0.6s ease;
+}
+
+.progress-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: white; /* Ensures the text is readable on darker backgrounds */
+  font-weight: bold;
+}
+
+.btn-success,
+.highlight {
+  border-color: #32cd32;
+}
+
+.btn-success:hover,
+.btn-dark-green:hover {
+  background-color: #2ecc71;
+  border-color: #2ecc71;
+}
+
+.btn-dark-green:hover {
+  color: #000;
+}
+
+.footer {
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  padding: 0;
+  height: 70px;
+  justify-content: space-evenly;
+}
+#footer a {
+  background: transparent;
+  box-shadow: none;
+}
+#footer a:hover {
+  background: transparent;
+  box-shadow: none;
+}
+.custom-progress {
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+#message-pane-container {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  max-height: calc(30vh);
+  overflow-y: hidden;
+  font-size: 0.8rem;
+}
+#install-pane-container {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  max-height: calc(100vh - 70px);
+  overflow-y: hidden;
+  font-size: 0.8rem;
+}
+#install-pane {
+  background-color: transparent !important;
+}
+#install-pane .form-label {
+  font-size: 0.9rem;
+}
+
+#install-pane .form-select,
+#install-pane .form-control,
+#install-pane .form-check-input {
+  padding: 5px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.form-check-label {
+  margin-left: 10px;
+}
+
+.form-check-input {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid #32cd32;
+}
+
+#messageBox {
+  height: calc(100% - 250px) !important;
+  overflow-y: scroll;
+  line-height: normal;
+  scrollbar-width: none;
+}
+
+#messageBox::-webkit-scrollbar {
+  display: none;
+}
+
+.btn-dark-green,
+#versionSelect,
+#installPath {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #32cd32;
+  border: 2px solid #228b22;
+  font-weight: 400;
+}
+
+#versionSelect:focus,
+#installPath:focus {
+  outline: none;
+  border-color: #228b22;
+  box-shadow: 0 0 10px #228b22;
+}
+@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap');
+
+.navbar-brand {
+  color: transparent;
+  font-size: 2.2rem; /* Larger text */
+  transition: color 0.3s ease; /* Smooth color change */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
+  padding-left: 12px; /* Add some padding */
+  padding-right: 22px; /* Add some padding */
+
+  border: 2px solid rgba(50, 205, 50, 0.1);
+  border-radius: 10px; /* Round the corners */
+  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
+  color: #f2cd00; /* Lego brick yellow */
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease; /* Add box-shadow to the transition */
+}
+
+.navbar-brand:hover,
+.navbar-brand:active,
+.navbar-brand:focus,
+.navbar-brand:visited {
+  color: transparent;
+  font-size: 2.2rem; /* Larger text */
+  transition: color 0.3s ease; /* Smooth color change */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
+  padding-left: 12px; /* Add some padding */
+  padding-right: 22px; /* Add some padding */
+
+  border: 2px solid rgba(50, 205, 50, 0.1);
+  border-radius: 10px; /* Round the corners */
+  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
+  color: #f2cd00; /* Lego brick yellow */
+  transition: ease-in-out 0.5s;
+  box-shadow: 0 0 10px rgba(242, 205, 0, 0.7); /* Yellow box shadow */
+}
+.navbar-brand img {
+  width: 60px; /* Larger image */
+  height: 60px; /* Maintain aspect ratio */
+  padding: 5px; /* Add some padding */
+  transition: filter 0.3s ease; /* Smooth filter change */
+}
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.95);
+  color: #228b22;
+  border: 2px solid #228b22;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(242, 205, 0, 0.7);
+}
+
+.modal-header {
+  border-bottom: 2px solid #228b22;
+}
+
+.modal-title {
+  font-family: 'Fredericka the Great', cursive;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-body a {
+  color: #f2cd00;
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+  text-decoration: none;
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.modal-body a img {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+}
+
+.modal-body a:hover {
+  color: #228b22;
+}
+.modal-title {
+  text-align: center; /* Center the text */
+  width: 100%; /* Make the title take up the full width */
+}
+
+.draggableArea {
+  -webkit-app-region: drag;
+}
+
+.not-draggable {
+  -webkit-app-region: no-drag;
+}
+.footer a {
+  color: rgb(50, 205, 50, 0.8); /* Lego brick yellow text */
+  transition: color 0.3s ease; /* Smooth color change */
+}
+.footer a * {
+  height: 20px;
 }
