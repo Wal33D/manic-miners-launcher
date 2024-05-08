@@ -13,8 +13,7 @@
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center not-draggable" href="#" data-bs-toggle="modal"
         data-bs-target="#navbarModal">
-        <img src="assets/ManicMiners.png" alt="Manic Miners" width="30" height="30"
-          class="d-inline-block align-text-top">
+        <div id="brand-image" class="d-inline-block align-text-top"></div>
         Manic Miners HQ
       </a>
     </div>
@@ -37,19 +36,12 @@
 
   <div id="bottom-navbar-container"></div>
   <div id="installerMenuModal-container"></div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-      document.getElementById("install-pane-container").innerHTML = '<object type="text/html" data="installPane.html" ></object>';
-      document.getElementById("message-pane-container").innerHTML = '<object type="text/html" data="messageBox.html" ></object>';
-      document.getElementById("bottom-navbar-container").innerHTML = '<object type="text/html" data="bottomNavbar.html" ></object>';
-      document.getElementById("installerMenuModal-container").innerHTML = '<object type="text/html" data="installerMenuModal.html" ></object>';
-
-
-    });
-  </script>
-
 </body>
+<script>
+  $(document).ready(function () {
+    $("#install-pane-container").load("partials/installPane.html");
+  });
+
+</script>
 
 </html>

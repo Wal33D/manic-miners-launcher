@@ -27,7 +27,20 @@
  */
 
 import './index.css';
+// Importing jQuery into a renderer file
+//@ts-ignore
+window.$ = window.jQuery = require('jquery');
 
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
+
+// In your renderer.js or a specific renderer script
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('src/installPane.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('install-pane-container').innerHTML = html;
+    })
+    .catch(error => console.error('Error loading the partial:', error));
+});
