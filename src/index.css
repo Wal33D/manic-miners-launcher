@@ -16,18 +16,22 @@
   background-size: cover; /* Resize the background image to cover the entire container */
   background-position: center; /* Center the background image */
 }
+html {
+  background: transparen;
+  border-radius: 50px !important;
+}
 body {
   background: url('../assets/background.jpg') no-repeat center center fixed;
+
   background-size: cover;
   color: white;
   text-shadow: 1px 1px 2px black;
-  height: 100vh;
+  height: 99vh;
   overflow: hidden !important;
-  margin: 0 !important;
-  padding: 10px !important;
+  margin: 10px !important;
   box-sizing: border-box !important;
-  border-radius: 10px !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 50px !important;
 }
 input[type='text'],
 select,
