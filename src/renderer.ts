@@ -1,4 +1,6 @@
 import './index.css';
+
+import './partials/mainMenuModal.css';
 import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelElement';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
