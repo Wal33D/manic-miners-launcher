@@ -5,8 +5,9 @@ import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelElement';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
 import { topNavbarElement } from './partials/topNavbarElement';
+import { fetchVersions } from './fetchVersions';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   /**
    * The top navigation bar element.
    *
@@ -69,5 +70,26 @@ document.addEventListener('DOMContentLoaded', () => {
       .addEventListener('click', function () {
         console.log('Install button clicked!');
       });
+  }
+
+  try {
+    //@ts-ignore
+    const response = await window.api.getVersions();
+    if (response.status && response.versions) {
+      const selectBox = document.getElementById('versionSelect');
+      response.versions.forEach(
+        (version: { displayName: string; version: string }) => {
+          const option = document.createElement('option');
+          option.text = version.displayName;
+          option.value = version.version;
+          //@ts-ignore
+          selectBox.add(option);
+        }
+      );
+    } else {
+      console.error(response.message);
+    }
+  } catch (error) {
+    console.error('Failed to fetch versions:', error);
   }
 });

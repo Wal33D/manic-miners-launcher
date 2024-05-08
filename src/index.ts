@@ -4,7 +4,6 @@ import { createWindow } from './createWindow';
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
-import { fetchVersions } from './fetchVersions';
 
 const startApp = (): void => {
   app.on('ready', createWindow);
