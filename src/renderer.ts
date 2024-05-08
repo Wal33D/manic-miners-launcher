@@ -28,15 +28,10 @@
 
 import './index.css';
 // Importing jQuery into a renderer file
-//@ts-ignore
-window.$ = window.jQuery = require('jquery');
-
-$(document).ready(function () {
-  $('#install-pane-container').load('partials/installPane.html');
+import installPaneHtml from './partials/installPane._html';
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('install-pane-container');
+  if (container) {
+    container.innerHTML = installPaneHtml;
+  }
 });
-
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack'
-);
-const partial = require('./partials/installPane.html');
-document.getElementById('some-container').innerHTML = partial;
