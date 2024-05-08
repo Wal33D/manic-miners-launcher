@@ -28,10 +28,12 @@
 
 import './index.css';
 // Importing jQuery into a renderer file
-import installPaneHtml from './partials/installPane._html';
+//@ts-ignore
+import installPaneHtml from './partials/installPaneHtml.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('install-pane-container');
   if (container) {
-    container.innerHTML = installPaneHtml;
+    container.innerHTML = installPaneHtml();
   }
 });

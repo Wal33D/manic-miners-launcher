@@ -29,7 +29,8 @@ export const rules: Required<ModuleOptions>['rules'] = [
     },
   },
   {
-    test: /\.html$/,
+    test: /\.html_partial$/,
     use: ['html-loader'],
   },
+  // Other loaders...
 ];

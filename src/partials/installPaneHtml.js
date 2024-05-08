@@ -1,4 +1,5 @@
-<!-- Right Side Pane Content -->
+export function installPaneHtml() {
+  return `
 <div class="bg-dark text-light p-3 rounded draggableArea" id="install-pane">
     <div class="p-3">
         <label for="versionSelect" class="form-label">Select Version</label>
@@ -25,3 +26,5 @@
     </div>
     <hr>
 </div>
+`;
+}
