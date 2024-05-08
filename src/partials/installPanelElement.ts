@@ -1,5 +1,4 @@
-export function installPaneHtml() {
-  return `
+export const installPanelHtml = `
     <div class="bg-dark text-light p-3 rounded draggableArea" id="install-pane">
         <div class="p-3">
             <label for="versionSelect" class="form-label">Select Version</label>
@@ -27,4 +26,12 @@ export function installPaneHtml() {
         <hr>
     </div>
   `;
+const container = document.getElementById('install-pane-container');
+if (container) {
+  container.innerHTML = installPanelHtml;
+  document
+    .getElementById('installButton')
+    .addEventListener('click', function () {
+      console.log('Install button clicked!');
+    });
 }

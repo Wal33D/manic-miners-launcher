@@ -1,47 +1,24 @@
-/**
- * This file will automatically be loaded by webpack and run in the "renderer" context.
- * To learn more about the differences between the "main" and the "renderer" context in
- * Electron, visit:
- *
- * https://electronjs.org/docs/latest/tutorial/process-model
- *
- * By default, Node.js integration in this file is disabled. When enabling Node.js integration
- * in a renderer process, please be aware of potential security implications. You can read
- * more about security risks here:
- *
- * https://electronjs.org/docs/tutorial/security
- *
- * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
- * flag:
- *
- * ```
- *  // Create the browser window.
- *  mainWindow = new BrowserWindow({
- *    width: 800,
- *    height: 600,
- *    webPreferences: {
- *      nodeIntegration: true
- *    }
- *  });
- * ```
- */
-
 import './index.css';
-import { installPaneHtml } from './installPaneHtml.js';
-import { all } from './bottomNavbar.js';
+import { progressBarElement } from './partials/progressBarElement';
+import { installPanelHtml } from './partials/installPanelElement';
+import { installerMenuModalElement } from './partials/installerMenuModalElement';
+
 document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('install-pane-container');
-  if (container) {
-    container.innerHTML = installPaneHtml();
+  const footer = document.getElementById('bottom-navbar-container');
+  if (footer) {
+    footer.innerHTML = progressBarElement;
     document
       .getElementById('installButton')
       .addEventListener('click', function () {
         console.log('Install button clicked!');
       });
   }
-  const footer = document.getElementById('bottom-navbar-container');
-  if (footer) {
-    footer.innerHTML = all;
+  installPanelHtml;
+  const installerMenuModal = document.getElementById(
+    'installer-menu-modal-container'
+  );
+  if (installerMenuModal) {
+    installerMenuModal.innerHTML = installerMenuModalElement;
     document
       .getElementById('installButton')
       .addEventListener('click', function () {

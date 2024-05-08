@@ -1,3 +1,4 @@
+export const installerMenuModalElement = `
 <!-- Modal -->
 <div class="modal fade not-draggable" id="navbarModal" tabindex="-1" aria-labelledby="navbarModalLabel"
     aria-hidden="true">
@@ -28,3 +29,4 @@
         </div>
     </div>
 </div>
+`;
