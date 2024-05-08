@@ -7,6 +7,25 @@ import { installerMenuModalElement } from './partials/installerMenuModalElement'
 import { topNavbarElement } from './partials/topNavbarElement';
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const response = await window.api.getVersions();
+      if (response.status && response.versions) {
+        const selectBox = document.getElementById('versionSelect');
+        response.versions.forEach(version => {
+          const option = document.createElement('option');
+          option.text = version.displayName;
+          option.value = version.version;
+          selectBox.add(option);
+        });
+      } else {
+        console.error(response.message);
+      }
+    } catch (error) {
+      console.error('Failed to fetch versions:', error);
+    }
+  });
+
   /**
    * The top navigation bar element.
    *
