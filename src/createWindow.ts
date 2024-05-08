@@ -13,8 +13,9 @@ export const createWindow = (): void => {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    autoHideMenuBar: false, // This will hide the menu bar
-    frame: true, // This will remove the frame
+    frame: false, // This will remove the frame
+    transparent: true,
+    autoHideMenuBar: true, // This will hide the menu bar
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
