@@ -1,14 +1,26 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/.retool_types/**": true,
-        "**/*tsconfig.json": true,
-        ".cache": true,
-        "retool.config.json": true
-    }
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.retool_types/**": true,
+    "**/*tsconfig.json": true,
+    ".cache": true,
+    "retool.config.json": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  // Include other file types as needed, for example, CSS, HTML, etc.
+  "[html]": {
+    "editor.formatOnSave": true
+  }
 }
