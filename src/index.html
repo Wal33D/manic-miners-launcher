@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manic Miners HQ</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
 </head>
 
 <body class="draggableArea">
@@ -39,6 +38,17 @@
   <div id="bottom-navbar-container"></div>
   <div id="installerMenuModal-container"></div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      document.getElementById("install-pane-container").innerHTML = '<object type="text/html" data="installPane.html" ></object>';
+      document.getElementById("message-pane-container").innerHTML = '<object type="text/html" data="messageBox.html" ></object>';
+      document.getElementById("bottom-navbar-container").innerHTML = '<object type="text/html" data="bottomNavbar.html" ></object>';
+      document.getElementById("installerMenuModal-container").innerHTML = '<object type="text/html" data="installerMenuModal.html" ></object>';
+
+
+    });
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
