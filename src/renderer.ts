@@ -27,13 +27,26 @@
  */
 
 import './index.css';
-// Importing jQuery into a renderer file
-//@ts-ignore
-import installPaneHtml from './partials/installPaneHtml.js';
+import { installPaneHtml } from './installPaneHtml.js';
+const f = require('./bottomNavbar.partial_html');
 
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('install-pane-container');
   if (container) {
     container.innerHTML = installPaneHtml();
+    document
+      .getElementById('installButton')
+      .addEventListener('click', function () {
+        console.log('Install button clicked!');
+      });
+  }
+  const footer = document.getElementById('bottom-navbar-container');
+  if (footer) {
+    footer.innerHTML = f;
+    document
+      .getElementById('installButton')
+      .addEventListener('click', function () {
+        console.log('Install button clicked!');
+      });
   }
 });
