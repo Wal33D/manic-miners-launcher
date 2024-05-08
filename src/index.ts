@@ -7,14 +7,12 @@ if (require('electron-squirrel-startup')) {
 }
 
 // Store versions data globally
-//@ts-ignore
-global.versionsData = null;
+let versionsData: any = null;
 
 const startApp = async (): Promise<void> => {
   app.on('ready', async () => {
     const response = await fetchVersions();
-    //@ts-ignore
-    global.versionsData = response; // Store the fetched data
+    versionsData = response; // Store the fetched data
     console.log(response); // Optional: log the fetched data
     createWindow(); // Now create the window
   });
@@ -33,7 +31,6 @@ const startApp = async (): Promise<void> => {
 
   // IPC listener for renderer requests
   ipcMain.on('getVersionsData', event => {
-    //@ts-ignore
     event.reply('versionsDataResponse', versionsData);
   });
 };

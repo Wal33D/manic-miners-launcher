@@ -1,8 +1,2 @@
-import { contextBridge } from 'electron';
-import { fetchVersions } from './fetchVersions'; // Assuming fetchVersions is exported from another file
-
-contextBridge.exposeInMainWorld('api', {
-  getVersions: async () => {
-    return await fetchVersions();
-  },
-});
+// See the Electron documentation for details on how to use preload scripts:
+// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
