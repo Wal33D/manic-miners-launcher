@@ -1,21 +1,13 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { createWindow } from './createWindow';
-import { fetchVersions } from './fetchVersions';
+import { ipcMain } from 'electron';
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// Store versions data globally
-let versionsData: any = null;
-
-const startApp = async (): Promise<void> => {
-  app.on('ready', async () => {
-    const response = await fetchVersions();
-    versionsData = response; // Store the fetched data
-    console.log(response); // Optional: log the fetched data
-    createWindow(); // Now create the window
-  });
+const startApp = (): void => {
+  app.on('ready', createWindow);
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -28,11 +20,11 @@ const startApp = async (): Promise<void> => {
       createWindow();
     }
   });
-
-  // IPC listener for renderer requests
-  ipcMain.on('getVersionsData', event => {
-    event.reply('versionsDataResponse', versionsData);
-  });
 };
-
+// IPC listener for renderer requests
+// Main process
+ipcMain.on('port', (e, msg) => {
+  const [port] = e.ports;
+  console.log(msg);
+});
 startApp();

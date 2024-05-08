@@ -7,15 +7,8 @@ import { installerMenuModalElement } from './partials/installerMenuModalElement'
 import { topNavbarElement } from './partials/topNavbarElement';
 import { ipcRenderer } from 'electron';
 
-// Trigger the 'getVersionsData' event when a button is clicked
-document.getElementById('yourButtonId').addEventListener('click', () => {
-  ipcRenderer.send('getVersionsData');
-});
-
-// Listen for the 'versionsDataResponse' event
-ipcRenderer.on('versionsDataResponse', (event, data) => {
-  console.log(data); // This will log the versionsData
-});
+const { port1, port2 } = new MessageChannel();
+ipcRenderer.postMessage('port', { message: 'hello' }, [port1]);
 
 document.addEventListener('DOMContentLoaded', async () => {
   /**
