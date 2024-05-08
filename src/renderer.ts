@@ -71,4 +71,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Install button clicked!');
       });
   }
+  const { ipcRenderer } = require('electron');
+
+  setTimeout(() => {
+    // Request versions data from main process
+    ipcRenderer.send('getVersionsData');
+
+    // Listen for the versions data
+    ipcRenderer.on('versionsDataResponse', (event, data) => {
+      console.log('Received versions data:', data);
+      // Here, you can do something with the data, like populate UI elements
+    });
+  }, 5000);
 });
