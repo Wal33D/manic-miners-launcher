@@ -1,5 +1,3 @@
-import path from 'path';
-const lms = path.join(__dirname, './assets/lms.png');
 export const installerMenuModalElement = `
 <!-- Modal -->
 <div class="modal fade not-draggable" id="navbarModal" tabindex="-1" aria-labelledby="navbarModalLabel"
@@ -12,7 +10,7 @@ export const installerMenuModalElement = `
             </div>
             <div class="modal-body">
                 <a href="#" class="d-flex align-items-center mb-2">
-                    <img src="assets/lms.png" alt="Tool Store" width="80" height="80" class="mr-2">
+                    <div id='lmsMenuImg'alt="Go Home" width="80" height="80" class="mr-2"></div>
                     Home
                 </a>
                 <a href="#" class="d-block mb-2">
@@ -20,8 +18,8 @@ export const installerMenuModalElement = `
                     Library
                 </a>
                 <a href="#" class="d-block mb-2">
-                    <img src="assets/toolstore.png" alt="Tool Store" width="80" height="80" class="mr-2">
-                    Store
+                <div id='tsMenuImg'alt="Tool Store" width="80" height="80" class="mr-2"></div>
+                Store
                 </a>
                 <a href="#" class="d-block mb-2">
                     <img src="assets/supportstation.png" alt="Tool Store" width="80" height="80" class="mr-2">

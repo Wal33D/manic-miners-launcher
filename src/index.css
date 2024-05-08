@@ -7,6 +7,15 @@
   font-weight: normal;
   font-style: normal;
 }
+#lmsMenuImg {
+  background-image: url('../assets/lms.png');
+}
+#tsMenuImg {
+  background-image: url('../assets/toolstore.png');
+}
+#lmsMenuImg {
+  background-image: url('../assets/lms.png');
+}
 
 #brand-image {
   width: 50px;
