@@ -1,26 +1,27 @@
 import './index.css';
-
 import './partials/mainMenuModal.css';
+import { Modal } from 'bootstrap';
 import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelElement';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
 import { topNavbarElement } from './partials/topNavbarElement';
 
-// Assuming you're using Bootstrap 5
-import { Modal } from 'bootstrap'; // Import Bootstrap's Modal class
-
 document.addEventListener('DOMContentLoaded', () => {
+  /**
+   * The top navigation bar element.
+   *
+   * @type {HTMLElement}
+   */
   const topNav = document.getElementById('top-navbar-container');
   if (topNav) {
     topNav.innerHTML = topNavbarElement;
 
     topNav.addEventListener('click', function () {
-      const mainMenuModal = document.getElementById('navbarModal');
+      const mainMenuModal = document.getElementById('topNavBtn');
 
-      // Check if the modal element exists
       if (mainMenuModal) {
         const bsModal = new Modal(mainMenuModal, {
-          keyboard: true, // Allows closing the modal with the escape key
+          keyboard: true,
         });
 
         bsModal.toggle();

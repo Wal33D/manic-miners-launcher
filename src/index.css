@@ -234,55 +234,6 @@ textarea {
   padding: 5px; /* Add some padding */
   transition: filter 0.3s ease; /* Smooth filter change */
 }
-.modal-content {
-  background-color: rgba(0, 0, 0, 0.95);
-  color: #228b22;
-  border: 2px solid #228b22;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(242, 205, 0, 0.7);
-}
-
-.modal-header {
-  border-bottom: 2px solid #228b22;
-}
-
-.modal-title {
-  font-family: 'Fredericka the Great', cursive;
-  font-size: 2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.modal-body a {
-  color: #f2cd00;
-  font-size: 1.5rem;
-  transition: color 0.3s ease;
-  text-decoration: none;
-  padding: 10px;
-  border: 2px solid transparent;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-}
-
-.modal-body a img {
-  width: 80px;
-  height: 80px;
-  margin-right: 20px;
-}
-
-.modal-body a:hover {
-  color: #228b22;
-}
-.modal-title {
-  text-align: center; /* Center the text */
-  width: 100%; /* Make the title take up the full width */
-}
 
 .draggableArea {
   -webkit-app-region: drag;
