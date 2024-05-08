@@ -14,15 +14,15 @@ export const installerMenuModalElement = `
                     Home
                 </a>
                 <a href="#" class="d-block mb-2">
-                    <img src="assets/teleportstation.png" alt="Tool Store" width="80" height="80" class="mr-2">
-                    Library
+                <div id='teleportMenuImg'alt="Go Home" width="80" height="80" class="mr-2"></div>
+                Library
                 </a>
                 <a href="#" class="d-block mb-2">
                 <div id='tsMenuImg'alt="Tool Store" width="80" height="80" class="mr-2"></div>
                 Store
                 </a>
                 <a href="#" class="d-block mb-2">
-                    <img src="assets/supportstation.png" alt="Tool Store" width="80" height="80" class="mr-2">
+                <div id='supportMenuImg'alt="Tool Store" width="80" height="80" class="mr-2"></div>
                     Settings
                 </a>
             </div>

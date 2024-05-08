@@ -13,8 +13,11 @@
 #tsMenuImg {
   background-image: url('../assets/toolstore.png');
 }
-#lmsMenuImg {
-  background-image: url('../assets/lms.png');
+#teleportMenuImg {
+  background-image: url('../assets/teleportstation.png');
+}
+#supportMenuImg {
+  background-image: url('../assets/supportstation.png');
 }
 
 #brand-image {

@@ -2,8 +2,18 @@ import './index.css';
 import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelElement';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
+import { topNavbarElement } from './partials/topNavbarElement';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const topNav = document.getElementById('top-navbar-container');
+  if (topNav) {
+    topNav.innerHTML = topNavbarElement;
+    document
+      .getElementById('topNavbarElement')
+      .addEventListener('click', function () {
+        console.log('Install button clicked!');
+      });
+  }
   /**
    * The container element for the install pane.
    */
