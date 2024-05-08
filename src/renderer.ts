@@ -31,16 +31,12 @@ import './index.css';
 //@ts-ignore
 window.$ = window.jQuery = require('jquery');
 
+$(document).ready(function () {
+  $('#install-pane-container').load('partials/installPane.html');
+});
+
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
-
-// In your renderer.js or a specific renderer script
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('src/installPane.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('install-pane-container').innerHTML = html;
-    })
-    .catch(error => console.error('Error loading the partial:', error));
-});
+const partial = require('./partials/installPane.html');
+document.getElementById('some-container').innerHTML = partial;
