@@ -1,6 +1,12 @@
 import { BrowserWindow, app } from 'electron';
 import { createWindow } from './createWindow';
+import { fetchVersions } from './fetchVersions';
 
+async function test(): Promise<void> {
+  const response = await fetchVersions();
+  console.log(response);
+  startApp();
+}
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -20,5 +26,4 @@ const startApp = (): void => {
     }
   });
 };
-
-startApp();
+test();
