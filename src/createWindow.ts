@@ -13,7 +13,7 @@ export const createWindow = (): void => {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    autoHideMenuBar: true, // This will hide the menu bar
+    autoHideMenuBar: false, // This will hide the menu bar
     frame: true, // This will remove the frame
   });
 

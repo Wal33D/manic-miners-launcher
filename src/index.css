@@ -7,6 +7,15 @@
   font-weight: normal;
   font-style: normal;
 }
+#lmsMenuImg,
+#tsMenuImg,
+#teleportMenuImg,
+#supportMenuImg {
+  width: 80px;
+  height: 80px;
+  background-size: cover; /* Resize the background image to cover the entire container */
+  background-position: center; /* Center the background image */
+}
 #lmsMenuImg {
   background-image: url('../assets/lms.png');
 }
