@@ -1,11 +1,11 @@
 import { IPC_CHANNELS } from '../ipcConfig';
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
-  window.electronAPI?.send(IPC_CHANNELS.request - version - information);
+  window.electronAPI?.send('request-version-information');
   //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, data => {
-    console.log(data);
     const { versions, defaultVersion } = data;
+    console.log(data);
     const versionSelect = document.getElementById('versionSelect') as any;
     if (versionSelect) {
       while (versionSelect.children.length > 1) {
@@ -36,6 +36,8 @@ export const initializeVersionSelect = (): void => {
           const selectedVersion = versionSelect.value;
           console.log(`Version selected: ${selectedVersion}`);
           //@ts-ignore
+          window.electronAPI.send('set-selected-version', defaultVersion);
+
           console.log(selectedVersion);
           //@ts-ignore
 

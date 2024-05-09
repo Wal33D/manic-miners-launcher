@@ -4,6 +4,7 @@ import { fetchVersions } from './api/versions/fetchVersions';
 import { checkInstalledVersions } from './api/checkInstalledVersions';
 import { handleGameLaunch } from './api/handleGameLaunch';
 import Store from 'electron-store';
+import { IPC_CHANNELS } from './ipcConfig';
 
 const store: any = new Store();
 
@@ -37,10 +38,10 @@ ipcMain.on('request-version-information', async (event, arg) => {
     store.set('current-selected-version', defaultVersion);
 
     const versionData = await fetchVersions({ versionType: 'all' });
-    event.reply('version-information-reply', { versions: versionData.versions, defaultVersion });
+    event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { versions: versionData.versions, defaultVersion });
   } catch (error) {
     console.error('Error fetching versions:', error);
-    event.reply('version-information-reply', { error: error.message });
+    event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { error: error.message });
   }
 });
 ipcMain.on('set-selected-version', (event, selectedVersion) => {
