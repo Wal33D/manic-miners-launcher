@@ -25,4 +25,5 @@ export const installPanelHtml = `
         </div>
         <hr>
     </div>
+    
   `;

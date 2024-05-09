@@ -1,8 +1,7 @@
 // main.ts
 import { BrowserWindow, app, ipcMain } from 'electron';
 import { createWindow } from './createWindow';
-import { fetchServerData } from './fetchServerData';
-import { fetchVersions } from './fetchVersions';
+import { fetchVersions } from './versions/fetchVersions';
 
 if (require('electron-squirrel-startup')) {
   app.quit();
