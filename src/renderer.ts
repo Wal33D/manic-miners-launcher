@@ -66,6 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const playButton = document.getElementById('playButton');
   const versionSelect = document.getElementById('versionSelect');
 
+  // Function to set the disabled appearance
+  function setDisabledAppearance(element: HTMLElement | any, disabled: boolean) {
+    element.disabled = disabled;
+    if (disabled) {
+      element.style.opacity = '0.6';
+      element.style.cursor = 'not-allowed';
+    } else {
+      element.style.opacity = '';
+      element.style.cursor = '';
+    }
+  }
+
   playButton.addEventListener('click', () => {
     //@ts-ignore
     const versionIdentifier = versionSelect.value;
@@ -73,20 +85,25 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('No version selected.');
       return;
     }
-    // Disable the Play button to prevent multiple launches
-    //@ts-ignore
-    playButton.disabled = true;
+
+    // Disable the Play button and the version selection to prevent multiple launches and changes during operation
+    setDisabledAppearance(playButton, true);
+    setDisabledAppearance(versionSelect, true);
+
     // Send the version identifier to the main process
     //@ts-ignore
     window.electronAPI.send('launch-game', versionIdentifier);
   });
+
   // Listen for game launch replies from the main process
   //@ts-ignore
   window.electronAPI.receive('game-launch-reply', data => {
     console.log('Game launch status:', data);
-    //@ts-ignore
-    // Re-enable the Play button regardless of the result
-    playButton.disabled = false;
+
+    // Re-enable the Play button and the version selection regardless of the result
+    setDisabledAppearance(playButton, false);
+    setDisabledAppearance(versionSelect, false);
+
     // Optionally, handle different responses based on the data received
     if (data.success) {
       console.log('Game launched successfully');

@@ -13,7 +13,7 @@ export const launchExecutable = ({
   executablePath: string;
 }): Promise<{ status: boolean; message: string; exitCode?: number; veryShortRun?: boolean }> => {
   return new Promise((resolve, reject) => {
-    logToFile(`Launching executable at: ${executablePath}`);
+    logToFile({ message: `Launching executable at: ${executablePath}` });
     const startTime = Date.now();
 
     const process = spawn(executablePath, [], {
@@ -25,37 +25,37 @@ export const launchExecutable = ({
     process.stdout.on('data', data => {
       const stdoutMessage = `stdout: ${data}`;
       console.log(stdoutMessage);
-      logToFile(stdoutMessage);
+      logToFile({ message: stdoutMessage });
     });
 
     // Listen to stderr
     process.stderr.on('data', data => {
       const stderrMessage = `stderr: ${data}`;
       console.error(stderrMessage);
-      logToFile(stderrMessage);
+      logToFile({ message: stderrMessage });
     });
 
     process.on('error', err => {
       const errorMessage = `Failed to start process: ${err.message}`;
       console.error(errorMessage);
-      logToFile(errorMessage);
+      logToFile({ message: errorMessage });
       reject({ status: false, message: `Error launching executable: ${err.message}` });
     });
 
     process.on('exit', code => {
       const endTime = Date.now();
-      const runTime = (endTime - startTime) / 1000 / 60; // Convert to minutes
+      const runTime = (endTime - startTime) / 1000 / 60;
       const veryShortRun = runTime < 5;
       const exitMessage =
         code === 0 ? 'Executable launched and exited normally.' : `Executable launched but exited with error code: ${code}`;
       const exitLogMessage = `Process exited at: ${new Date(endTime).toISOString()} (runtime: ${runTime.toFixed(2)} minutes)`;
       console.log(exitLogMessage);
-      logToFile(exitLogMessage);
+      logToFile({ message: exitLogMessage });
 
       if (veryShortRun) {
         const warningMessage = `Warning: The process had a very short run time (${runTime.toFixed(2)} minutes), which might indicate an issue.`;
         console.warn(warningMessage);
-        logToFile(warningMessage);
+        logToFile({ message: warningMessage });
       }
 
       resolve({ status: code === 0, message: exitMessage, exitCode: code, veryShortRun });
