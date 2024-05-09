@@ -1,9 +1,10 @@
+import { Versions } from '../api/versions/versionTypes';
 import { IPC_CHANNELS } from '../ipcConfig';
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.send(IPC_CHANNELS.VERSION_INFO_REQUEST);
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, data => {
+  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, (data: { versions: Versions; selectBoxDefaultVersion: any }) => {
     console.log(data);
     const { versions, currentlyInstalledVersions } = data;
     const versionSelect = document.getElementById('versionSelect') as any;
