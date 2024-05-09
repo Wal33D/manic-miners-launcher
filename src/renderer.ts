@@ -8,7 +8,7 @@ import { topNavbarElement } from './partials/topNavbarElement';
 import { loadVersionSelect } from './renderer/versionSelect';
 import { setDisabledAppearance } from './domHelpers/setDisabledAppearance';
 
-//loadVersionSelect();
+loadVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
   const topNav = document.getElementById('top-navbar-container');

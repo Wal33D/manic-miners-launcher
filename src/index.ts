@@ -46,6 +46,11 @@ ipcMain.on('set-selected-version', (event, versionIdentifier) => {
   event.reply('set-selected-version-reply', { success: true, message: 'Version set successfully.' });
 });
 
+ipcMain.on('get-selected-version', event => {
+  const selectedVersion = store.get('current-selected-version');
+  event.reply('get-selected-version-reply', selectedVersion);
+});
+
 ipcMain.on('launch-game', async (event, versionIdentifier) => {
   console.log(`Launching game with version: ${versionIdentifier}`);
   try {
