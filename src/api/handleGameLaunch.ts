@@ -12,14 +12,14 @@ export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifie
     logToFile({ message: `Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'` });
     const installedVersions = await checkInstalledVersions();
 
-    if (!installedVersions.status || !installedVersions.existingInstalls || installedVersions.existingInstalls.length === 0) {
+    if (!installedVersions.status || !installedVersions.installedVersions || installedVersions.installedVersions.length === 0) {
       logToFile({ message: 'No installations found or failed to fetch installations.' });
       return false;
     }
 
     // Determine which version to launch
     const versionToLaunch: any =
-      installedVersions.existingInstalls.find(v => v.identifier === versionIdentifier) || installedVersions.existingInstalls[0];
+      installedVersions.installedVersions.find(v => v.identifier === versionIdentifier) || installedVersions.installedVersions[0];
 
     logToFile({
       message: `Attempting to launch version: '${versionToLaunch.identifier}' (Requested: '${versionIdentifier || 'default'}')`,
