@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fetchVersions } from './versions/fetchVersions';
-import { getDirectories } from './getDirectories';
+import { getDirectories, Directories } from './getDirectories';
 import { Versions } from './versions/versionTypes';
 /**
  * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
@@ -19,7 +19,7 @@ export const checkInstalledVersionsWithExe = async (): Promise<{
   let results = [] as any;
 
   try {
-    const { launcherInstallPath } = getDirectories();
+    const { launcherInstallPath } = getDirectories() as Directories;
     const versionsData = (await fetchVersions({ versionType: 'all' })) as Versions;
     const versionIdentifiers = versionsData.versions.map(v => v.identifier);
 

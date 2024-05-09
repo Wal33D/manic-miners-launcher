@@ -1,24 +1,55 @@
 import { spawn } from 'child_process';
+import { getDirectories } from './getDirectories';
+import * as fs from 'fs';
 
-/**
- * Launches an executable file located at the provided path.
- * @param executablePath The file system path to the executable to be launched.
- */
+export const launchExecutable = ({
+  executablePath,
+}: {
+  executablePath: string;
+}): Promise<{ status: boolean; message: string; exitCode?: number; veryShortRun?: boolean }> => {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    const { launcherLogsPath } = getDirectories();
 
-export function launchExecutable(executablePath: string): void {
-  try {
     const process = spawn(executablePath, [], {
-      detached: true, // This allows the process to run independently of its parent (the Node.js process).
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+
+    process.stdout.on('data', data => {
+      logData('stdout', data.toString());
+    });
+
+    process.stderr.on('data', data => {
+      logData('stderr', data.toString());
     });
 
     process.on('error', err => {
-      console.error(`Failed to start process: ${err.message}`);
+      logData('error', `Failed to start process: ${err.message}`);
+      reject({ status: false, message: `Error launching executable: ${err.message}` });
     });
 
-    // Since we do not need to monitor the process, we'll unreference it.
-    // This tells Node.js not to wait for this process to finish before exiting.
+    process.on('exit', code => {
+      const endTime = Date.now();
+      const runTime = (endTime - startTime) / 1000 / 60; // Convert to minutes
+      const veryShortRun = runTime < 5;
+      const message = code === 0 ? 'Executable launched and exited normally.' : `Executable launched but exited with error code: ${code}`;
+
+      logData('exit', {
+        exitCode: code,
+        runTime: runTime.toFixed(2),
+        veryShortRun,
+        endTime: new Date(endTime).toISOString(),
+      });
+
+      resolve({ status: code === 0, message, exitCode: code, veryShortRun });
+    });
+
     process.unref();
-  } catch (error) {
-    console.error(`Error launching executable: ${error.message}`);
-  }
-}
+
+    function logData(type: string, data: any) {
+      const logFilePath = path.join(launcherLogsPath, `${executablePath.replace(/[^a-z0-9]/gi, '_')}_log.json`);
+      fs.appendFileSync(logFilePath, JSON.stringify({ type, timestamp: new Date().toISOString(), data }, null, 2) + ',\n');
+    }
+  });
+};

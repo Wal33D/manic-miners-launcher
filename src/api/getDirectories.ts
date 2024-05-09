@@ -1,19 +1,36 @@
-const os = require('os');
-const path = require('path');
-const fs = require('fs');
+import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+
+export interface Directories {
+  launcherInstallPath: string;
+  launcherCachePath: string;
+  launcherLogsPath: string;
+  levelsPath: string;
+  levelsBackupPath: string;
+  logsPath: string;
+  configPath: string;
+  configIniPath: string;
+  saveGamesPath: string;
+  LRRPath: string;
+  profilesPath: string;
+  minersPath: string;
+  backupSavesPath: string;
+}
 
 // Ensure the directory exists, create if it does not
-function ensureDirectoryExists(directoryPath) {
+function ensureDirectoryExists(directoryPath: string): void {
   if (!fs.existsSync(directoryPath)) {
     fs.mkdirSync(directoryPath, { recursive: true });
   }
 }
 
 // Function to gather and ensure existence of various system directories
-export function getDirectories() {
+export function getDirectories(): Directories {
   const homeDirectory = os.homedir();
   const launcherInstallPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\installations`;
   const launcherCachePath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\cache`;
+  const launcherLogsPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\logs`;
 
   // Ensuring launcher directories are created
   ensureDirectoryExists(launcherInstallPath);
@@ -50,6 +67,7 @@ export function getDirectories() {
   return {
     launcherInstallPath,
     launcherCachePath,
+    launcherLogsPath,
     levelsPath,
     levelsBackupPath,
     logsPath,
