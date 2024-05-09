@@ -5,8 +5,9 @@ import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelHtml';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
 import { topNavbarElement } from './partials/topNavbarElement';
-
 import { loadVersionSelect } from './renderer/versionSelect';
+import { setDisabledAppearance } from './domHelpers/setDisabledAppearance';
+
 loadVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -63,52 +64,72 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  const playButton = document.getElementById('playButton');
-  const versionSelect = document.getElementById('versionSelect');
+  const actionButton = document.getElementById('actionButton');
+  const versionSelect = document.getElementById('versionSelect') as any;
 
-  // Function to set the disabled appearance
-  function setDisabledAppearance(element: HTMLElement | any, disabled: boolean) {
-    element.disabled = disabled;
-    if (disabled) {
-      element.style.opacity = '0.6';
-      element.style.cursor = 'not-allowed';
-    } else {
-      element.style.opacity = '';
-      element.style.cursor = '';
+  versionSelect.addEventListener('change', () => {
+    updateActionButton(versionSelect.value);
+  });
+
+  actionButton.addEventListener('click', () => {
+    const action = actionButton.getAttribute('data-action');
+    handleAction(action, versionSelect.value);
+  });
+
+  function updateActionButton(versionIdentifier: any) {
+    // Mock function to check status
+    checkVersionStatus(versionIdentifier).then(status => {
+      switch (status) {
+        case 'download':
+          actionButton.textContent = 'Download';
+          actionButton.className = 'btn btn-primary w-100 not-draggable';
+          actionButton.setAttribute('data-action', 'download');
+          break;
+        case 'install':
+          actionButton.textContent = 'Install';
+          actionButton.className = 'btn btn-warning w-100 not-draggable';
+          actionButton.setAttribute('data-action', 'install');
+          break;
+        case 'play':
+          actionButton.textContent = 'Play Game';
+          actionButton.className = 'btn btn-success w-100 not-draggable';
+          actionButton.setAttribute('data-action', 'play');
+          break;
+        default:
+          actionButton.textContent = 'Check Status';
+          actionButton.className = 'btn btn-dark w-100 not-draggable';
+          actionButton.setAttribute('data-action', 'check');
+      }
+    });
+  }
+
+  function handleAction(action: string, versionIdentifier: any) {
+    // Logic to handle different actions based on the button's data-action attribute
+    switch (action) {
+      case 'download':
+        console.log('Downloading...');
+        break;
+      case 'install':
+        console.log('Installing...');
+        break;
+      case 'play':
+        console.log('Launching game...');
+        break;
     }
   }
 
-  playButton.addEventListener('click', () => {
-    //@ts-ignore
-    const versionIdentifier = versionSelect.value;
-    if (!versionIdentifier) {
-      console.error('No version selected.');
-      return;
-    }
+  function checkVersionStatus(versionIdentifier: string) {
+    // Mock API call or logic to determine the status
+    return new Promise(resolve => {
+      // Simulate an API response
+      setTimeout(() => {
+        // Example logic that might come from checking local files or a database
+        if (versionIdentifier === 'v1.0') resolve('play');
+        else if (versionIdentifier === 'v1.1') resolve('install');
+        else resolve('download');
+      }, 1000);
+    });
+  }
 
-    // Disable the Play button and the version selection to prevent multiple launches and changes during operation
-    setDisabledAppearance(playButton, true);
-    setDisabledAppearance(versionSelect, true);
-
-    // Send the version identifier to the main process
-    //@ts-ignore
-    window.electronAPI.send('launch-game', versionIdentifier);
-  });
-
-  // Listen for game launch replies from the main process
-  //@ts-ignore
-  window.electronAPI.receive('game-launch-reply', data => {
-    console.log('Game launch status:', data);
-
-    // Re-enable the Play button and the version selection regardless of the result
-    setDisabledAppearance(playButton, false);
-    setDisabledAppearance(versionSelect, false);
-
-    // Optionally, handle different responses based on the data received
-    if (data.success) {
-      console.log('Game launched successfully');
-    } else {
-      console.error('Failed to launch game:', data.message);
-    }
-  });
+  updateActionButton(versionSelect.value); // Initial update on load
 });
