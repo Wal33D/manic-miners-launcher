@@ -42,7 +42,10 @@ export const checkInstalledVersions = async (): Promise<{
       matchedDirs.map(async dir => {
         const fullDirPath = path.join(launcherInstallPath, dir);
         const filesInDir = await fs.readdir(fullDirPath);
-        const exeFiles = filesInDir.filter(file => file.endsWith('.exe')).map(file => path.join(fullDirPath, file));
+        const exeFiles = filesInDir
+          .filter(file => file.endsWith('.exe'))
+          .map(file => path.join(fullDirPath, file))
+          .shift();
 
         // Calculate the total size of the directory
         const fileStats = await Promise.all(filesInDir.map(file => fs.stat(path.join(fullDirPath, file))));
@@ -51,7 +54,7 @@ export const checkInstalledVersions = async (): Promise<{
         return {
           identifier: dir, // Assuming `dir` is directly used as identifier; adjust if needed
           directory: fullDirPath,
-          executables: exeFiles,
+          executablePath: exeFiles,
           installationSize: totalSize,
         };
       })
@@ -59,7 +62,7 @@ export const checkInstalledVersions = async (): Promise<{
     // Sort results by identifier after all data has been gathered
     results.sort((b: { identifier: string }, a: { identifier: any }) => a.identifier.localeCompare(b.identifier));
     defaultCurrentVersion = results[0].identifier;
-
+    console.log(results);
     status = true;
     message = 'Installed versions, executables, and directory sizes checked successfully, with full paths provided.';
   } catch (error) {
