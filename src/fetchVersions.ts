@@ -1,6 +1,5 @@
-import fetch from 'node-fetch';
-
-interface VersionInfo {
+// Interface for each version item
+interface Version {
   gameId: number;
   title: string;
   displayName: string;
@@ -21,36 +20,32 @@ interface VersionInfo {
   description: string;
 }
 
-interface FetchVersionsResponse {
-  status: boolean;
-  versions?: VersionInfo[];
-  message: string;
+// Interface for the complete response from 'versions' routes
+interface Versions {
+  versions: Version[];
 }
 
-export const fetchVersions = async (): Promise<FetchVersionsResponse> => {
-  let message = 'Failed to fetch versions.';
-  let status = false;
-  let versions: VersionInfo[] = [];
+import { fetchServerData } from './fetchServerData';
 
-  try {
-    const response = await fetch(
-      'https://manic-launcher.vercel.app/api/versions/all'
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
+type SimpleVersionType = 'all' | 'latest' | 'past' | 'experimental';
 
-    if (data && data.versions) {
-      versions = data.versions;
-      status = true;
-      message = 'Versions fetched successfully.';
-    } else {
-      message = 'No versions data found.';
-    }
-  } catch (error: any) {
-    message = `Error: ${error.message}`;
+// Function to fetch versions based on a simplified version type
+export async function fetchVersions({
+  versionType = 'all',
+}: {
+  versionType?: SimpleVersionType;
+}): Promise<Versions> {
+  // Format the route name by prepending 'versions.' to the versionType
+  const formattedVersionType = `versions.${versionType}`;
+
+  // Call fetchServerData with the formatted version type and map the response to our VersionsResponse type
+  const { data, status, message } = await fetchServerData({
+    routeName: formattedVersionType,
+  });
+
+  if (!status) {
+    throw new Error(message);
   }
 
-  return { status, versions, message };
-};
+  return { versions: data.versions as Version[] }; // Type assertion used here for simplicity
+}

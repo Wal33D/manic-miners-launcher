@@ -1,6 +1,8 @@
-import { BrowserWindow, app } from 'electron';
+// main.ts
+import { BrowserWindow, app, ipcMain } from 'electron';
 import { createWindow } from './createWindow';
-import { ipcMain } from 'electron';
+import { fetchServerData } from './fetchServerData';
+import { fetchVersions } from './fetchVersions';
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -21,10 +23,17 @@ const startApp = (): void => {
     }
   });
 };
-// IPC listener for renderer requests
-// Main process
-ipcMain.on('port', (e, msg) => {
-  const [port] = e.ports;
-  console.log(msg);
+
+ipcMain.on('request-mainprocess-action', async (event, arg) => {
+  console.log(arg); // Log the incoming message, which might indicate which action to perform
+
+  // Assuming arg might dictate which function to run, if it's 'fetchVersions' we execute it
+  if (arg === 'fetchVersions') {
+    const versionData = await fetchVersions({ versionType: 'latest' });
+    event.reply('action-reply', versionData); // Send the fetched versions data back to renderer
+  } else {
+    event.reply('action-reply', 'Received an unknown command');
+  }
 });
+
 startApp();

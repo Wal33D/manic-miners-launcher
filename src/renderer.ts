@@ -5,18 +5,8 @@ import { progressBarElement } from './partials/progressBarElement';
 import { installPanelHtml } from './partials/installPanelHtml';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
 import { topNavbarElement } from './partials/topNavbarElement';
-import { ipcRenderer } from 'electron';
 
-const { port1, port2 } = new MessageChannel();
-ipcRenderer.postMessage('port', { message: 'hello' }, [port1]);
-
-document.addEventListener('DOMContentLoaded', async () => {
-  /**
-   * The top navigation bar element.
-   *
-   * @type {HTMLElement}
-   */
-
+document.addEventListener('DOMContentLoaded', () => {
   const topNav = document.getElementById('top-navbar-container');
   if (topNav) {
     topNav.innerHTML = topNavbarElement;
