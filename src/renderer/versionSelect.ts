@@ -1,25 +1,30 @@
+/**
+ * Loads the version select options by fetching versions from the main process.
+ * This function sends a request to the main process to fetch the versions and receives the response.
+ * The response data is used to populate the version select dropdown element with options.
+ * If the response data is an array with at least one element, each element is added as an option to the dropdown.
+ * The option value is set to the version identifier and the option text is set to the version display name.
+ * If the response data is not an array or if no data is received, an error message is logged.
+ * If the versionSelect element is not found, an error message is logged.
+ */
 export const loadVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.send('request-mainprocess-action', 'fetchVersions');
   //@ts-ignore
   window.electronAPI?.receive('action-reply', data => {
-    console.log(data); // Continue to log the data for debugging
+    console.log(data);
 
-    // Get the select element from the DOM
     const versionSelect = document.getElementById('versionSelect');
     if (versionSelect) {
-      // Clear existing options (excluding the placeholder)
       while (versionSelect.children.length > 1) {
         versionSelect.removeChild(versionSelect.lastChild);
       }
 
-      // Check if data is an array and has content
       if (Array.isArray(data) && data.length > 0) {
-        // Append new options from the data
         data.forEach(version => {
           const option = document.createElement('option');
-          option.value = version.identifier; // Assuming 'identifier' can be used as a value
-          option.textContent = version.displayName; // Display name for the option
+          option.value = version.identifier;
+          option.textContent = version.displayName;
           versionSelect.appendChild(option);
         });
       } else {

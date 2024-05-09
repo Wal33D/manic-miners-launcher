@@ -22,8 +22,6 @@ export const installPanelHtml = `
             </fieldset>
             <button id="installButton" class="btn btn-dark-green mb-3 w-100 not-draggable">Install</button>
             <button id="downloadButton" class="btn btn-dark-green w-100 not-draggable">Download</button>
-            <h1>Hello from Electron!</h1>
-            <button class="not-draggable" id="fetchVersionsButton">Fetch Versions</button>
         </div>
         <hr>
     </div>

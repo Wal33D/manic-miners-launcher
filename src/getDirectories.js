@@ -12,7 +12,7 @@ function ensureDirectoryExists(directoryPath) {
 // Function to gather and ensure existence of various system directories
 export function getDirectories() {
   const homeDirectory = os.homedir();
-  const launcherInstallPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher`;
+  const launcherInstallPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\installations`;
   const launcherCachePath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\cache`;
 
   // Ensuring launcher directories are created
@@ -20,12 +20,7 @@ export function getDirectories() {
   ensureDirectoryExists(launcherCachePath);
 
   // Paths in user's Documents directory
-  const levelsPath = path.join(
-    homeDirectory,
-    'Documents',
-    'ManicMiners',
-    'Levels'
-  );
+  const levelsPath = path.join(homeDirectory, 'Documents', 'ManicMiners', 'Levels');
   const levelsBackupPath = path.join(levelsPath, 'Backup');
 
   // Ensure game document directories are created
