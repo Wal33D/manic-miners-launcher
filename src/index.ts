@@ -34,25 +34,21 @@ const registerIpcHandlers = (): void => {
     event.reply(IPC_CHANNELS.SET_SELECTED_VERSION_REPLY, { success: true, message: 'Version set successfully.' });
   };
 
-  const handleGameLaunchRequest = async (
-    event: { reply: (arg0: string, arg1: { success: boolean; message: any }) => void },
-    versionIdentifier: any
-  ) => {
-    try {
-      const success = await handleGameLaunch({ versionIdentifier });
-      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
-    } catch (error) {
-      console.error(`Error launching game: ${error.message}`);
-      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success: false, message: error.message });
-    }
-  };
-
   ipcMain.on(IPC_CHANNELS.VERSION_INFO_REQUEST, handleVersionRequest);
   ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, setAndReplyVersion);
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, event =>
     event.reply(IPC_CHANNELS.GET_SELECTED_VERSION_REPLY, store.get('current-selected-version'))
   );
-  ipcMain.on(IPC_CHANNELS.LAUNCH_GAME, handleGameLaunchRequest);
+  ipcMain.on(IPC_CHANNELS.LAUNCH_GAME, async (event, versionIdentifier) => {
+    console.log(`Launching game with version: ${versionIdentifier}`);
+    try {
+      const success = await handleGameLaunch({ versionIdentifier });
+      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
+    } catch (error) {
+      console.error(`Error launching game: ${error.message}`);
+      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success: false, message: `Error launching game: ${error.message}` });
+    }
+  });
 };
 
 const onAppReady = () => {
