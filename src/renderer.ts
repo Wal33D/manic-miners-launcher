@@ -8,7 +8,7 @@ import { topNavbarElement } from './partials/topNavbarElement';
 import { loadVersionSelect } from './renderer/versionSelect';
 import { setDisabledAppearance } from './domHelpers/setDisabledAppearance';
 
-loadVersionSelect();
+//loadVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
   const topNav = document.getElementById('top-navbar-container');
@@ -57,18 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const actionButton = document.getElementById('actionButton') as any;
   const versionSelect = document.getElementById('versionSelect') as any;
-
-  // Function to set the disabled appearance
-  function setDisabledAppearance(element: { disabled: any; style: { opacity: string; cursor: string } }, disabled: boolean) {
-    element.disabled = disabled;
-    if (disabled) {
-      element.style.opacity = '0.5';
-      element.style.cursor = 'not-allowed';
-    } else {
-      element.style.opacity = '';
-      element.style.cursor = '';
-    }
-  }
 
   function updateActionButton(versionIdentifier: any) {
     // Example function to determine the button status based on the version
