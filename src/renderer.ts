@@ -61,3 +61,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+document.addEventListener('DOMContentLoaded', () => {
+  const playButton = document.getElementById('playButton');
+  const versionSelect = document.getElementById('versionSelect');
+
+  playButton.addEventListener('click', () => {
+    //@ts-ignore
+    const versionIdentifier = versionSelect.value;
+    if (!versionIdentifier) {
+      console.error('No version selected.');
+      return;
+    }
+    //@ts-ignore
+    // Use the exposed API to send the version identifier to the main process
+    window.electronAPI.send('launch-game', versionIdentifier);
+  });
+
+  // Optionally, listen for game launch replies
+  //@ts-ignore
+  window.electronAPI.receive('game-launch-reply', data => {
+    console.log('Game launch status:', data);
+  });
+});

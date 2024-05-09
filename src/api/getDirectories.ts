@@ -35,6 +35,7 @@ export function getDirectories(): Directories {
   // Ensuring launcher directories are created
   ensureDirectoryExists(launcherInstallPath);
   ensureDirectoryExists(launcherCachePath);
+  ensureDirectoryExists(launcherLogsPath);
 
   // Paths in user's Documents directory
   const levelsPath = path.join(homeDirectory, 'Documents', 'ManicMiners', 'Levels');
