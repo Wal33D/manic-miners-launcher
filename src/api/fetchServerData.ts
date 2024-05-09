@@ -10,11 +10,7 @@ interface FetchResult {
   message: string;
 }
 
-export async function fetchServerData({
-  routeName = 'launcher.all',
-}: {
-  routeName?: string;
-}): Promise<FetchResult> {
+export async function fetchServerData({ routeName = 'launcher.all' }: { routeName?: string }): Promise<FetchResult> {
   const { launcherCachePath } = getDirectories();
   const cacheFilePath = `${launcherCachePath}/${routeName}.json`;
 
@@ -43,15 +39,11 @@ export async function fetchServerData({
 
     // If 'fetchServerEndpoints' can return an array, ensure we handle it:
     if (!endpoint || Array.isArray(endpoint)) {
-      throw new Error(
-        'Expected a single endpoint, but received none or multiple.'
-      );
+      throw new Error('Expected a single endpoint, but received none or multiple.');
     }
 
     // Fetch data from the selected endpoint
-    const response = await fetch(
-      `https://manic-launcher.vercel.app${endpoint.endpoint}`
-    );
+    const response = await fetch(`https://manic-launcher.vercel.app${endpoint.endpoint}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -60,11 +52,7 @@ export async function fetchServerData({
     message = 'Data fetched successfully.';
 
     // Cache the fetched data
-    await fs.writeFile(
-      cacheFilePath,
-      JSON.stringify({ status, data, message }),
-      'utf8'
-    );
+    await fs.writeFile(cacheFilePath, JSON.stringify({ status, data, message }), 'utf8');
   } catch (error) {
     message = `Error: ${error.message}`;
   }

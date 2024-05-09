@@ -1,19 +1,19 @@
 import fs from 'fs/promises';
 import path from 'path';
-
-import { Versions } from './versions/versionTypes';
 import { fetchVersions } from './versions/fetchVersions';
 import { getDirectories } from './getDirectories';
+import { Versions } from './versions/versionTypes';
 
 /**
  * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
- * @returns Object containing status and message along with an array of objects with directory names and EXE files found within those directories, if successful.
+ * Also calculates the total size of each directory.
+ * @returns Object containing status and message along with an array of objects with directory full paths, EXE files full paths, and directory sizes found within those directories, if successful.
  */
 
 export const checkInstalledVersionsWithExe = async (): Promise<{
   status: boolean;
   message: string;
-  results?: Array<{ directory: string; executables: string[] }>;
+  results?: Array<{ directory: string; executables: string[]; size: number }>;
 }> => {
   let status = false;
   let message = '';
@@ -36,20 +36,27 @@ export const checkInstalledVersionsWithExe = async (): Promise<{
       matchedDirs.map(async dir => {
         const fullDirPath = path.join(launcherInstallPath, dir);
         const filesInDir = await fs.readdir(fullDirPath);
-        const exeFiles = filesInDir.filter(file => file.endsWith('.exe'));
+        const exeFiles = filesInDir.filter(file => file.endsWith('.exe')).map(file => path.join(fullDirPath, file));
+
+        // Calculate the total size of the directory
+        const fileStats = await Promise.all(filesInDir.map(file => fs.stat(path.join(fullDirPath, file))));
+        const totalSize = fileStats.reduce((acc, stat) => acc + stat.size, 0);
 
         return {
-          directory: dir,
+          identifier: dir,
+          directory: fullDirPath,
+          executable: exeFiles.length > 0,
           executables: exeFiles,
+          installationSize: totalSize,
         };
       })
     );
-    console.log(results);
     status = true;
-    message = 'Installed versions and executables checked successfully.';
+    message = 'Installed versions, executables, and directory sizes checked successfully, with full paths provided.';
   } catch (error) {
     message = `Failed to read installation directory: ${error}`;
   }
+  console.log(results);
 
   return { status, message, results };
 };

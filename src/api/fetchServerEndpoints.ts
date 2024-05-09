@@ -8,11 +8,7 @@ interface Endpoint {
   endpoint: string;
 }
 
-export async function fetchServerEndpoints({
-  routeName,
-}: {
-  routeName?: string;
-}): Promise<Endpoint | Endpoint[]> {
+export async function fetchServerEndpoints({ routeName }: { routeName?: string }): Promise<Endpoint | Endpoint[]> {
   const { launcherCachePath } = getDirectories();
   const cacheFilePath = `${launcherCachePath}/endpoints.json`;
 
@@ -32,13 +28,9 @@ export async function fetchServerEndpoints({
     endpoints = JSON.parse(cachedData);
   } catch (error) {
     // If reading fails or cache is expired, fetch from API and cache the result
-    const routesResponse = await fetch(
-      'https://manic-launcher.vercel.app/api/routes'
-    );
+    const routesResponse = await fetch('https://manic-launcher.vercel.app/api/routes');
     if (!routesResponse.ok) {
-      throw new Error(
-        `Failed to fetch endpoints. Status: ${routesResponse.status}`
-      );
+      throw new Error(`Failed to fetch endpoints. Status: ${routesResponse.status}`);
     }
     const routesData = await routesResponse.json();
     endpoints = Object.keys(routesData).map(key => ({
