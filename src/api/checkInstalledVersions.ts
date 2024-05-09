@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fetchVersions } from './versions/fetchVersions';
-import { getDirectories, Directories } from './getDirectories';
+import { getDirectories } from './getDirectories';
 import { Versions } from './versions/versionTypes';
 /**
  * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
@@ -12,21 +12,14 @@ import { Versions } from './versions/versionTypes';
 export const checkInstalledVersions = async (): Promise<{
   status: boolean;
   message: string;
-  defaultCurrentVersion: string;
-  existingInstalls?: Array<{
-    identifier: string;
-    directory: string;
-    executable: boolean;
-    executables: string[];
-    installationSize: number;
-  }>;
+  existingInstalls?: Array<{ identifier: string; directory: string; executable: boolean; executables: string[]; installationSize: number }>;
 }> => {
   let status = false;
   let message = '';
   let results = [] as any;
-  let defaultCurrentVersion: string;
+
   try {
-    const { launcherInstallPath } = getDirectories() as Directories;
+    const { launcherInstallPath } = getDirectories();
     const versionsData = (await fetchVersions({ versionType: 'all' })) as Versions;
     const versionIdentifiers = versionsData.versions.map(v => v.identifier);
 
@@ -59,20 +52,15 @@ export const checkInstalledVersions = async (): Promise<{
         };
       })
     );
+
     // Sort results by identifier after all data has been gathered
     results.sort((b: { identifier: string }, a: { identifier: any }) => a.identifier.localeCompare(b.identifier));
-    defaultCurrentVersion = results[0].identifier;
-    console.log(results);
     status = true;
     message = 'Installed versions, executables, and directory sizes checked successfully, with full paths provided.';
   } catch (error) {
     message = `Failed to read installation directory: ${error}`;
   }
+  console.log(results);
 
-  return {
-    status,
-    message,
-    defaultCurrentVersion,
-    existingInstalls: results,
-  };
+  return { status, message, existingInstalls: results };
 };
