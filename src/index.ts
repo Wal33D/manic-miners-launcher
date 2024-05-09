@@ -46,9 +46,9 @@ ipcMain.on('request-version-information', async (event, arg) => {
   }
 });
 
-ipcMain.on('launch-game', (event, versionIdentifier) => {
+ipcMain.on('launch-game', async (event, versionIdentifier) => {
   console.log(`Launching game with version: ${versionIdentifier}`);
-  handleGameLaunch({ versionIdentifier });
+  await handleGameLaunch({ versionIdentifier });
 
   // Logic to launch the game executable
 });

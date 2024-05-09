@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   const playButton = document.getElementById('playButton');
   const versionSelect = document.getElementById('versionSelect');
@@ -72,14 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('No version selected.');
       return;
     }
+    // Disable the Play button to prevent multiple launches
     //@ts-ignore
-    // Use the exposed API to send the version identifier to the main process
+    playButton.disabled = true;
+    // Send the version identifier to the main process
+    //@ts-ignore
     window.electronAPI.send('launch-game', versionIdentifier);
   });
-
-  // Optionally, listen for game launch replies
+  // Listen for game launch replies from the main process
   //@ts-ignore
   window.electronAPI.receive('game-launch-reply', data => {
     console.log('Game launch status:', data);
+    //@ts-ignore
+    // Re-enable the Play button regardless of the result
+    playButton.disabled = false;
+    // Optionally, handle different responses based on the data received
+    if (data.success) {
+      console.log('Game launched successfully');
+    } else {
+      console.error('Failed to launch game:', data.message);
+    }
   });
 });
