@@ -6,20 +6,10 @@ import { installPanelHtml } from './partials/installPanelHtml';
 import { installerMenuModalElement } from './partials/installerMenuModalElement';
 import { topNavbarElement } from './partials/topNavbarElement';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const fetchVersionsButton = document.getElementById('fetchVersionsButton');
-  fetchVersionsButton?.addEventListener('click', () => {
-    //@ts-ignore
+import { loadVersionSelect } from './renderer/versionSelect';
 
-    window.electronAPI?.send('request-mainprocess-action', 'fetchVersions');
-  });
-  //@ts-ignore
-
-  window.electronAPI?.receive('action-reply', data => {
-    console.log(data);
-  });
-});
 document.addEventListener('DOMContentLoaded', () => {
+  loadVersionSelect();
   const topNav = document.getElementById('top-navbar-container');
   if (topNav) {
     topNav.innerHTML = topNavbarElement;
@@ -42,11 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('install-pane-container');
   if (container) {
     container.innerHTML = installPanelHtml;
-    document
-      .getElementById('installButton')
-      .addEventListener('click', function () {
-        console.log('Install button clicked!');
-      });
+    document.getElementById('installButton').addEventListener('click', function () {
+      console.log('Install button clicked!');
+    });
   }
 
   /**
@@ -57,25 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const footer = document.getElementById('bottom-navbar-container');
   if (footer) {
     footer.innerHTML = progressBarElement;
-    document
-      .getElementById('installButton')
-      .addEventListener('click', function () {
-        console.log('Install button clicked!');
-      });
+    document.getElementById('installButton').addEventListener('click', function () {
+      console.log('Install button clicked!');
+    });
   }
 
   /**
    * The container element for the installer menu modal.
    */
-  const installerMenuModal = document.getElementById(
-    'installer-menu-modal-container'
-  );
+  const installerMenuModal = document.getElementById('installer-menu-modal-container');
   if (installerMenuModal) {
     installerMenuModal.innerHTML = installerMenuModalElement;
-    document
-      .getElementById('installButton')
-      .addEventListener('click', function () {
-        console.log('Install button clicked!');
-      });
+    document.getElementById('installButton').addEventListener('click', function () {
+      console.log('Install button clicked!');
+    });
   }
 });

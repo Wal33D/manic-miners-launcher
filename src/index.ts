@@ -28,7 +28,7 @@ ipcMain.on('request-mainprocess-action', async (event, arg) => {
 
   // Assuming arg might dictate which function to run, if it's 'fetchVersions' we execute it
   if (arg === 'fetchVersions') {
-    const versionData = await fetchVersions({ versionType: 'latest' });
+    const versionData = await fetchVersions({ versionType: 'all' });
     event.reply('action-reply', versionData); // Send the fetched versions data back to renderer
   } else {
     event.reply('action-reply', 'Received an unknown command');
