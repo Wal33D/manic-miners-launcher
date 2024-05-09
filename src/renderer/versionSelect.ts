@@ -36,6 +36,9 @@ export const initializeVersionSelect = (): void => {
           const selectedVersion = versionSelect.value;
           console.log(`Version selected: ${selectedVersion}`);
           //@ts-ignore
+          console.log(selectedVersion);
+          //@ts-ignore
+
           window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
         });
       } else {

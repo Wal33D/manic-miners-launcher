@@ -18,7 +18,7 @@ export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifie
     }
 
     // Determine which version to launch
-    const versionToLaunch =
+    const versionToLaunch: any =
       installedVersions.existingInstalls.find(v => v.identifier === versionIdentifier) || installedVersions.existingInstalls[0];
 
     logToFile({
