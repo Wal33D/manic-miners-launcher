@@ -1,9 +1,9 @@
 export const installerMenuModalElement = `
-<div class="modal fade not-draggable" id="navbarModal" tabindex="-1" aria-labelledby="navbarModalLabel" aria-hidden="true">
+<div class="modal fade not-draggable" id="navbar-main-menu-modal" tabindex="-1" aria-labelledby="navbar-main-menu-modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="navbarModalLabel">Navigation</h5>
+                <h5 class="modal-title" id="navbar-main-menu-modalLabel">Navigation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
