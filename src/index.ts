@@ -24,22 +24,25 @@ const startApp = (): void => {
 };
 
 ipcMain.on('request-mainprocess-action', async (event, arg) => {
-  console.log(arg); // Log the incoming message, which might indicate which action to perform
-
-  // Check the action to perform based on 'arg'
-  switch (arg) {
-    case 'fetchVersions':
-      try {
-        // Fetch version data, default to 'all' if not specified in the arg
-        const versionData = await fetchVersions({ versionType: 'all' });
-        event.reply('action-reply', versionData.versions); // Ensure to send only the versions array if that's what the renderer expects
-      } catch (error) {
-        console.error('Error fetching versions:', error);
-        event.reply('action-reply', { error: error.message }); // Send error message back to renderer for handling
-      }
-      break;
-    default:
-      event.reply('action-reply', { error: 'Received an unknown command' });
+  console.log(arg);
+  if (arg === 'fetchVersions') {
+    try {
+      const versionData = await fetchVersions({ versionType: 'all' });
+      event.reply('reply-fetchVersions', versionData); // Specific channel for version data
+    } catch (error) {
+      console.error('Error fetching versions:', error);
+      event.reply('reply-fetchVersions', { error: error.message });
+    }
+  } else if (arg === 'fetchInstalledVersions') {
+    try {
+      const { existingInstalls } = await checkInstalledVersionsWithExe();
+      event.reply('reply-fetchInstalledVersions', { existingInstalls });
+    } catch (error) {
+      console.error('Error fetching installed versions:', error);
+      event.reply('reply-fetchInstalledVersions', { error: error.message });
+    }
+  } else {
+    event.reply('reply-error', { error: 'Received an unknown command' });
   }
 });
 
