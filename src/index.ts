@@ -53,6 +53,8 @@ ipcMain.on('get-selected-version', event => {
 
 ipcMain.on('launch-game', async (event, versionIdentifier) => {
   console.log(`Launching game with version: ${versionIdentifier}`);
+  console.log(versionIdentifier);
+
   try {
     const success = await handleGameLaunch({ versionIdentifier });
     event.reply('game-launch-reply', { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });

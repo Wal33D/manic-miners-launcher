@@ -12,7 +12,7 @@ import { Versions } from './versions/versionTypes';
 export const checkInstalledVersions = async (): Promise<{
   status: boolean;
   message: string;
-  existingInstalls?: Array<{ identifier: string; directory: string; executable: boolean; executables: string[]; installationSize: number }>;
+  existingInstalls?: Array<{ identifier: string; directory: string; executablePath: boolean; installationSize: number }>;
 }> => {
   let status = false;
   let message = '';

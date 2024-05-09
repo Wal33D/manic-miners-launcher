@@ -7,11 +7,11 @@ import { checkInstalledVersions } from './checkInstalledVersions';
  * @param versionIdentifier Optional identifier for a specific version to launch.
  * @returns Promise<boolean> indicating whether the game was successfully launched.
  */
-
 export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifier?: string }): Promise<boolean> => {
   try {
     logToFile({ message: `Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'` });
     const installedVersions = await checkInstalledVersions();
+
     if (!installedVersions.status || !installedVersions.existingInstalls || installedVersions.existingInstalls.length === 0) {
       logToFile({ message: 'No installations found or failed to fetch installations.' });
       return false;
@@ -20,18 +20,18 @@ export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifie
     // Determine which version to launch
     const versionToLaunch =
       installedVersions.existingInstalls.find(v => v.identifier === versionIdentifier) || installedVersions.existingInstalls[0];
+
     logToFile({
       message: `Attempting to launch version: '${versionToLaunch.identifier}' (Requested: '${versionIdentifier || 'default'}')`,
     });
 
     // Check if the version has an executable to launch
-    if (!versionToLaunch.executable) {
+    if (!versionToLaunch.executablePath) {
       logToFile({ message: `No executable files found for the selected version: ${versionToLaunch.identifier}` });
       return false;
     }
 
-    const executablePath = versionToLaunch.executables[0];
-    const launchResults = await launchExecutable({ executablePath });
+    const launchResults = await launchExecutable({ executablePath: versionToLaunch.executablePath });
     logToFile({ message: launchResults.message });
 
     if (launchResults.status) {
