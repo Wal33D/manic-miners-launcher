@@ -3,6 +3,7 @@ import { BrowserWindow, app, ipcMain } from 'electron';
 import { createWindow } from './createWindow';
 import { fetchVersions } from './api/versions/fetchVersions';
 import { checkInstalledVersionsWithExe } from './api/checkInstalledVersions';
+import { launchExecutable } from './api/launchExecutable';
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -46,3 +47,4 @@ ipcMain.on('request-version-information', async (event, arg) => {
 });
 
 startApp();
+launchExecutable('C:\\Users\\Aquataze\\AppData\\Local\\ManicMinersLauncher\\installations\\ManicMiners-Baraklava-V1.0.4\\ManicMiners.exe');

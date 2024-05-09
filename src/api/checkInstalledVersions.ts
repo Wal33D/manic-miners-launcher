@@ -3,7 +3,6 @@ import path from 'path';
 import { fetchVersions } from './versions/fetchVersions';
 import { getDirectories } from './getDirectories';
 import { Versions } from './versions/versionTypes';
-
 /**
  * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
  * Also calculates the total size of each directory.
@@ -43,7 +42,7 @@ export const checkInstalledVersionsWithExe = async (): Promise<{
         const totalSize = fileStats.reduce((acc, stat) => acc + stat.size, 0);
 
         return {
-          identifier: dir,
+          identifier: dir, // Assuming `dir` is directly used as identifier; adjust if needed
           directory: fullDirPath,
           executable: exeFiles.length > 0,
           executables: exeFiles,
@@ -51,6 +50,9 @@ export const checkInstalledVersionsWithExe = async (): Promise<{
         };
       })
     );
+
+    // Sort results by identifier after all data has been gathered
+    results.sort((b: { identifier: string }, a: { identifier: any }) => a.identifier.localeCompare(b.identifier));
     status = true;
     message = 'Installed versions, executables, and directory sizes checked successfully, with full paths provided.';
   } catch (error) {
