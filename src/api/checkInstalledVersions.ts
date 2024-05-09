@@ -9,7 +9,7 @@ import { Versions } from './versions/versionTypes';
  * @returns Object containing status and message along with an array of objects with directory full paths, EXE files full paths, and directory sizes found within those directories, if successful.
  */
 
-export const checkInstalledVersionsWithExe = async (): Promise<{
+export const checkInstalledVersions = async (): Promise<{
   status: boolean;
   message: string;
   existingInstalls?: Array<{ identifier: string; directory: string; executable: boolean; executables: string[]; installationSize: number }>;

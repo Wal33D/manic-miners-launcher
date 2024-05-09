@@ -2,8 +2,9 @@
 import { BrowserWindow, app, ipcMain } from 'electron';
 import { createWindow } from './createWindow';
 import { fetchVersions } from './api/versions/fetchVersions';
-import { checkInstalledVersionsWithExe } from './api/checkInstalledVersions';
+import { checkInstalledVersions } from './api/checkInstalledVersions';
 import { handleGameLaunch } from './api/handleGameLaunch';
+
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -31,7 +32,7 @@ ipcMain.on('request-version-information', async (event, arg) => {
   switch (arg) {
     case 'fetchVersions':
       try {
-        const { existingInstalls } = await checkInstalledVersionsWithExe();
+        const { existingInstalls } = await checkInstalledVersions();
 
         // Fetch version data, default to 'all' if not specified in the arg
         const versionData = await fetchVersions({ versionType: 'all' });

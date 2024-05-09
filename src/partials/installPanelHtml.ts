@@ -21,7 +21,7 @@ export const installPanelHtml = `
             </div>
         </fieldset>
         <!-- Dynamic Button -->
-        <button id="playButton" class="btn btn-success w-100 not-draggable">Loading</button>
+        <button id="actionButton" class="btn btn-success w-100 not-draggable">Loading</button>
     </div>
 </div>
 `;
