@@ -12,7 +12,7 @@ import { Versions } from './versions/versionTypes';
 export const checkInstalledVersions = async (): Promise<{
   status: boolean;
   message: string;
-  defaultCurrentVersion: any;
+  defaultCurrentVersion: string;
   existingInstalls?: Array<{
     identifier: string;
     directory: string;
@@ -24,7 +24,7 @@ export const checkInstalledVersions = async (): Promise<{
   let status = false;
   let message = '';
   let results = [] as any;
-
+  let defaultCurrentVersion: string;
   try {
     const { launcherInstallPath } = getDirectories() as Directories;
     const versionsData = (await fetchVersions({ versionType: 'all' })) as Versions;
@@ -56,23 +56,20 @@ export const checkInstalledVersions = async (): Promise<{
         };
       })
     );
-
     // Sort results by identifier after all data has been gathered
     results.sort((b: { identifier: string }, a: { identifier: any }) => a.identifier.localeCompare(b.identifier));
+    defaultCurrentVersion = results[0].identifier;
+
     status = true;
     message = 'Installed versions, executables, and directory sizes checked successfully, with full paths provided.';
   } catch (error) {
     message = `Failed to read installation directory: ${error}`;
   }
-  console.log(results.length > 0 ? results[0] : null);
-  console.log(results.length > 0 ? results[0] : null);
-  console.log(results.length > 0 ? results[0] : null);
 
-  console.log(results.length > 0 ? results[0] : null);
   return {
     status,
     message,
-    defaultCurrentVersion: results.length > 0 ? results[0] : null,
+    defaultCurrentVersion,
     existingInstalls: results,
   };
 };

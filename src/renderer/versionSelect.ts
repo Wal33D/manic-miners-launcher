@@ -1,10 +1,9 @@
-import { Versions } from '../api/versions/versionTypes';
 import { IPC_CHANNELS } from '../ipcConfig';
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.send(IPC_CHANNELS.VERSION_INFO_REQUEST);
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, (data: { versions: Versions; selectBoxDefaultVersion: any }) => {
+  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, data => {
     console.log(data);
     const { versions, selectBoxDefaultVersion } = data;
     const versionSelect = document.getElementById('versionSelect') as any;
@@ -23,9 +22,11 @@ export const initializeVersionSelect = (): void => {
 
         // Set the default selected version
         if (selectBoxDefaultVersion) {
-          versionSelect.value = selectBoxDefaultVersion.identifier;
+          const firstInstalledVersion = selectBoxDefaultVersion;
+          versionSelect.value = firstInstalledVersion;
+          // Immediately save the default selected version
           //@ts-ignore
-          window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectBoxDefaultVersion.identifier);
+          window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, firstInstalledVersion);
         } else {
           console.error('No currently installed versions data received or data is not an array.');
         }
