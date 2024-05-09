@@ -2,8 +2,8 @@
 import { BrowserWindow, app, ipcMain } from 'electron';
 import { createWindow } from './createWindow';
 import { fetchVersions } from './versions/fetchVersions';
-import { main } from './checkInstalledVersions';
-main();
+import { checkInstalledVersionsWithExe } from './checkInstalledVersions';
+checkInstalledVersionsWithExe();
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
