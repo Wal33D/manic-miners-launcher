@@ -28,22 +28,22 @@ const registerIpcHandlers = (): void => {
   ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, (event, versionIdentifier) => {
     console.log(`Setting selected version: ${versionIdentifier}`);
     store.set('current-selected-version', versionIdentifier);
-    event.reply('set-selected-version-reply', { success: true, message: 'Version set successfully.' });
+    event.reply(IPC_CHANNELS.SET_SELECTED_VERSION_REPLY, { success: true, message: 'Version set successfully.' });
   });
 
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, event => {
     const selectedVersion = store.get('current-selected-version');
-    event.reply('get-selected-version-reply', selectedVersion);
+    event.reply(IPC_CHANNELS.GET_SELECTED_VERSION_REPLY, selectedVersion);
   });
 
   ipcMain.on(IPC_CHANNELS.LAUNCH_GAME, async (event, versionIdentifier) => {
     console.log(`Launching game with version: ${versionIdentifier}`);
     try {
       const success = await handleGameLaunch({ versionIdentifier });
-      event.reply(IPC_CHANNELS.GAME_LAUNCH_REPLY, { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
+      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
     } catch (error) {
       console.error(`Error launching game: ${error.message}`);
-      event.reply(IPC_CHANNELS.GAME_LAUNCH_REPLY, { success: false, message: `Error launching game: ${error.message}` });
+      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success: false, message: `Error launching game: ${error.message}` });
     }
   });
 };
