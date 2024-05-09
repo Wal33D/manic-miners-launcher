@@ -7,6 +7,19 @@ import { installerMenuModalElement } from './partials/installerMenuModalElement'
 import { topNavbarElement } from './partials/topNavbarElement';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const fetchVersionsButton = document.getElementById('fetchVersionsButton');
+  fetchVersionsButton?.addEventListener('click', () => {
+    //@ts-ignore
+
+    window.electronAPI?.send('request-mainprocess-action', 'fetchVersions');
+  });
+  //@ts-ignore
+
+  window.electronAPI?.receive('action-reply', data => {
+    console.log(data);
+  });
+});
+document.addEventListener('DOMContentLoaded', () => {
   const topNav = document.getElementById('top-navbar-container');
   if (topNav) {
     topNav.innerHTML = topNavbarElement;
