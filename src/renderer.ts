@@ -7,9 +7,9 @@ import { installerMenuModalElement } from './partials/installerMenuModalElement'
 import { topNavbarElement } from './partials/topNavbarElement';
 
 import { loadVersionSelect } from './renderer/versionSelect';
+loadVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadVersionSelect();
   const topNav = document.getElementById('top-navbar-container');
   if (topNav) {
     topNav.innerHTML = topNavbarElement;
