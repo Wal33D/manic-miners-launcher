@@ -29,28 +29,30 @@ const startApp = (): void => {
   });
 };
 
-ipcMain.on('request-version-information', async (event, arg) => {
-  console.log(arg); // Log the incoming message, which might indicate which action to perform
+ipcMain.on('request-version-information', async event => {
   try {
-    let storedPreferedVersion = store.get('current-selected-version');
-
-    let defaultVersion = (await checkInstalledVersions()).installedVersions.shift() || storedPreferedVersion;
-    store.set('current-selected-version', defaultVersion);
-
     const versionData = await fetchVersions({ versionType: 'all' });
-    event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { versions: versionData.versions, defaultVersion });
+    let storedPreferredVersion = store.get('current-selected-version');
+    // Use storedPreferredVersion if available and valid; otherwise, use the first from installedVersions
+    let defaultVersion = storedPreferredVersion || (await checkInstalledVersions()).installedVersions.shift();
+
+    event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, {
+      versions: versionData.versions,
+      defaultVersion: defaultVersion || versionData.versions[0], // Ensure there is always a default
+    });
   } catch (error) {
     console.error('Error fetching versions:', error);
     event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { error: error.message });
   }
 });
-ipcMain.on('set-selected-version', (event, selectedVersion) => {
+
+ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, (event, selectedVersion) => {
   store.set('current-selected-version', selectedVersion);
 });
 
 ipcMain.on('get-selected-version', event => {
   const selectedVersion = store.get('current-selected-version');
-  event.reply('get-selected-version-reply', selectedVersion);
+  event.reply('get-selected-version', selectedVersion);
 });
 
 ipcMain.on('launch-game', async (event, versionIdentifier) => {

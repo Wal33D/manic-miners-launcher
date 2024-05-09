@@ -1,4 +1,5 @@
 import { IPC_CHANNELS } from '../ipcConfig';
+
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.send('request-version-information');
@@ -8,10 +9,12 @@ export const initializeVersionSelect = (): void => {
     console.log(data);
     const versionSelect = document.getElementById('versionSelect') as any;
     if (versionSelect) {
-      while (versionSelect.children.length > 1) {
-        versionSelect.removeChild(versionSelect.lastChild);
+      // Clear existing options except the first one
+      while (versionSelect.options.length > 1) {
+        versionSelect.remove(1);
       }
 
+      // Fill the select box with versions
       if (Array.isArray(versions) && versions.length > 0) {
         versions.forEach(version => {
           const option = document.createElement('option');
@@ -22,25 +25,23 @@ export const initializeVersionSelect = (): void => {
 
         // Set the default selected version
         if (defaultVersion) {
-          const firstInstalledVersionValue = defaultVersion.displayName;
-          versionSelect.value = firstInstalledVersionValue;
-          // Immediately save the default selected version
+          versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
+          // Send the whole default version object to store it in the Electron store
           //@ts-ignore
-          window.electronAPI.send('set-selected-version', defaultVersion);
+          window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
         } else {
-          console.error('No currently installed versions data received or data is not an array.');
+          console.error('No default version provided.');
         }
 
-        // Add an event listener to save the selected version whenever it changes
+        // Listener to save the selected version when it changes
         versionSelect.addEventListener('change', () => {
-          const selectedVersion = versionSelect.value;
-          console.log(`Version selected: ${selectedVersion}`);
+          const selectedOption = versionSelect.options[versionSelect.selectedIndex];
+          const selectedVersion = {
+            identifier: selectedOption.value,
+            displayName: selectedOption.textContent,
+          };
+          console.log(`Version selected: ${selectedVersion.identifier}, ${selectedVersion.displayName}`);
           //@ts-ignore
-          window.electronAPI.send('set-selected-version', defaultVersion);
-
-          console.log(selectedVersion);
-          //@ts-ignore
-
           window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
         });
       } else {
