@@ -6,5 +6,4 @@ export const IPC_CHANNELS = {
   SET_SELECTED_VERSION: 'set-selected-version',
   GET_SELECTED_VERSION: 'get-selected-version',
   SET_SELECTED_VERSION_REPLY: 'set-selected-version-reply',
-  GET_SELECTED_VERSION_REPLY: 'get-selected-version-reply',
 };

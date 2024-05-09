@@ -31,14 +31,35 @@ const startApp = (): void => {
 
 ipcMain.on('request-version-information', async event => {
   try {
+    // Fetch all available versions
     const versionData = await fetchVersions({ versionType: 'all' });
+
+    // Fetch installed versions to find a default if necessary
+    const installedVersionsResult = await checkInstalledVersions();
+    const installedVersions = installedVersionsResult.installedVersions;
+
+    // Retrieve the preferred version from the store, if available
     let storedPreferredVersion = store.get('current-selected-version');
-    // Use storedPreferredVersion if available and valid; otherwise, use the first from installedVersions
-    let defaultVersion = storedPreferredVersion || (await checkInstalledVersions()).installedVersions.shift();
+
+    // Check if the stored preferred version is still valid
+    let defaultVersion = versionData.versions.find(v => v.identifier === storedPreferredVersion?.identifier);
+
+    // If there's no valid stored preferred version and there are installed versions, use the first installed version
+    if (!defaultVersion && installedVersions && installedVersions.length > 0) {
+      defaultVersion = installedVersions[0];
+      // Update the store to reflect this newly selected default version
+      store.set('current-selected-version', defaultVersion);
+    }
+
+    // Ensure there's always a default version selected
+    if (!defaultVersion && versionData.versions.length > 0) {
+      defaultVersion = versionData.versions[0]; // Fallback to the first available version
+      store.set('current-selected-version', defaultVersion);
+    }
 
     event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, {
       versions: versionData.versions,
-      defaultVersion: defaultVersion || versionData.versions[0], // Ensure there is always a default
+      defaultVersion,
     });
   } catch (error) {
     console.error('Error fetching versions:', error);
@@ -50,9 +71,9 @@ ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, (event, selectedVersion) => {
   store.set('current-selected-version', selectedVersion);
 });
 
-ipcMain.on('get-selected-version', event => {
+ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, event => {
   const selectedVersion = store.get('current-selected-version');
-  event.reply('get-selected-version', selectedVersion);
+  event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersion);
 });
 
 ipcMain.on('launch-game', async (event, versionIdentifier) => {
