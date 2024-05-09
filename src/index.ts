@@ -26,12 +26,20 @@ const startApp = (): void => {
 ipcMain.on('request-mainprocess-action', async (event, arg) => {
   console.log(arg); // Log the incoming message, which might indicate which action to perform
 
-  // Assuming arg might dictate which function to run, if it's 'fetchVersions' we execute it
-  if (arg === 'fetchVersions') {
-    const versionData = await fetchVersions({ versionType: 'all' });
-    event.reply('action-reply', versionData); // Send the fetched versions data back to renderer
-  } else {
-    event.reply('action-reply', 'Received an unknown command');
+  // Check the action to perform based on 'arg'
+  switch (arg) {
+    case 'fetchVersions':
+      try {
+        // Fetch version data, default to 'all' if not specified in the arg
+        const versionData = await fetchVersions({ versionType: 'all' });
+        event.reply('action-reply', versionData.versions); // Ensure to send only the versions array if that's what the renderer expects
+      } catch (error) {
+        console.error('Error fetching versions:', error);
+        event.reply('action-reply', { error: error.message }); // Send error message back to renderer for handling
+      }
+      break;
+    default:
+      event.reply('action-reply', { error: 'Received an unknown command' });
   }
 });
 
