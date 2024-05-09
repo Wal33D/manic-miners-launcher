@@ -1,25 +1,12 @@
 import { spawn } from 'child_process';
-import { getDirectories } from './getDirectories';
-import fs from 'fs';
-import { join } from 'path';
-
-const { launcherLogsPath } = getDirectories();
-const logFilePath = join(launcherLogsPath, 'runtime-log.txt');
-
-/**
- * Appends messages to the runtime log file.
- * @param message The message to log.
- */
-const logToFile = (message: string) => {
-  const timeStampedMessage = `${new Date().toISOString()}: ${message}\n`;
-  fs.appendFileSync(logFilePath, timeStampedMessage, 'utf-8');
-};
+import { logToFile } from '../logger';
 
 /**
  * Launches an executable file and monitors if it opened successfully or if it crashed.
  * @param executablePath The file system path to the executable to be launched.
  * @returns A promise that resolves to an object containing the status of the operation, a message, and the exit code.
  */
+
 export const launchExecutable = ({
   executablePath,
 }: {

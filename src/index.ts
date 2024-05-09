@@ -48,9 +48,24 @@ ipcMain.on('request-version-information', async (event, arg) => {
 
 ipcMain.on('launch-game', async (event, versionIdentifier) => {
   console.log(`Launching game with version: ${versionIdentifier}`);
-  await handleGameLaunch({ versionIdentifier });
+  try {
+    // The handleGameLaunch function is expected to return true if successful, false otherwise
+    const success = await handleGameLaunch({ versionIdentifier });
 
-  // Logic to launch the game executable
+    if (success) {
+      console.log('Game launched successfully');
+      // Send a success message back to the renderer
+      event.reply('game-launch-reply', { success: true, message: 'Game launched successfully.' });
+    } else {
+      console.log('Game failed to launch');
+      // Send a failure message back to the renderer
+      event.reply('game-launch-reply', { success: false, message: 'Failed to launch game.' });
+    }
+  } catch (error) {
+    console.error(`Error launching game: ${error.message}`);
+    // Send an error message back to the renderer
+    event.reply('game-launch-reply', { success: false, message: `Error launching game: ${error.message}` });
+  }
 });
 
 startApp();
