@@ -18,8 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     topNav.innerHTML = topNavbarElement;
 
     topNav.addEventListener('click', function () {
-      const mainMenuModal = document.getElementById('topNavBtn');
-      console.log(mainMenuModal);
+      const mainMenuModal = document.getElementById('navbar-main-menu-modal');
       if (mainMenuModal) {
         const bsModal = new Modal(mainMenuModal, {
           keyboard: true,
