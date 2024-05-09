@@ -1,69 +1,61 @@
 import { BrowserWindow, app, ipcMain } from 'electron';
-import Store from 'electron-store';
 import { createWindow } from './createWindow';
-import { IPC_CHANNELS } from './ipcConfig';
 import { fetchVersions } from './api/versions/fetchVersions';
-import { handleGameLaunch } from './api/handleGameLaunch';
 import { checkInstalledVersions } from './api/checkInstalledVersions';
-import { Version } from './api/versions/versionTypes';
+import { handleGameLaunch } from './api/handleGameLaunch';
+import Store from 'electron-store';
 
-const store = new Store() as any;
+const store: any = new Store();
 
-if (require('electron-squirrel-startup')) app.quit();
+if (require('electron-squirrel-startup')) {
+  // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+  app.quit();
+}
 
-const registerIpcHandlers = (): void => {
-  const handleVersionRequest = async (event: {
-    reply: (arg0: string, arg1: { versions?: Version[]; selectBoxDefaultVersion?: any; error?: any }) => void;
-  }) => {
-    try {
-      const { existingInstalls } = await checkInstalledVersions();
-      const { versions } = await fetchVersions({ versionType: 'all' });
-      console.log(store.get('current-selected-version'));
-      const selectedVersion = existingInstalls.shift();
-      event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, {
-        versions,
-        selectBoxDefaultVersion: selectedVersion.identifier || store.get('current-selected-version'),
-      });
-    } catch (error) {
-      console.error('Error fetching versions:', error);
-      event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { error: error.message });
+const startApp = (): void => {
+  app.on('ready', createWindow);
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
     }
-  };
+  });
 
-  const setAndReplyVersion = (
-    event: { reply: (arg0: string, arg1: { success: boolean; message: string }) => void },
-    versionIdentifier: any
-  ) => {
-    store.set('current-selected-version', versionIdentifier);
-    event.reply(IPC_CHANNELS.SET_SELECTED_VERSION_REPLY, { success: true, message: 'Version set successfully.' });
-  };
-
-  const handleGameLaunchRequest = async (
-    event: { reply: (arg0: string, arg1: { success: boolean; message: any }) => void },
-    versionIdentifier: any
-  ) => {
-    try {
-      const success = await handleGameLaunch({ versionIdentifier });
-      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
-    } catch (error) {
-      console.error(`Error launching game: ${error.message}`);
-      event.reply(IPC_CHANNELS.LAUNCH_GAME_REPLY, { success: false, message: error.message });
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
     }
-  };
-
-  ipcMain.on(IPC_CHANNELS.VERSION_INFO_REQUEST, handleVersionRequest);
-  ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, setAndReplyVersion);
-  ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, event =>
-    event.reply(IPC_CHANNELS.GET_SELECTED_VERSION_REPLY, store.get('current-selected-version'))
-  );
-  ipcMain.on(IPC_CHANNELS.LAUNCH_GAME, handleGameLaunchRequest);
+  });
 };
 
-const onAppReady = () => {
-  createWindow();
-  registerIpcHandlers();
-};
+ipcMain.on('request-version-information', async (event, arg) => {
+  console.log(arg); // Log the incoming message, which might indicate which action to perform
+  try {
+    const { existingInstalls } = await checkInstalledVersions();
+    const versionData = await fetchVersions({ versionType: 'all' });
+    event.reply('version-information-reply', { versions: versionData.versions, currentlyInstalledVersions: existingInstalls });
+  } catch (error) {
+    console.error('Error fetching versions:', error);
+    event.reply('version-information-reply', { error: error.message });
+  }
+});
 
-app.on('ready', onAppReady);
-app.on('window-all-closed', () => app.quit());
-app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow());
+ipcMain.on('get-selected-version', event => {
+  const selectedVersion = store.get('current-selected-version');
+  event.reply('get-selected-version-reply', selectedVersion);
+});
+
+ipcMain.on('launch-game', async (event, versionIdentifier) => {
+  console.log(`Launching game with version: ${versionIdentifier}`);
+  console.log(versionIdentifier);
+
+  try {
+    const success = await handleGameLaunch({ versionIdentifier });
+    event.reply('game-launch-reply', { success, message: success ? 'Game launched successfully.' : 'Failed to launch game.' });
+  } catch (error) {
+    console.error(`Error launching game: ${error.message}`);
+    event.reply('game-launch-reply', { success: false, message: `Error launching game: ${error.message}` });
+  }
+});
+
+startApp();
