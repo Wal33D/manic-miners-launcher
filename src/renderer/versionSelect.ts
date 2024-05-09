@@ -6,7 +6,7 @@ export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, (data: { versions: Versions; selectBoxDefaultVersion: any }) => {
     console.log(data);
-    const { versions, currentlyInstalledVersions } = data;
+    const { versions, selectBoxDefaultVersion } = data;
     const versionSelect = document.getElementById('versionSelect') as any;
     if (versionSelect) {
       while (versionSelect.children.length > 1) {
@@ -22,12 +22,10 @@ export const initializeVersionSelect = (): void => {
         });
 
         // Set the default selected version
-        if (Array.isArray(currentlyInstalledVersions) && currentlyInstalledVersions.length > 0) {
-          const firstInstalledVersion = currentlyInstalledVersions[0];
-          versionSelect.value = firstInstalledVersion.identifier;
-          // Immediately save the default selected version
+        if (selectBoxDefaultVersion) {
+          versionSelect.value = selectBoxDefaultVersion.identifier;
           //@ts-ignore
-          window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, firstInstalledVersion.identifier);
+          window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectBoxDefaultVersion.identifier);
         } else {
           console.error('No currently installed versions data received or data is not an array.');
         }

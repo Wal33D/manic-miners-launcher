@@ -64,7 +64,15 @@ export const checkInstalledVersions = async (): Promise<{
   } catch (error) {
     message = `Failed to read installation directory: ${error}`;
   }
-  console.log(results);
+  console.log(results.length > 0 ? results[0] : null);
+  console.log(results.length > 0 ? results[0] : null);
+  console.log(results.length > 0 ? results[0] : null);
 
-  return { status, message, defaultCurrentVersion: results[0], existingInstalls: results };
+  console.log(results.length > 0 ? results[0] : null);
+  return {
+    status,
+    message,
+    defaultCurrentVersion: results.length > 0 ? results[0] : null,
+    existingInstalls: results,
+  };
 };

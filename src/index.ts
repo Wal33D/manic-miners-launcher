@@ -16,9 +16,10 @@ const registerIpcHandlers = (): void => {
   ipcMain.on(IPC_CHANNELS.VERSION_INFO_REQUEST, async (event, arg) => {
     console.log(arg);
     try {
-      const { defaultCurrentVersion } = await checkInstalledVersions();
+      const { identifier: alreadyInstalledVersionIdentifier } = (await checkInstalledVersions()).defaultCurrentVersion;
       const { versions } = await fetchVersions({ versionType: 'all' });
-      event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { versions: versions, selectBoxDefaultVersion: defaultCurrentVersion });
+      console.log(versions, alreadyInstalledVersionIdentifier);
+      event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { versions: versions, selectBoxDefaultVersion: alreadyInstalledVersionIdentifier });
     } catch (error) {
       console.error('Error fetching versions:', error);
       event.reply(IPC_CHANNELS.VERSION_INFO_REPLY, { error: error.message });
