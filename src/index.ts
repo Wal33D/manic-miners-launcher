@@ -31,16 +31,20 @@ const startApp = (): void => {
 ipcMain.on('request-version-information', async (event, arg) => {
   console.log(arg); // Log the incoming message, which might indicate which action to perform
   try {
-    let defaultVersion = (await checkInstalledVersions()).installedVersions.shift();
-    store.set('current-selected-version', defaultVersion.identifier);
+    let storedPreferedVersion = store.get('current-selected-version');
 
-    defaultVersion = store.get('current-selected-version');
+    let defaultVersion = (await checkInstalledVersions()).installedVersions.shift() || storedPreferedVersion;
+    store.set('current-selected-version', defaultVersion);
+
     const versionData = await fetchVersions({ versionType: 'all' });
     event.reply('version-information-reply', { versions: versionData.versions, defaultVersion });
   } catch (error) {
     console.error('Error fetching versions:', error);
     event.reply('version-information-reply', { error: error.message });
   }
+});
+ipcMain.on('set-selected-version', (event, selectedVersion) => {
+  store.set('current-selected-version', selectedVersion);
 });
 
 ipcMain.on('get-selected-version', event => {

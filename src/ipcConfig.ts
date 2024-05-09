@@ -1,5 +1,5 @@
 export const IPC_CHANNELS = {
-  VERSION_INFO_REQUEST: 'request-version-information',
+  request-version-information: 'request-version-information',
   VERSION_INFO_REPLY: 'version-information-reply',
   LAUNCH_GAME: 'launch-game',
   LAUNCH_GAME_REPLY: 'game-launch-reply',
