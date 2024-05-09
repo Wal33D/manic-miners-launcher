@@ -1,4 +1,4 @@
-export const loadVersionSelect = (): void => {
+export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.send('request-version-information', 'fetchVersions');
   //@ts-ignore
