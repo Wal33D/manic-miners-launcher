@@ -8,8 +8,8 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
-import { mainConfig } from './webpack.main.config';
-import { rendererConfig } from './webpack.renderer.config';
+import { mainConfig } from './config/webpack.main.config';
+import { rendererConfig } from './config/webpack.renderer.config';
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -25,11 +25,11 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/index.html',
-            js: './src/renderer.ts',
+            html: './src/renderer/index.html', // Updated path to index.html
+            js: './src/renderer/renderer.ts', // Updated path to renderer.ts
             name: 'main_window',
             preload: {
-              js: './src/preload.ts',
+              js: './src/preload/preload.ts', // Updated path to preload.ts
             },
           },
         ],

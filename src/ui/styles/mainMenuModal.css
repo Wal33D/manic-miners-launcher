@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Fredericka the Great';
-  src: url('../../assets/FrederickatheGreat-Regular.ttf') format('truetype');
+  src: url('../../../assets/FrederickatheGreat-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,16 +15,16 @@
 }
 
 #lmsMenuImg {
-  background-image: url('../../assets/lms.png');
+  background-image: url('../../../assets/lms.png');
 }
 #tsMenuImg {
-  background-image: url('../../assets/toolstore.png');
+  background-image: url('../../../assets/toolstore.png');
 }
 #teleportMenuImg {
-  background-image: url('../../assets/teleportstation.png');
+  background-image: url('../../../assets/teleportstation.png');
 }
 #supportMenuImg {
-  background-image: url('../../assets/supportstation.png');
+  background-image: url('../../../assets/supportstation.png');
 }
 
 .modal-header {

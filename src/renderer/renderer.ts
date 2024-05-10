@@ -1,13 +1,13 @@
 import './index.css';
-import './partials/mainMenuModal.css';
+import '../ui/styles/mainMenuModal.css';
 import { Modal } from 'bootstrap';
-import { progressBarElement } from './partials/progressBarElement';
-import { installPanelHtml } from './partials/installPanelHtml';
-import { installerMenuModalElement } from './partials/installerMenuModalElement';
-import { topNavbarElement } from './partials/topNavbarElement';
-import { initializeVersionSelect } from './renderer/versionSelect';
-import { setDisabledAppearance } from './domHelpers/setDisabledAppearance';
-import { IPC_CHANNELS } from './ipcConfig';
+import { progressBarElement } from '../ui/partials/progressBarElement';
+import { installPanelHtml } from '../ui/partials/installPanelHtml';
+import { installerMenuModalElement } from '../ui/partials/installerMenuModalElement';
+import { topNavbarElement } from '../ui/partials/topNavbarElement';
+import { initializeVersionSelect } from './components/versionSelect';
+import { setDisabledAppearance } from './components/setDisabledAppearance';
+import { IPC_CHANNELS } from '../main/ipcHandlers/ipcConfig';
 
 initializeVersionSelect();
 

@@ -1,4 +1,4 @@
-import { IPC_CHANNELS } from '../ipcConfig';
+import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcConfig';
 
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
