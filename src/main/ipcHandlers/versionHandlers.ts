@@ -7,7 +7,7 @@ import Store from 'electron-store';
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
-  ipcMain.on(IPC_CHANNELS.VERSION_INFO_REQUEST, async event => {
+  ipcMain.on(IPC_CHANNELS.VERSION_INFO_REPLY, async event => {
     try {
       const versionData = await fetchVersions({ versionType: 'all' });
       const installedVersionsResult = await checkInstalledVersions();
