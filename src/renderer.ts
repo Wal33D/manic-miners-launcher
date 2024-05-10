@@ -7,6 +7,7 @@ import { installerMenuModalElement } from './partials/installerMenuModalElement'
 import { topNavbarElement } from './partials/topNavbarElement';
 import { initializeVersionSelect } from './renderer/versionSelect';
 import { setDisabledAppearance } from './domHelpers/setDisabledAppearance';
+import { IPC_CHANNELS } from './ipcConfig';
 
 initializeVersionSelect();
 
@@ -81,12 +82,12 @@ if (container) {
 
       // Send the version identifier to the main process
       //@ts-ignore
-      window.electronAPI.send('launch-game', versionIdentifier);
+      window.electronAPI.send(IPC_CHANNELS.LAUNCH_GAME, versionIdentifier);
     });
 
     // Listen for game launch replies from the main process
     //@ts-ignore
-    window.electronAPI.receive('game-launch-reply', data => {
+    window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, data => {
       console.log('Game launch status:', data);
 
       // Re-enable the Play button and the version selection regardless of the result
