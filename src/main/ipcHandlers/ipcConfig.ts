@@ -3,4 +3,5 @@ export const IPC_CHANNELS = {
   VERSION_INFO: 'request-version-information',
   SET_SELECTED_VERSION: 'set-selected-version',
   GET_SELECTED_VERSION: 'get-selected-version',
+  CHECK_VERSION_INSTALLED: 'check-version-installed',
 };

@@ -3,10 +3,15 @@ import { IPC_CHANNELS } from './ipcConfig';
 import { fetchVersions } from '../../api/versions/fetchVersions';
 import { checkInstalledVersions } from '../../api/checkInstalledVersions';
 import Store from 'electron-store';
+// Add the new IPC channel handling inside setupVersionHandlers if closely related
 
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
+  ipcMain.on(IPC_CHANNELS.CHECK_VERSION_INSTALLED, async (event, versionIdentifier) => {
+    const isInstalled = await checkInstalledVersions(versionIdentifier);
+    event.reply(IPC_CHANNELS.CHECK_VERSION_INSTALLED, isInstalled);
+  });
   ipcMain.on(IPC_CHANNELS.VERSION_INFO, async event => {
     console.log('Handling VERSION_INFO request...');
     try {
