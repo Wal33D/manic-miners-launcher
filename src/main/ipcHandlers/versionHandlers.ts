@@ -9,10 +9,17 @@ import Store from 'electron-store';
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
-  ipcMain.on(IPC_CHANNELS.CHECK_VERSION_INSTALLED, async (event, versionIdentifier) => {
-    const isInstalled = await isVersionInstalled(versionIdentifier);
-    event.reply(IPC_CHANNELS.CHECK_VERSION_INSTALLED, isInstalled);
+  ipcMain.on('request-versions', async event => {
+    const versions = await fetchVersions({});
+    event.reply('reply-versions', versions);
   });
+
+  // Handler for checking if a specific version is installed
+  ipcMain.on('check-version-installed', async (event, versionIdentifier) => {
+    const installed = await isVersionInstalled(versionIdentifier);
+    event.reply('version-installed-status', installed);
+  });
+
   ipcMain.on(IPC_CHANNELS.VERSION_INFO, async event => {
     console.log('Handling VERSION_INFO request...');
     try {
