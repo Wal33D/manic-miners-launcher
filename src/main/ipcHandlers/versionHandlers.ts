@@ -8,24 +8,35 @@ const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
   ipcMain.on(IPC_CHANNELS.VERSION_INFO, async event => {
+    console.log('Handling VERSION_INFO request...');
     try {
+      console.log('Fetching versions...');
       const versionData = await fetchVersions({ versionType: 'all' });
-      const installedVersionsResult = await checkInstalledVersions();
-      const installedVersions = installedVersionsResult.installedVersions;
+      console.log('Versions fetched:', versionData.versions.length, 'versions found.');
 
-      let storedPreferredVersion = store.get('current-selected-version');
-      let defaultVersion = versionData.versions.find(v => v.identifier === storedPreferredVersion?.identifier);
+      console.log('Checking installed versions...');
+      const installedVersions = (await checkInstalledVersions()).installedVersions;
+      console.log('Installed versions:', installedVersions.length, 'versions installed.');
+
+      console.log('Getting stored preferred version ID from store...');
+      const storedPreferredVersionId = store.get('current-selected-version-id');
+      let defaultVersion = versionData.versions.find(v => v.identifier === storedPreferredVersionId);
 
       if (!defaultVersion && installedVersions?.length > 0) {
+        console.log('No stored preferred version found. Setting first installed version as default...');
         defaultVersion = installedVersions[0];
-        store.set('current-selected-version', defaultVersion);
+        store.set('current-selected-version-id', defaultVersion.identifier);
+        console.log('Stored new default version ID:', defaultVersion.identifier);
       }
 
       if (!defaultVersion && versionData.versions.length > 0) {
+        console.log('No valid versions found in store. Setting first available version as default...');
         defaultVersion = versionData.versions[0];
-        store.set('current-selected-version', defaultVersion);
+        store.set('current-selected-version-id', defaultVersion.identifier);
+        console.log('Stored new default version ID:', defaultVersion.identifier);
       }
 
+      console.log('Replying with version information...');
       event.reply(IPC_CHANNELS.VERSION_INFO, {
         versions: versionData.versions,
         defaultVersion,
@@ -36,12 +47,15 @@ export const setupVersionHandlers = () => {
     }
   });
 
-  ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, (event, selectedVersion) => {
-    store.set('current-selected-version', selectedVersion);
+  ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, (event, selectedVersionId) => {
+    console.log('Setting selected version ID:', selectedVersionId);
+    store.set('current-selected-version-id', selectedVersionId);
   });
 
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, event => {
-    const selectedVersion = store.get('current-selected-version');
-    event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersion);
+    console.log('Getting selected version ID from store...');
+    const selectedVersionId = store.get('current-selected-version-id');
+    console.log('Selected version ID:', selectedVersionId);
+    event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersionId);
   });
 };
