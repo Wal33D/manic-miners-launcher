@@ -22,7 +22,7 @@ export const installPanelHtml = `
         </fieldset>
         <hr>
         <!-- Play Button -->
-        <button id="playButton" class="btn btn-success w-100 not-draggable">Play Game</button>
-    </div>
+        <button id="playButton" class="btn btn-primary">Install</button>
+        </div>
 </div>
 `;

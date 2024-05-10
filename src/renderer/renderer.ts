@@ -57,43 +57,19 @@ if (container) {
   container.innerHTML = installPanelHtml;
 
   document.addEventListener('DOMContentLoaded', () => {
-    const playButton = document.getElementById('playButton');
-    const versionSelect = document.getElementById('versionSelect');
-
-    // Function to set the disabled appearance
-
-    playButton.addEventListener('click', () => {
-      //@ts-ignore
-      const versionIdentifier = versionSelect.value;
-      if (!versionIdentifier) {
-        console.error('No version selected.');
-        return;
-      }
-
-      // Disable the Play button and the version selection to prevent multiple launches and changes during operation
-      setDisabledAppearance(playButton, true);
-      setDisabledAppearance(versionSelect, true);
-
-      // Send the version identifier to the main process
-      //@ts-ignore
-      window.electronAPI.send(IPC_CHANNELS.LAUNCH_GAME, versionIdentifier);
-    });
-
-    // Listen for game launch replies from the main process
+    // Request version info from the main process
     //@ts-ignore
-    window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, data => {
-      console.log('Game launch status:', data);
+    window.electronAPI.send('REQUEST_VERSIONS');
 
-      // Re-enable the Play button and the version selection regardless of the result
-      setDisabledAppearance(playButton, false);
-      setDisabledAppearance(versionSelect, false);
-
-      // Optionally, handle different responses based on the data received
-      if (data.success) {
-        console.log('Game launched successfully');
-      } else {
-        console.error('Failed to launch game:', data.message);
-      }
+    //@ts-ignore
+    window.electronAPI.receive('REPLY_VERSIONS', versions => {
+      const versionSelect = document.getElementById('versionSelect');
+      versions.forEach((version: { identifier: string; displayName: any }) => {
+        const option = document.createElement('option');
+        option.value = version.identifier;
+        option.textContent = version.displayName || version.identifier;
+        versionSelect.appendChild(option);
+      });
     });
   });
 }
