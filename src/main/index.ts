@@ -4,10 +4,10 @@ import { BrowserWindow, app, ipcMain } from 'electron';
 // Imports from internal modules and components
 import Store from 'electron-store';
 import { createWindow } from './createWindow';
-import { IPC_CHANNELS } from './ipcConfig';
-import { fetchVersions } from './api/versions/fetchVersions';
-import { handleGameLaunch } from './api/handleGameLaunch';
-import { checkInstalledVersions } from './api/checkInstalledVersions';
+import { IPC_CHANNELS } from '../ipcConfig';
+import { fetchVersions } from '../api/versions/fetchVersions';
+import { handleGameLaunch } from '../api/handleGameLaunch';
+import { checkInstalledVersions } from '../api/checkInstalledVersions';
 
 // Initialization of the store for persistent data storage
 const store: any = new Store();
