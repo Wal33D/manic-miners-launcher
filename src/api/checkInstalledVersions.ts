@@ -5,19 +5,14 @@ import { getDirectories } from './getDirectories';
 import { Version, Versions } from './versions/versionTypes';
 
 /**
- * Checks installed versions in the launcher install directory.
- * If a specific version identifier is provided, checks if that version is installed.
- * Otherwise, identifies any EXE files within those directories and calculates the total size of each directory.
- * @param versionIdentifier Optional specific version identifier to check.
- * @returns Object containing status and message along with the enhanced version objects if successful or boolean if checking a specific version.
+ * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
+ * Also calculates the total size of each directory.
+ * @returns Object containing status and message along with the enhanced version objects if successful.
  */
-export const checkInstalledVersions = async (
-  versionIdentifier?: string
-): Promise<{
+export const checkInstalledVersions = async (): Promise<{
   status: boolean;
   message: string;
   installedVersions?: Version[];
-  isInstalled?: boolean;
 }> => {
   let status = false;
   let message = '';
@@ -34,6 +29,7 @@ export const checkInstalledVersions = async (
     // Create a map of directories to their respective Version data
     let versionMap = new Map(versionsData.versions.map(v => [v.identifier, { ...v }]));
 
+    // Filter and update the version objects with file system data
     for (const dir of dirs) {
       if (versionMap.has(dir)) {
         const fullDirPath = path.join(launcherInstallPath, dir);
@@ -53,14 +49,10 @@ export const checkInstalledVersions = async (
         versionMap.set(dir, versionInfo);
       }
     }
+
+    // Only include versions that have a directory found
     //@ts-ignore
-
     results = Array.from(versionMap.values()).filter(v => v.directory);
-
-    if (versionIdentifier) {
-      const foundVersion = results.find((v: { identifier: string }) => v.identifier === versionIdentifier);
-      return { status: true, message: 'Check specific version installation status.', isInstalled: !!foundVersion };
-    }
 
     status = true;
     message = 'Installed versions data enhanced successfully.';
