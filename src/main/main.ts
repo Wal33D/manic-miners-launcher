@@ -1,12 +1,23 @@
 import { BrowserWindow, app } from 'electron';
 import { createWindow } from './createWindow';
-import { setupVersionHandlers } from './ipcHandlers/versionHandlers';
 import { setupGameLaunchHandlers } from './ipcHandlers/gameLaunchHandlers';
+import { ipcMain } from 'electron';
+import { fetchVersions } from '../api/versions/fetchVersions';
+import { isVersionInstalled } from '../api/isVersionInstalled';
 
 const startApp = (): void => {
   app.on('ready', () => {
     createWindow();
-    setupVersionHandlers();
+    ipcMain.on('request-versions', async event => {
+      const versions = await fetchVersions({ versionType: 'all' }); // Ensure this returns an array
+      if (Array.isArray(versions)) {
+        event.reply('reply-versions', versions);
+      } else {
+        console.error('fetchVersions did not return an array:', versions);
+        event.reply('reply-versions', []); // Send an empty array if not an array
+      }
+    });
+
     setupGameLaunchHandlers();
   });
 
