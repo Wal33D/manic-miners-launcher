@@ -2,9 +2,9 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcConfig';
 
 export const initializeVersionSelect = (): void => {
   //@ts-ignore
-  window.electronAPI?.send('request-version-information');
+  window.electronAPI?.send(IPC_CHANNELS.VERSION_INFO);
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO_REPLY, data => {
+  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO, data => {
     const { versions, defaultVersion } = data;
     console.log(data);
     const versionSelect = document.getElementById('versionSelect') as any;
