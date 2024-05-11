@@ -1,8 +1,7 @@
 import path from 'path';
 import os from 'os'; // Import the os module
 
-import { verifyFile } from '../fileUtils/verifyFile';
-import { IFileDetails } from '../fileUtils/fileUtilsTypes';
+import { verifyFile } from './verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 
@@ -27,17 +26,11 @@ export const downloadVersion = async ({
   let finalStatus = true;
   updateStatus({ status: 'Starting download process...', progress: 2 });
   console.log(version);
-  console.log(version);
-
-  console.log(version);
 
   try {
     updateStatus({ status: 'Fetching version index...', progress: 7 });
-    const { status, versions, message } = await fetchVersions();
+    const { versions } = await fetchVersions({ versionType: 'all' });
 
-    if (!status) {
-      throw new Error(`Failed to retrieve results: ${message}`);
-    }
     updateStatus({ progress: 12 });
 
     let versionToProcess;
@@ -56,7 +49,7 @@ export const downloadVersion = async ({
     const downloadUrl = versionToProcess.downloadUrl;
     // Check if the file exists and if it matches the expected size
     updateStatus({ progress: 24, status: 'Verifying existing file...' });
-    const fileDetails = (await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes })) as IFileDetails;
+    const fileDetails = await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes });
     console.log(fileDetails);
     updateStatus({ status: `Verification complete: ${fileDetails.sizeMatches ? 'Success' : 'Failed'}`, progress: 32 });
 

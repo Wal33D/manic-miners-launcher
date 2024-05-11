@@ -5,4 +5,6 @@ export const IPC_CHANNELS = {
   GET_SELECTED_VERSION: 'get-selected-version',
   CHECK_VERSION_INSTALLED: 'check-version-installed',
   SELECT_INSTALL_DIRECTORY: 'select-install-directory',
+  DOWNLOAD_VERSION: 'download-version',
+  DOWNLOAD_STATUS: 'download-status',
 };
