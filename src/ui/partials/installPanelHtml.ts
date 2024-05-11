@@ -7,7 +7,6 @@ export const installPanelHtml = `
         </select>
         <label for="installPath" class="not-draggable form-label">Install Directory</label>
         <input type="text" id="installPath" class="not-draggable form-control mb-3" placeholder="Click to select install directory">
-
         <fieldset class="mb-3">
             <div class="d-flex flex-md-row flex-column mb-3">
                 <div class="form-check me-md-2 mb-2 mb-md-0">
@@ -20,9 +19,8 @@ export const installPanelHtml = `
                 </div>
             </div>
         </fieldset>
-        <button id="installButton" style="display:none;" class="btn btn-dark-green mb-3 w-100 not-draggable">Install</button>
         <hr>
-        <!-- Play Button -->
+        <button id="installButton" style="display:none;" class="btn btn-dark-green mb-3 w-100 not-draggable">Install</button>
         <button id="playButton" class="btn btn-success w-100 not-draggable">Play Game</button>
     </div>
 </div>

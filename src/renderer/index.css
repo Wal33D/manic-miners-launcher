@@ -147,7 +147,7 @@ textarea {
   font-size: 0.8rem;
 }
 #install-pane-container {
-  background-color: rgba(0, 0, 0, 0.6) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
   max-height: calc(100vh - 70px);
   overflow-y: hidden;
   font-size: 0.8rem;

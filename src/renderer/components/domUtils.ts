@@ -1,16 +1,12 @@
-export function trimFilePath(fullPath: string) {
-  if (!fullPath) {
-    throw new Error('Invalid file path provided. Path is empty.');
+export function trimFilePath(fullPath: string): string | null {
+  if (!fullPath || fullPath.lastIndexOf('\\') === -1) {
+    return null;
   }
   const lastSlashIndex = fullPath.lastIndexOf('\\');
-  if (lastSlashIndex === -1) {
-    throw new Error('Invalid file path provided. No backslash found in path.');
-  }
   return fullPath.substring(0, lastSlashIndex);
 }
 
 export function fetchDefaultDirectory() {
-  // Sending the IPC message to request directories
   //@ts-ignore
   window.electronAPI.send('GET_DIRECTORIES');
 
@@ -20,4 +16,22 @@ export function fetchDefaultDirectory() {
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
     installPathInput.value = directories.launcherInstallPath;
   });
+}
+
+export function toggleButtonVisibility(hidePlayButton: boolean) {
+  const playButton = document.getElementById('playButton') as HTMLButtonElement;
+  const installButton = document.getElementById('installButton') as HTMLButtonElement;
+
+  if (!playButton || !installButton) {
+    console.error('Buttons not found on the page.');
+    return;
+  }
+
+  if (hidePlayButton) {
+    playButton.style.display = 'none';
+    installButton.style.display = 'block';
+  } else {
+    playButton.style.display = 'block';
+    installButton.style.display = 'none';
+  }
 }

@@ -1,5 +1,5 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
-import { fetchDefaultDirectory, trimFilePath } from './domUtils';
+import { fetchDefaultDirectory, toggleButtonVisibility, trimFilePath } from './domUtils';
 
 export const initializeVersionSelect = (): void => {
   // Request the version information
@@ -10,8 +10,6 @@ export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, data => {
     const { versions, defaultVersion } = data;
-    console.log('Received versions data:', data);
-
     const versionSelect = document.getElementById('versionSelect') as HTMLSelectElement;
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
 
@@ -20,29 +18,25 @@ export const initializeVersionSelect = (): void => {
       return;
     }
 
-    // Clear existing options except the first one
     while (versionSelect.options.length > 1) {
       versionSelect.remove(1);
     }
 
-    // Validate that versions data is an array and not empty
     if (!Array.isArray(versions) || versions.length === 0) {
       console.error('No versions data received or data is not an array.');
       return;
     }
 
-    // Populate the select box with versions
     versions.forEach(version => {
       const option = document.createElement('option');
-      option.value = version.identifier; // Use identifier for option value
-      option.textContent = version.displayName; // Assuming a displayName property exists
+      option.value = version.identifier;
+      option.textContent = version.displayName;
       versionSelect.appendChild(option);
     });
 
-    // Set the default version if available
     if (defaultVersion) {
-      versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
-      installPathInput.value = trimFilePath(defaultVersion.directory || '');
+      versionSelect.value = defaultVersion.identifier;
+      setInstallPathAndToggleButton(defaultVersion, installPathInput);
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
     } else {
@@ -52,15 +46,28 @@ export const initializeVersionSelect = (): void => {
     versionSelect.addEventListener('change', () => {
       const selectedIdentifier = versionSelect.value;
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
-      if (selectedVersion) {
-        if (!selectedVersion.directory) {
-          fetchDefaultDirectory();
-        } else {
-          installPathInput.value = trimFilePath(selectedVersion.directory);
-        }
-        //@ts-ignore
-        window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
-      }
+      setInstallPathAndToggleButton(selectedVersion, installPathInput);
+      //@ts-ignore
+      window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
     });
   });
 };
+
+function setInstallPathAndToggleButton(version: { directory: any }, installPathInput: HTMLInputElement) {
+  if (version && !version.directory) {
+    // If no directory is specified, fetch the default directory and display the install button
+    fetchDefaultDirectory();
+    toggleButtonVisibility(true);
+  } else {
+    const trimmedPath = trimFilePath(version.directory || '');
+    if (trimmedPath === null) {
+      // If trimming fails (invalid path), fetch the default directory and display the install button
+      fetchDefaultDirectory();
+      toggleButtonVisibility(true);
+    } else {
+      // If a valid directory path is trimmed, use it and display the play button
+      installPathInput.value = trimmedPath;
+      toggleButtonVisibility(false);
+    }
+  }
+}
