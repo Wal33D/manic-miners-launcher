@@ -2,12 +2,14 @@ import { BrowserWindow, app } from 'electron';
 import { createWindow } from './createWindow';
 import { setupVersionHandlers } from './ipcHandlers/setupVersionHandlers';
 import { setupGameLaunchHandlers } from './ipcHandlers/setupGameLaunchHandlers';
+import { setupDownloadHandlers } from './ipcHandlers/setupDownloadHandlers';
 
 const startApp = (): void => {
   app.on('ready', () => {
     createWindow();
     setupVersionHandlers();
     setupGameLaunchHandlers();
+    setupDownloadHandlers();
   });
 
   app.on('window-all-closed', () => {

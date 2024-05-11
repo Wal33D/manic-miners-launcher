@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const playButton = document.getElementById('playButton');
-    const versionSelect = document.getElementById('versionSelect');
+    const versionSelect: any = document.getElementById('versionSelect');
     if (playButton && versionSelect) {
       playButton.addEventListener('click', () => {
         //@ts-ignore
@@ -84,6 +84,42 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log('Game launched successfully');
         } else {
           console.error('Failed to launch game:', data.message);
+        }
+      });
+    }
+    const installButton = document.getElementById('installButton');
+
+    if (installButton && installPathInput && versionSelect) {
+      installButton.addEventListener('click', () => {
+        const versionIdentifier = versionSelect.value;
+        const downloadPath = installPathInput.value; // Ensure this path is the desired download location
+
+        if (!versionIdentifier || !downloadPath) {
+          console.error('No version selected or download path specified.');
+          return;
+        }
+
+        // Send the download request to the main process
+        //@ts-ignore
+        window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_VERSION, {
+          version: versionIdentifier,
+          downloadPath: downloadPath,
+        });
+      });
+
+      //@ts-ignore
+      window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, status => {
+        console.log('Download Progress:', status.progress, '%', status.status);
+        // Update a progress bar or show status messages on your UI
+      });
+
+      //@ts-ignore
+      window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, result => {
+        console.log(result.message);
+        if (result.downloaded) {
+          alert('Download completed successfully.');
+        } else {
+          alert('Failed to download the version: ' + result.message);
         }
       });
     }

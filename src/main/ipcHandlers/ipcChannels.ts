@@ -7,4 +7,5 @@ export const IPC_CHANNELS = {
   SELECT_INSTALL_DIRECTORY: 'select-install-directory',
   DOWNLOAD_VERSION: 'download-version',
   DOWNLOAD_STATUS: 'download-status',
+  DOWNLOAD_PROGRESS: 'download-progress',
 };
