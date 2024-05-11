@@ -1,12 +1,10 @@
 export function trimFilePath(fullPath: string) {
   if (!fullPath) {
-    fetchDefaultDirectory(); // Call fetchDefaultDirectory if fullPath is falsy
-    return; // Exit function early
+    throw new Error('Invalid file path provided. Path is empty.');
   }
   const lastSlashIndex = fullPath.lastIndexOf('\\');
   if (lastSlashIndex === -1) {
-    fetchDefaultDirectory(); // Call fetchDefaultDirectory if no backslash is found
-    return; // Exit function early
+    throw new Error('Invalid file path provided. No backslash found in path.');
   }
   return fullPath.substring(0, lastSlashIndex);
 }
