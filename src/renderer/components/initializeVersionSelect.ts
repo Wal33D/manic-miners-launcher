@@ -1,4 +1,5 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+import { fetchDefaultDirectory, trimFilePath } from './domUtils';
 
 export const initializeVersionSelect = (): void => {
   // Request the version information
@@ -48,20 +49,12 @@ export const initializeVersionSelect = (): void => {
       console.error('No default version provided.');
     }
 
-    // Listener to save the selected version object when it changes
     versionSelect.addEventListener('change', () => {
       const selectedIdentifier = versionSelect.value;
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
-      console.log(`Version selected: ${selectedIdentifier}`, selectedVersion);
       if (selectedVersion) {
         if (!selectedVersion.directory) {
-          // Request the default install directory if no directory is specified
-          //@ts-ignore
-          window.electronAPI.send('GET_DIRECTORIES');
-          //@ts-ignore
-          window.electronAPI.receive('DIRECTORIES_RESPONSE', directories => {
-            installPathInput.value = trimFilePath(directories.launcherInstallPath);
-          });
+          fetchDefaultDirectory();
         } else {
           installPathInput.value = trimFilePath(selectedVersion.directory);
         }
@@ -71,14 +64,3 @@ export const initializeVersionSelect = (): void => {
     });
   });
 };
-
-function trimFilePath(fullPath: string) {
-  if (!fullPath) {
-    return 'No directory specified';
-  }
-  const lastSlashIndex = fullPath.lastIndexOf('\\');
-  if (lastSlashIndex === -1) {
-    return 'No directory specified'; // Return a placeholder if no backslash is found
-  }
-  return fullPath.substring(0, lastSlashIndex + 1); // Include the slash to keep the final backslash
-}
