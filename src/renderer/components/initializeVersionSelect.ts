@@ -42,7 +42,7 @@ export const initializeVersionSelect = (): void => {
     if (defaultVersion) {
       versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
       // Update the installPathInput with the directory of the default version
-      installPathInput.value = defaultVersion.directory || 'No directory specified';
+      installPathInput.value = trimFilePath(defaultVersion.directory || '');
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
     } else {
@@ -55,10 +55,21 @@ export const initializeVersionSelect = (): void => {
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
       console.log(`Version selected: ${selectedIdentifier}`, selectedVersion);
       if (selectedVersion) {
-        installPathInput.value = selectedVersion.directory || 'No directory specified';
+        installPathInput.value = trimFilePath(selectedVersion.directory || 'No directory specified');
         //@ts-ignore
         window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
       }
     });
   });
 };
+
+function trimFilePath(fullPath: any) {
+  if (!fullPath) {
+    return 'No directory specified';
+  }
+  const lastSlashIndex = fullPath.lastIndexOf('\\');
+  if (lastSlashIndex === -1) {
+    return 'No directory specified'; // Return a placeholder if no backslash is found
+  }
+  return fullPath.substring(0, lastSlashIndex + 1); // Include the slash to keep the final backslash
+}

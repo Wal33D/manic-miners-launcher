@@ -31,24 +31,23 @@ export const setupVersionHandlers = () => {
 const getVersionDetails = async () => {
   const versionData = await fetchVersions({ versionType: 'all' });
   const installedVersionsResult = await fetchInstalledVersions();
-  let defaultVersion = null;
-  const storedVersion = store.get('current-selected-version');
 
-  if (installedVersionsResult.status && installedVersionsResult.installedVersions) {
-    defaultVersion = installedVersionsResult.installedVersions.find(v => v.identifier === storedVersion?.identifier) || storedVersion;
-  }
+  const enhancedVersions = versionData.versions.map(version => {
+    const installedVersion = installedVersionsResult.installedVersions.find(v => v.identifier === version.identifier);
+    return {
+      ...version,
+      directory: installedVersion ? installedVersion.directory : undefined,
+    };
+  });
 
-  if (!defaultVersion && versionData.versions.length > 0) {
-    defaultVersion = versionData.versions[0];
+  let defaultVersion = store.get('current-selected-version');
+  if (!defaultVersion || !enhancedVersions.find(v => v.identifier === defaultVersion.identifier)) {
+    defaultVersion = enhancedVersions[0];
     store.set('current-selected-version', defaultVersion);
   }
 
-  if (defaultVersion?.directory) {
-    console.log(`Directory path for selected version: ${defaultVersion.directory}`);
-  }
-
   return {
-    versions: versionData.versions,
+    versions: enhancedVersions,
     defaultVersion,
   };
 };
@@ -63,3 +62,21 @@ const getSelectedVersion = () => {
   console.log(`Currently selected version: ${selectedVersion.identifier}`);
   return selectedVersion;
 };
+
+// In your main process file, add this within the setupVersionHandlers or similar setup function
+const { dialog } = require('electron');
+
+ipcMain.on('open-directory-dialog', event => {
+  dialog
+    .showOpenDialog({
+      properties: ['openDirectory'],
+    })
+    .then(result => {
+      if (!result.canceled && result.filePaths.length > 0) {
+        event.reply('directory-selected', result.filePaths[0]);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to open directory dialog:', err);
+    });
+});

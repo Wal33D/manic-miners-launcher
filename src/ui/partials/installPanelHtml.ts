@@ -6,8 +6,8 @@ export const installPanelHtml = `
             <option value="" disabled selected>Choose a version:</option>
         </select>
         <label for="installPath" class="not-draggable form-label">Install Directory</label>
-        <input type="text" id="installPath" readonly class="not-draggable form-control mb-3"
-            placeholder="C:\\Users\\YourUser\\Desktop\\ManicMiners\\install">
+        <input type="text" id="installPath" class="not-draggable form-control mb-3" placeholder="Click to select install directory">
+
         <fieldset class="mb-3">
             <div class="d-flex flex-md-row flex-column mb-3">
                 <div class="form-check me-md-2 mb-2 mb-md-0">
