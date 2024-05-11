@@ -4,7 +4,7 @@ import { verifyFile } from './verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 import { Version } from '../api/versionTypes';
-import { getDirectories } from './fetchDirectories';
+
 /**
  * Handles the logic to fetch file details and triggers the download process.
  * @param {string} [version] - The optional version identifier.
