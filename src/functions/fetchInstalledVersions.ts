@@ -1,27 +1,24 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { fetchVersions } from './versions/fetchVersions';
-import { getDirectories } from './getDirectories';
-import { Version, Versions } from './versions/versionTypes';
+import { fetchVersions } from '../api/fetchVersions';
+import { getDirectories } from './fetchDirectories';
+import { Version, Versions } from '../api/versionTypes';
 
 /**
  * Checks installed versions in the launcher install directory and identifies any EXE files within those directories.
  * Also calculates the total size of each directory.
  * @returns Object containing status and message along with the enhanced version objects if successful.
  */
-export const checkInstalledVersions = async (): Promise<{
+
+export const fetchInstalledVersions = async (): Promise<{
   status: boolean;
-  message: string;
   installedVersions?: Version[];
 }> => {
   let status = false;
-  let message = '';
-  let results: any;
-
+  let installedVersions: Version[] = [];
   try {
     const { launcherInstallPath } = getDirectories();
     const versionsData: Versions = await fetchVersions({ versionType: 'all' });
-
     const filesAndDirs = await fs.readdir(launcherInstallPath);
     const dirStats = await Promise.all(filesAndDirs.map(name => fs.stat(path.join(launcherInstallPath, name))));
     const dirs = filesAndDirs.filter((_, index) => dirStats[index].isDirectory());
@@ -52,13 +49,10 @@ export const checkInstalledVersions = async (): Promise<{
 
     // Only include versions that have a directory found
     //@ts-ignore
-    results = Array.from(versionMap.values()).filter(v => v.directory);
+    installedVersions = Array.from(versionMap.values()).filter(v => v.directory);
 
     status = true;
-    message = 'Installed versions data enhanced successfully.';
-  } catch (error) {
-    message = `Failed to read installation directory: ${error}`;
-  }
+  } catch (error) {}
 
-  return { status, message, installedVersions: results };
+  return { status, installedVersions };
 };

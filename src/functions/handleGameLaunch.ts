@@ -1,6 +1,6 @@
 import { logToFile } from '../logger';
 import { launchExecutable } from './launchExecutable';
-import { checkInstalledVersions } from './checkInstalledVersions';
+import { fetchInstalledVersions } from './fetchInstalledVersions';
 
 /**
  * Function to handle the launching of a specific game version or the first available version if no identifier is provided.
@@ -10,7 +10,7 @@ import { checkInstalledVersions } from './checkInstalledVersions';
 export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifier?: string }): Promise<boolean> => {
   try {
     logToFile({ message: `Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'` });
-    const installedVersions = await checkInstalledVersions();
+    const installedVersions = await fetchInstalledVersions();
 
     if (!installedVersions.status || !installedVersions.installedVersions || installedVersions.installedVersions.length === 0) {
       logToFile({ message: 'No installations found or failed to fetch installations.' });

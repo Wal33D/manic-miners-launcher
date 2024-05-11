@@ -1,4 +1,5 @@
 export interface Version {
+  directory: string | null;
   gameId: number;
   title: string;
   displayName: string;

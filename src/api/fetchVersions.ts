@@ -1,4 +1,4 @@
-import { fetchServerData } from '../fetchServerData';
+import { fetchServerData } from './fetchServerData';
 import { Version, Versions, VersionSelectionType } from './versionTypes';
 
 export async function fetchVersions({ versionType = 'all' }: { versionType?: VersionSelectionType }): Promise<Versions> {

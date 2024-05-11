@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import { IPC_CHANNELS } from './ipcConfig';
-import { handleGameLaunch } from '../../api/handleGameLaunch';
+import { IPC_CHANNELS } from './ipcChannels';
+import { handleGameLaunch } from '../../functions/handleGameLaunch';
 
 export const setupGameLaunchHandlers = () => {
   ipcMain.on(IPC_CHANNELS.LAUNCH_GAME, async (event, versionIdentifier) => {

@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { getDirectories } from './getDirectories';
+import { getDirectories } from './fetchDirectories';
 
 /**
  * Checks if a specific version is installed by looking for its directory and executable.

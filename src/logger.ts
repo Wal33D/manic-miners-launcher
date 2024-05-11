@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { join } from 'path';
-import { getDirectories } from './api/getDirectories';
+import { getDirectories } from './functions/fetchDirectories';
 
 // Retrieve the launcher logs path from the configuration.
 const { launcherLogsPath } = getDirectories();
