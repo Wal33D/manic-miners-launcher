@@ -1,10 +1,10 @@
 import path from 'path';
-import os from 'os'; // Import the os module
 
 import { verifyFile } from './verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
-
+import { Version } from '../api/versionTypes';
+import { getDirectories } from './fetchDirectories';
 /**
  * Handles the logic to fetch file details and triggers the download process.
  * @param {string} [version] - The optional version identifier.
@@ -15,10 +15,10 @@ import { fetchVersions } from '../api/fetchVersions';
 
 export const downloadVersion = async ({
   version,
-  downloadPath = path.join(os.tmpdir()), // Use OS temp directory with a subfolder for organization
+  downloadPath,
   updateStatus,
 }: {
-  version?: string;
+  version?: Version;
   downloadPath?: string;
   updateStatus: any;
 }): Promise<{ downloaded: boolean; message: string }> => {
@@ -33,15 +33,7 @@ export const downloadVersion = async ({
 
     updateStatus({ progress: 12 });
 
-    let versionToProcess;
-    if (version) {
-      versionToProcess = versions.find((v: { version: string | string[] }) => v.version.includes(version));
-      if (!versionToProcess) {
-        throw new Error(`Version ${version} not found.`);
-      }
-    } else {
-      versionToProcess = versions[0];
-    }
+    let versionToProcess: Version = version;
     updateStatus({ progress: 15 });
 
     const filename = versionToProcess.filename;
