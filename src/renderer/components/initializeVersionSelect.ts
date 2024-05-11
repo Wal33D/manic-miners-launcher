@@ -10,39 +10,37 @@ export const initializeVersionSelect = (): void => {
   //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, data => {
     const { versions, defaultVersion } = data;
-    console.log('Received versions data:', data);
 
     const versionSelect = document.getElementById('versionSelect') as HTMLSelectElement;
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
+    const playButton = document.getElementById('playButton') as HTMLButtonElement; // Assuming you have a button with this ID
+    const installButton = document.getElementById('installButton') as HTMLButtonElement; // Assuming you have a button with this ID
 
-    if (!versionSelect || !installPathInput) {
-      console.error('The versionSelect or installPath element was not found.');
+    if (!versionSelect || !installPathInput || !playButton || !installButton) {
+      console.error('One or more required elements were not found.');
       return;
     }
 
-    // Clear existing options except the first one
     while (versionSelect.options.length > 1) {
       versionSelect.remove(1);
     }
 
-    // Validate that versions data is an array and not empty
     if (!Array.isArray(versions) || versions.length === 0) {
       console.error('No versions data received or data is not an array.');
       return;
     }
 
-    // Populate the select box with versions
     versions.forEach(version => {
       const option = document.createElement('option');
-      option.value = version.identifier; // Use identifier for option value
-      option.textContent = version.displayName; // Assuming a displayName property exists
+      option.value = version.identifier;
+      option.textContent = version.displayName;
       versionSelect.appendChild(option);
     });
 
-    // Set the default version if available
     if (defaultVersion) {
-      versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
+      versionSelect.value = defaultVersion.identifier;
       installPathInput.value = trimFilePath(defaultVersion.directory || '');
+      toggleButtonVisibility(defaultVersion.directory, playButton, installButton);
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
     } else {
@@ -54,9 +52,10 @@ export const initializeVersionSelect = (): void => {
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
       if (selectedVersion) {
         if (!selectedVersion.directory) {
-          fetchDefaultDirectory();
+          fetchDefaultDirectory(); // This should eventually set the path and update button visibility
         } else {
           installPathInput.value = trimFilePath(selectedVersion.directory);
+          toggleButtonVisibility(selectedVersion.directory, playButton, installButton);
         }
         //@ts-ignore
         window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
@@ -64,3 +63,13 @@ export const initializeVersionSelect = (): void => {
     });
   });
 };
+
+function toggleButtonVisibility(directory: string | null, playButton: HTMLButtonElement, installButton: HTMLButtonElement) {
+  if (directory) {
+    playButton.style.display = 'block';
+    installButton.style.display = 'none';
+  } else {
+    playButton.style.display = 'none';
+    installButton.style.display = 'block';
+  }
+}
