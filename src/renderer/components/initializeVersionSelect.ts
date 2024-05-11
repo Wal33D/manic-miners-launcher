@@ -41,7 +41,6 @@ export const initializeVersionSelect = (): void => {
     // Set the default version if available
     if (defaultVersion) {
       versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
-      // Update the installPathInput with the directory of the default version
       installPathInput.value = trimFilePath(defaultVersion.directory || '');
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
@@ -55,7 +54,17 @@ export const initializeVersionSelect = (): void => {
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
       console.log(`Version selected: ${selectedIdentifier}`, selectedVersion);
       if (selectedVersion) {
-        installPathInput.value = trimFilePath(selectedVersion.directory || 'No directory specified');
+        if (!selectedVersion.directory) {
+          // Request the default install directory if no directory is specified
+          //@ts-ignore
+          window.electronAPI.send('GET_DIRECTORIES');
+          //@ts-ignore
+          window.electronAPI.receive('DIRECTORIES_RESPONSE', directories => {
+            installPathInput.value = trimFilePath(directories.launcherInstallPath);
+          });
+        } else {
+          installPathInput.value = trimFilePath(selectedVersion.directory);
+        }
         //@ts-ignore
         window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
       }
@@ -63,7 +72,7 @@ export const initializeVersionSelect = (): void => {
   });
 };
 
-function trimFilePath(fullPath: any) {
+function trimFilePath(fullPath: string) {
   if (!fullPath) {
     return 'No directory specified';
   }
