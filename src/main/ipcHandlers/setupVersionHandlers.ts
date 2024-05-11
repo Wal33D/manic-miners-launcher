@@ -3,52 +3,63 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
+import { Version } from '../../api/versionTypes';
 
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
-  ipcMain.on(IPC_CHANNELS.VERSION_INFO, async event => {
+  ipcMain.on(IPC_CHANNELS.ALL_VERSION_INFO, async event => {
     try {
-      const versionData = await fetchVersions({ versionType: 'all' });
-      const installedVersionsResult = await fetchInstalledVersions();
-      let defaultVersion = null;
-
-      // Retrieve the stored version object from the store
-      const storedVersion = store.get('current-selected-version');
-
-      if (installedVersionsResult.status && installedVersionsResult.installedVersions) {
-        defaultVersion = installedVersionsResult.installedVersions.find(v => v.identifier === storedVersion?.identifier) || storedVersion;
-      }
-
-      // Set the first version as the default if no valid stored version exists
-      if (!defaultVersion && versionData.versions.length > 0) {
-        defaultVersion = versionData.versions[0];
-        store.set('current-selected-version', defaultVersion);
-      }
-
-      // Log the directory path if it exists
-      if (defaultVersion?.directory) {
-        console.log(`Directory path for selected version: ${defaultVersion.directory}`);
-      }
-
-      event.reply(IPC_CHANNELS.VERSION_INFO, {
-        versions: versionData.versions,
-        defaultVersion,
-      });
+      const versions = await getVersionDetails();
+      event.reply(IPC_CHANNELS.ALL_VERSION_INFO, versions);
     } catch (error) {
       console.error('Error fetching version data:', error.message);
-      event.reply(IPC_CHANNELS.VERSION_INFO, { error: error.message });
+      event.reply(IPC_CHANNELS.ALL_VERSION_INFO, { error: error.message });
     }
   });
 
   ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, async (event, selectedVersion) => {
-    store.set('current-selected-version', selectedVersion);
-    console.log(`Selected version updated: ${selectedVersion.identifier}`);
+    setSelectedVersion(selectedVersion);
   });
 
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, async event => {
-    const selectedVersion = store.get('current-selected-version');
-    console.log(`Currently selected version: ${selectedVersion.identifier}`);
+    const selectedVersion = getSelectedVersion();
     event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersion);
   });
+};
+
+const getVersionDetails = async () => {
+  const versionData = await fetchVersions({ versionType: 'all' });
+  const installedVersionsResult = await fetchInstalledVersions();
+  let defaultVersion = null;
+  const storedVersion = store.get('current-selected-version');
+
+  if (installedVersionsResult.status && installedVersionsResult.installedVersions) {
+    defaultVersion = installedVersionsResult.installedVersions.find(v => v.identifier === storedVersion?.identifier) || storedVersion;
+  }
+
+  if (!defaultVersion && versionData.versions.length > 0) {
+    defaultVersion = versionData.versions[0];
+    store.set('current-selected-version', defaultVersion);
+  }
+
+  if (defaultVersion?.directory) {
+    console.log(`Directory path for selected version: ${defaultVersion.directory}`);
+  }
+
+  return {
+    versions: versionData.versions,
+    defaultVersion,
+  };
+};
+
+const setSelectedVersion = (selectedVersion: Version) => {
+  store.set('current-selected-version', selectedVersion);
+  console.log(`Selected version updated: ${selectedVersion.identifier}`);
+};
+
+const getSelectedVersion = () => {
+  const selectedVersion = store.get('current-selected-version');
+  console.log(`Currently selected version: ${selectedVersion.identifier}`);
+  return selectedVersion;
 };

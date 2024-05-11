@@ -3,17 +3,19 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 export const initializeVersionSelect = (): void => {
   // Request the version information
   //@ts-ignore
-  window.electronAPI?.send(IPC_CHANNELS.VERSION_INFO);
+  window.electronAPI?.send(IPC_CHANNELS.ALL_VERSION_INFO);
 
   // Handler for receiving version information
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.VERSION_INFO, data => {
+  window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, data => {
     const { versions, defaultVersion } = data;
     console.log('Received versions data:', data);
 
     const versionSelect = document.getElementById('versionSelect') as HTMLSelectElement;
-    if (!versionSelect) {
-      console.error('The versionSelect element was not found.');
+    const installPathInput = document.getElementById('installPath') as HTMLInputElement;
+
+    if (!versionSelect || !installPathInput) {
+      console.error('The versionSelect or installPath element was not found.');
       return;
     }
 
@@ -39,7 +41,8 @@ export const initializeVersionSelect = (): void => {
     // Set the default version if available
     if (defaultVersion) {
       versionSelect.value = defaultVersion.identifier; // Set the select box to show the default version
-      // Send the full default version object when setting the selected version
+      // Update the installPathInput with the directory of the default version
+      installPathInput.value = defaultVersion.directory || 'No directory specified';
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
     } else {
@@ -52,6 +55,7 @@ export const initializeVersionSelect = (): void => {
       const selectedVersion = versions.find(v => v.identifier === selectedIdentifier);
       console.log(`Version selected: ${selectedIdentifier}`, selectedVersion);
       if (selectedVersion) {
+        installPathInput.value = selectedVersion.directory || 'No directory specified';
         //@ts-ignore
         window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
       }
