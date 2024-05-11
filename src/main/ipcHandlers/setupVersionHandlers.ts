@@ -44,18 +44,11 @@ export const setupVersionHandlers = () => {
   ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, async (event, selectedVersion) => {
     store.set('current-selected-version', selectedVersion);
     console.log(`Selected version updated: ${selectedVersion.identifier}`);
-    if (selectedVersion && selectedVersion.directory) {
-      console.log(`Directory path for newly selected version: ${selectedVersion.directory}`);
-    }
   });
 
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, async event => {
     const selectedVersion = store.get('current-selected-version');
     console.log(`Currently selected version: ${selectedVersion.identifier}`);
-    if (selectedVersion && selectedVersion.directory) {
-      console.log(`Directory path for the selected version: ${selectedVersion.directory}`);
-    }
-
     event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersion);
   });
 };
