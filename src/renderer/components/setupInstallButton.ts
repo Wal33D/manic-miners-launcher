@@ -1,3 +1,4 @@
+// installHandler.ts
 import { updateStatus } from './updateStatus';
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';

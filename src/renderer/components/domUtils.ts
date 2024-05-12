@@ -1,23 +1,12 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 
-export const trimFilePath = ({ fullPath }: { fullPath: string }): { found: boolean; path: string | null; message: string } => {
-  let message = '';
-  let path = null;
-  let found = false;
-
+export function trimFilePath(fullPath: string): string | null {
   if (!fullPath || fullPath.lastIndexOf('\\') === -1) {
-    message = 'No backslash found in path or path is empty.';
-    return { found, path, message };
+    return null;
   }
-
   const lastSlashIndex = fullPath.lastIndexOf('\\');
-  path = fullPath.substring(0, lastSlashIndex);
-  found = true;
-  message = 'Path trimmed successfully.';
-
-  return { found, path, message };
-};
-
+  return fullPath.substring(0, lastSlashIndex);
+}
 export function fetchDefaultDirectory(callback: (path: string) => void) {
   //@ts-ignore
   window.electronAPI.send(IPC_CHANNELS.GET_DIRECTORIES);
@@ -37,57 +26,33 @@ export function fetchDefaultDirectory(callback: (path: string) => void) {
   });
 }
 
-export const toggleButtonVisibility = ({ hidePlayButton }: { hidePlayButton: boolean }): { status: boolean; message: string } => {
+export function toggleButtonVisibility(hidePlayButton: boolean) {
   const playButton = document.getElementById('playButton') as HTMLButtonElement;
   const installButton = document.getElementById('installButton') as HTMLButtonElement;
-  let message = '';
-  let status = false;
 
   if (!playButton || !installButton) {
-    message = 'Buttons not found on the page.';
-    return { status, message };
+    console.error('Buttons not found on the page.');
+    return;
   }
 
   if (hidePlayButton) {
     playButton.style.display = 'none';
     installButton.style.display = 'block';
-    message = 'Play button hidden, install button shown.';
   } else {
     playButton.style.display = 'block';
     installButton.style.display = 'none';
-    message = 'Play button shown, install button hidden.';
   }
+}
 
-  status = true;
-  return { status, message };
-};
-
-export const setDisabledAppearance = ({
-  element,
-  disabled,
-}: {
-  element: HTMLElement | any;
-  disabled: boolean;
-}): { status: boolean; message: string } => {
-  let message = '';
-
-  if (!element) {
-    message = 'Element not found.';
-    return { status: false, message };
-  }
-
+export function setDisabledAppearance(element: HTMLElement | any, disabled: boolean) {
   element.disabled = disabled;
   if (disabled) {
     element.style.opacity = '0.6';
     element.style.cursor = 'not-allowed';
-    element.classList.add('disabled');
-    message = 'Element disabled and styled accordingly.';
+    element.classList.add('disabled'); // Adding a class for extra specificity if needed
   } else {
     element.style.opacity = '';
-    element.style.cursor = '';
+    element.style.cursor = ''; // Ensure cursor is reset
     element.classList.remove('disabled');
-    message = 'Element enabled and styled accordingly.';
   }
-
-  return { status: true, message };
-};
+}
