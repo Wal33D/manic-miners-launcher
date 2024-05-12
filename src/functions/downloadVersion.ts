@@ -1,9 +1,10 @@
 import path from 'path';
+import os from 'os'; // Import the os module
 
-import { verifyFile } from './verifyFile';
+import { verifyFile } from '../fileUtils/verifyFile';
+import { IFileDetails } from '../fileUtils/fileUtilsTypes';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
-import { Version } from '../api/versionTypes';
 
 /**
  * Handles the logic to fetch file details and triggers the download process.
@@ -15,16 +16,19 @@ import { Version } from '../api/versionTypes';
 
 export const downloadVersion = async ({
   version,
-  downloadPath,
+  downloadPath = path.join(os.tmpdir()), // Use OS temp directory with a subfolder for organization
   updateStatus,
 }: {
-  version?: Version;
+  version?: string;
   downloadPath?: string;
   updateStatus: any;
 }): Promise<{ downloaded: boolean; message: string }> => {
   let finalMessage = '';
   let finalStatus = true;
   updateStatus({ status: 'Starting download process...', progress: 2 });
+  console.log(version);
+  console.log(version);
+
   console.log(version);
 
   try {
@@ -33,7 +37,15 @@ export const downloadVersion = async ({
 
     updateStatus({ progress: 12 });
 
-    let versionToProcess: Version = version;
+    let versionToProcess;
+    if (version) {
+      versionToProcess = versions.find((v: { version: string | string[] }) => v.version.includes(version));
+      if (!versionToProcess) {
+        throw new Error(`Version ${version} not found.`);
+      }
+    } else {
+      versionToProcess = versions[0];
+    }
     updateStatus({ progress: 15 });
 
     const filename = versionToProcess.filename;
@@ -41,7 +53,7 @@ export const downloadVersion = async ({
     const downloadUrl = versionToProcess.downloadUrl;
     // Check if the file exists and if it matches the expected size
     updateStatus({ progress: 24, status: 'Verifying existing file...' });
-    const fileDetails = await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes });
+    const fileDetails = (await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes })) as IFileDetails;
     console.log(fileDetails);
     updateStatus({ status: `Verification complete: ${fileDetails.sizeMatches ? 'Success' : 'Failed'}`, progress: 32 });
 
