@@ -42,7 +42,7 @@ export async function downloadFile({
           // Check if updateStatus is provided before calling it
           const progressIncrement = (downloadedBytes / totalBytes) * (100 - initialProgress);
           const currentProgress = initialProgress + progressIncrement;
-          updateStatus({ progress: Math.min(Math.floor(currentProgress), 100) }); // Ensure progress does not exceed 100
+          updateStatus({ progress: Math.min(Math.floor(currentProgress), 70) }); // Ensure progress does not exceed 100
         }
         callback(null, chunk);
       },
