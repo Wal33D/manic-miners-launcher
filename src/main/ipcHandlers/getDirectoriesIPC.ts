@@ -13,6 +13,8 @@ export const setupDirectoryHandler = async (): Promise<{ status: boolean; messag
         if (!dirResult.status) {
           throw new Error(dirResult.message);
         }
+        console.log('Sending directory data:', dirResult.directories);
+
         event.reply(IPC_CHANNELS.GET_DIRECTORIES, {
           status: true,
           message: 'Directories fetched successfully',
