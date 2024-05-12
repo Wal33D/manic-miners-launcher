@@ -6,14 +6,19 @@ export const initializeUrls = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
+  // Handler for receiving URL data
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, urls => {
-    updateLinksUI(urls);
-    console.log('Received URLs:', urls);
+  window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, response => {
+    if (response.status) {
+      updateLinksUI(response.urls); // Pass only the URLs object
+      console.log('Received URLs:', response.urls);
+    } else {
+      console.error('Failed to fetch URLs:', response.message);
+    }
   });
 
   // Update the UI with received URL data
-  function updateLinksUI(urls: { [s: string]: any } | ArrayLike<any>) {
+  function updateLinksUI(urls: { [s: string]: unknown } | ArrayLike<unknown>) {
     const linksContainer = document.getElementById('links-pane');
     if (!linksContainer) {
       console.error('The links-pane element was not found.');
@@ -25,8 +30,9 @@ export const initializeUrls = (): void => {
       linksContainer.removeChild(linksContainer.firstChild);
     }
 
-    // Dynamically create link elements for each URL
+    // Correctly access each URL and associated key
     Object.entries(urls).forEach(([key, url]) => {
+      console.log(`URL for ${key}: ${url}`); // Debugging output
       const link: any = document.createElement('a');
       link.href = url;
       link.target = '_blank';
@@ -36,7 +42,6 @@ export const initializeUrls = (): void => {
     });
   }
 
-  // Helper function to determine the icon class based on the key
   function getIconClass(key: string) {
     const iconMap = {
       Website: 'fas fa-globe',
@@ -46,7 +51,10 @@ export const initializeUrls = (): void => {
       Facebook: 'fab fa-facebook-f',
       FAQ: 'fas fa-question-circle',
       Email: 'fas fa-envelope',
-    } as any;
-    return iconMap[key] || 'fas fa-link'; // Default icon if key is not found
+    };
+    //@ts-ignore
+    const iconClass = iconMap[key] || 'fas fa-link'; // Default icon if key is not found
+    console.log(`Icon for ${key}: ${iconClass}`); // Debugging output
+    return iconClass;
   }
 };

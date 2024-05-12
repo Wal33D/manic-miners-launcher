@@ -272,34 +272,46 @@ button.disabled {
 }
 #links-pane {
   background-color: rgba(0, 0, 0, 0.8) !important;
-  padding: 10px; /* Adjust padding for better spacing */
+  padding: 15px; /* Adjust padding for better spacing */
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around; /* Ensure buttons are evenly spaced */
+  justify-content: center; /* Centered buttons on all screen sizes */
+  align-items: center; /* Vertically center items in the container */
 }
 
 .icon-button {
-  display: flex;
+  display: inline-flex; /* Use inline-flex to allow wrapping as inline elements */
   justify-content: center;
   align-items: center;
-  width: 40px; /* Fixed width for square shape */
-  height: 40px; /* Fixed height for square shape */
-  margin: 5px; /* Small margin around buttons */
-  color: #32cd32; /* Green text to match theme */
+  width: 50px; /* Adjusted for a slightly larger touch target */
+  height: 50px; /* Matching width for square aspect ratio */
+  margin: 8px; /* Increased margin for better spacing */
+  color: #32cd32; /* Theme-specific green text */
   border: 2px solid #228b22; /* Dark green border */
-  background-color: transparent; /* Transparent background */
-  border-radius: 5px; /* Slightly rounded corners */
+  background-color: transparent;
+  border-radius: 50%; /* Circular buttons */
   transition:
     background-color 0.3s,
-    color 0.3s; /* Smooth transition for hover effects */
+    color 0.3s,
+    transform 0.3s; /* Added transform to transition for effect */
 }
 
 .icon-button:hover {
-  background-color: rgba(50, 205, 50, 0.1); /* Slight highlight on hover */
-  color: #fff; /* White text on hover */
-  border-color: #32cd32; /* Lighter green border on hover */
+  background-color: rgba(50, 205, 50, 0.2); /* Adjusted hover background for better visibility */
+  color: #fff;
+  border-color: #32cd32;
+  transform: scale(1.1); /* Slight scale on hover for effect */
 }
 
 .icon-button i {
-  font-size: 20px; /* Larger icons within buttons */
+  font-size: 24px; /* Larger icons for better visibility */
+}
+
+/* Responsive adjustments with Bootstrap utilities */
+@media (max-width: 576px) {
+  .icon-button {
+    width: 50px; /* Smaller buttons on small devices */
+    height: 50px;
+    font-size: 18px; /* Smaller icons on small devices */
+  }
 }
