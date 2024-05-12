@@ -11,8 +11,10 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       return;
     }
 
-    // Disable the install button to prevent multiple clicks during the download process
+    // Disable the install button, version select, and install path input to prevent changes during the download
     installButton.disabled = true;
+    versionSelect.disabled = true;
+    installPathInput.disabled = true;
 
     // Send the download request to the main process
     //@ts-ignore
@@ -37,7 +39,9 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       alert('Failed to download the version: ' + result.message);
     }
 
-    // Re-enable the install button once the download is complete or fails
+    // Re-enable the install button, version select, and install path input once the download is complete or fails
     installButton.disabled = false;
+    versionSelect.disabled = false;
+    installPathInput.disabled = false;
   });
 }
