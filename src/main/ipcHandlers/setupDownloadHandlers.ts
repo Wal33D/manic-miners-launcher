@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
-import { downloadVersion } from '../../functions/downloadVersion';
 import { unpackVersion } from '../../functions/unpackVersion';
+import { downloadVersion } from '../../functions/downloadVersion';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
 
@@ -57,17 +57,5 @@ export const setupDownloadHandlers = () => {
         message: `Error processing version: ${error.message}`,
       });
     }
-  });
-
-  // Main process file (e.g., main.js or index.js)
-  const path = require('path');
-  const player = require('play-sound')({});
-
-  ipcMain.on(IPC_CHANNELS.PLAY_SOUND, () => {
-    player.play(path.join(__dirname, 'assets/success.mp3'), (err: any) => {
-      if (err) {
-        console.error('Failed to play sound:', err);
-      }
-    });
   });
 };

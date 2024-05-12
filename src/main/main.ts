@@ -4,6 +4,7 @@ import { setupVersionHandlers } from './ipcHandlers/setupVersionHandlers';
 import { setupGameLaunchHandlers } from './ipcHandlers/setupGameLaunchHandlers';
 import { setupDownloadHandlers } from './ipcHandlers/setupDownloadHandlers';
 import { setupDirectoryHandler } from './ipcHandlers/getDirectoriesIPC';
+import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 
 const startApp = (): void => {
   app.on('ready', () => {
@@ -12,6 +13,7 @@ const startApp = (): void => {
     setupVersionHandlers();
     setupGameLaunchHandlers();
     setupDownloadHandlers();
+    setupInputPathDialog();
   });
 
   app.on('window-all-closed', () => {

@@ -4,7 +4,6 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
-
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
@@ -62,21 +61,3 @@ const getSelectedVersion = () => {
   console.log(`Currently selected version: ${selectedVersion.identifier}`);
   return selectedVersion;
 };
-
-// In your main process file, add this within the setupVersionHandlers or similar setup function
-const { dialog } = require('electron');
-
-ipcMain.on('open-directory-dialog', event => {
-  dialog
-    .showOpenDialog({
-      properties: ['openDirectory'],
-    })
-    .then(result => {
-      if (!result.canceled && result.filePaths.length > 0) {
-        event.reply('directory-selected', result.filePaths[0]);
-      }
-    })
-    .catch(err => {
-      console.error('Failed to open directory dialog:', err);
-    });
-});
