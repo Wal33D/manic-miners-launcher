@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { downloadVersion } from '../../functions/downloadVersion';
 import { unpackVersion } from '../../functions/unpackVersion';
+import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
 
 const store = new Store() as any;
@@ -29,9 +30,10 @@ export const setupDownloadHandlers = () => {
         });
 
         if (unpackResult.unpacked) {
-          // Set the newly downloaded and unpacked version as the selected version
-          const updatedVersions = await getVersionDetails(); // Make sure this fetches the latest data including directory paths
-          const newSelectedVersion = updatedVersions.versions.find((v: { identifier: any }) => v.identifier === version);
+          // After unpacking, fetch the updated list of installed versions
+          const installedVersions = await fetchInstalledVersions();
+          const newSelectedVersion = installedVersions.installedVersions.find((v: { identifier: any }) => v.identifier === version);
+
           if (newSelectedVersion) {
             store.set('current-selected-version', newSelectedVersion);
             event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED); // Notify the renderer to refresh the UI
