@@ -1,6 +1,7 @@
 // installHandler.ts
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
+import { updateStatus } from './updateStatus';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
@@ -26,9 +27,8 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
   });
 
   //@ts-ignore
-  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, status => {
-    // Update the progress bar and status message in the UI
-    updateDownloadProgress(status.progress, status.status);
+  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, ({ progress, status }) => {
+    updateStatus(progress, status);
   });
 
   //@ts-ignore
@@ -54,15 +54,4 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     //@ts-ignore
     window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO);
   });
-}
-
-function updateDownloadProgress(progress: string, status: any) {
-  const progressBar = document.getElementById('downloadProgress');
-  const progressText = document.getElementById('progressText');
-
-  if (progressBar && progressText) {
-    progressBar.style.width = `${progress}%`;
-    progressBar.setAttribute('aria-valuenow', progress);
-    progressText.textContent = `${progress}% - ${status}`;
-  }
 }
