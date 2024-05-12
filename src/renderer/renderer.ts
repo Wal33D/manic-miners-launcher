@@ -92,19 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (installButton && installPathInput && versionSelect) {
       installButton.addEventListener('click', () => {
         const versionIdentifier = versionSelect.value;
-        const d = document.getElementById('installPath');
-        const downloadPath = installPathInput.value; // Ensure this path is the desired download location
+        const installPath = document.getElementById('installPath') as HTMLInputElement;
+        const downloadPath = installPath.value;
 
         if (!versionIdentifier || !downloadPath) {
           console.error('No version selected or download path specified.');
           return;
         }
-        console.log(downloadPath);
         // Send the download request to the main process
         //@ts-ignore
         window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_VERSION, {
           version: versionIdentifier,
-          downloadPath: downloadPath,
         });
       });
 
