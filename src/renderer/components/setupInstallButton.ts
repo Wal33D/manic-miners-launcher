@@ -3,7 +3,7 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
 import { updateStatus } from './updateStatus';
 
-const successSound = new Audio('../../../assets/success.mp3');
+const successSound = new Audio('assets//success.mp3');
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
