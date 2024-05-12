@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { Version } from '../../api/versionTypes';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
-import { getDirectories } from '../../functions/fetchDirectories';
+
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 
 import Store from 'electron-store';
@@ -81,9 +81,4 @@ ipcMain.on('open-directory-dialog', event => {
     .catch(err => {
       console.error('Failed to open directory dialog:', err);
     });
-});
-
-ipcMain.on('GET_DIRECTORIES', event => {
-  const directories = getDirectories();
-  event.reply('DIRECTORIES_RESPONSE', directories);
 });

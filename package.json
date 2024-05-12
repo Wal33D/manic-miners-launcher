@@ -45,7 +45,8 @@
     "bootstrap": "^5.3.3",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^9.0.0",
-    "os-browserify": "^0.3.0"
+    "os-browserify": "^0.3.0",
+    "windows-shortcuts": "^0.1.6"
   },
   "repository": {
     "type": "git",

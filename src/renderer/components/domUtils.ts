@@ -1,3 +1,5 @@
+import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+
 export function trimFilePath(fullPath: string): string | null {
   if (!fullPath || fullPath.lastIndexOf('\\') === -1) {
     return null;
@@ -8,11 +10,11 @@ export function trimFilePath(fullPath: string): string | null {
 
 export function fetchDefaultDirectory() {
   //@ts-ignore
-  window.electronAPI.send('GET_DIRECTORIES');
+  window.electronAPI.send(IPC_CHANNELS.GET_DIRECTORIES);
 
   // Handling the response
   //@ts-ignore
-  window.electronAPI.receive('DIRECTORIES_RESPONSE', directories => {
+  window.electronAPI.receive(IPC_CHANNELS.GET_DIRECTORIES, directories => {
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
     installPathInput.value = directories.launcherInstallPath;
   });

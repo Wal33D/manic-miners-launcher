@@ -1,16 +1,15 @@
 import path from 'path';
-import os from 'os';
 import { verifyFile } from '../fileUtils/verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 
 export const downloadVersion = async ({
   versionIdentifier,
-  downloadPath = path.join(os.tmpdir()), // Use OS temp directory with a subfolder for organization
+  downloadPath,
   updateStatus,
 }: {
   versionIdentifier?: string;
-  downloadPath?: string;
+  downloadPath: string;
   updateStatus: any;
 }): Promise<{ downloaded: boolean; message: string }> => {
   updateStatus({ status: 'Starting download process...', progress: 2 });
