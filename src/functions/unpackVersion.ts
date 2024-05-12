@@ -4,15 +4,6 @@ import StreamZip from 'node-stream-zip';
 import { fetchVersions } from '../api/fetchVersions';
 import { createDirectory } from '../fileUtils/createDirectory';
 
-/**
- * Unpacks a specified or the latest version of Manic Miners from a zip file into the installation directory.
- * It handles the creation of necessary directories during extraction and updates progress.
- * @param {string} [versionIdentifier] - Optional version identifier to unpack a specific version. If not provided, the latest version is used.
- * @param {Function} [updateStatus] - Optional function to update progress or send status messages.
- * @param {boolean} [overwriteExisting=false] - Indicates whether to unpack again if the directory already exists.
- * @returns An object indicating the success status and the full installation path with a message describing the outcome.
- */
-
 export const unpackVersion = async ({
   versionIdentifier,
   installationDirectory = './installations',
@@ -36,7 +27,6 @@ export const unpackVersion = async ({
     if (updateStatus) updateStatus({ status: 'Starting the unpacking process...', progress: 10 });
     const { versions } = await fetchVersions({ versionType: 'all' });
 
-    // Use identifier to find the specific version or fallback to the latest version
     const versionToUnpack = versions.find(v => v.identifier === versionIdentifier) || versions[0];
     if (!versionToUnpack) {
       throw new Error(`Failed to find the specified version: ${versionIdentifier}`);
@@ -58,7 +48,6 @@ export const unpackVersion = async ({
     const totalFiles = Object.keys(entries).length;
     let extractedFiles = 0;
 
-    if (updateStatus) updateStatus({ status: 'Extracting files...', progress: 30 });
     for (const entry of Object.values(entries)) {
       const fullPath = path.join(specificInstallPath, entry.name);
       if (entry.isDirectory) {
@@ -71,16 +60,26 @@ export const unpackVersion = async ({
         await zip.extract(entry.name, fullPath);
       }
       extractedFiles++;
-      const progress = 30 + (extractedFiles / totalFiles) * 55; // Map extraction progress from 30% to 90%
-      if (updateStatus) updateStatus({ progress });
+      if (updateStatus) updateStatus({ status: 'Extracting files...', progress: 30 + (extractedFiles / totalFiles) * 65 });
     }
     await zip.close();
 
-    if (updateStatus) updateStatus({ status: 'Unpacking completed successfully.', progress: 95 });
+    // Check for nested directory structure and flatten if necessary
+    const subdirectories = fs
+      .readdirSync(specificInstallPath)
+      .filter(subDir => fs.statSync(path.join(specificInstallPath, subDir)).isDirectory());
+    if (subdirectories.length === 1) {
+      const nestedDir = path.join(specificInstallPath, subdirectories[0]);
+      fs.readdirSync(nestedDir).forEach(file => {
+        fs.renameSync(path.join(nestedDir, file), path.join(specificInstallPath, file));
+      });
+      fs.rmdirSync(nestedDir);
+    }
+
     unpacked = true;
     installPath = specificInstallPath;
     message = `Successfully unpacked ${versionToUnpack.title} into ${installPath}`;
-    if (updateStatus) updateStatus({ status: message, progress: 100 });
+    if (updateStatus) updateStatus({ status: 'Unpacking completed successfully.', progress: 100 });
   } catch (error: any) {
     message = `Error unpacking the zip file: ${error.message}`;
     if (updateStatus) updateStatus({ status: message, progress: 100 });
