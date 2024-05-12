@@ -3,6 +3,8 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
 import { updateStatus } from './updateStatus';
 
+const successSound = new Audio('../../../assets/success.mp3');
+
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
     const versionIdentifier = versionSelect.value;
@@ -35,7 +37,7 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
   window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, result => {
     console.log(result.message);
     if (result.downloaded) {
-      alert('Download completed successfully.');
+      successSound.play(); // Play success sound instead of alert
       //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO); // Request updated version list
     } else {
