@@ -11,7 +11,7 @@ export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HT
     }
 
     // Disable play button, version select dropdown, and install path input while the game is launching
-    setDisabledAppearance(playButton, true);
+    setDisabledAppearance({ element: playButton, disabled: true });
     setDisabledAppearance(versionSelect, true);
     setDisabledAppearance(installPathInput, true);
 

@@ -1,7 +1,6 @@
-// installHandler.ts
+import { updateStatus } from './updateStatus';
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
-import { updateStatus } from './updateStatus';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
