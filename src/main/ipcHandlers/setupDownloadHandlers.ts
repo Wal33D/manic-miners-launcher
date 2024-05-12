@@ -2,6 +2,9 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { downloadVersion } from '../../functions/downloadVersion';
 import { unpackVersion } from '../../functions/unpackVersion';
+import Store from 'electron-store';
+
+const store = new Store() as any;
 
 export const setupDownloadHandlers = () => {
   ipcMain.on(IPC_CHANNELS.DOWNLOAD_VERSION, async (event, { version, downloadPath }) => {
@@ -12,29 +15,33 @@ export const setupDownloadHandlers = () => {
         versionIdentifier: version,
         downloadPath,
         updateStatus: (status: any) => {
-          // Emitting intermediate status updates back to the renderer
           event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, status);
         },
       });
 
       if (downloadResult.downloaded) {
-        // Trigger unpacking after successful download
         const unpackResult = await unpackVersion({
           versionIdentifier: version,
-          installationDirectory: downloadPath, // Assuming the downloadPath is where we want to unpack
+          installationDirectory: downloadPath,
           updateStatus: (status: any) => {
             event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, status);
           },
         });
 
         if (unpackResult.unpacked) {
+          // Set the newly downloaded and unpacked version as the selected version
+          const updatedVersions = await getVersionDetails(); // Make sure this fetches the latest data including directory paths
+          const newSelectedVersion = updatedVersions.versions.find((v: { identifier: any }) => v.identifier === version);
+          if (newSelectedVersion) {
+            store.set('current-selected-version', newSelectedVersion);
+            event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED); // Notify the renderer to refresh the UI
+          }
+
           event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
             downloaded: true,
             unpacked: true,
             message: unpackResult.message,
           });
-          // Notify renderer that versions information may have been updated after successful unpacking
-          event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED);
         } else {
           throw new Error(`Unpacking failed: ${unpackResult.message}`);
         }

@@ -7,16 +7,15 @@ export function trimFilePath(fullPath: string): string | null {
   const lastSlashIndex = fullPath.lastIndexOf('\\');
   return fullPath.substring(0, lastSlashIndex);
 }
-
-export function fetchDefaultDirectory() {
+export function fetchDefaultDirectory(callback: any) {
   //@ts-ignore
   window.electronAPI.send(IPC_CHANNELS.GET_DIRECTORIES);
 
-  // Handling the response
   //@ts-ignore
   window.electronAPI.receive(IPC_CHANNELS.GET_DIRECTORIES, directories => {
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
     installPathInput.value = directories.launcherInstallPath;
+    callback(directories.launcherInstallPath); // Call the callback with the path
   });
 }
 
