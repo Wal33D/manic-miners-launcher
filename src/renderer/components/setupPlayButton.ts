@@ -1,6 +1,6 @@
 // playButtonHandler.ts
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
-import { setDisabledAppearance } from './setDisabledAppearance';
+import { setDisabledAppearance } from './domUtils';
 
 export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HTMLSelectElement) {
   playButton.addEventListener('click', () => {
