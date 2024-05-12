@@ -33,6 +33,8 @@ export const setupDownloadHandlers = () => {
             unpacked: true,
             message: unpackResult.message,
           });
+          // Notify renderer that versions information may have been updated after successful unpacking
+          event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED);
         } else {
           throw new Error(`Unpacking failed: ${unpackResult.message}`);
         }

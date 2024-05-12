@@ -1,6 +1,6 @@
 // installHandler.ts
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
-import { setDisabledAppearance } from './domUtils'; // Assuming this is the correct import path
+import { setDisabledAppearance } from './domUtils';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
@@ -36,6 +36,8 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     console.log(result.message);
     if (result.downloaded) {
       alert('Download completed successfully.');
+      //@ts-ignore
+      window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO); // Request updated version list
     } else {
       alert('Failed to download the version: ' + result.message);
     }
@@ -44,5 +46,12 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     setDisabledAppearance(installButton, false);
     setDisabledAppearance(versionSelect, false);
     setDisabledAppearance(installPathInput, false);
+  });
+
+  //@ts-ignore
+  window.electronAPI.receive(IPC_CHANNELS.VERSIONS_UPDATED, () => {
+    // Re-fetch version info to update the UI
+    //@ts-ignore
+    window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO);
   });
 }
