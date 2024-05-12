@@ -5,6 +5,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manic Miners HQ</title>
+  <style>
+    .link-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .link-item {
+      margin: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon {
+      margin-right: 8px;
+      color: #007bff;
+      /* Bootstrap primary color */
+    }
+  </style>
 </head>
 
 <body class="draggableArea">
@@ -14,17 +35,51 @@
       <div class="col-auto col-md-7 col-lg-8 col-xl-9 d-flex flex-column justify-content-start align-items-start">
         <!-- Left side content or background visible area -->
       </div>
-      <!-- Combined container for both installation pane and message box -->
       <div class="col-sm-12 col-md-5 col-lg-4 col-xl-3 p-3">
-        <div id="install-pane-container" class="bg-dark text-light rounded draggableArea"></div>
+        <div id="install-pane-container" class="bg-dark text-light rounded draggableArea">
+          <!-- Links will be dynamically inserted here -->
+        </div>
+        <div id="url-links" class="link-container"></div>
+
       </div>
     </div>
   </div>
   <div id="bottom-navbar-container"></div>
   <div id="installer-menu-modal-container">
   </div>
-  <script></script>
+  <script>
+    // Assume this data comes from a server or external API call
+    const urls = {
+      Website: "https://manicminers.baraklava.com/",
+      Discord: "https://discord.gg/C3hH7mFsMv",
+      Reddit: "https://www.reddit.com/r/manicminers/",
+      YouTube: "https://youtu.be/1mQacGNeNVA?list=PL2_YluKFsmfIAT4G9zlUmbmRuX4Kvb75g",
+      Facebook: "https://www.facebook.com/ManicMinersGame/",
+      FAQ: "https://manicminers.baraklava.com/faq/",
+      Email: "mailto:rockraidersremake@gmail.com"
+    };
+
+    const icons = {
+      Website: "fas fa-globe",
+      Discord: "fab fa-discord",
+      Reddit: "fab fa-reddit-alien",
+      YouTube: "fab fa-youtube",
+      Facebook: "fab fa-facebook-f",
+      FAQ: "fas fa-question-circle",
+      Email: "fas fa-envelope"
+    };
+
+    const urlLinks = document.getElementById('url-links');
+
+    for (const [key, value] of Object.entries(urls)) {
+      const linkElem = document.createElement('a');
+      linkElem.href = value;
+      linkElem.target = "_blank";
+      linkElem.classList.add('link-item');
+      linkElem.innerHTML = `<i class="${icons[key]} icon"></i>${key}`;
+      urlLinks.appendChild(linkElem);
+    }
+  </script>
 </body>
-<!-- Assuming you have set up handling HTML imports in Webpack -->
 
 </html>
