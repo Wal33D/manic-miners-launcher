@@ -11,6 +11,9 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       return;
     }
 
+    // Disable the install button to prevent multiple clicks during the download process
+    installButton.disabled = true;
+
     // Send the download request to the main process
     //@ts-ignore
     window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_VERSION, {
@@ -33,5 +36,8 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     } else {
       alert('Failed to download the version: ' + result.message);
     }
+
+    // Re-enable the install button once the download is complete or fails
+    installButton.disabled = false;
   });
 }
