@@ -4,13 +4,21 @@ import { verifyFile } from '../fileUtils/verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 
-export const downloadVersion = async ({ version, downloadPath = path.join(os.tmpdir()), updateStatus }) => {
+export const downloadVersion = async ({
+  versionIdentifier,
+  downloadPath = path.join(os.tmpdir()), // Use OS temp directory with a subfolder for organization
+  updateStatus,
+}: {
+  versionIdentifier?: string;
+  downloadPath?: string;
+  updateStatus: any;
+}): Promise<{ downloaded: boolean; message: string }> => {
   updateStatus({ status: 'Starting download process...', progress: 2 });
 
   try {
     updateStatus({ status: 'Fetching version index...', progress: 7 });
     const versionData = await fetchVersions({});
-    const versions = versionData.versions;
+    const versions = versionData.versions; // Ensure this is an array
 
     updateStatus({ progress: 12 });
     console.log('Available versions:', versions); // Debug: Log available versions
@@ -19,10 +27,10 @@ export const downloadVersion = async ({ version, downloadPath = path.join(os.tmp
       throw new Error('Fetched versions data is not an array');
     }
 
-    const versionToProcess = versions.find(v => v.version === version);
+    const versionToProcess = versions.find(v => v.identifier === versionIdentifier);
     if (!versionToProcess) {
-      console.log(`Searched for version '${version}' but not found.`); // Debug: Confirm what was searched
-      throw new Error(`Version ${version} not found.`);
+      console.log(`Searched for version identifier '${versionIdentifier}' but not found.`); // Debug: Confirm what was searched
+      throw new Error(`Version ${versionIdentifier} not found.`);
     }
 
     updateStatus({ progress: 15 });
