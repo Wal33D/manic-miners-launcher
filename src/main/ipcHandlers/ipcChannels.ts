@@ -11,4 +11,5 @@ export const IPC_CHANNELS = {
   DOWNLOAD_PROGRESS: 'download-progress',
   GET_DIRECTORIES: 'get-directories',
   PLAY_SOUND: 'play-sound',
+  GET_URLS: 'get-urls',
 };

@@ -269,3 +269,36 @@ button:disabled,
 button.disabled {
   cursor: not-allowed !important; /* Using !important to ensure overriding any other styles */
 }
+#links-pane {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  padding: 10px; /* Adjust padding for better spacing */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Ensure buttons are evenly spaced */
+}
+
+.icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px; /* Fixed width for square shape */
+  height: 40px; /* Fixed height for square shape */
+  margin: 5px; /* Small margin around buttons */
+  color: #32cd32; /* Green text to match theme */
+  border: 2px solid #228b22; /* Dark green border */
+  background-color: transparent; /* Transparent background */
+  border-radius: 5px; /* Slightly rounded corners */
+  transition:
+    background-color 0.3s,
+    color 0.3s; /* Smooth transition for hover effects */
+}
+
+.icon-button:hover {
+  background-color: rgba(50, 205, 50, 0.1); /* Slight highlight on hover */
+  color: #fff; /* White text on hover */
+  border-color: #32cd32; /* Lighter green border on hover */
+}
+
+.icon-button i {
+  font-size: 20px; /* Larger icons within buttons */
+}
