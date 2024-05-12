@@ -9,7 +9,7 @@ import { getDirectories } from './fetchDirectories';
  */
 export const isVersionInstalled = async (versionIdentifier: string): Promise<boolean> => {
   try {
-    const { launcherInstallPath } = getDirectories();
+    const { launcherInstallPath } = (await getDirectories()).directories;
     const versionDirPath = path.join(launcherInstallPath, versionIdentifier);
 
     // Check if the version directory exists

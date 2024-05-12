@@ -34,7 +34,7 @@ async function ensureDirectoryExists(directoryPath: string): Promise<void> {
 }
 
 // Function to gather and ensure existence of various system directories
-export async function getDirectories(): Promise<{ status: boolean; message: string; data?: Directories }> {
+export async function getDirectories(): Promise<{ status: boolean; message: string; directories?: Directories }> {
   try {
     const homeDirectory = os.homedir();
     const launcherInstallPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\installations`;
@@ -76,19 +76,22 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
 
     return {
       status: true,
-      launcherInstallPath,
-      launcherCachePath,
-      launcherLogsPath,
-      levelsPath,
-      levelsBackupPath,
-      logsPath,
-      configPath,
-      configIniPath,
-      saveGamesPath,
-      LRRPath,
-      profilesPath,
-      minersPath,
-      backupSavesPath,
+      message: 'Directories fetched and ensured successfully',
+      directories: {
+        launcherInstallPath,
+        launcherCachePath,
+        launcherLogsPath,
+        levelsPath,
+        levelsBackupPath,
+        logsPath,
+        configPath,
+        configIniPath,
+        saveGamesPath,
+        LRRPath,
+        profilesPath,
+        minersPath,
+        backupSavesPath,
+      },
     };
   } catch (error: any) {
     return {
