@@ -26,10 +26,7 @@ export const downloadVersion = async ({
   let finalMessage = '';
   let finalStatus = true;
   updateStatus({ status: 'Starting download process...', progress: 2 });
-  console.log(version);
-  console.log(version);
-
-  console.log(version);
+  console.log(version, downloadPath, updateStatus);
 
   try {
     updateStatus({ status: 'Fetching version index...', progress: 7 });

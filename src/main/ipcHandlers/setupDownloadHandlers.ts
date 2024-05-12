@@ -8,7 +8,7 @@ export const setupDownloadHandlers = () => {
 
     try {
       const result = await downloadVersion({
-        version,
+        version: 'ManicMiners-Baraklava-V0.2.7',
         downloadPath,
         updateStatus: (status: any) => {
           // Emitting intermediate status updates back to the renderer
