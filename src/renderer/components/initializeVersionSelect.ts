@@ -66,26 +66,42 @@ export const initializeVersionSelect = (): void => {
     });
   }
 };
+function setInstallPathAndToggleButton(version: { directory: any }, installPathInput: HTMLInputElement) {
+  console.log('setInstallPathAndToggleButton called with version:', version);
 
-function setInstallPathAndToggleButton(version: { directory?: string }, installPathInput: HTMLInputElement) {
-  // Handle the case where directory is explicitly undefined or falsy
-  if (!version || !version.directory) {
+  if (version && !version.directory) {
+    console.log('Version is defined but directory is not. Fetching default directory.');
     fetchDefaultDirectory((defaultPath: string) => {
+      console.log('Default directory fetched:', defaultPath);
       installPathInput.value = defaultPath; // Set the path once it's fetched
-      toggleButtonVisibility(true); // Assuming toggleButtonVisibility handles UI state based on path availability
+      toggleButtonVisibility(true);
+      console.log('Install path set to default and buttons toggled accordingly.');
     });
-  } else {
+  } else if (version.directory) {
+    console.log('Version directory exists:', version.directory);
     const trimmedPath = trimFilePath(version.directory);
-    if (!trimmedPath) {
-      // If trimming the path fails or returns a falsy value, use the default directory
+    console.log('Trimmed path result:', trimmedPath);
+    if (trimmedPath === null) {
+      // If trimming fails (invalid path), fetch the default directory and update accordingly
+      console.log('Trimmed path was invalid, fetching default directory.');
       fetchDefaultDirectory((defaultPath: string) => {
         installPathInput.value = defaultPath;
         toggleButtonVisibility(true);
+        console.log('Fallback to default path due to invalid trimmed path, updated UI.');
       });
     } else {
-      // Set the trimmed path and adjust the UI if the path is valid
+      // If a valid directory path is trimmed, use it and adjust the UI
       installPathInput.value = trimmedPath;
-      toggleButtonVisibility(false); // Assumes toggle off means "no actions needed"
+      toggleButtonVisibility(false);
+      console.log('Valid trimmed path set and buttons toggled to show play.');
     }
+  } else {
+    // If no version is actively selected, fetch default directory as a fallback
+    console.log('No version selected, fetching default directory as a fallback.');
+    fetchDefaultDirectory((defaultPath: string) => {
+      installPathInput.value = defaultPath;
+      toggleButtonVisibility(true);
+      console.log('Fallback to default path since no version was selected, updated UI.');
+    });
   }
 }
