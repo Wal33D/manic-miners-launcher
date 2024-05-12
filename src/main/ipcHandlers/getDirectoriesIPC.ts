@@ -9,11 +9,14 @@ export const setupDirectoryHandler = async (): Promise<{ status: boolean; messag
   try {
     ipcMain.on(IPC_CHANNELS.GET_DIRECTORIES, async event => {
       try {
-        const directories = await getDirectories(); // Assuming getDirectories can be made async
+        const dirResult = await getDirectories();
+        if (!dirResult.status) {
+          throw new Error(dirResult.message);
+        }
         event.reply(IPC_CHANNELS.GET_DIRECTORIES, {
           status: true,
           message: 'Directories fetched successfully',
-          directories,
+          directories: dirResult.directories,
         });
         status = true; // Indicates successful setup of the IPC handler.
       } catch (error: any) {

@@ -8,48 +8,63 @@ interface Endpoint {
   endpoint: string;
 }
 
-export async function fetchServerEndpoints({ routeName }: { routeName?: string }): Promise<Endpoint | Endpoint[]> {
-  const { launcherCachePath } = getDirectories();
-  const cacheFilePath = `${launcherCachePath}/endpoints.json`;
+export async function fetchServerEndpoints({
+  routeName,
+}: {
+  routeName?: string;
+}): Promise<{ status: boolean; message: string; data?: Endpoint | Endpoint[] }> {
+  let message = '';
+  let data: Endpoint[] = [];
 
-  let endpoints: Endpoint[];
   try {
-    const stats = await stat(cacheFilePath);
-    const lastModified = new Date(stats.mtime).getTime();
-    const now = Date.now();
-    const twentyMinutes = 10 * 60 * 1000;
+    const { status: dirStatus, message: dirMessage, directories } = await getDirectories();
+    if (!dirStatus) {
+      throw new Error(`Directory fetch failed: ${dirMessage}`);
+    }
+    const launcherCachePath = directories.launcherCachePath;
+    const cacheFilePath = `${launcherCachePath}/endpoints.json`;
 
-    if (now - lastModified > twentyMinutes) {
-      throw new Error('Cache expired'); // Trigger fetch from API
+    try {
+      const stats = await stat(cacheFilePath);
+      const lastModified = new Date(stats.mtime).getTime();
+      const now = Date.now();
+      const twentyMinutes = 20 * 60 * 1000; // Fixed to 20 minutes as per typical definition
+
+      if (now - lastModified > twentyMinutes) {
+        throw new Error('Cache expired'); // Trigger fetch from API
+      }
+
+      // Try to read from cache
+      const cachedData = await fs.readFile(cacheFilePath, 'utf8');
+      data = JSON.parse(cachedData);
+    } catch (error) {
+      // If reading fails or cache is expired, fetch from API and cache the result
+      const routesResponse = await fetch('https://manic-launcher.vercel.app/api/routes');
+      if (!routesResponse.ok) {
+        throw new Error(`Failed to fetch endpoints. Status: ${routesResponse.status}`);
+      }
+      const routesData = await routesResponse.json();
+      data = Object.keys(routesData).map(key => ({
+        name: key,
+        endpoint: routesData[key],
+      }));
+
+      // Cache the endpoints data
+      await fs.writeFile(cacheFilePath, JSON.stringify(data), 'utf8');
     }
 
-    // Try to read from cache
-    const cachedData = await fs.readFile(cacheFilePath, 'utf8');
-    endpoints = JSON.parse(cachedData);
-  } catch (error) {
-    // If reading fails or cache is expired, fetch from API and cache the result
-    const routesResponse = await fetch('https://manic-launcher.vercel.app/api/routes');
-    if (!routesResponse.ok) {
-      throw new Error(`Failed to fetch endpoints. Status: ${routesResponse.status}`);
+    // Validate if the requested route exists and return just that endpoint
+    if (routeName) {
+      const matchedEndpoint = data.find(e => e.name === routeName);
+      if (!matchedEndpoint) {
+        throw new Error(`Route not found: ${routeName}`);
+      }
+      return { status: true, message: 'Endpoint found successfully', data: matchedEndpoint };
     }
-    const routesData = await routesResponse.json();
-    endpoints = Object.keys(routesData).map(key => ({
-      name: key,
-      endpoint: routesData[key],
-    }));
 
-    // Cache the endpoints data
-    await fs.writeFile(cacheFilePath, JSON.stringify(endpoints), 'utf8');
+    return { status: true, message: 'Endpoints fetched successfully', data };
+  } catch (error: any) {
+    message = `Error fetching server endpoints: ${error.message}`;
+    return { status: false, message };
   }
-
-  // Validate if the requested route exists and return just that endpoint
-  if (routeName) {
-    const matchedEndpoint = endpoints.find(e => e.name === routeName);
-    if (!matchedEndpoint) {
-      throw new Error(`Route not found: ${routeName}`);
-    }
-    return matchedEndpoint;
-  }
-
-  return endpoints;
 }

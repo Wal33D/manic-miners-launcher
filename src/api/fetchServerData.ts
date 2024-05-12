@@ -1,7 +1,7 @@
 import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
-import { default as fetch } from 'node-fetch';
+import fetch from 'node-fetch';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
 
 interface FetchResult {
@@ -11,14 +11,19 @@ interface FetchResult {
 }
 
 export async function fetchServerData({ routeName = 'launcher.all' }: { routeName?: string }): Promise<FetchResult> {
-  const { launcherCachePath } = getDirectories();
-  const cacheFilePath = `${launcherCachePath}/${routeName}.json`;
-
   let message = 'Failed to fetch data.';
   let status = false;
   let data: any;
 
   try {
+    // Get directories asynchronously and safely extract the cache path
+    const directoriesResult = await getDirectories();
+    if (!directoriesResult.status) {
+      throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+    }
+    const launcherCachePath = directoriesResult.directories.launcherCachePath;
+    const cacheFilePath = `${launcherCachePath}/${routeName}.json`;
+
     // Check cache first
     try {
       const stats = await stat(cacheFilePath);
@@ -35,14 +40,13 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
     }
 
     // Fetching the endpoint, expecting a single Endpoint back
-    const endpoint = await fetchServerEndpoints({ routeName });
-
-    // If 'fetchServerEndpoints' can return an array, ensure we handle it:
-    if (!endpoint || Array.isArray(endpoint)) {
+    const endpointResult = await fetchServerEndpoints({ routeName });
+    if (!endpointResult.status || !endpointResult.data || Array.isArray(endpointResult.data)) {
       throw new Error('Expected a single endpoint, but received none or multiple.');
     }
 
     // Fetch data from the selected endpoint
+    const endpoint = endpointResult.data; // Safely extracted single endpoint data
     const response = await fetch(`https://manic-launcher.vercel.app${endpoint.endpoint}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
