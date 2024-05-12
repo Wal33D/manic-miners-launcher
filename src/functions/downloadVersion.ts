@@ -19,7 +19,7 @@ export const downloadVersion = async ({
     const versionData = await fetchVersions({});
     const versions = versionData.versions; // Ensure this is an array
 
-    updateStatus({ progress: 12 });
+    updateStatus({ progress: 5 });
     console.log('Available versions:', versions); // Debug: Log available versions
 
     if (!Array.isArray(versions)) {
@@ -28,23 +28,22 @@ export const downloadVersion = async ({
 
     const versionToProcess = versions.find(v => v.identifier === versionIdentifier);
     if (!versionToProcess) {
-      console.log(`Searched for version identifier '${versionIdentifier}' but not found.`); // Debug: Confirm what was searched
       throw new Error(`Version ${versionIdentifier} not found.`);
     }
 
-    updateStatus({ progress: 15 });
+    updateStatus({ progress: 7 });
 
     const filename = versionToProcess.filename;
     const filePath = path.join(downloadPath, filename);
     const downloadUrl = versionToProcess.downloadUrl;
 
-    updateStatus({ progress: 24, status: 'Verifying existing file...' });
+    updateStatus({ progress: 10, status: 'Verifying existing file...' });
     const fileDetails = await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes });
 
-    updateStatus({ status: `Verification complete: ${fileDetails.sizeMatches ? 'Success' : 'Failed'}`, progress: 32 });
+    updateStatus({ status: `Verification complete: ${fileDetails.sizeMatches ? 'Success' : 'Failed'}`, progress: 15 });
 
     if (fileDetails.exists && fileDetails.sizeMatches) {
-      updateStatus({ status: `File verified successfully. No action needed.`, progress: 35 });
+      updateStatus({ status: `File verified successfully. No action needed.`, progress: 17 });
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
       updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Archive does not exist, initiating download.' });
@@ -53,11 +52,12 @@ export const downloadVersion = async ({
         filePath,
         expectedSize: versionToProcess.sizeInBytes,
         updateStatus,
+        initialProgress: 20,
       });
       return { downloaded: downloadResult.status, message: downloadResult.message };
     }
   } catch (error) {
-    updateStatus({ status: `Error: ${error.message}`, progress: 100 });
+    updateStatus({ status: `Error: ${error.message}`, progress: 60 });
     return { downloaded: false, message: `Error downloading version: ${error.message}` };
   }
 };

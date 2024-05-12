@@ -24,7 +24,7 @@ export const unpackVersion = async ({
   let installPath = '';
 
   try {
-    if (updateStatus) updateStatus({ status: 'Starting the unpacking process...', progress: 10 });
+    if (updateStatus) updateStatus({ status: 'Starting the unpacking process...', progress: 60 });
     const { versions } = await fetchVersions({ versionType: 'all' });
 
     const versionToUnpack = versions.find(v => v.identifier === versionIdentifier) || versions[0];
@@ -60,7 +60,7 @@ export const unpackVersion = async ({
         await zip.extract(entry.name, fullPath);
       }
       extractedFiles++;
-      if (updateStatus) updateStatus({ status: 'Extracting files...', progress: 30 + (extractedFiles / totalFiles) * 65 });
+      if (updateStatus) updateStatus({ status: 'Extracting files...', progress: 60 + (extractedFiles / totalFiles) * 95 });
     }
     await zip.close();
 
