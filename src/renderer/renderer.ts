@@ -10,7 +10,6 @@ import { setupInstallButton } from './components/setupInstallButton';
 import { setupDirectoryDialog } from './components/setupDirectoryDialog';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { installerMenuModalElement } from '../ui/partials/installerMenuModalElement';
-import { linksPanelHtml } from '../ui/partials/linksPanelHtml';
 import { initializeUrls } from './components/initializeUrls';
 
 initializeVersionSelect();
@@ -36,10 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (installPaneContainer) {
     installPaneContainer.innerHTML = installPanelHtml;
 
-    const linksPaneContainer = document.createElement('div');
-    linksPaneContainer.innerHTML = linksPanelHtml;
-    installPaneContainer.after(linksPaneContainer);
-
     const playButton = document.getElementById('playButton') as HTMLButtonElement;
     const versionSelect: any = document.getElementById('versionSelect') as HTMLSelectElement;
     const installButton = document.getElementById('installButton') as HTMLButtonElement;
@@ -50,8 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setupInstallButton(installButton, installPathInput, versionSelect);
       setupDirectoryDialog(installPathInput);
     }
-  }
-  document.addEventListener('DOMContentLoaded', () => {
     initializeUrls();
-  });
+  }
 });

@@ -2,31 +2,18 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 
 export const initializeUrls = (): void => {
-  // Initially fetch URL data and set up a listener for updates
-  fetchUrlData();
-
-  // Listener to refresh URL data when updated
   //@ts-ignore
-  window.electronAPI?.receive(IPC_CHANNELS.URLS_UPDATED, () => {
-    fetchUrlData(); // Fetch the latest URLs after update notifications
-  });
-
-  // Function to fetch URL data
-  function fetchUrlData() {
-    //@ts-ignore
-
-    window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
-  }
+  window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
   //@ts-ignore
-
   window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, urls => {
     updateLinksUI(urls);
+    console.log('Received URLs:', urls);
   });
 
   // Update the UI with received URL data
-  function updateLinksUI(urls: { [s: string]: unknown } | ArrayLike<unknown>) {
+  function updateLinksUI(urls: { [s: string]: any } | ArrayLike<any>) {
     const linksContainer = document.getElementById('links-pane');
     if (!linksContainer) {
       console.error('The links-pane element was not found.');
