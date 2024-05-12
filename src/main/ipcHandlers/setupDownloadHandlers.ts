@@ -58,4 +58,16 @@ export const setupDownloadHandlers = () => {
       });
     }
   });
+
+  // Main process file (e.g., main.js or index.js)
+  const path = require('path');
+  const player = require('play-sound')({});
+
+  ipcMain.on(IPC_CHANNELS.PLAY_SOUND, () => {
+    player.play(path.join(__dirname, 'assets/success.mp3'), (err: any) => {
+      if (err) {
+        console.error('Failed to play sound:', err);
+      }
+    });
+  });
 };
