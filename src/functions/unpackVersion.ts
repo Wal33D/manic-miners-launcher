@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
-import { fetchVersions } from '../../api/fetchVersions';
-import { createDirectory } from '../../fileUtils/createDirectory';
+import { fetchVersions } from '../api/fetchVersions';
+import { createDirectory } from '../fileUtils/createDirectory';
 
 /**
  * Unpacks a specified or the latest version of Manic Miners from a zip file into the installation directory.
@@ -13,7 +13,7 @@ import { createDirectory } from '../../fileUtils/createDirectory';
  * @returns An object indicating the success status and the full installation path with a message describing the outcome.
  */
 
-export const unpackManicMinersVersion = async ({
+export const unpackVersion = async ({
   versionIdentifier,
   installationDirectory = './installations',
   updateStatus,

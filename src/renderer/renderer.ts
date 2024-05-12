@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
 
     if (installPathInput && playButton && versionSelect && installButton) {
-      setupPlayButton(playButton, versionSelect);
+      setupPlayButton(playButton, versionSelect, installPathInput);
       setupInstallButton(installButton, installPathInput, versionSelect);
       setupDirectoryDialog(installPathInput);
     }

@@ -1,5 +1,6 @@
 // installHandler.ts
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+import { setDisabledAppearance } from './domUtils'; // Assuming this is the correct import path
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
@@ -11,10 +12,10 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       return;
     }
 
-    // Disable the install button, version select, and install path input to prevent changes during the download
-    installButton.disabled = true;
-    versionSelect.disabled = true;
-    installPathInput.disabled = true;
+    // Disable UI elements during the download process
+    setDisabledAppearance(installButton, true);
+    setDisabledAppearance(versionSelect, true);
+    setDisabledAppearance(installPathInput, true);
 
     // Send the download request to the main process
     //@ts-ignore
@@ -39,9 +40,9 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       alert('Failed to download the version: ' + result.message);
     }
 
-    // Re-enable the install button, version select, and install path input once the download is complete or fails
-    installButton.disabled = false;
-    versionSelect.disabled = false;
-    installPathInput.disabled = false;
+    // Re-enable UI elements once the download is complete or fails
+    setDisabledAppearance(installButton, false);
+    setDisabledAppearance(versionSelect, false);
+    setDisabledAppearance(installPathInput, false);
   });
 }

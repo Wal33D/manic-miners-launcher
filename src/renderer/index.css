@@ -265,3 +265,7 @@ textarea {
 .footer a * {
   height: 20px;
 }
+button:disabled,
+button.disabled {
+  cursor: not-allowed !important; /* Using !important to ensure overriding any other styles */
+}

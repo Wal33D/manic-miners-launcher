@@ -43,8 +43,10 @@ export function setDisabledAppearance(element: HTMLElement | any, disabled: bool
   if (disabled) {
     element.style.opacity = '0.6';
     element.style.cursor = 'not-allowed';
+    element.classList.add('disabled'); // Adding a class for extra specificity if needed
   } else {
     element.style.opacity = '';
-    element.style.cursor = '';
+    element.style.cursor = ''; // Ensure cursor is reset
+    element.classList.remove('disabled');
   }
 }
