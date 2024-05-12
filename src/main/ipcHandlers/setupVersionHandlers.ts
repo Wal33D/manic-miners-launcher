@@ -2,9 +2,7 @@ import { ipcMain } from 'electron';
 import { Version } from '../../api/versionTypes';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
-
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
-
 import Store from 'electron-store';
 
 const store = new Store() as any;

@@ -8,6 +8,7 @@ import { progressBarElement } from '../ui/partials/progressBarElement';
 import { setDisabledAppearance } from './components/setDisabledAppearance';
 import { installerMenuModalElement } from '../ui/partials/installerMenuModalElement';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
+import { setupInstallButton } from './components/setupInstallButton';
 
 initializeVersionSelect();
 
@@ -87,40 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-    const installButton = document.getElementById('installButton');
+    const installButton = document.getElementById('installButton') as HTMLButtonElement;
 
     if (installButton && installPathInput && versionSelect) {
-      installButton.addEventListener('click', () => {
-        const versionIdentifier = versionSelect.value;
-        const installPath = document.getElementById('installPath') as HTMLInputElement;
-        const downloadPath = installPath.value;
-
-        if (!versionIdentifier || !downloadPath) {
-          console.error('No version selected or download path specified.');
-          return;
-        }
-        // Send the download request to the main process
-        //@ts-ignore
-        window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_VERSION, {
-          version: versionIdentifier,
-        });
-      });
-
-      //@ts-ignore
-      window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, status => {
-        console.log('Download Progress:', status.progress, '%', status.status);
-        // Update a progress bar or show status messages on your UI
-      });
-
-      //@ts-ignore
-      window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, result => {
-        console.log(result.message);
-        if (result.downloaded) {
-          alert('Download completed successfully.');
-        } else {
-          alert('Failed to download the version: ' + result.message);
-        }
-      });
+      setupInstallButton(installButton, installPathInput, versionSelect);
     }
   }
 });

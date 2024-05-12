@@ -5,6 +5,6 @@ import { getDirectories } from '../../functions/fetchDirectories';
 export const setupDirectoryHandler = () => {
   ipcMain.on(IPC_CHANNELS.GET_DIRECTORIES, event => {
     const directories = getDirectories();
-    event.reply('DIRECTORIES_RESPONSE', directories);
+    event.reply(IPC_CHANNELS.GET_DIRECTORIES, directories);
   });
 };
