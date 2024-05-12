@@ -17,7 +17,6 @@ export async function fetchUrls(): Promise<Urls> {
     YouTube: data.YouTube,
     Facebook: data.Facebook,
     FAQ: data.FAQ,
-    Email: data.Email,
   };
 }
 
@@ -28,5 +27,4 @@ export interface Urls {
   YouTube: string;
   Facebook: string;
   FAQ: string;
-  Email: string;
 }

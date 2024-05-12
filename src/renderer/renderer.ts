@@ -11,6 +11,7 @@ import { setupDirectoryDialog } from './components/setupDirectoryDialog';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { installerMenuModalElement } from '../ui/partials/installerMenuModalElement';
 import { linksPanelHtml } from '../ui/partials/linksPanelHtml';
+import { initializeUrls } from './components/initializeUrls';
 
 initializeVersionSelect();
 
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const linksPaneContainer = document.createElement('div');
     linksPaneContainer.innerHTML = linksPanelHtml;
-    installPaneContainer.after(linksPaneContainer); // Insert the links panel right after the install pane container
+    installPaneContainer.after(linksPaneContainer);
 
     const playButton = document.getElementById('playButton') as HTMLButtonElement;
     const versionSelect: any = document.getElementById('versionSelect') as HTMLSelectElement;
@@ -50,4 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setupDirectoryDialog(installPathInput);
     }
   }
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeUrls();
+  });
 });

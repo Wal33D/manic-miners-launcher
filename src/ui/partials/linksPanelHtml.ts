@@ -19,9 +19,6 @@ export const linksPanelHtml = `
         <a href="https://manicminers.baraklava.com/faq/" target="_blank" class="not-draggable icon-button">
             <i class="fas fa-question-circle"></i>
         </a>
-        <a href="mailto:rockraidersremake@gmail.com" target="_blank" class="not-draggable icon-button">
-            <i class="fas fa-envelope"></i>
-        </a>
     </div>
 </div>
 `;

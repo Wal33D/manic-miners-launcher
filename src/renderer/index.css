@@ -1,5 +1,6 @@
 /* In your main stylesheet */
 @import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 @font-face {
   font-family: 'Fredericka the Great';
