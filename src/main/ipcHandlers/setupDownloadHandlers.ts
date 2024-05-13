@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { unpackVersion } from '../../functions/unpackVersion';
 import { downloadVersion } from '../../functions/downloadVersion';
+import { DownloadGameResponse, downloadGame } from 'itchio-downloader';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
 
@@ -14,6 +15,14 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
   try {
     ipcMain.on(IPC_CHANNELS.DOWNLOAD_VERSION, async (event, { version, downloadPath }) => {
       console.log(`Downloading version: ${version} to ${downloadPath}`);
+      //latest version only do this for a download instead -->
+      const { filePath, metaData, metadataPath, message, status } = (await downloadGame({
+        itchGameUrl: 'https://baraklava.itch.io/manic-miners',
+        desiredFileDirectory: downloadPath,
+      })) as DownloadGameResponse;
+      //<-- latest version only do this for a download instead
+
+      console.log(filePath, metaData, metadataPath, message, status);
       try {
         const downloadResult = await downloadVersion({
           versionIdentifier: version,
