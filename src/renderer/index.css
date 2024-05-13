@@ -1,6 +1,7 @@
-/* Importing necessary fonts and libraries */
+/* In your main stylesheet */
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
+
 @font-face {
   font-family: 'Fredericka the Great';
   src: url('../../assets/FrederickatheGreat-Regular.ttf') format('truetype');
@@ -8,8 +9,18 @@
   font-style: normal;
 }
 
+#brand-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  background-image: url('../../assets/ManicMiners.png');
+  background-size: cover; /* Resize the background image to cover the entire container */
+  background-position: center; /* Center the background image */
+}
+
 body {
   background: url('../../assets/background.jpg') no-repeat center center fixed;
+
   background-size: cover;
   color: white;
   text-shadow: 1px 1px 2px black;
@@ -19,35 +30,65 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
   border-radius: 50px !important;
 }
-
-.navbar {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+input[type='text'],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+.window-controls button {
+  background: #ccc;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 3px;
 }
 
-.navbar-brand {
-  color: #f2cd00;
-  font-size: 2.2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  font-family: 'Fredericka the Great', Arial, sans-serif;
-  padding: 12px 22px;
-  border: 2px solid rgba(50, 205, 50, 0.1);
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.3);
-  transition:
-    color 0.3s ease,
-    box-shadow 0.3s ease;
+.window-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
-.navbar-brand:hover {
-  box-shadow: 0 0 10px rgba(242, 205, 0, 0.7);
+input[type='text'],
+select {
+  color: black;
+}
+
+textarea {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid hsl(120, 61%, 50%);
+  color: white !important;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small !important;
+  overflow: hidden;
+  max-height: 30%;
+}
+
+.container {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.highlight,
+.btn-success,
+.progress-bar,
+.form-check-input:checked {
+  background-color: #32cd32;
 }
 
 .progress {
-  height: 20px;
+  width: 100% !important;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: 40px; /* Adjust height to fit your design */
   background-color: #e9ecef;
   border-radius: 0.25rem;
-  background-image: linear-gradient(to right, #32cd32 0%, #28a745 100%);
 }
 
 .progress-bar {
@@ -55,40 +96,219 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #fff;
-  font-size: 16px;
+  color: #fff; /* White text color for better visibility */
+  font-size: 16px; /* Adjust font size as necessary */
   transition: width 0.6s ease;
 }
 
-#side-pane {
-  background-color: rgba(0, 0, 0, 0.8);
+.progress-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: white; /* Ensures the text is readable on darker backgrounds */
+  font-weight: bold;
 }
 
-#install-pane {
-  color: #fff;
+.btn-success,
+.highlight {
+  border-color: #32cd32;
 }
 
-.btn-dark-green,
-.btn-success {
-  background-color: #32cd32;
-  border-color: #228b22;
-  transition: background-color 0.3s ease;
-}
-
-.btn-dark-green:hover,
-.btn-success:hover {
+.btn-success:hover,
+.btn-dark-green:hover {
   background-color: #2ecc71;
   border-color: #2ecc71;
 }
 
+.btn-dark-green:hover {
+  color: #000;
+}
+
 .footer {
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  padding: 0;
+  height: 70px;
+  justify-content: space-evenly;
+}
+#footer a {
+  background: transparent;
+  box-shadow: none;
+}
+#footer a:hover {
+  background: transparent;
+  box-shadow: none;
+}
+.custom-progress {
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+#message-pane-container {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  max-height: calc(30vh);
+  overflow-y: hidden;
+  font-size: 0.8rem;
+}
+#install-pane-container {
+  background-color: transparent !important;
+}
+#install-pane {
+  background-color: transparent !important;
+}
+#install-pane .form-label {
+  font-size: 0.9rem;
+}
+
+#install-pane .form-select,
+#install-pane .form-control,
+#install-pane .form-check-input {
+  padding: 5px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.form-check-label {
+  margin-left: 10px;
+}
+
+.form-check-input {
   background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+  border: 2px solid #32cd32;
+}
+
+#messageBox {
+  height: calc(100% - 250px) !important;
+  overflow-y: scroll;
+  line-height: normal;
+  scrollbar-width: none;
+}
+
+#messageBox::-webkit-scrollbar {
+  display: none;
+}
+
+.btn-dark-green,
+#versionSelect,
+#installPath {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #32cd32;
+  border: 2px solid #228b22;
+  font-weight: 400;
+}
+
+#versionSelect:focus,
+#installPath:focus {
+  outline: none;
+  border-color: #228b22;
+  box-shadow: 0 0 10px #228b22;
+}
+
+.navbar-brand {
+  color: transparent;
+  font-size: 2.2rem; /* Larger text */
+  transition: color 0.3s ease; /* Smooth color change */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
+  padding-left: 12px; /* Add some padding */
+  padding-right: 22px; /* Add some padding */
+
+  border: 2px solid rgba(50, 205, 50, 0.1);
+  border-radius: 10px; /* Round the corners */
+  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
+  color: #f2cd00; /* Lego brick yellow */
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease; /* Add box-shadow to the transition */
+}
+
+.navbar-brand:hover,
+.navbar-brand:active,
+.navbar-brand:focus,
+.navbar-brand:visited {
+  color: transparent;
+  font-size: 2.2rem; /* Larger text */
+  transition: color 0.3s ease; /* Smooth color change */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
+  padding-left: 12px; /* Add some padding */
+  padding-right: 22px; /* Add some padding */
+
+  border: 2px solid rgba(50, 205, 50, 0.1);
+  border-radius: 10px; /* Round the corners */
+  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
+  color: #f2cd00; /* Lego brick yellow */
+  transition: ease-in-out 0.5s;
+  box-shadow: 0 0 10px rgba(242, 205, 0, 0.7); /* Yellow box shadow */
+}
+.navbar-brand img {
+  width: 60px; /* Larger image */
+  height: 60px; /* Maintain aspect ratio */
+  padding: 5px; /* Add some padding */
+  transition: filter 0.3s ease; /* Smooth filter change */
+}
+
+.draggableArea {
+  -webkit-app-region: drag;
+}
+
+.not-draggable {
+  -webkit-app-region: no-drag;
+}
+.footer a {
+  color: rgb(50, 205, 50, 0.8); /* Lego brick yellow text */
+  transition: color 0.3s ease; /* Smooth color change */
+}
+.footer a * {
+  height: 20px;
+}
+button:disabled,
+button.disabled {
+  cursor: not-allowed !important; /* Using !important to ensure overriding any other styles */
+}
+#links-pane {
+  background-color: transparent !important;
+  padding: 5px; /* Adjust padding for better spacing */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centered buttons on all screen sizes */
+  align-items: center; /* Vertically center items in the container */
+}
+
+.icon-button {
+  cursor: pointer;
+  display: inline-flex; /* Use inline-flex to allow wrapping as inline elements */
+  justify-content: center;
+  align-items: center;
+  width: 30px; /* Adjusted for a slightly larger touch target */
+  height: 30px; /* Matching width for square aspect ratio */
+  margin: 5px; /* Increased margin for better spacing */
+  color: #32cd32; /* Theme-specific green text */
+  border: 2px solid #228b22; /* Dark green border */
+  background-color: transparent;
+  border-radius: 50%; /* Circular buttons */
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.3s; /* Added transform to transition for effect */
 }
 
 .icon-button:hover {
-  background-color: rgba(50, 205, 50, 0.2);
+  background-color: rgba(50, 205, 50, 0.2); /* Adjusted hover background for better visibility */
   color: #fff;
   border-color: #32cd32;
-  transform: scale(1.1);
+  transform: scale(1.1); /* Slight scale on hover for effect */
+}
+
+.icon-button i {
+  font-size: 24px; /* Larger icons for better visibility */
+}
+
+#side-pane {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  font-size: 0.8rem;
 }
