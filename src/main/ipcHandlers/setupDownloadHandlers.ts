@@ -22,30 +22,14 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
           desiredFileDirectory: downloadPath,
         })) as DownloadGameResponse;
 
-        if (status) {
-          console.log(`Latest version downloaded at: ${filePath}`, metaData, metadataPath, message);
+        console.log(`Download response: ${filePath}, ${metaData}, ${metadataPath}, ${message}, ${status}`);
 
-          const unpackResult = await unpackVersion({
-            versionIdentifier: version,
-            installationDirectory: downloadPath,
-            updateStatus: (status: any) => {
-              event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, status);
-            },
-          });
+        event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
+          downloaded: status,
+          message: message,
+        });
 
-          if (unpackResult.unpacked) {
-            event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
-              downloaded: true,
-              unpacked: true,
-              message: 'Latest version downloaded and unpacked successfully.',
-            });
-          } else {
-            throw new Error(`Unpacking failed: ${unpackResult.message}`);
-          }
-          return; // Exit after handling the latest version download and unpacking
-        } else {
-          throw new Error(message);
-        }
+        return; // Exit after handling the latest version download
       } else {
         console.log(`Downloading version: ${version} to ${downloadPath}`);
 
