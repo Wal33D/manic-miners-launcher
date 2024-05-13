@@ -32,12 +32,15 @@ export const initializeUrls = (): void => {
 
     // Correctly access each URL and associated key
     Object.entries(urls).forEach(([key, url]) => {
-      console.log(`URL for ${key}: ${url}`); // Debugging output
       const link: any = document.createElement('a');
       link.href = url;
-      link.target = '_blank';
       link.className = 'not-draggable icon-button';
       link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
+      link.addEventListener('click', (event: any) => {
+        event.preventDefault(); // Prevent default link behavior
+        //@ts-ignore
+        window.electronShell.openExternal(url); // Use the exposed function to open the link externally
+      });
       linksContainer.appendChild(link);
     });
   }
