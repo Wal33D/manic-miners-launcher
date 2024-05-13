@@ -8,7 +8,7 @@ export const createWindow = (): void => {
     width: 1280,
     height: 700,
     minWidth: 415, // Minimum width of the window
-    minHeight: 600, // Minimum height of the window
+    minHeight: 740, // Minimum height of the window
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
