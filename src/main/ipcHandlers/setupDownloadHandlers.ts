@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { unpackVersion } from '../../functions/unpackVersion';
 import { downloadVersion } from '../../functions/downloadVersion';
+import { downloadGame } from 'itchio-downloader';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
 
