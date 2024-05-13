@@ -15,16 +15,6 @@ import { initializeUrls } from './components/initializeUrls';
 initializeVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
-  const topNav = document.getElementById('top-navbar-container');
-  if (topNav) {
-    setupTopNav(topNav);
-  }
-
-  const footer = document.getElementById('bottom-navbar-container');
-  if (footer) {
-    //   footer.innerHTML = progressBarElement;
-  }
-
   const installerMenuModal = document.getElementById('installer-menu-modal-container');
   if (installerMenuModal) {
     installerMenuModal.innerHTML = installerMenuModalElement;
