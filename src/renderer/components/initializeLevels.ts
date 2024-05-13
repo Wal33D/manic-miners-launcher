@@ -1,0 +1,41 @@
+// Import IPC channels from a centralized file (adjust the import path as needed)
+import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+
+export const initializeLevels = (): void => {
+  //@ts-ignore
+  window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
+
+  // Handler for receiving levels data
+  //@ts-ignore
+  window.electronAPI?.receive(IPC_CHANNELS.GET_LEVELS, response => {
+    if (response.status) {
+      updateLevelsTable(response.levels); // Pass only the levels array
+      console.log('Received levels:', response.levels);
+    } else {
+      console.error('Failed to fetch levels:', response.message);
+    }
+  });
+
+  // Update the UI with received levels data
+  function updateLevelsTable(levels: any[]) {
+    const tableBody = document.getElementById('levelsTable').querySelector('tbody');
+    if (!tableBody) {
+      console.error('The levelsTable tbody element was not found.');
+      return;
+    }
+
+    // Clear existing rows
+    tableBody.innerHTML = '';
+
+    // Insert new rows for each level
+    levels.forEach(level => {
+      const row = tableBody.insertRow();
+      row.innerHTML = `
+        <td>${level.title}</td>
+        <td>${level.creator}</td>
+        <td>${new Date(level.date).toLocaleDateString()}</td>
+        <td>${level.downloadCount.toLocaleString()}</td>
+      `;
+    });
+  }
+};

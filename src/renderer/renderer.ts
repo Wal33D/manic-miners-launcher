@@ -7,6 +7,7 @@ import { setupInstallButton } from './components/setupInstallButton';
 import { setupDirectoryDialog } from './components/setupDirectoryDialog';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { initializeUrls } from './components/initializeUrls';
+import { initializeLevels } from './components/initializeLevels';
 
 initializeVersionSelect();
 
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setupDirectoryDialog(installPathInput);
     }
     initializeUrls();
+    initializeLevels();
   }
 
   const mainMenuModal = document.getElementById('topNavBtn');

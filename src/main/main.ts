@@ -6,6 +6,7 @@ import { setupDownloadHandlers } from './ipcHandlers/setupDownloadHandlers';
 import { setupDirectoryHandler } from './ipcHandlers/getDirectoriesIPC';
 import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
+import { setupLevelHandler } from './ipcHandlers/setupLevelHandler';
 
 const startApp = (): void => {
   app.on('ready', () => {
@@ -16,6 +17,7 @@ const startApp = (): void => {
     setupDownloadHandlers();
     setupInputPathDialog();
     setupUrlHandler();
+    setupLevelHandler();
   });
 
   app.on('window-all-closed', () => {
