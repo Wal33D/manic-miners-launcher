@@ -277,6 +277,7 @@ button.disabled {
 }
 
 .icon-button {
+  cursor: pointer;
   display: inline-flex; /* Use inline-flex to allow wrapping as inline elements */
   justify-content: center;
   align-items: center;
