@@ -19,10 +19,16 @@ export const initializeUrls = (): void => {
 
   // Update the UI with received URL data
   function updateLinksUI(urls: { [s: string]: unknown } | ArrayLike<unknown>) {
-    const linksContainer = document.getElementById('links-pane');
-    if (!linksContainer) {
-      console.error('The links-pane element was not found.');
-      return;
+    const linksContainer: any = document.getElementById('links-pane');
+    if (linksContainer) {
+      linksContainer.addEventListener('click', (event: { target: { closest: (arg0: string) => any }; preventDefault: () => void }) => {
+        const target = event.target.closest('a'); // Find the <a> element
+        if (target && target.href) {
+          event.preventDefault(); // Stop the link from opening in Electron
+          //@ts-ignore
+          require('electron').shell.openExternal(target.href); // Open the link in the default browser
+        }
+      });
     }
 
     // Clear existing links
@@ -32,15 +38,12 @@ export const initializeUrls = (): void => {
 
     // Correctly access each URL and associated key
     Object.entries(urls).forEach(([key, url]) => {
+      console.log(`URL for ${key}: ${url}`); // Debugging output
       const link: any = document.createElement('a');
       link.href = url;
+      link.target = '_blank';
       link.className = 'not-draggable icon-button';
       link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
-      link.addEventListener('click', (event: any) => {
-        event.preventDefault(); // Prevent default link behavior
-        //@ts-ignore
-        window.electronShell.openExternal(url); // Use the exposed function to open the link externally
-      });
       linksContainer.appendChild(link);
     });
   }
