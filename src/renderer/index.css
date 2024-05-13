@@ -148,7 +148,7 @@ textarea {
   font-size: 0.8rem;
 }
 #install-pane-container {
-  background-color: rgba(0, 0, 0, 0.8) !important;
+  background-color: transparent !important;
   max-height: calc(100vh - 70px);
   overflow-y: hidden;
   font-size: 0.8rem;
@@ -271,7 +271,7 @@ button.disabled {
   cursor: not-allowed !important; /* Using !important to ensure overriding any other styles */
 }
 #links-pane {
-  background-color: rgba(0, 0, 0, 0.8) !important;
+  background-color: transparent !important;
   padding: 15px; /* Adjust padding for better spacing */
   display: flex;
   flex-wrap: wrap;
@@ -314,4 +314,8 @@ button.disabled {
     height: 50px;
     font-size: 18px; /* Smaller icons on small devices */
   }
+}
+
+#side-pane {
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
