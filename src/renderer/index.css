@@ -309,4 +309,5 @@ button.disabled {
   max-height: calc(100vh - 70px);
   overflow-y: hidden;
   font-size: 0.8rem;
+  padding: 0 !important;
 }
