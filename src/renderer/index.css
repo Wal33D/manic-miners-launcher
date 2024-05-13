@@ -82,9 +82,8 @@ textarea {
 }
 
 .progress {
-  width: 100% !important;
-  margin: 0;
-  padding: 0;
+  width: 100%;
+  margin: none;
   position: relative;
   height: 40px; /* Adjust height to fit your design */
   background-color: #e9ecef;
