@@ -7,5 +7,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   receive: (channel: string, func: Function) => {
     ipcRenderer.on(channel, (event, ...args) => func(...args));
   },
-  openExternal: (url: any) => shell.openExternal(url),
+  openExternal: shell.openExternal,
 });

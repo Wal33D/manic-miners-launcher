@@ -6,7 +6,6 @@ export const initializeUrls = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
-  // Handler for receiving URL data
   //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, response => {
     if (response.status) {
@@ -18,17 +17,11 @@ export const initializeUrls = (): void => {
   });
 
   // Update the UI with received URL data
-  function updateLinksUI(urls: { [s: string]: unknown } | ArrayLike<unknown>) {
-    const linksContainer: any = document.getElementById('links-pane');
-    if (linksContainer) {
-      linksContainer.addEventListener('click', (event: { target: { closest: (arg0: string) => any }; preventDefault: () => void }) => {
-        const target = event.target.closest('a'); // Find the <a> element
-        if (target && target.href) {
-          event.preventDefault(); // Stop the link from opening in Electron
-          //@ts-ignore
-          require('electron').shell.openExternal(target.href); // Open the link in the default browser
-        }
-      });
+  function updateLinksUI(urls: { [s: string]: string } | ArrayLike<unknown>) {
+    const linksContainer = document.getElementById('links-pane');
+    if (!linksContainer) {
+      console.error('The links-pane element was not found.');
+      return;
     }
 
     // Clear existing links
@@ -39,11 +32,15 @@ export const initializeUrls = (): void => {
     // Correctly access each URL and associated key
     Object.entries(urls).forEach(([key, url]) => {
       console.log(`URL for ${key}: ${url}`); // Debugging output
-      const link: any = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
+      const link = document.createElement('a');
+      link.setAttribute('data-url', url as string);
       link.className = 'not-draggable icon-button';
       link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        //@ts-ignore
+        window.electronAPI.openExternal(url);
+      });
       linksContainer.appendChild(link);
     });
   }
@@ -59,8 +56,8 @@ export const initializeUrls = (): void => {
       Email: 'fas fa-envelope',
     };
     //@ts-ignore
-    const iconClass = iconMap[key] || 'fas fa-link'; // Default icon if key is not found
-    console.log(`Icon for ${key}: ${iconClass}`); // Debugging output
+    const iconClass = iconMap[key] || 'fas fa-link';
+    console.log(`Icon for ${key}: ${iconClass}`);
     return iconClass;
   }
 };
