@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { unpackVersion } from '../../functions/unpackVersion';
 import { downloadVersion } from '../../functions/downloadVersion';
-import { downloadGame } from 'itchio-downloader';
+import { DownloadGameResponse, downloadGame } from 'itchio-downloader';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
 
@@ -13,9 +13,42 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
   let status = false;
 
   try {
-    ipcMain.on(IPC_CHANNELS.DOWNLOAD_VERSION, async (event, { version, downloadPath }) => {
-      console.log(`Downloading version: ${version} to ${downloadPath}`);
-      try {
+    ipcMain.on(IPC_CHANNELS.DOWNLOAD_VERSION, async (event, { version, downloadPath, latest }) => {
+      if (latest) {
+        console.log(`Downloading latest version to ${downloadPath}`);
+
+        const { filePath, metaData, metadataPath, message, status } = (await downloadGame({
+          itchGameUrl: 'https://baraklava.itch.io/manic-miners',
+          desiredFileDirectory: downloadPath,
+        })) as DownloadGameResponse;
+
+        if (status) {
+          console.log(`Latest version downloaded at: ${filePath}`, metaData, metadataPath, message);
+
+          const unpackResult = await unpackVersion({
+            versionIdentifier: version,
+            installationDirectory: downloadPath,
+            updateStatus: (status: any) => {
+              event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, status);
+            },
+          });
+
+          if (unpackResult.unpacked) {
+            event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
+              downloaded: true,
+              unpacked: true,
+              message: 'Latest version downloaded and unpacked successfully.',
+            });
+          } else {
+            throw new Error(`Unpacking failed: ${unpackResult.message}`);
+          }
+          return; // Exit after handling the latest version download and unpacking
+        } else {
+          throw new Error(message);
+        }
+      } else {
+        console.log(`Downloading version: ${version} to ${downloadPath}`);
+
         const downloadResult = await downloadVersion({
           versionIdentifier: version,
           downloadPath,
@@ -35,7 +68,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
 
           if (unpackResult.unpacked) {
             const installedVersions = await fetchInstalledVersions();
-            const newSelectedVersion = installedVersions.installedVersions.find((v: { identifier: any }) => v.identifier === version);
+            const newSelectedVersion = installedVersions.installedVersions.find(v => v.identifier === version);
 
             if (newSelectedVersion) {
               store.set('current-selected-version', newSelectedVersion);
@@ -53,19 +86,18 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         } else {
           throw new Error(`Download failed: ${downloadResult.message}`);
         }
-      } catch (error: any) {
-        console.error(`Error processing version: ${error.message}`);
-        event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
-          downloaded: false,
-          message: `Error processing version: ${error.message}`,
-        });
       }
     });
 
     message = 'Download handlers set up successfully.';
     status = true; // Indicates the handler was set up successfully.
   } catch (error: any) {
-    message = `Failed to set up download handlers: ${error.message}`;
+    console.error(`Failed to set up download handlers: ${error.message}`);
+    //@ts-ignore
+    event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
+      downloaded: false,
+      message: `Error: ${error.message}`,
+    });
     status = false;
   }
 
