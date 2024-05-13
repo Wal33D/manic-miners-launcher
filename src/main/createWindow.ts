@@ -7,7 +7,7 @@ export const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     width: 1180,
     height: 600,
-    minWidth: 415, // Minimum width of the window
+    minWidth: 670, // Minimum width of the window
     minHeight: 600, // Minimum height of the window
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,

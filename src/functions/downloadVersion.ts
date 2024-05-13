@@ -46,7 +46,7 @@ export const downloadVersion = async ({
       updateStatus({ status: `File verified successfully. No action needed.`, progress: 17 });
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
-      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Archive does not exist, initiating download.' });
+      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading...' });
       const downloadResult = await downloadFile({
         downloadUrl,
         filePath,

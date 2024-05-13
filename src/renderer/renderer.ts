@@ -3,23 +3,14 @@ import './index.css';
 import '../ui/styles/mainMenuModal.css';
 import { setupTopNav } from './components/setupTopNav';
 import { setupPlayButton } from './components/setupPlayButton';
-//import { topNavbarElement } from '../ui/partials/topNavbarElement';
-//import { installPanelHtml } from '../ui/partials/installPanelHtml';
-//import { progressBarElement } from '../ui/partials/progressBarElement';
 import { setupInstallButton } from './components/setupInstallButton';
 import { setupDirectoryDialog } from './components/setupDirectoryDialog';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
-import { installerMenuModalElement } from '../ui/partials/installerMenuModalElement';
 import { initializeUrls } from './components/initializeUrls';
 
 initializeVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
-  const installerMenuModal = document.getElementById('installer-menu-modal-container');
-  if (installerMenuModal) {
-    installerMenuModal.innerHTML = installerMenuModalElement;
-  }
-
   const installPaneContainer = document.getElementById('install-pane-container');
   if (installPaneContainer) {
     const playButton = document.getElementById('playButton') as HTMLButtonElement;
@@ -33,5 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
       setupDirectoryDialog(installPathInput);
     }
     initializeUrls();
+  }
+
+  const mainMenuModal = document.getElementById('topNavBtn');
+  if (mainMenuModal) {
+    setupTopNav(mainMenuModal);
   }
 });
