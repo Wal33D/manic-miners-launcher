@@ -209,7 +209,7 @@ textarea {
 
 .navbar-brand {
   color: transparent;
-  font-size: 2.2rem; /* Larger text */
+  font-size: 2rem; /* Larger text */
   transition: color 0.3s ease; /* Smooth color change */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
   font-family: 'Fredericka the Great', cursive; /* Lego-like font */
@@ -230,7 +230,6 @@ textarea {
 .navbar-brand:focus,
 .navbar-brand:visited {
   color: transparent;
-  font-size: 2.2rem; /* Larger text */
   transition: color 0.3s ease; /* Smooth color change */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
   font-family: 'Fredericka the Great', cursive; /* Lego-like font */
@@ -272,6 +271,7 @@ button.disabled {
 #links-pane {
   background-color: transparent !important;
   padding: 5px; /* Adjust padding for better spacing */
+  margin-bottom: 10px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centered buttons on all screen sizes */
