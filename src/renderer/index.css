@@ -149,9 +149,6 @@ textarea {
 }
 #install-pane-container {
   background-color: transparent !important;
-  max-height: calc(100vh - 70px);
-  overflow-y: hidden;
-  font-size: 0.8rem;
 }
 #install-pane {
   background-color: transparent !important;
@@ -272,7 +269,7 @@ button.disabled {
 }
 #links-pane {
   background-color: transparent !important;
-  padding: 15px; /* Adjust padding for better spacing */
+  padding: 5px; /* Adjust padding for better spacing */
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centered buttons on all screen sizes */
@@ -283,9 +280,9 @@ button.disabled {
   display: inline-flex; /* Use inline-flex to allow wrapping as inline elements */
   justify-content: center;
   align-items: center;
-  width: 50px; /* Adjusted for a slightly larger touch target */
-  height: 50px; /* Matching width for square aspect ratio */
-  margin: 8px; /* Increased margin for better spacing */
+  width: 30px; /* Adjusted for a slightly larger touch target */
+  height: 30px; /* Matching width for square aspect ratio */
+  margin: 5px; /* Increased margin for better spacing */
   color: #32cd32; /* Theme-specific green text */
   border: 2px solid #228b22; /* Dark green border */
   background-color: transparent;
@@ -307,15 +304,9 @@ button.disabled {
   font-size: 24px; /* Larger icons for better visibility */
 }
 
-/* Responsive adjustments with Bootstrap utilities */
-@media (max-width: 576px) {
-  .icon-button {
-    width: 50px; /* Smaller buttons on small devices */
-    height: 50px;
-    font-size: 18px; /* Smaller icons on small devices */
-  }
-}
-
 #side-pane {
   background-color: rgba(0, 0, 0, 0.8) !important;
+  max-height: calc(100vh - 70px);
+  overflow-y: hidden;
+  font-size: 0.8rem;
 }
