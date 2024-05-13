@@ -218,7 +218,6 @@ textarea {
 
   border: 2px solid rgba(50, 205, 50, 0.1);
   border-radius: 10px; /* Round the corners */
-  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
   color: #f2cd00; /* Lego brick yellow */
   transition:
     color 0.3s ease,
@@ -238,7 +237,6 @@ textarea {
 
   border: 2px solid rgba(50, 205, 50, 0.1);
   border-radius: 10px; /* Round the corners */
-  background-color: rgba(0, 0, 0, 0.3); /* Lego brick yellow background */
   color: #f2cd00; /* Lego brick yellow */
   transition: ease-in-out 0.5s;
   box-shadow: 0 0 10px rgba(242, 205, 0, 0.7); /* Yellow box shadow */
@@ -271,7 +269,7 @@ button.disabled {
 #links-pane {
   background-color: transparent !important;
   padding: 5px; /* Adjust padding for better spacing */
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centered buttons on all screen sizes */
@@ -283,10 +281,10 @@ button.disabled {
   display: inline-flex; /* Use inline-flex to allow wrapping as inline elements */
   justify-content: center;
   align-items: center;
-  width: 30px; /* Adjusted for a slightly larger touch target */
-  height: 30px; /* Matching width for square aspect ratio */
+  width: 25px; /* Adjusted for a slightly larger touch target */
+  height: 25px; /* Matching width for square aspect ratio */
   margin: 5px; /* Increased margin for better spacing */
-  color: #32cd32; /* Theme-specific green text */
+  color: rgb(50, 205, 50); /* Theme-specific green text */
   border: 2px solid #228b22; /* Dark green border */
   background-color: transparent;
   border-radius: 50%; /* Circular buttons */
@@ -310,4 +308,13 @@ button.disabled {
 #side-pane {
   background-color: rgba(0, 0, 0, 0.8) !important;
   font-size: 0.8rem;
+}
+#main-select-tabs a {
+  color: #2ecc71;
+  background-color: rgba(0, 0, 0, 0.6);
+  cursor: pointer !important;
+}
+.nav-link.active {
+  color: rgb(0, 0, 0) !important;
+  background-color: rgb(50, 205, 50) !important;
 }

@@ -12,4 +12,5 @@ export const IPC_CHANNELS = {
   GET_DIRECTORIES: 'get-directories',
   PLAY_SOUND: 'play-sound',
   GET_URLS: 'get-urls',
+  GET_LEVELS: 'get-levels',
 };
