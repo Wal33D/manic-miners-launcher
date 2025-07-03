@@ -2,23 +2,25 @@ import test from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import JSZip from 'jszip';
 import { unpackVersion } from '../src/functions/unpackVersion';
 import * as fetchVersionsModule from '../src/api/fetchVersions';
 
-function createMaliciousZip(dir: string) {
-  const zipDir = path.join(dir, 'zip');
-  fs.mkdirSync(zipDir);
+async function createMaliciousZip(dir: string) {
   const outside = path.join(dir, 'evil.txt');
+  const zipPath = path.join(dir, 'mal.zip');
+
   fs.writeFileSync(outside, 'evil');
-  execSync('zip mal.zip ../evil.txt', { cwd: zipDir });
-  fs.renameSync(path.join(zipDir, 'mal.zip'), path.join(dir, 'mal.zip'));
-  fs.rmSync(zipDir, { recursive: true, force: true });
+
+  const zip = new JSZip();
+  zip.file('../evil.txt', fs.readFileSync(outside));
+  const content = await zip.generateAsync({ type: 'nodebuffer' });
+  fs.writeFileSync(zipPath, content);
 }
 
 test('unpackVersion rejects archives with path traversal entries', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
-  createMaliciousZip(dir);
+  await createMaliciousZip(dir);
 
   const original = fetchVersionsModule.fetchVersions;
   (fetchVersionsModule as any).fetchVersions = async () => ({
