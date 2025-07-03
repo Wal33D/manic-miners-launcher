@@ -55,6 +55,13 @@ If you want to build the launcher from source you'll need **Node.js 20 or newer*
 3. Start the app in development mode using `npm run start`.
 4. To create distributable packages run `npm run make`.
 
+### Environment Variables
+
+`SERVER_BASE_URL` sets the base URL used for update checks and other API calls.
+If not provided, the launcher defaults to `https://manic-launcher.vercel.app`.
+Set this variable before running the app if you need to target a different
+server.
+
 ## License:
 
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.

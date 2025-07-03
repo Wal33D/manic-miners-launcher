@@ -4,6 +4,9 @@ import { getDirectories } from '../functions/fetchDirectories';
 import fetch from 'node-fetch';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
 
+const SERVER_BASE_URL = process.env.SERVER_BASE_URL ||
+  'https://manic-launcher.vercel.app';
+
 interface FetchResult {
   status: boolean;
   data?: any;
@@ -47,7 +50,7 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
 
     // Fetch data from the selected endpoint
     const endpoint = endpointResult.data; // Safely extracted single endpoint data
-    const response = await fetch(`https://manic-launcher.vercel.app${endpoint.endpoint}`);
+    const response = await fetch(`${SERVER_BASE_URL}${endpoint.endpoint}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
