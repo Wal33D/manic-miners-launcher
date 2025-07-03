@@ -28,6 +28,7 @@ export interface ElectronAPI {
   receiveOnce: (channel: IpcChannel, func: (...args: unknown[]) => void) => void;
   removeAllListeners: (channel: IpcChannel) => void;
   openExternal: (url: string) => void;
+  platform: NodeJS.Platform;
 }
 
 declare global {
