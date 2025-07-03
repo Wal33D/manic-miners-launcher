@@ -50,9 +50,10 @@ We welcome contributions! Whether it's submitting bug reports, feature suggestio
 
 If you want to build the launcher from source you'll need **Node.js 20 or newer**.
 
-1. Install dependencies with `npm install` or `yarn`.
-2. Start the app in development mode using `npm run start`.
-3. To create distributable packages run `npm run make`.
+1. Run `nvm use` to activate the Node.js version specified in `.nvmrc`.
+2. Install dependencies with `npm install` or `yarn`.
+3. Start the app in development mode using `npm run start`.
+4. To create distributable packages run `npm run make`.
 
 ## License:
 
