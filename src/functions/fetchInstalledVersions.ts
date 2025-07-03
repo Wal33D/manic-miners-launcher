@@ -18,7 +18,7 @@ export const fetchInstalledVersions = async (): Promise<{
   let installedVersions: Version[] = [];
   try {
     const { directories, status: dirStatus, message: dirMessage } = await getDirectories();
-    let launcherInstallPath = directories.launcherInstallPath;
+    const launcherInstallPath = directories.launcherInstallPath;
     if (!dirStatus) {
       throw new Error(dirMessage);
     }
@@ -29,7 +29,7 @@ export const fetchInstalledVersions = async (): Promise<{
     const dirs = filesAndDirs.filter((_, index) => dirStats[index].isDirectory());
 
     // Create a map of directories to their respective Version data
-    let versionMap = new Map(versionsData.versions.map(v => [v.identifier, { ...v }]));
+    const versionMap = new Map(versionsData.versions.map(v => [v.identifier, { ...v }]));
 
     // Filter and update the version objects with file system data
     for (const dir of dirs) {
@@ -43,7 +43,7 @@ export const fetchInstalledVersions = async (): Promise<{
         const totalSize = fileStats.reduce((acc, stat) => acc + stat.size, 0);
 
         // Update version object
-        let versionInfo: any = versionMap.get(dir);
+        const versionInfo: any = versionMap.get(dir);
         versionInfo.directory = fullDirPath;
         versionInfo.executablePath = exeFiles[0] || ''; // Take the first .exe found or empty string if none
         versionInfo.installationSize = totalSize;

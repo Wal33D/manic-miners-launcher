@@ -48,7 +48,7 @@ function parseStructuredText(text: any) {
       if (line.includes(':')) {
         const [key, value] = line.split(':').map(part => part.trim());
         if (key && value !== undefined) {
-          let cleanKey = key.replace(/[^a-zA-Z0-9]/g, '');
+          const cleanKey = key.replace(/[^a-zA-Z0-9]/g, '');
           result[cleanKey] = isNaN(Number(value)) ? value : Number(value);
         }
       }
