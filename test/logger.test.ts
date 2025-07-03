@@ -48,4 +48,3 @@ test('logToFile falls back to console in renderer', async () => {
     (process as any).type = originalType;
   }
 });
-
