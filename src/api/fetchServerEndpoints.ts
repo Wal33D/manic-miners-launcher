@@ -3,8 +3,7 @@ import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { default as fetch } from 'node-fetch';
 
-const SERVER_BASE_URL = process.env.SERVER_BASE_URL ||
-  'https://manic-launcher.vercel.app';
+const SERVER_BASE_URL = process.env.SERVER_BASE_URL || 'https://manic-launcher.vercel.app';
 
 interface Endpoint {
   name: string;
