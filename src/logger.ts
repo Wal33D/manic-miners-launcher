@@ -1,9 +1,10 @@
 let fs: typeof import('fs/promises') | null = null;
 let join: ((...paths: string[]) => string) | null = null;
 
-if (typeof process !== 'undefined' && process.type !== 'renderer') {
-  fs = eval('require')("fs").promises;
-  ({ join } = eval('require')("path"));
+if (typeof process !== 'undefined' && (process as any).type !== 'renderer') {
+  // Directly require Node modules when running outside the renderer
+  fs = require('fs').promises;
+  ({ join } = require('path'));
 }
 
 // Flag to control verbose logging
@@ -19,7 +20,7 @@ export const logToFile = async ({ message, filePath }: { message: string; filePa
     return;
   }
   try {
-    const { getDirectories } = eval('require')("./functions/fetchDirectories");
+    const { getDirectories } = await import('./functions/fetchDirectories');
     const { status, message: dirMessage, directories } = await getDirectories();
     if (!status) {
       throw new Error(dirMessage);
@@ -43,7 +44,7 @@ export const logToRuntimeLog = async ({ message }: { message: string }) => {
     return;
   }
   try {
-    const { getDirectories } = eval('require')("./functions/fetchDirectories");
+    const { getDirectories } = await import('./functions/fetchDirectories');
     const { status, message: dirMessage, directories } = await getDirectories();
     if (!status) {
       throw new Error(dirMessage);
