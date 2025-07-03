@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.send(channel, data);
     }
   },
-  receive: (channel: string, func: Function) => {
+  receive: (channel: string, func: (...args: any[]) => void) => {
     if (validReceiveChannels.includes(channel)) {
       ipcRenderer.on(channel, (_event, ...args) => func(...args));
     }
