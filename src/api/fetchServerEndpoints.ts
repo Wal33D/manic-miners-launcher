@@ -3,6 +3,9 @@ import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { default as fetch } from 'node-fetch';
 
+const SERVER_BASE_URL = process.env.SERVER_BASE_URL ||
+  'https://manic-launcher.vercel.app';
+
 interface Endpoint {
   name: string;
   endpoint: string;
@@ -39,7 +42,7 @@ export async function fetchServerEndpoints({
       data = JSON.parse(cachedData);
     } catch (error) {
       // If reading fails or cache is expired, fetch from API and cache the result
-      const routesResponse = await fetch('https://manic-launcher.vercel.app/api/routes');
+      const routesResponse = await fetch(`${SERVER_BASE_URL}/api/routes`);
       if (!routesResponse.ok) {
         throw new Error(`Failed to fetch endpoints. Status: ${routesResponse.status}`);
       }
