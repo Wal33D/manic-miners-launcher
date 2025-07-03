@@ -4,7 +4,7 @@
   "description": "A dedicated launcher for Manic Miners, an adventurous underground mining game that pays homage to classic resource management and strategy games.",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron-forge start -- --no-sandbox",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
