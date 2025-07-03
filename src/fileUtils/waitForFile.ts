@@ -25,11 +25,12 @@ export async function waitForFile({
     try {
       await access(filePath, fs.constants.F_OK);
       return true; // File still exists
-    } catch (error: any) {
-      if (error.code === 'ENOENT') {
+    } catch (error: unknown) {
+      const err = error as Error & { code?: string };
+      if (err.code === 'ENOENT') {
         return false; // File does not exist
       }
-      throw error; // Re-throw unexpected errors
+      throw err; // Re-throw unexpected errors
     }
   };
 
@@ -50,9 +51,10 @@ export async function waitForFile({
           if (!exists) {
             // Once `.crdownload` disappears, wait for next file creation.
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as Error;
           watcher.close();
-          reject({ status: false, message: `Error monitoring file: ${error.message}` });
+          reject({ status: false, message: `Error monitoring file: ${err.message}` });
         }
       } else if (!initialFiles.has(fullPath) && eventType === 'rename') {
         // Assume the file appearing after a `.crdownload` disappears is the completed file.

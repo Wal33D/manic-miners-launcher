@@ -16,16 +16,18 @@ const fsAccess = util.promisify(fs.access);
 export const acquireLock = async () => {
   try {
     await fsWriteFile(lockFilePath, 'locked');
-  } catch (error: any) {
-    throw new Error('Failed to acquire lock: ' + error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    throw new Error('Failed to acquire lock: ' + err.message);
   }
 };
 
 export const releaseLock = async () => {
   try {
     await fsUnlink(lockFilePath);
-  } catch (error: any) {
-    console.error('Failed to release lock:', error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Failed to release lock:', err.message);
   }
 };
 

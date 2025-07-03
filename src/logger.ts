@@ -29,8 +29,9 @@ export const logToFile = async ({ message, filePath }: { message: string; filePa
     const finalPath = filePath || join(launcherLogsPath, 'default-log.txt');
     const timeStampedMessage = `${new Date().toISOString()}: ${message}\n`;
     await fs.appendFile(finalPath, timeStampedMessage, 'utf-8');
-  } catch (error: any) {
-    console.error(`Failed to write to log file: ${error.message}`);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(`Failed to write to log file: ${err.message}`);
   }
 };
 
@@ -51,8 +52,9 @@ export const logToRuntimeLog = async ({ message }: { message: string }) => {
     }
     const launcherLogsPath = directories.launcherLogsPath;
     await logToFile({ message, filePath: join(launcherLogsPath, 'runtime-log.txt') });
-  } catch (error: any) {
-    console.error(`Failed to log runtime message: ${error.message}`);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(`Failed to log runtime message: ${err.message}`);
   }
 };
 

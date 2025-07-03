@@ -99,10 +99,11 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
         backupSavesPath,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     return {
       status: false,
-      message: `Failed to fetch and ensure directories: ${error.message}`,
+      message: `Failed to fetch and ensure directories: ${err.message}`,
     };
   }
 }
