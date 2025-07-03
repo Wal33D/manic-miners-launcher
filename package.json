@@ -10,7 +10,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "update-git-url": "node updatePackageJson.js",
+    "update-git-url": "node scripts/updatePackageJson.js",
     "test": "node --require ts-node/register --test test/*.test.ts"
   },
   "devDependencies": {
