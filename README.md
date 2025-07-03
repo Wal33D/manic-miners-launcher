@@ -62,6 +62,12 @@ Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICE
 
 The bundled **Fredericka the Great** font is provided under the [SIL Open Font License](https://scripts.sil.org/OFL). See [assets/NOTICE](assets/NOTICE) for more information.
 
+## Security Notes
+
+Some dependencies currently have unresolved high-severity vulnerabilities as reported by `npm audit`.
+These issues stem from packages such as `express`, `puppeteer`, and `tar-fs`, which are pulled in by the `itchio-downloader` dependency.
+Consider reviewing the audit report and updating or replacing these packages when patches become available.
+
 Happy mining!
 
 ---
