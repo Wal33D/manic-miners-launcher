@@ -15,6 +15,6 @@ Thank you for considering contributing to this project! To file issues or submit
 
 ## Installing Dependencies
 
-This project uses **npm** as its package manager. Run `npm install` (or `npm ci` in CI environments) to install dependencies.
+This project uses **pnpm** as its package manager. Run `pnpm install` (or `pnpm install --frozen-lockfile` in CI environments) to install dependencies.
 
 We appreciate all contributions and will review your pull request as soon as possible.
