@@ -63,7 +63,7 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
     const savedBasePath = path.join(localAppData, 'ManicMiners', 'Saved');
     const logsPath = path.join(savedBasePath, 'Logs');
     const configPath = path.join(savedBasePath, 'Config');
-    const configIniPath = path.join(configPath, 'WindowsNoEditor');
+    const configIniPath = process.platform === 'win32' ? path.join(configPath, 'WindowsNoEditor') : configPath;
     const saveGamesPath = path.join(savedBasePath, 'SaveGames');
     const LRRPath = path.join(saveGamesPath, 'LRR');
     const profilesPath = path.join(saveGamesPath, 'Profiles');
