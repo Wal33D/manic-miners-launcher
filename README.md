@@ -3,6 +3,7 @@
 Welcome to the official repository of **Manic Miners Launcher**, a modern launcher for the nostalgic, classic game of building and mining. Our launcher aims to bring a renewed experience to fans of the original game, enhancing its accessibility and providing new features to the community.
 
 ## Features:
+
 - **Easy Installation**: Set up your game with just a few clicks. No more digging through forums for install guides.
 - **Auto-Updates**: Keep your game up to date with the latest patches and content without lifting a finger.
 - **Mod Support**: Easily manage and integrate mods to enhance your gameplay experience.
@@ -15,18 +16,22 @@ Welcome to the official repository of **Manic Miners Launcher**, a modern launch
 ## Getting Started:
 
 ### Prerequisites:
+
 Before you install the Manic Miners Launcher, ensure you have the following:
-- A PC running Windows 7 or later.
+
+- **Supported OS**: Windows 7 or later. Other operating systems are currently unsupported and some features will be disabled.
 - An internet connection for downloading the launcher and updates.
 - The original game files if you wish to apply mods or play certain versions.
 
 ### Installation:
+
 1. **Download the Launcher**: Navigate to the [Releases](https://github.com/Wal33D/manic-miners-launcher/releases) section of this GitHub repository and download the latest version of the launcher.
 2. **Run the Installer**: Open the downloaded file and follow the installation wizard. The installer will guide you through the process.
 3. **Launch the Game**: Once installed, open Manic Miners Launcher from your desktop or start menu. From here, you can manage your game settings, mods, or simply hit "Play" to dive in!
 
 ## Usage:
-After launching, you'll be presented with the main interface. 
+
+After launching, you'll be presented with the main interface.
 
 - **Update Your Game**: If there's an update available, you'll see a notification. Click "Update" to proceed.
 - **Manage Mods**: Navigate to the Mods section to browse and install mods. You can enable or disable mods for each profile.
@@ -34,12 +39,15 @@ After launching, you'll be presented with the main interface.
 - **Start Playing**: Once you're set, hit the "Play" button. Enjoy your journey in the mines!
 
 ## Support:
+
 Got questions or ran into issues? Visit our [Issues](https://github.com/Wal33D/manic-miners-launcher/issues) section to report bugs or seek help. Also, check out the [FAQs](https://github.com/Wal33D/manic-miners-launcher/wiki/FAQ) for common questions and answers.
 
 ## Contributing:
+
 We welcome contributions! Whether it's submitting bug reports, feature suggestions, or contributing to the code, check out our [Contributing Guidelines](CONTRIBUTING.md) for more information on getting involved.
 
 ## Development
+
 If you want to build the launcher from source you'll need **Node.js 18 or newer**.
 
 1. Install dependencies with `npm install` or `yarn`.
@@ -51,6 +59,7 @@ If you want to build the launcher from source you'll need **Node.js 18 or newer*
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
 
 ## Assets
+
 The bundled **Fredericka the Great** font is provided under the [SIL Open Font License](https://scripts.sil.org/OFL). See [assets/NOTICE](assets/NOTICE) for more information.
 
 Happy mining!
