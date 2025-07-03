@@ -47,7 +47,11 @@ If you want to build the launcher from source you'll need **Node.js 18 or newer*
 3. To create distributable packages run `npm run make`.
 
 ## License:
+
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
+
+## Assets
+The bundled **Fredericka the Great** font is provided under the [SIL Open Font License](https://scripts.sil.org/OFL). See [assets/NOTICE](assets/NOTICE) for more information.
 
 Happy mining!
 
