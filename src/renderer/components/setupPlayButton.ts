@@ -21,7 +21,7 @@ export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HT
   });
 
   // Listen for game launch replies from the main process
-  window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, data => {
+  window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, (data: any) => {
     debugLog(`Game launch status: ${JSON.stringify(data)}`);
 
     // Re-enable play button, version select dropdown, and install path input after receiving the launch status

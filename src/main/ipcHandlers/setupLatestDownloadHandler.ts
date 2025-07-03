@@ -23,7 +23,7 @@ export const setupLatestDownloadHandler = async (): Promise<{ status: boolean; m
 
       const downloadResponse = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
-        desiredFileDirectory: downloadPath,
+        downloadDirectory: downloadPath,
       })) as any;
 
       const { filePath, metaData, metadataPath, message, status } = downloadResponse;
