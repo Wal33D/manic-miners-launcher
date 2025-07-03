@@ -21,7 +21,7 @@ Before you install the Manic Miners Launcher, ensure you have the following:
 - The original game files if you wish to apply mods or play certain versions.
 
 ### Installation:
-1. **Download the Launcher**: Navigate to the [Releases](https://github.com/yourrepo/manic-miners-launcher/releases) section of this GitHub repository and download the latest version of the launcher.
+1. **Download the Launcher**: Navigate to the [Releases](https://github.com/Wal33D/manic-miners-launcher/releases) section of this GitHub repository and download the latest version of the launcher.
 2. **Run the Installer**: Open the downloaded file and follow the installation wizard. The installer will guide you through the process.
 3. **Launch the Game**: Once installed, open Manic Miners Launcher from your desktop or start menu. From here, you can manage your game settings, mods, or simply hit "Play" to dive in!
 
@@ -34,7 +34,7 @@ After launching, you'll be presented with the main interface.
 - **Start Playing**: Once you're set, hit the "Play" button. Enjoy your journey in the mines!
 
 ## Support:
-Got questions or ran into issues? Visit our [Issues](https://github.com/yourrepo/manic-miners-launcher/issues) section to report bugs or seek help. Also, check out the [FAQs](https://github.com/yourrepo/manic-miners-launcher/wiki/FAQ) for common questions and answers.
+Got questions or ran into issues? Visit our [Issues](https://github.com/Wal33D/manic-miners-launcher/issues) section to report bugs or seek help. Also, check out the [FAQs](https://github.com/Wal33D/manic-miners-launcher/wiki/FAQ) for common questions and answers.
 
 ## Contributing:
 We welcome contributions! Whether it's submitting bug reports, feature suggestions, or contributing to the code, check out our [Contributing Guidelines](CONTRIBUTING.md) for more information on getting involved.
