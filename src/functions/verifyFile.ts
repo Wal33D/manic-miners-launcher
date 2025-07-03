@@ -21,10 +21,10 @@ export const verifyFile = async (params: any): Promise<any> => {
   let createdAt = 0;
   let updatedAt = 0;
   let accessedAt = 0;
-  let name = path.basename(filePath);
-  let extension = path.extname(filePath);
-  let pathFull = path.resolve(filePath);
-  let pathRelative = path.relative(process.cwd(), pathFull);
+  const name = path.basename(filePath);
+  const extension = path.extname(filePath);
+  const pathFull = path.resolve(filePath);
+  const pathRelative = path.relative(process.cwd(), pathFull);
   let permissions = '';
 
   try {

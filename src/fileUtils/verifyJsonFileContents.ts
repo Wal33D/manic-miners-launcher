@@ -10,37 +10,40 @@ import { readAndParseJsonFiles } from './readAndParseJsonFiles';
  */
 
 export const verifyJsonFileContents = async (
-   requests: Array<{ filePath: string; jsonContent: object }> | { filePath: string; jsonContent: object }
+  requests: Array<{ filePath: string; jsonContent: object }> | { filePath: string; jsonContent: object }
 ): Promise<{ filePath: string; status: boolean; message: string } | Array<{ filePath: string; status: boolean; message: string }>> => {
-   // Normalize input to an array
-   const normalizedRequests = Array.isArray(requests) ? requests : [requests];
-   const isSingleRequest = !Array.isArray(requests);
+  // Normalize input to an array
+  const normalizedRequests = Array.isArray(requests) ? requests : [requests];
+  const isSingleRequest = !Array.isArray(requests);
 
-   const filePaths = normalizedRequests.map((req) => req.filePath);
-   const fileContents = (await readAndParseJsonFiles({ filePaths })) as any;
+  const filePaths = normalizedRequests.map(req => req.filePath);
+  const fileContents = (await readAndParseJsonFiles({ filePaths })) as any;
 
-   const results = fileContents.map((file: { status: any; filePath: any; message: any; content: any }, index: any) => {
-      if (!file.status) {
-         return { filePath: file.filePath, status: false, message: file.message };
+  const results = fileContents.map((file: { status: any; filePath: any; message: any; content: any }, index: any) => {
+    if (!file.status) {
+      return { filePath: file.filePath, status: false, message: file.message };
+    }
+
+    const jsonContent = normalizedRequests[index].jsonContent;
+    const isContentMatching = (fileContent: Record<string, any>, contentToVerify: Record<string, any>) => {
+      for (const key in contentToVerify) {
+        if (
+          !Object.prototype.hasOwnProperty.call(fileContent, key) ||
+          JSON.stringify(fileContent[key]) !== JSON.stringify(contentToVerify[key])
+        ) {
+          return false;
+        }
       }
+      return true;
+    };
 
-      const jsonContent = normalizedRequests[index].jsonContent;
-      const isContentMatching = (fileContent: { [x: string]: any; hasOwnProperty: (arg0: string) => any }, contentToVerify: any) => {
-         for (let key in contentToVerify) {
-            if (!fileContent.hasOwnProperty(key) || JSON.stringify(fileContent[key]) !== JSON.stringify(contentToVerify[key])) {
-               return false;
-            }
-         }
-         return true;
-      };
+    if (isContentMatching(file.content, jsonContent)) {
+      return { filePath: file.filePath, status: true, message: 'The provided JSON content matches the file content.' };
+    } else {
+      return { filePath: file.filePath, status: false, message: 'The provided JSON content does not match the file content.' };
+    }
+  });
 
-      if (isContentMatching(file.content, jsonContent)) {
-         return { filePath: file.filePath, status: true, message: 'The provided JSON content matches the file content.' };
-      } else {
-         return { filePath: file.filePath, status: false, message: 'The provided JSON content does not match the file content.' };
-      }
-   });
-
-   // Return either a single object or an array based on the input
-   return isSingleRequest ? results[0] : results;
+  // Return either a single object or an array based on the input
+  return isSingleRequest ? results[0] : results;
 };
