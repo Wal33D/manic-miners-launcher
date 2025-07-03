@@ -39,6 +39,13 @@ Got questions or ran into issues? Visit our [Issues](https://github.com/Wal33D/m
 ## Contributing:
 We welcome contributions! Whether it's submitting bug reports, feature suggestions, or contributing to the code, check out our [Contributing Guidelines](CONTRIBUTING.md) for more information on getting involved.
 
+## Development
+If you want to build the launcher from source you'll need **Node.js 18 or newer**.
+
+1. Install dependencies with `npm install` or `yarn`.
+2. Start the app in development mode using `npm run start`.
+3. To create distributable packages run `npm run make`.
+
 ## License:
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
 
