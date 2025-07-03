@@ -6,7 +6,7 @@ export const initializeLevels = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
 
   // Handler for receiving levels data
-  window.electronAPI?.receive(IPC_CHANNELS.GET_LEVELS, response => {
+  window.electronAPI?.receive(IPC_CHANNELS.GET_LEVELS, (response: any) => {
     if (response.status) {
       updateLevelsTable(response.levels); // Pass only the levels array
       debugLog(`Received levels: ${JSON.stringify(response.levels)}`);

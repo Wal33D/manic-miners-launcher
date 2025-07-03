@@ -13,4 +13,4 @@ export const IPC_CHANNELS = {
   PLAY_SOUND: 'play-sound',
   GET_URLS: 'get-urls',
   GET_LEVELS: 'get-levels',
-};
+} as const;

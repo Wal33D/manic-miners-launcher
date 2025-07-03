@@ -19,7 +19,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
       //latest version only do this for a download instead -->
       const { filePath, metaData, metadataPath, message, status } = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
-        desiredFileDirectory: downloadPath,
+        downloadDirectory: downloadPath,
       })) as DownloadGameResponse;
       //<-- latest version only do this for a download instead
 

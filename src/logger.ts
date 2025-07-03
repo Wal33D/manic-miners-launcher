@@ -1,6 +1,10 @@
-import fs from 'fs/promises'; // Use fs promises module for async file operations
-import { join } from 'path';
-import { getDirectories } from './functions/fetchDirectories';
+let fs: typeof import('fs/promises') | null = null;
+let join: ((...paths: string[]) => string) | null = null;
+
+if (typeof process !== 'undefined' && process.type !== 'renderer') {
+  fs = eval('require')("fs").promises;
+  ({ join } = eval('require')("path"));
+}
 
 // Flag to control verbose logging
 export const isVerbose = process.env.VERBOSE === 'true';
@@ -10,7 +14,12 @@ export const isVerbose = process.env.VERBOSE === 'true';
  * @param options An object containing the message and optional file path.
  */
 export const logToFile = async ({ message, filePath }: { message: string; filePath?: string }) => {
+  if (!fs || !join) {
+    console.log(message);
+    return;
+  }
   try {
+    const { getDirectories } = eval('require')("./functions/fetchDirectories");
     const { status, message: dirMessage, directories } = await getDirectories();
     if (!status) {
       throw new Error(dirMessage);
@@ -29,7 +38,12 @@ export const logToFile = async ({ message, filePath }: { message: string; filePa
  * @param message The message to log.
  */
 export const logToRuntimeLog = async ({ message }: { message: string }) => {
+  if (!fs || !join) {
+    console.log(message);
+    return;
+  }
   try {
+    const { getDirectories } = eval('require')("./functions/fetchDirectories");
     const { status, message: dirMessage, directories } = await getDirectories();
     if (!status) {
       throw new Error(dirMessage);
