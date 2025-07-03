@@ -37,9 +37,14 @@ async function ensureDirectoryExists(directoryPath: string): Promise<void> {
 export async function getDirectories(): Promise<{ status: boolean; message: string; directories?: Directories }> {
   try {
     const homeDirectory = os.homedir();
-    const launcherInstallPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\installations`;
-    const launcherCachePath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\cache`;
-    const launcherLogsPath = `${process.env['LOCALAPPDATA']}\\ManicMinersLauncher\\logs`;
+    const localAppData =
+      process.env.LOCALAPPDATA ||
+      (process.platform === 'win32' ? path.join(os.homedir(), 'AppData', 'Local') : path.join(os.homedir(), '.local', 'share'));
+
+    const launcherBasePath = path.join(localAppData, 'ManicMinersLauncher');
+    const launcherInstallPath = path.join(launcherBasePath, 'installations');
+    const launcherCachePath = path.join(launcherBasePath, 'cache');
+    const launcherLogsPath = path.join(launcherBasePath, 'logs');
 
     // Ensuring launcher directories are created
     await ensureDirectoryExists(launcherInstallPath);
@@ -55,14 +60,15 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
     await ensureDirectoryExists(levelsBackupPath);
 
     // Paths where the game stores its files
-    const logsPath = `${process.env['LOCALAPPDATA']}\\ManicMiners\\Saved\\Logs`;
-    const configPath = `${process.env['LOCALAPPDATA']}\\ManicMiners\\Saved\\Config`;
-    const configIniPath = `${process.env['LOCALAPPDATA']}\\ManicMiners\\Saved\\Config\\WindowsNoEditor`;
-    const saveGamesPath = `${process.env['LOCALAPPDATA']}\\ManicMiners\\Saved\\SaveGames`;
-    const LRRPath = `${saveGamesPath}\\LRR`;
-    const profilesPath = `${saveGamesPath}\\Profiles`;
-    const minersPath = `${saveGamesPath}\\Miners`;
-    const backupSavesPath = `${saveGamesPath}\\Backup`;
+    const savedBasePath = path.join(localAppData, 'ManicMiners', 'Saved');
+    const logsPath = path.join(savedBasePath, 'Logs');
+    const configPath = path.join(savedBasePath, 'Config');
+    const configIniPath = path.join(configPath, 'WindowsNoEditor');
+    const saveGamesPath = path.join(savedBasePath, 'SaveGames');
+    const LRRPath = path.join(saveGamesPath, 'LRR');
+    const profilesPath = path.join(saveGamesPath, 'Profiles');
+    const minersPath = path.join(saveGamesPath, 'Miners');
+    const backupSavesPath = path.join(saveGamesPath, 'Backup');
 
     // Ensure game directories are created
     await ensureDirectoryExists(logsPath);
