@@ -64,9 +64,10 @@ export const setupLatestDownloadHandler = async (): Promise<{ status: boolean; m
 
     message = 'Latest download handler set up successfully.';
     status = true; // Indicates the handler was set up successfully.
-  } catch (error: any) {
-    console.error(`Failed to set up latest download handlers: ${error.message}`);
-    message = `Failed to set up latest download handlers: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error(`Failed to set up latest download handlers: ${err.message}`);
+    message = `Failed to set up latest download handlers: ${err.message}`;
     status = false;
   }
 

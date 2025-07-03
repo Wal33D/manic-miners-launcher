@@ -25,8 +25,9 @@ export const setupPlaySoundHandler = async (): Promise<{ status: boolean; messag
 
     message = 'Play sound handler set up successfully.';
     status = true;
-  } catch (error: any) {
-    message = `Failed to set up play sound handler: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to set up play sound handler: ${err.message}`;
     status = false;
   }
 

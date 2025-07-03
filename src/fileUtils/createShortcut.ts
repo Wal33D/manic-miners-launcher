@@ -44,8 +44,9 @@ export const createShortcut = async ({
       message = `URL shortcut created successfully at ${shortcutPath}`;
     }
     created = true;
-  } catch (error: any) {
-    message = `Error creating ${type} shortcut at ${shortcutPath}: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Error creating ${type} shortcut at ${shortcutPath}: ${err.message}`;
   }
 
   return { created, message };

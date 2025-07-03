@@ -59,8 +59,9 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
 
     // Cache the fetched data
     await fs.writeFile(cacheFilePath, JSON.stringify({ status, data, message }), 'utf8');
-  } catch (error) {
-    message = `Error: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Error: ${err.message}`;
   }
 
   return { status, data, message };

@@ -80,8 +80,9 @@ export const unpackVersion = async ({
     installPath = specificInstallPath;
     message = `Successfully unpacked ${versionToUnpack.title} into ${installPath}`;
     if (updateStatus) updateStatus({ status: 'Unpacking completed successfully.', progress: 100 });
-  } catch (error: any) {
-    message = `Error unpacking the zip file: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Error unpacking the zip file: ${err.message}`;
     if (updateStatus) updateStatus({ status: message, progress: 100 });
     unpacked = false;
   }
