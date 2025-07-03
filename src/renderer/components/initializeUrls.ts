@@ -1,5 +1,6 @@
 // Import IPC channels from a centralized file (adjust the import path as needed)
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+import { debugLog } from '../../logger';
 
 export const initializeUrls = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
@@ -8,7 +9,7 @@ export const initializeUrls = (): void => {
   window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, response => {
     if (response.status) {
       updateLinksUI(response.urls); // Pass only the URLs object
-      console.log('Received URLs:', response.urls);
+      debugLog(`Received URLs: ${JSON.stringify(response.urls)}`);
     } else {
       console.error('Failed to fetch URLs:', response.message);
     }
@@ -29,7 +30,7 @@ export const initializeUrls = (): void => {
 
     // Correctly access each URL and associated key
     Object.entries(urls).forEach(([key, url]) => {
-      console.log(`URL for ${key}: ${url}`); // Debugging output
+      debugLog(`URL for ${key}: ${url}`);
       const link = document.createElement('a');
       link.setAttribute('data-url', url as string);
       link.className = 'not-draggable icon-button';
@@ -53,7 +54,7 @@ export const initializeUrls = (): void => {
       Email: 'fas fa-envelope',
     };
     const iconClass = iconMap[key] || 'fas fa-link';
-    console.log(`Icon for ${key}: ${iconClass}`);
+    debugLog(`Icon for ${key}: ${iconClass}`);
     return iconClass;
   }
 };

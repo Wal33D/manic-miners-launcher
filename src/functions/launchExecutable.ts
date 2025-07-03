@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { logToFile } from '../logger';
+import { logToFile, debugLog } from '../logger';
 
 /**
  * Launches an executable file and monitors if it opened successfully or if it crashed.
@@ -24,7 +24,7 @@ export const launchExecutable = ({
     // Listen to stdout
     process.stdout.on('data', data => {
       const stdoutMessage = `stdout: ${data}`;
-      console.log(stdoutMessage);
+      debugLog(stdoutMessage);
       logToFile({ message: stdoutMessage });
     });
 
@@ -49,12 +49,12 @@ export const launchExecutable = ({
       const exitMessage =
         code === 0 ? 'Executable launched and exited normally.' : `Executable launched but exited with error code: ${code}`;
       const exitLogMessage = `Process exited at: ${new Date(endTime).toISOString()} (runtime: ${runTime.toFixed(2)} minutes)`;
-      console.log(exitLogMessage);
+      debugLog(exitLogMessage);
       logToFile({ message: exitLogMessage });
 
       if (veryShortRun) {
         const warningMessage = `Warning: The process had a very short run time (${runTime.toFixed(2)} minutes), which might indicate an issue.`;
-        console.warn(warningMessage);
+        debugLog(warningMessage);
         logToFile({ message: warningMessage });
       }
 
