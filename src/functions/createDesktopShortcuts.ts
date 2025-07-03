@@ -18,7 +18,8 @@ export const createDesktopShortcuts = async ({
 
   try {
     if (!installPath) {
-      installPath = await findLatestVersionPath();
+      const baseInstallDir = path.join(os.homedir(), 'Desktop', 'map-generator-master', 'installations');
+      installPath = await findLatestVersionPath(baseInstallDir);
     }
 
     const desktopPath = path.join(os.homedir(), 'Desktop');
