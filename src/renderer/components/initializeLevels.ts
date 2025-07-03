@@ -1,5 +1,6 @@
 // Import IPC channels from a centralized file (adjust the import path as needed)
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+import { debugLog } from '../../logger';
 
 export const initializeLevels = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
@@ -8,7 +9,7 @@ export const initializeLevels = (): void => {
   window.electronAPI?.receive(IPC_CHANNELS.GET_LEVELS, response => {
     if (response.status) {
       updateLevelsTable(response.levels); // Pass only the levels array
-      console.log('Received levels:', response.levels);
+      debugLog(`Received levels: ${JSON.stringify(response.levels)}`);
     } else {
       console.error('Failed to fetch levels:', response.message);
     }

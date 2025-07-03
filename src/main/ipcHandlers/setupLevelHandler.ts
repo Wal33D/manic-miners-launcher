@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchLevels } from '../../api/fetchLevels';
+import { debugLog } from '../../logger';
 
 export const setupLevelHandler = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
@@ -10,7 +11,7 @@ export const setupLevelHandler = async (): Promise<{ status: boolean; message: s
     ipcMain.on(IPC_CHANNELS.GET_LEVELS, async event => {
       try {
         const levelsResult = await fetchLevels();
-        console.log('Sending level data:', levelsResult);
+        debugLog(`Sending level data: ${JSON.stringify(levelsResult)}`);
 
         event.reply(IPC_CHANNELS.GET_LEVELS, {
           status: true,
