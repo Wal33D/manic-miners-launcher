@@ -64,5 +64,6 @@
   },
   "overrides": {
     "webpack-dev-server": "5.2.2"
-  }
+  },
+  "packageManager": "pnpm@9.15.4"
 }
