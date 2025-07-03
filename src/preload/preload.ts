@@ -1,5 +1,5 @@
-const { shell, contextBridge, ipcRenderer } = require('electron');
-const { IPC_CHANNELS } = require('../main/ipcHandlers/ipcChannels');
+import { shell, contextBridge, ipcRenderer } from 'electron';
+import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 
 const validSendChannels = [
   IPC_CHANNELS.GET_DIRECTORIES,
