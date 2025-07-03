@@ -2,11 +2,9 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 
 export const initializeLevels = (): void => {
-  //@ts-ignore
   window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
 
   // Handler for receiving levels data
-  //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.GET_LEVELS, response => {
     if (response.status) {
       updateLevelsTable(response.levels); // Pass only the levels array
