@@ -44,11 +44,12 @@ export async function downloadFile({
       transform(chunk, encoding, callback) {
         downloadedBytes += chunk.length;
         if (updateStatus) {
-          // When totalBytes is zero fall back to expectedSize or bytes received
-          const denominator = totalBytes || expectedSize || 1;
+          // Use expectedSize or bytes received when Content-Length is missing
+          // Progress is capped at 100
+          const denominator = totalBytes || expectedSize || downloadedBytes || 1;
           const progressIncrement = (downloadedBytes / denominator) * (100 - initialProgress);
           const currentProgress = initialProgress + progressIncrement;
-          updateStatus({ progress: Math.min(Math.floor(currentProgress), 70) });
+          updateStatus({ progress: Math.min(Math.floor(currentProgress), 100) });
         }
         callback(null, chunk);
       },

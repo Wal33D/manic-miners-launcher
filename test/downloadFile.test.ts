@@ -102,3 +102,31 @@ test('downloadFile handles missing Content-Length', async () => {
   close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test('downloadFile handles missing Content-Length without expected size', async () => {
+  const content = 'no length or size';
+  const hash = createHash('md5').update(content).digest('hex');
+  const { url, close } = await startServerNoLength(content);
+  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const file = path.join(dir, 'file.txt');
+
+  const progressValues: number[] = [];
+
+  const result = await downloadFile({
+    downloadUrl: url,
+    filePath: file,
+    expectedMd5: hash,
+    updateStatus: status => {
+      if ('progress' in status) {
+        progressValues.push(status.progress);
+      }
+    },
+  });
+
+  assert.ok(result.status, result.message);
+  assert.ok(progressValues.length > 0);
+  progressValues.forEach(p => assert.ok(p >= 0 && p <= 100));
+
+  close();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
