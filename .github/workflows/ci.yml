@@ -19,5 +19,7 @@ jobs:
         run: npm ci
       - name: Run lint
         run: npm run lint
+      - name: Run tests
+        run: npm test
       - name: Build Electron app
         run: npm run make
