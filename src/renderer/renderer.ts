@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeLevels();
   }
 
-  const mainMenuModal = document.getElementById('topNavBtn');
-  if (mainMenuModal) {
-    setupTopNav(mainMenuModal);
+  const mainMenuBtn = document.getElementById('navbar-main-menu-modal-btn');
+  if (mainMenuBtn) {
+    setupTopNav(mainMenuBtn);
   }
 });
