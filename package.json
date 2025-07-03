@@ -60,5 +60,9 @@
   },
   "engines": {
     "node": ">=20.19.2"
+  },
+  "overrides": {
+    "webpack-dev-server": "5.2.2"
+
   }
 }
