@@ -27,6 +27,8 @@ export type IpcChannel =
 export interface ElectronAPI {
   send: (channel: IpcChannel, data?: unknown) => void;
   receive: (channel: IpcChannel, func: (...args: unknown[]) => void) => void;
+  receiveOnce: (channel: IpcChannel, func: (...args: unknown[]) => void) => void;
+  removeAllListeners: (channel: IpcChannel) => void;
   openExternal: (url: string) => void;
 }
 
