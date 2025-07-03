@@ -4,7 +4,6 @@ declare module '*.partial_html' {
   export default content;
 }
 
-declare module 'play-sound';
 
 export type IpcChannel =
   | 'launch-game'
