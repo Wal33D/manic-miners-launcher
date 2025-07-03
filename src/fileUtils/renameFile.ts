@@ -41,8 +41,9 @@ export const renameFile = async ({
     await rename(filePath, newFilePath);
     message = `File renamed to ${finalFileName}`;
     return { status: true, message, newFilePath };
-  } catch (error: any) {
-    message = `Failed to rename file: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to rename file: ${err.message}`;
     return { status: false, message };
   }
 };

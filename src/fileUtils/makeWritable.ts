@@ -36,10 +36,11 @@ export const makeWritable = async ({ dirPath }: { dirPath: string }): Promise<{ 
     } else {
       await fs.chmod(dirPath, 0o666); // Make file writable if it's not a directory
     }
-  } catch (error: any) {
-    exists = error.code !== 'ENOENT'; // Update exists based on specific error code
+  } catch (error: unknown) {
+    const err = error as Error & { code?: string };
+    exists = err.code !== 'ENOENT'; // Update exists based on specific error code
     writable = false; // Set writable to false if any error occurs
-    return { exists, writable, message: `Failed to make writable: ${dirPath}, Reason: ${error.message}` };
+    return { exists, writable, message: `Failed to make writable: ${dirPath}, Reason: ${err.message}` };
   }
 
   return { exists, writable, message: `All files and directories at ${dirPath} made writable.` };

@@ -43,7 +43,8 @@ export async function clearDirectory({ directoryPath }: { directoryPath: string 
     }
 
     return { clean: true, message: 'Directory and all contents successfully cleared.' };
-  } catch (error: any) {
-    return { clean: false, message: `Failed to clear directory: ${error.message}` };
+  } catch (error: unknown) {
+    const err = error as Error;
+    return { clean: false, message: `Failed to clear directory: ${err.message}` };
   }
 }

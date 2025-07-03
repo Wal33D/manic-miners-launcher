@@ -87,8 +87,9 @@ export const createFileReadOnly = async (
           hasParentDirectory,
           message,
         };
-      } catch (error: any) {
-        throw new Error(`Failed to write to the file '${filePath}' due to: ${error.message}`);
+      } catch (error: unknown) {
+        const err = error as Error;
+        throw new Error(`Failed to write to the file '${filePath}' due to: ${err.message}`);
       }
     })
   );
