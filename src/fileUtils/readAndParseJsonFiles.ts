@@ -1,5 +1,12 @@
 import fs from 'fs/promises';
 
+interface JsonFileResult {
+  filePath: string;
+  content: any | null;
+  status: boolean;
+  message: string;
+}
+
 /**
  * Reads and parses the contents of one or more JSON files specified by their paths.
  * This function handles both a single file path and an array of file paths.
@@ -14,17 +21,15 @@ export const readAndParseJsonFiles = async ({
    filePaths
 }: {
    filePaths: string | string[];
-}): Promise<
-   { filePath: string; content: any | null; status: boolean; message: string } | { filePath: string; content: any | null; status: boolean; message: string }[]
-> => {
+}): Promise<JsonFileResult | JsonFileResult[]> => {
    // Ensure filePaths is always an array
    const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
    const isSinglePath = !Array.isArray(filePaths);
 
-   const readPromises = paths.map((filePath) =>
+   const readPromises: Promise<JsonFileResult>[] = paths.map((filePath) =>
       fs
          .readFile(filePath, 'utf8')
-         .then((fileContent) => {
+         .then((fileContent): JsonFileResult => {
             const parsedContent = JSON.parse(fileContent); // Parse the JSON content
             return {
                filePath,
@@ -33,19 +38,19 @@ export const readAndParseJsonFiles = async ({
                message: 'JSON file read and parsed successfully.'
             };
          })
-         .catch((error) => ({
-            filePath,
-            status: false,
-            content: null,
-            message: `Failed to read or parse JSON file: ${error.message}`
-         }))
+         .catch((error): JsonFileResult => ({
+               filePath,
+               status: false,
+               content: null,
+               message: `Failed to read or parse JSON file: ${error.message}`
+            }))
    );
 
    // Wait for all read operations to complete, handling each one's success or failure
    const results = await Promise.allSettled(readPromises);
 
    // Map results to format the final output as required
-   const formattedResults = results.map((result) => {
+   const formattedResults: JsonFileResult[] = results.map((result) => {
       if (result.status === 'fulfilled') {
          return result.value;
       } else {
@@ -55,7 +60,7 @@ export const readAndParseJsonFiles = async ({
             status: false,
             content: null,
             message: result.reason.message || 'An unexpected error occurred'
-         };
+         } as JsonFileResult;
       }
    });
 

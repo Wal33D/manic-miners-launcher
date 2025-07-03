@@ -1,5 +1,12 @@
 import fs from 'fs/promises';
 
+interface ReadFileResult {
+  filePath: string;
+  content: string | null;
+  read: boolean;
+  message: string;
+}
+
 /**
  * Reads the contents of one or more files specified by their paths.
  * This function handles both a single file path and an array of file paths.
@@ -13,23 +20,21 @@ export const readFile = async ({
    filePaths
 }: {
    filePaths: string | string[];
-}): Promise<
-   { filePath: string; content: string | null; read: boolean; message: string } | { filePath: string; content: string | null; read: boolean; message: string }[]
-> => {
+}): Promise<ReadFileResult | ReadFileResult[]> => {
    // Ensure filePaths is always an array
    const paths = Array.isArray(filePaths) ? filePaths : [filePaths];
    const isSinglePath = !Array.isArray(filePaths);
 
-   const readPromises = paths.map((filePath) =>
+   const readPromises: Promise<ReadFileResult>[] = paths.map((filePath) =>
       fs
          .readFile(filePath, 'utf8')
-         .then((content) => ({
+         .then((content): ReadFileResult => ({
             filePath,
             read: true,
             content,
             message: 'File read successfully.'
          }))
-         .catch((error) => ({
+         .catch((error): ReadFileResult => ({
             filePath,
             read: false,
             content: null,
@@ -41,7 +46,7 @@ export const readFile = async ({
    const results = await Promise.allSettled(readPromises);
 
    // Map results to format the final output as required
-   const formattedResults = results.map((result) => {
+   const formattedResults: ReadFileResult[] = results.map((result) => {
       if (result.status === 'fulfilled') {
          return result.value;
       } else {
@@ -51,7 +56,7 @@ export const readFile = async ({
             read: false,
             content: null,
             message: result.reason.message || 'An unexpected error occurred'
-         };
+         } as ReadFileResult;
       }
    });
 
