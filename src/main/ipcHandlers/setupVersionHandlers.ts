@@ -4,6 +4,7 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import Store from 'electron-store';
+import { debugLog } from '../../logger';
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
@@ -53,11 +54,11 @@ const getVersionDetails = async () => {
 
 const setSelectedVersion = (selectedVersion: Version) => {
   store.set('current-selected-version', selectedVersion);
-  console.log(`Selected version updated: ${selectedVersion.identifier}`);
+  debugLog(`Selected version updated: ${selectedVersion.identifier}`);
 };
 
 const getSelectedVersion = () => {
   const selectedVersion = store.get('current-selected-version');
-  console.log(`Currently selected version: ${selectedVersion.identifier}`);
+  debugLog(`Currently selected version: ${selectedVersion.identifier}`);
   return selectedVersion;
 };

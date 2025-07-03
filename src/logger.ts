@@ -2,6 +2,9 @@ import fs from 'fs/promises'; // Use fs promises module for async file operation
 import { join } from 'path';
 import { getDirectories } from './functions/fetchDirectories';
 
+// Flag to control verbose logging
+export const isVerbose = process.env.VERBOSE === 'true';
+
 /**
  * Logs a message to a file with a timestamp. Uses a specified file or a default log file if no path is provided.
  * @param options An object containing the message and optional file path.
@@ -35,5 +38,15 @@ export const logToRuntimeLog = async ({ message }: { message: string }) => {
     await logToFile({ message, filePath: join(launcherLogsPath, 'runtime-log.txt') });
   } catch (error: any) {
     console.error(`Failed to log runtime message: ${error.message}`);
+  }
+};
+
+/**
+ * Logs a message to the runtime log only when verbose logging is enabled.
+ * @param message The debug message to log.
+ */
+export const debugLog = async (message: string) => {
+  if (isVerbose) {
+    await logToRuntimeLog({ message });
   }
 };
