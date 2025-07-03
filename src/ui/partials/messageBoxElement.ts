@@ -4,4 +4,3 @@ export const messageBoxElement = `
     <label for="messageBox" class="form-label">Mission Updates</label>
 </div>
 `;
-
