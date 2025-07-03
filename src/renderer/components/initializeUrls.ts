@@ -6,7 +6,7 @@ export const initializeUrls = (): void => {
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
-  window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, response => {
+  window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, (response: any) => {
     if (response.status) {
       updateLinksUI(response.urls); // Pass only the URLs object
       debugLog(`Received URLs: ${JSON.stringify(response.urls)}`);
@@ -37,7 +37,7 @@ export const initializeUrls = (): void => {
       link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
       link.addEventListener('click', event => {
         event.preventDefault();
-        window.electronAPI.openExternal(url);
+        window.electronAPI.openExternal(url as string);
       });
       linksContainer.appendChild(link);
     });

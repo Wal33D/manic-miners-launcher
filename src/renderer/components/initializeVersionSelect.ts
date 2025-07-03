@@ -16,7 +16,7 @@ export const initializeVersionSelect = (): void => {
   }
 
   // Handler for receiving version information
-  window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, data => {
+  window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, (data: any) => {
     updateVersionSelectUI(data);
   });
 
