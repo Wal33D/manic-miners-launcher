@@ -11,7 +11,7 @@ export const createWindow = (): void => {
     minHeight: 600, // Minimum height of the window
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
     },
     autoHideMenuBar: true, // This will hide the menu bar
