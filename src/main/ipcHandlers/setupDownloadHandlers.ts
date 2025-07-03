@@ -62,19 +62,21 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         } else {
           throw new Error(`Download failed: ${downloadResult.message}`);
         }
-      } catch (error: any) {
-        console.error(`Error processing version: ${error.message}`);
+      } catch (error: unknown) {
+        const err = error as Error;
+        console.error(`Error processing version: ${err.message}`);
         event.reply(IPC_CHANNELS.DOWNLOAD_VERSION, {
           downloaded: false,
-          message: `Error processing version: ${error.message}`,
+          message: `Error processing version: ${err.message}`,
         });
       }
     });
 
     message = 'Download handlers set up successfully.';
     status = true; // Indicates the handler was set up successfully.
-  } catch (error: any) {
-    message = `Failed to set up download handlers: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to set up download handlers: ${err.message}`;
     status = false;
   }
 

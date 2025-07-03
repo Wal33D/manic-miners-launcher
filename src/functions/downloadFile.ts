@@ -84,7 +84,8 @@ export async function downloadFile({
     }
 
     return { status: true, message: 'File downloaded and verified successfully.' };
-  } catch (error: any) {
-    return { status: false, message: `Error during download: ${error.message}` };
+  } catch (error: unknown) {
+    const err = error as Error;
+    return { status: false, message: `Error during download: ${err.message}` };
   }
 }

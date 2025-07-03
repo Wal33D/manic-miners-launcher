@@ -41,7 +41,7 @@ export const verifyFile = async (params: IVerifyFileParams): Promise<IFileDetail
     accessedAt = stats.atimeMs;
     updatedAt = stats.ctimeMs;
     createdAt = stats.birthtimeMs;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Set false as the file does not exist or error occurred
     exists = false;
   }

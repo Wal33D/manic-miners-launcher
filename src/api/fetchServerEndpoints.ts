@@ -64,8 +64,9 @@ export async function fetchServerEndpoints({
     }
 
     return { status: true, message: 'Endpoints fetched successfully', data };
-  } catch (error: any) {
-    message = `Error fetching server endpoints: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Error fetching server endpoints: ${err.message}`;
     return { status: false, message };
   }
 }

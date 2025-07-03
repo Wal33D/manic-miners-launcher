@@ -22,19 +22,21 @@ export const setupDirectoryHandler = async (): Promise<{ status: boolean; messag
           directories: dirResult.directories,
         });
         status = true; // Indicates successful setup of the IPC handler.
-      } catch (error: any) {
-        console.error(`Error fetching directories: ${error.message}`);
+      } catch (error: unknown) {
+        const err = error as Error;
+        console.error(`Error fetching directories: ${err.message}`);
         event.reply(IPC_CHANNELS.GET_DIRECTORIES, {
           status: false,
-          message: `Error fetching directories: ${error.message}`,
+          message: `Error fetching directories: ${err.message}`,
         });
       }
     });
 
     message = 'Directory handler set up successfully.';
     status = true;
-  } catch (error: any) {
-    message = `Failed to set up directory handler: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to set up directory handler: ${err.message}`;
     status = false;
   }
 

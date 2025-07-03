@@ -51,14 +51,15 @@ export async function destroy({ pathToDestroy }: { pathToDestroy: string }): Pro
       path: pathToDestroy,
       message: destroyed ? 'Destruction completed successfully.' : 'Destruction failed. Some components could not be removed.',
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     return {
       destroyed: writableStatus && clearStatus && deleteStatus,
       writableStatus,
       clearStatus,
       deleteStatus,
       path: pathToDestroy,
-      message: `Error during destruction of ${pathToDestroy}: ${error.message}`,
+      message: `Error during destruction of ${pathToDestroy}: ${err.message}`,
     };
   }
 }
