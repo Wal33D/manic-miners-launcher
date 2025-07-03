@@ -1,6 +1,5 @@
 import fs from 'fs';
-import fetch from 'node-fetch';
-import { Transform } from 'stream';
+import { Transform, Readable } from 'stream';
 import crypto from 'crypto';
 
 /**
@@ -55,8 +54,9 @@ export async function downloadFile({
     });
 
     const fileStream = fs.createWriteStream(filePath);
+    const readable = Readable.fromWeb(response.body as any);
     await new Promise<void>((resolve, reject) => {
-      response.body
+      readable
         .pipe(progressStream)
         .pipe(fileStream)
         .on('error', reject)
