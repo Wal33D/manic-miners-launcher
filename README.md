@@ -48,7 +48,7 @@ We welcome contributions! Whether it's submitting bug reports, feature suggestio
 
 ## Development
 
-If you want to build the launcher from source you'll need **Node.js 18 or newer**.
+If you want to build the launcher from source you'll need **Node.js 20 or newer**.
 
 1. Install dependencies with `npm install` or `yarn`.
 2. Start the app in development mode using `npm run start`.
