@@ -15,9 +15,7 @@ class ModalStub {
 }
 
 test('setupTopNav attaches listener and opens modal', () => {
-  const dom = new JSDOM(
-    `<!DOCTYPE html><a id="navbar-main-menu-modal-btn"></a><div id="navbar-main-menu-modal"></div>`
-  );
+  const dom = new JSDOM(`<!DOCTYPE html><a id="navbar-main-menu-modal-btn"></a><div id="navbar-main-menu-modal"></div>`);
 
   const { document, Event } = dom.window;
   global.document = document;
@@ -30,10 +28,7 @@ test('setupTopNav attaches listener and opens modal', () => {
 
   btn.dispatchEvent(new Event('click'));
 
-  assert.strictEqual(
-    ModalStub.lastElement,
-    document.getElementById('navbar-main-menu-modal')
-  );
+  assert.strictEqual(ModalStub.lastElement, document.getElementById('navbar-main-menu-modal'));
   assert.ok(ModalStub.toggled);
 
   mock.stop('bootstrap');
