@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// Path to the .git/config and package.json files
-const gitConfigPath = path.join(__dirname, '.git', 'config');
-const packageJsonPath = path.join(__dirname, 'package.json');
+// Path to the .git/config and package.json files. These files are located one
+// directory above this script (the project root), so reference them using
+// ".." rather than the script directory itself.
+const gitConfigPath = path.join(__dirname, '..', '.git', 'config');
+const packageJsonPath = path.join(__dirname, '..', 'package.json');
 
 const updateRepositoryUrl = () => {
   try {
