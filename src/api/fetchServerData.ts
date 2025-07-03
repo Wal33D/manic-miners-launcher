@@ -4,8 +4,7 @@ import { getDirectories } from '../functions/fetchDirectories';
 import fetch from 'node-fetch';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
 
-const SERVER_BASE_URL = process.env.SERVER_BASE_URL ||
-  'https://manic-launcher.vercel.app';
+const SERVER_BASE_URL = process.env.SERVER_BASE_URL || 'https://manic-launcher.vercel.app';
 
 interface FetchResult {
   status: boolean;
