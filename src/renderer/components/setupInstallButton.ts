@@ -30,7 +30,7 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     updateStatus(progress, status);
   });
 
-  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, result => {
+  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, (result: any) => {
     debugLog(result.message);
     if (result.downloaded) {
       window.electronAPI.send(IPC_CHANNELS.PLAY_SOUND); // Request the main process to play the success sound
