@@ -28,11 +28,7 @@ const updateRepositoryUrl = () => {
     packageJson.repository.url = repositoryUrl;
 
     // Write the updated package.json back to the file system
-    fs.writeFileSync(
-      packageJsonPath,
-      JSON.stringify(packageJson, null, 2),
-      'utf8'
-    );
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
     console.log('Updated repository URL in package.json successfully.');
   } catch (error) {
     console.error('Error updating package.json:', error);
