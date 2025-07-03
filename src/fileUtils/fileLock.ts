@@ -11,26 +11,26 @@ const fsAccess = util.promisify(fs.access);
 
 // Helper functions to handle the lock file
 export const acquireLock = async () => {
-   try {
-      await fsWriteFile(lockFilePath, 'locked');
-   } catch (error: any) {
-      throw new Error('Failed to acquire lock: ' + error.message);
-   }
+  try {
+    await fsWriteFile(lockFilePath, 'locked');
+  } catch (error: any) {
+    throw new Error('Failed to acquire lock: ' + error.message);
+  }
 };
 
 export const releaseLock = async () => {
-   try {
-      await fsUnlink(lockFilePath);
-   } catch (error: any) {
-      console.error('Failed to release lock:', error.message);
-   }
+  try {
+    await fsUnlink(lockFilePath);
+  } catch (error: any) {
+    console.error('Failed to release lock:', error.message);
+  }
 };
 
 export const isLocked = async () => {
-   try {
-      await fsAccess(lockFilePath);
-      return true;
-   } catch (error) {
-      return false;
-   }
+  try {
+    await fsAccess(lockFilePath);
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
