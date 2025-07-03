@@ -36,6 +36,8 @@
     "node-loader": "^2.1.0",
     "prettier": "^3.2.5",
     "style-loader": "^4.0.0",
+    "jsdom": "^26.1.0",
+    "mock-require": "^3.0.3",
     "ts-loader": "^9.2.2",
     "ts-node": "^10.0.0",
     "typescript": "^5.0.0"
