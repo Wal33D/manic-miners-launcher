@@ -2,6 +2,7 @@
 import { updateStatus } from './updateStatus';
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
+import { debugLog } from '../../logger';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   installButton.addEventListener('click', () => {
@@ -30,7 +31,7 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
   });
 
   window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, result => {
-    console.log(result.message);
+    debugLog(result.message);
     if (result.downloaded) {
       window.electronAPI.send(IPC_CHANNELS.PLAY_SOUND); // Request the main process to play the success sound
       window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO); // Request updated version list
