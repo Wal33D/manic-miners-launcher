@@ -2,11 +2,9 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 
 export const initializeUrls = (): void => {
-  //@ts-ignore
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
-  //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, response => {
     if (response.status) {
       updateLinksUI(response.urls); // Pass only the URLs object
@@ -38,7 +36,6 @@ export const initializeUrls = (): void => {
       link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
       link.addEventListener('click', event => {
         event.preventDefault();
-        //@ts-ignore
         window.electronAPI.openExternal(url);
       });
       linksContainer.appendChild(link);
@@ -46,7 +43,7 @@ export const initializeUrls = (): void => {
   }
 
   function getIconClass(key: string) {
-    const iconMap = {
+    const iconMap: Record<string, string> = {
       Website: 'fas fa-globe',
       Discord: 'fab fa-discord',
       Reddit: 'fab fa-reddit-alien',
@@ -55,7 +52,6 @@ export const initializeUrls = (): void => {
       FAQ: 'fas fa-question-circle',
       Email: 'fas fa-envelope',
     };
-    //@ts-ignore
     const iconClass = iconMap[key] || 'fas fa-link';
     console.log(`Icon for ${key}: ${iconClass}`);
     return iconClass;

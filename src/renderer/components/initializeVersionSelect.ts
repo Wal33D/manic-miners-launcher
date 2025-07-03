@@ -6,19 +6,16 @@ export const initializeVersionSelect = (): void => {
   fetchVersionData();
 
   // Listener to refresh version information when updated
-  //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.VERSIONS_UPDATED, () => {
     fetchVersionData(); // Fetch the latest versions after update notifications
   });
 
   // Function to fetch version data
   function fetchVersionData() {
-    //@ts-ignore
     window.electronAPI?.send(IPC_CHANNELS.ALL_VERSION_INFO);
   }
 
   // Handler for receiving version information
-  //@ts-ignore
   window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, data => {
     updateVersionSelectUI(data);
   });
@@ -50,7 +47,6 @@ export const initializeVersionSelect = (): void => {
     if (defaultVersion) {
       versionSelect.value = defaultVersion.identifier;
       setInstallPathAndToggleButton(defaultVersion, installPathInput);
-      //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, defaultVersion);
     } else {
       console.error('No default version provided.');
@@ -61,7 +57,6 @@ export const initializeVersionSelect = (): void => {
       const selectedIdentifier = versionSelect.value;
       const selectedVersion = versions.find((v: { identifier: string }) => v.identifier === selectedIdentifier);
       setInstallPathAndToggleButton(selectedVersion, installPathInput);
-      //@ts-ignore
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
     });
   }

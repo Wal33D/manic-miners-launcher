@@ -16,12 +16,10 @@ export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HT
     setDisabledAppearance(installPathInput, true);
 
     // Send the version identifier to the main process to launch the game
-    //@ts-ignore
     window.electronAPI.send(IPC_CHANNELS.LAUNCH_GAME, versionIdentifier);
   });
 
   // Listen for game launch replies from the main process
-  //@ts-ignore
   window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, data => {
     console.log('Game launch status:', data);
 
