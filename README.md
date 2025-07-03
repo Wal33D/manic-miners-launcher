@@ -40,7 +40,11 @@ Got questions or ran into issues? Visit our [Issues](https://github.com/Wal33D/m
 We welcome contributions! Whether it's submitting bug reports, feature suggestions, or contributing to the code, check out our [Contributing Guidelines](CONTRIBUTING.md) for more information on getting involved.
 
 ## License:
+
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
+
+## Assets
+The bundled **Fredericka the Great** font is provided under the [SIL Open Font License](https://scripts.sil.org/OFL). See [assets/NOTICE](assets/NOTICE) for more information.
 
 Happy mining!
 
