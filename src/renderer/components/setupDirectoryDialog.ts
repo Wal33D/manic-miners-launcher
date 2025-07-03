@@ -5,6 +5,7 @@ export function setupDirectoryDialog(installPathInput: HTMLInputElement) {
   });
 
   // Handler to receive the selected directory path and update the input field
+  window.electronAPI.removeAllListeners('directory-selected');
   window.electronAPI.receive('directory-selected', (path: any) => {
     installPathInput.value = path as string;
   });

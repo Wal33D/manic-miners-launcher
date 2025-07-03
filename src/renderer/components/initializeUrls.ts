@@ -3,10 +3,11 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { debugLog } from '../../logger';
 
 export const initializeUrls = (): void => {
+  window.electronAPI?.removeAllListeners(IPC_CHANNELS.GET_URLS);
   window.electronAPI?.send(IPC_CHANNELS.GET_URLS);
 
   // Handler for receiving URL data
-  window.electronAPI?.receive(IPC_CHANNELS.GET_URLS, (response: any) => {
+  window.electronAPI?.receiveOnce(IPC_CHANNELS.GET_URLS, (response: any) => {
     if (response.status) {
       updateLinksUI(response.urls); // Pass only the URLs object
       debugLog(`Received URLs: ${JSON.stringify(response.urls)}`);

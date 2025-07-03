@@ -11,7 +11,8 @@ export function trimFilePath(fullPath: string): string | null {
 export function fetchDefaultDirectory(callback: (path: string) => void) {
   window.electronAPI.send(IPC_CHANNELS.GET_DIRECTORIES);
 
-  window.electronAPI.receive(IPC_CHANNELS.GET_DIRECTORIES, (response: any) => {
+  window.electronAPI.removeAllListeners(IPC_CHANNELS.GET_DIRECTORIES);
+  window.electronAPI.receiveOnce(IPC_CHANNELS.GET_DIRECTORIES, (response: any) => {
     if (response.status && response.directories) {
       const installPathInput = document.getElementById('installPath') as HTMLInputElement;
       // Assuming 'response.directories' contains the actual directory data
