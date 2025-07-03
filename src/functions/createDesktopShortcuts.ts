@@ -106,8 +106,9 @@ export const createDesktopShortcuts = async ({
       });
       filePaths.push(result.message); // Adjusting to push the returned message
     }
-  } catch (error: any) {
-    filePaths.push(`Error creating shortcuts: ${error.message}`);
+  } catch (error: unknown) {
+    const err = error as Error;
+    filePaths.push(`Error creating shortcuts: ${err.message}`);
     status = false;
   }
 

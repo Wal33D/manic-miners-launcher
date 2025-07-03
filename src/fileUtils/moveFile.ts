@@ -30,8 +30,9 @@ export const moveFile = async ({
     await rename(sourcePath, targetPath);
     message = `File moved successfully to ${targetPath}`;
     return { status: true, message, newPath: targetPath };
-  } catch (error: any) {
-    message = `Failed to move file: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to move file: ${err.message}`;
     return { status: false, message };
   }
 };

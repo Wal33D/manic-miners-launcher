@@ -53,13 +53,14 @@ export const resetDirectory = async ({
       existed,
       message,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     return {
       reset,
       destroyed,
       created,
       existed,
-      message: `Error during directory reset: ${error.message}`,
+      message: `Error during directory reset: ${err.message}`,
     };
   }
 };

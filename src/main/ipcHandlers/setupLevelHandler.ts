@@ -20,19 +20,21 @@ export const setupLevelHandler = async (): Promise<{ status: boolean; message: s
           count: levelsResult.count,
         });
         status = true; // Indicates successful setup of the IPC handler.
-      } catch (error: any) {
-        console.error(`Error fetching levels: ${error.message}`);
+      } catch (error: unknown) {
+        const err = error as Error;
+        console.error(`Error fetching levels: ${err.message}`);
         event.reply(IPC_CHANNELS.GET_LEVELS, {
           status: false,
-          message: `Error fetching levels: ${error.message}`,
+          message: `Error fetching levels: ${err.message}`,
         });
       }
     });
 
     message = 'Level handler set up successfully.';
     status = true;
-  } catch (error: any) {
-    message = `Failed to set up level handler: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to set up level handler: ${err.message}`;
     status = false;
   }
 

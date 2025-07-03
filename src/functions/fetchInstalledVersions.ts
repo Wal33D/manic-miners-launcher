@@ -56,8 +56,9 @@ export const fetchInstalledVersions = async (): Promise<{
     installedVersions = Array.from(versionMap.values()).filter(v => v.directory);
     message = 'Installed versions fetched successfully.';
     return { status: true, message, installedVersions };
-  } catch (error: any) {
-    message = `Error fetching installed versions: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Error fetching installed versions: ${err.message}`;
     return { status: false, message };
   }
 };

@@ -17,19 +17,21 @@ export const setupGameLaunchHandlers = async (): Promise<{ status: boolean; mess
           message: success ? 'Game launched successfully.' : 'Failed to launch game.',
         });
         status = true; // This indicates the event handler was setup successfully.
-      } catch (error: any) {
-        console.error(`Error launching game: ${error.message}`);
+      } catch (error: unknown) {
+        const err = error as Error;
+        console.error(`Error launching game: ${err.message}`);
         event.reply(IPC_CHANNELS.LAUNCH_GAME, {
           success: false,
-          message: `Error launching game: ${error.message}`,
+          message: `Error launching game: ${err.message}`,
         });
       }
     });
 
     message = 'Game launch handlers set up successfully.';
     status = true; // Indicates the handler was set up successfully.
-  } catch (error: any) {
-    message = `Failed to set up game launch handlers: ${error.message}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    message = `Failed to set up game launch handlers: ${err.message}`;
     status = false;
   }
 
