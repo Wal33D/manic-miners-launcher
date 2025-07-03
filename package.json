@@ -33,6 +33,7 @@
     "eslint-plugin-import": "^2.25.0",
     "eslint-plugin-prettier": "^5.5.1",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "jszip": "^3.10.1",
     "node-loader": "^2.1.0",
     "prettier": "^3.2.5",
     "style-loader": "^4.0.0",
@@ -45,13 +46,13 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
     "bootstrap": "^5.3.3",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.1.0",
+    "itchio-downloader": "^0.7.7",
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
-    "windows-shortcuts": "^0.1.6",
-    "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^10.1.0",
-    "itchio-downloader": "^0.7.7"
+    "windows-shortcuts": "^0.1.6"
   },
   "repository": {
     "type": "git",
