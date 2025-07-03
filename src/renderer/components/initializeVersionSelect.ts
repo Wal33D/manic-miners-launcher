@@ -2,6 +2,8 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { fetchDefaultDirectory, toggleButtonVisibility, trimFilePath } from './domUtils';
 
 export const initializeVersionSelect = (): void => {
+  window.electronAPI?.removeAllListeners(IPC_CHANNELS.VERSIONS_UPDATED);
+  window.electronAPI?.removeAllListeners(IPC_CHANNELS.ALL_VERSION_INFO);
   // Request the version information initially and upon notifications of updates
   fetchVersionData();
 

@@ -5,6 +5,9 @@ import { setDisabledAppearance } from './domUtils';
 import { debugLog } from '../../logger';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
+  window.electronAPI.removeAllListeners(IPC_CHANNELS.DOWNLOAD_PROGRESS);
+  window.electronAPI.removeAllListeners(IPC_CHANNELS.DOWNLOAD_VERSION);
+  window.electronAPI.removeAllListeners(IPC_CHANNELS.VERSIONS_UPDATED);
   installButton.addEventListener('click', () => {
     const versionIdentifier = versionSelect.value;
     const downloadPath = installPathInput.value;

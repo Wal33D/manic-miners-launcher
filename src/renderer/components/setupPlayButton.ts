@@ -4,6 +4,7 @@ import { setDisabledAppearance } from './domUtils';
 import { debugLog } from '../../logger';
 
 export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HTMLSelectElement, installPathInput: HTMLInputElement) {
+  window.electronAPI.removeAllListeners(IPC_CHANNELS.LAUNCH_GAME);
   playButton.addEventListener('click', () => {
     const versionIdentifier = versionSelect.value;
     if (!versionIdentifier) {

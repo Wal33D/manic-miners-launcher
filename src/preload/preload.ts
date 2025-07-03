@@ -36,5 +36,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.on(channel, (_event, ...args) => func(...args));
     }
   },
+  receiveOnce: (channel: string, func: (...args: any[]) => void) => {
+    if (validReceiveChannels.includes(channel)) {
+      ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    }
+  },
+  removeAllListeners: (channel: string) => {
+    if (validReceiveChannels.includes(channel)) {
+      ipcRenderer.removeAllListeners(channel);
+    }
+  },
   openExternal: shell.openExternal,
 });
