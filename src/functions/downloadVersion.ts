@@ -51,6 +51,7 @@ export const downloadVersion = async ({
         downloadUrl,
         filePath,
         expectedSize: versionToProcess.sizeInBytes,
+        expectedMd5: versionToProcess.md5Hash,
         updateStatus,
         initialProgress: 20,
       });

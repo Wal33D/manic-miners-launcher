@@ -10,7 +10,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "format": "prettier --write .",
-    "update-git-url": "node updatePackageJson.js"
+    "update-git-url": "node updatePackageJson.js",
+    "test": "node --require ts-node/register --test test/downloadFile.test.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
