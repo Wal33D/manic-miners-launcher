@@ -1,4 +1,5 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
+import { debugLog } from '../../logger';
 
 export function trimFilePath(fullPath: string): string | null {
   if (!fullPath || fullPath.lastIndexOf('\\') === -1) {
@@ -16,7 +17,7 @@ export function fetchDefaultDirectory(callback: (path: string) => void) {
       // Assuming 'response.directories' contains the actual directory data
       installPathInput.value = response.directories.launcherInstallPath;
       callback(response.directories.launcherInstallPath); // Call the callback with the path
-      console.log('Directory received and set: ', response.directories.launcherInstallPath);
+      debugLog(`Directory received and set: ${response.directories.launcherInstallPath}`);
     } else {
       console.error('Failed to fetch directories:', response.message);
       // Optionally set a default or handle error case

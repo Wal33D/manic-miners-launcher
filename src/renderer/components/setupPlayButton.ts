@@ -1,6 +1,7 @@
 // playButtonHandler.ts
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
+import { debugLog } from '../../logger';
 
 export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HTMLSelectElement, installPathInput: HTMLInputElement) {
   playButton.addEventListener('click', () => {
@@ -21,7 +22,7 @@ export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HT
 
   // Listen for game launch replies from the main process
   window.electronAPI.receive(IPC_CHANNELS.LAUNCH_GAME, data => {
-    console.log('Game launch status:', data);
+    debugLog(`Game launch status: ${JSON.stringify(data)}`);
 
     // Re-enable play button, version select dropdown, and install path input after receiving the launch status
     setDisabledAppearance(playButton, false);
@@ -29,7 +30,7 @@ export function setupPlayButton(playButton: HTMLButtonElement, versionSelect: HT
     setDisabledAppearance(installPathInput, false);
 
     if (data.success) {
-      console.log('Game launched successfully');
+      debugLog('Game launched successfully');
     } else {
       console.error('Failed to launch game:', data.message);
     }
