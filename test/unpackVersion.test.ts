@@ -25,9 +25,7 @@ test('unpackVersion rejects archives with path traversal entries', async () => {
     versions: [{ identifier: 'mal', filename: 'mal.zip', title: 'malicious' }],
   });
 
-  await assert.rejects(
-    () => unpackVersion({ versionIdentifier: 'mal', installationDirectory: dir, overwriteExisting: true })
-  );
+  await assert.rejects(() => unpackVersion({ versionIdentifier: 'mal', installationDirectory: dir, overwriteExisting: true }));
 
   (fetchVersionsModule as any).fetchVersions = original;
   fs.rmSync(dir, { recursive: true, force: true });

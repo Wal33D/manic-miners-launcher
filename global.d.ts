@@ -4,7 +4,6 @@ declare module '*.partial_html' {
   export default content;
 }
 
-
 export type IpcChannel =
   | 'launch-game'
   | 'versions-updated'
