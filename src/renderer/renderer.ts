@@ -12,6 +12,16 @@ import { initializeLevels } from './components/initializeLevels';
 initializeVersionSelect();
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.electronAPI.platform !== 'win32') {
+    console.warn('Running on non-Windows platform. Shortcut options are disabled.');
+    const startMenuCb = document.getElementById('start-menu-shortcut') as HTMLInputElement | null;
+    const desktopCb = document.getElementById('desktop-shortcut') as HTMLInputElement | null;
+    [startMenuCb, desktopCb].forEach(cb => {
+      if (cb) {
+        cb.disabled = true;
+      }
+    });
+  }
   const installPaneContainer = document.getElementById('install-pane-container');
   if (installPaneContainer) {
     const playButton = document.getElementById('playButton') as HTMLButtonElement;

@@ -5,13 +5,14 @@ Welcome to the official repository of **Manic Miners Launcher**, a modern launch
 ## Features:
 
 - **Easy Installation**: Set up your game with just a few clicks. No more digging through forums for install guides.
-- **Auto-Updates**: Keep your game up to date with the latest patches and content without lifting a finger.
+- **Auto-Updates (Windows only)**: Keep your game up to date with the latest patches and content without lifting a finger.
 - **Mod Support**: Easily manage and integrate mods to enhance your gameplay experience.
 - **Custom Profiles**: Set up multiple profiles for different mod configurations or save games.
 - **Performance Settings**: Tweak your game’s settings directly from the launcher for optimal performance on your machine.
 - **Online Leaderboards**: See how you rank against other players in various categories.
 - **Community Hub**: Access the latest news, guides, and forums directly through the launcher.
 - **Backup and Restore**: Safely backup your saves and profiles and restore them when needed.
+- **Shortcut Creation (Windows only)**: Optionally create Start Menu or Desktop shortcuts for quick access.
 
 ## Getting Started:
 
@@ -19,7 +20,7 @@ Welcome to the official repository of **Manic Miners Launcher**, a modern launch
 
 Before you install the Manic Miners Launcher, ensure you have the following:
 
-- **Supported OS**: Windows 7 or later. Other operating systems are currently unsupported and some features will be disabled.
+- **Supported OS**: Windows 7 or later. Other operating systems are currently unsupported and features such as auto-updates and shortcut creation will be disabled.
 - An internet connection for downloading the launcher and updates.
 - The original game files if you wish to apply mods or play certain versions.
 
