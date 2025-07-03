@@ -1,6 +1,7 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
 import { Transform } from 'stream';
+import crypto from 'crypto';
 
 /**
  * Downloads a file from a given URL to a specified path, optionally updates progress starting from a given initial progress value.
@@ -9,6 +10,7 @@ import { Transform } from 'stream';
  * @param {string} params.downloadUrl - URL from which to download the file.
  * @param {string} params.filePath - The path where the file will be saved.
  * @param {number} params.expectedSize - Expected size of the downloaded file.
+ * @param {string} [params.expectedMd5] - Expected MD5 hash of the file.
  * @param {Function} [params.updateStatus] - Optional function to update progress or send status messages.
  * @param {number} [params.initialProgress=0] - The initial progress value from which to start progress updates, defaults to 0.
  * @returns {Promise<{ status: boolean; message: string }>}
@@ -17,12 +19,14 @@ export async function downloadFile({
   downloadUrl,
   filePath,
   expectedSize,
+  expectedMd5,
   updateStatus,
   initialProgress = 0,
 }: {
   downloadUrl: string;
   filePath: string;
   expectedSize?: number;
+  expectedMd5?: string;
   updateStatus?: (status: any) => void;
   initialProgress?: number;
 }): Promise<{ status: boolean; message: string }> {
@@ -66,6 +70,14 @@ export async function downloadFile({
         status: false,
         message: `Downloaded file size does not match expected size. Expected: ${expectedSize} bytes, Got: ${stats.size} bytes`,
       };
+    }
+
+    if (expectedMd5) {
+      const hash = crypto.createHash('md5').update(fs.readFileSync(filePath)).digest('hex');
+      if (hash !== expectedMd5) {
+        fs.unlinkSync(filePath);
+        return { status: false, message: 'MD5 checksum mismatch.' };
+      }
     }
 
     return { status: true, message: 'File downloaded and verified successfully.' };
