@@ -48,7 +48,7 @@ We welcome contributions! Whether it's submitting bug reports, feature suggestio
 
 ## Development
 
-If you want to build the launcher from source you'll need **Node.js 20 or newer**.
+If you want to build the launcher from source you'll need **Node.js 20.19.2 or newer**.
 
 1. Run `nvm use` to activate the Node.js version specified in `.nvmrc`.
 2. Install dependencies with `npm install` or `yarn`.

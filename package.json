@@ -59,9 +59,10 @@
     "url": "https://github.com/Wal33D/manic-miners-launcher.git"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19.2"
   },
   "overrides": {
     "webpack-dev-server": "5.2.2"
+
   }
 }
