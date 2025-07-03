@@ -13,7 +13,9 @@ export const generateDatFile = (params: MapGenerationParams | any): GenerateDatF
       return acc;
     }, [] as string[]);
 
-    const pythonProcess = spawnSync('python', [pythonScriptPath, ...args]);
+    const pythonExecutable = process.env.PYTHON_EXECUTABLE || process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+
+    const pythonProcess = spawnSync(pythonExecutable, [pythonScriptPath, ...args]);
 
     if (pythonProcess.status === 1) {
       result = parseStructuredText(pythonProcess.stdout.toString());
