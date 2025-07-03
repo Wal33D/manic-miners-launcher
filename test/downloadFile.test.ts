@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import './messageBoxElement.test';
 import http from 'http';
 import fs from 'fs';
+const { access } = fs.promises;
 import path from 'path';
 import { createHash } from 'crypto';
 import { downloadFile } from '../src/functions/downloadFile';
@@ -48,7 +49,8 @@ test('downloadFile succeeds with correct checksum', async () => {
   });
 
   assert.ok(result.status, result.message);
-  assert.ok(fs.existsSync(file));
+  const fileExists = await access(file).then(() => true).catch(() => false);
+  assert.ok(fileExists);
 
   close();
   fs.rmSync(dir, { recursive: true, force: true });
@@ -68,7 +70,8 @@ test('downloadFile fails on checksum mismatch', async () => {
   });
 
   assert.strictEqual(result.status, false);
-  assert.ok(!fs.existsSync(file));
+  const fileMissing = await access(file).then(() => true).catch(() => false);
+  assert.ok(!fileMissing);
 
   close();
   fs.rmSync(dir, { recursive: true, force: true });
