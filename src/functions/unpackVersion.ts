@@ -28,11 +28,18 @@ export const unpackVersion = async ({
   }
 
   const specificInstallPath = path.join(installationDirectory, versionToUnpack.identifier);
-  if (fs.existsSync(specificInstallPath) && !overwriteExisting) {
+  let dirExists = false;
+  try {
+    await fs.promises.access(specificInstallPath);
+    dirExists = true;
+  } catch {
+    dirExists = false;
+  }
+  if (dirExists && !overwriteExisting) {
     throw new Error(`Installation directory at ${specificInstallPath} already exists. Use overwriteExisting to unpack again.`);
   }
 
-  if (!fs.existsSync(specificInstallPath)) {
+  if (!dirExists) {
     await createDirectory({ directory: specificInstallPath });
   }
 
@@ -57,7 +64,9 @@ export const unpackVersion = async ({
         await fs.promises.mkdir(fullPath, { recursive: true });
       } else {
         const dirPath = path.dirname(fullPath);
-        if (!fs.existsSync(dirPath)) {
+        try {
+          await fs.promises.access(dirPath);
+        } catch {
           await fs.promises.mkdir(dirPath, { recursive: true });
         }
         await zip.extract(entry.name, fullPath);
@@ -70,15 +79,21 @@ export const unpackVersion = async ({
     await zip.close();
 
     // Check for nested directory structure and flatten if necessary
-    const subdirectories = fs
-      .readdirSync(specificInstallPath)
-      .filter(subDir => fs.statSync(path.join(specificInstallPath, subDir)).isDirectory());
+    const dirEntries = await fs.promises.readdir(specificInstallPath);
+    const subdirectories: string[] = [];
+    for (const subDir of dirEntries) {
+      const stat = await fs.promises.stat(path.join(specificInstallPath, subDir));
+      if (stat.isDirectory()) {
+        subdirectories.push(subDir);
+      }
+    }
     if (subdirectories.length === 1) {
       const nestedDir = path.join(specificInstallPath, subdirectories[0]);
-      fs.readdirSync(nestedDir).forEach(file => {
-        fs.renameSync(path.join(nestedDir, file), path.join(specificInstallPath, file));
-      });
-      fs.rmdirSync(nestedDir);
+      const nestedFiles = await fs.promises.readdir(nestedDir);
+      for (const file of nestedFiles) {
+        await fs.promises.rename(path.join(nestedDir, file), path.join(specificInstallPath, file));
+      }
+      await fs.promises.rmdir(nestedDir);
     }
 
     const message = `Successfully unpacked ${versionToUnpack.title} into ${specificInstallPath}`;

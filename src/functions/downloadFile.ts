@@ -66,9 +66,9 @@ export async function downloadFile({
         });
     });
 
-    const stats = fs.statSync(filePath);
+    const stats = await fs.promises.stat(filePath);
     if (expectedSize !== undefined && stats.size !== expectedSize) {
-      fs.unlinkSync(filePath);
+      await fs.promises.unlink(filePath);
       return {
         status: false,
         message: `Downloaded file size does not match expected size. Expected: ${expectedSize} bytes, Got: ${stats.size} bytes`,
@@ -76,9 +76,10 @@ export async function downloadFile({
     }
 
     if (expectedMd5) {
-      const hash = crypto.createHash('md5').update(fs.readFileSync(filePath)).digest('hex');
+      const buffer = await fs.promises.readFile(filePath);
+      const hash = crypto.createHash('md5').update(buffer).digest('hex');
       if (hash !== expectedMd5) {
-        fs.unlinkSync(filePath);
+        await fs.promises.unlink(filePath);
         return { status: false, message: 'MD5 checksum mismatch.' };
       }
     }
