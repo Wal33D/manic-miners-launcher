@@ -16,6 +16,11 @@ export const createDesktopShortcuts = async ({
   let status = true;
   const filePaths: string[] = [];
 
+  if (process.platform !== 'win32') {
+    console.warn('Shortcut creation is only supported on Windows.');
+    return { status: false, filePaths };
+  }
+
   try {
     if (!installPath) {
       const baseInstallDir = path.join(os.homedir(), 'Desktop', 'map-generator-master', 'installations');

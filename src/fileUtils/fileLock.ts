@@ -3,7 +3,10 @@ import os from 'os';
 import path from 'path';
 import util from 'util';
 
-const lockFilePath = path.join(os.homedir(), 'AppData', 'LocalLow', 'ItchDownloadLock.lock');
+const lockFilePath =
+  process.platform === 'win32'
+    ? path.join(os.homedir(), 'AppData', 'LocalLow', 'ItchDownloadLock.lock')
+    : path.join(os.tmpdir(), 'ItchDownloadLock.lock');
 
 const fsWriteFile = util.promisify(fs.writeFile);
 const fsUnlink = util.promisify(fs.unlink);

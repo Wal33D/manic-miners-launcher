@@ -18,6 +18,10 @@ export const createShortcut = async ({
   let created = false;
   let message = '';
 
+  if (process.platform !== 'win32') {
+    return { created: false, message: 'Shortcut creation is only supported on Windows.' };
+  }
+
   try {
     if (type === 'file' || type === 'directory') {
       // Handle file and directory shortcut creation
