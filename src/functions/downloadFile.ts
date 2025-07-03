@@ -64,7 +64,7 @@ export async function downloadFile({
     });
 
     const stats = fs.statSync(filePath);
-    if (stats.size !== expectedSize) {
+    if (expectedSize !== undefined && stats.size !== expectedSize) {
       fs.unlinkSync(filePath);
       return {
         status: false,
