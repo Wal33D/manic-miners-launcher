@@ -1,14 +1,15 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import * as os from 'os';
 
 /**
- * Finds the latest version of the Manic Miners installation based on directory names with version numbers.
+ * Finds the latest version of the Manic Miners installation based on
+ * directory names with version numbers.
+ *
+ * @param baseDir The directory containing versioned installations.
  * @returns The full path to the executable of the latest version found.
  */
-export const findLatestVersionPath = async (): Promise<string> => {
-  const baseInstallationPath = path.join(os.homedir(), 'Desktop', 'map-generator-master', 'installations');
-  const directories = await fs.readdir(baseInstallationPath, { withFileTypes: true });
+export const findLatestVersionPath = async (baseDir: string): Promise<string> => {
+  const directories = await fs.readdir(baseDir, { withFileTypes: true });
   const versionedDirectories = directories
     .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('ManicMinersV'))
     .map(dirent => dirent.name)
@@ -16,5 +17,5 @@ export const findLatestVersionPath = async (): Promise<string> => {
   const latestVersionDirectory = versionedDirectories[0];
   if (!latestVersionDirectory) throw new Error('No valid installation directory found.');
 
-  return path.join(baseInstallationPath, latestVersionDirectory, 'ManicMiners.exe');
+  return path.join(baseDir, latestVersionDirectory, 'ManicMiners.exe');
 };
