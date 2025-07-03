@@ -13,4 +13,8 @@ Thank you for considering contributing to this project! To file issues or submit
 2. Make your changes and ensure that any tests pass.
 3. Open a pull request against the `master` branch with a clear description of your changes.
 
+## Installing Dependencies
+
+This project uses **npm** as its package manager. Run `npm install` (or `npm ci` in CI environments) to install dependencies.
+
 We appreciate all contributions and will review your pull request as soon as possible.
