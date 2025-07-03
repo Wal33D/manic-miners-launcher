@@ -8,10 +8,8 @@ export function trimFilePath(fullPath: string): string | null {
   return fullPath.substring(0, lastSlashIndex);
 }
 export function fetchDefaultDirectory(callback: (path: string) => void) {
-  //@ts-ignore
   window.electronAPI.send(IPC_CHANNELS.GET_DIRECTORIES);
 
-  //@ts-ignore
   window.electronAPI.receive(IPC_CHANNELS.GET_DIRECTORIES, response => {
     if (response.status && response.directories) {
       const installPathInput = document.getElementById('installPath') as HTMLInputElement;
