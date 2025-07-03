@@ -36,17 +36,19 @@ export async function downloadFile({
       return { status: false, message: `HTTP error while downloading: status ${response.status}` };
     }
 
-    const totalBytes = parseInt(response.headers.get('content-length') || '0');
+    const totalBytesHeader = response.headers.get('content-length');
+    const totalBytes = totalBytesHeader ? parseInt(totalBytesHeader) : 0;
     let downloadedBytes = 0;
 
     const progressStream = new Transform({
       transform(chunk, encoding, callback) {
         downloadedBytes += chunk.length;
         if (updateStatus) {
-          // Check if updateStatus is provided before calling it
-          const progressIncrement = (downloadedBytes / totalBytes) * (100 - initialProgress);
+          // When totalBytes is zero fall back to expectedSize or bytes received
+          const denominator = totalBytes || expectedSize || 1;
+          const progressIncrement = (downloadedBytes / denominator) * (100 - initialProgress);
           const currentProgress = initialProgress + progressIncrement;
-          updateStatus({ progress: Math.min(Math.floor(currentProgress), 70) }); // Ensure progress does not exceed 100
+          updateStatus({ progress: Math.min(Math.floor(currentProgress), 70) });
         }
         callback(null, chunk);
       },
