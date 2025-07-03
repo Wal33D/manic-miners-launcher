@@ -47,4 +47,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
   openExternal: shell.openExternal,
+  platform: process.platform,
 });
