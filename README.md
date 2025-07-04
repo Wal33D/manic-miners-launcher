@@ -56,6 +56,21 @@ If you want to build the launcher from source you'll need **Node.js 20.19.2 or n
 3. Start the app in development mode using `pnpm start`.
 4. To create distributable packages run `pnpm run make`.
 
+### macOS TypeScript checks
+
+On macOS the TypeScript checker used during development can crash with `EPIPE`
+errors. The build scripts automatically disable this check on darwin systems.
+If you want to run the checker anyway, set the `FORCE_TS_CHECK` environment
+variable before starting the app:
+
+```bash
+export FORCE_TS_CHECK=1
+pnpm start
+```
+
+Unset `FORCE_TS_CHECK` to restore the default behaviour and avoid potential
+`EPIPE` crashes.
+
 ### Environment Variables
 
 `SERVER_BASE_URL` sets the base URL used for update checks and other API calls.
