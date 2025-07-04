@@ -22,8 +22,12 @@ export const initializeVersionSelect = (): void => {
     updateVersionSelectUI(data);
   });
 
-  function updateVersionSelectUI(data: { versions: any; defaultVersion: any }) {
+  function updateVersionSelectUI(data: { versions?: any; defaultVersion?: any }) {
     const { versions, defaultVersion } = data;
+    if (!Array.isArray(versions)) {
+      console.error('Invalid versions data received:', versions);
+      return;
+    }
     const versionSelect = document.getElementById('versionSelect') as HTMLSelectElement;
     const installPathInput = document.getElementById('installPath') as HTMLInputElement;
 
