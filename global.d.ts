@@ -19,6 +19,8 @@ export type IpcChannel =
   | 'play-sound'
   | 'get-urls'
   | 'get-levels'
+  | 'download-level'
+  | 'level-download-progress'
   | 'open-directory-dialog'
   | 'directory-selected';
 
