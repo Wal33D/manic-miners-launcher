@@ -17,7 +17,12 @@ export const initializeLevels = (): void => {
   });
 
   // Update the UI with received levels data
-  function updateLevelsTable(levels: any[]) {
+  function updateLevelsTable(levels: any[] | undefined | null) {
+    if (!Array.isArray(levels)) {
+      console.error('Invalid levels data received:', levels);
+      return;
+    }
+
     const tableBody = document.getElementById('levelsTable').querySelector('tbody');
     if (!tableBody) {
       console.error('The levelsTable tbody element was not found.');

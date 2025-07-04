@@ -17,7 +17,12 @@ export const initializeUrls = (): void => {
   });
 
   // Update the UI with received URL data
-  function updateLinksUI(urls: { [s: string]: string } | ArrayLike<unknown>) {
+  function updateLinksUI(urls: { [s: string]: string } | ArrayLike<unknown> | undefined | null) {
+    if (!urls || typeof urls !== 'object') {
+      console.error('Invalid URLs data received:', urls);
+      return;
+    }
+
     const linksContainer = document.getElementById('links-pane');
     if (!linksContainer) {
       console.error('The links-pane element was not found.');
