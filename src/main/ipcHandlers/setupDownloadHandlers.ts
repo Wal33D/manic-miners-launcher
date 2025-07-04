@@ -20,6 +20,15 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
       const { filePath, metaData, metadataPath, message, status } = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
         downloadDirectory: downloadPath,
+        onProgress: ({ bytesReceived, totalBytes, fileName }) => {
+          const progress = totalBytes
+            ? Math.floor((bytesReceived / totalBytes) * 100)
+            : 0;
+          event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, {
+            progress,
+            status: `Downloading ${fileName ?? 'game'}...`,
+          });
+        },
       })) as DownloadGameResponse;
       //<-- latest version only do this for a download instead
 
