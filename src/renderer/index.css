@@ -1,6 +1,13 @@
 /* In your main stylesheet */
-@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~bootswatch/dist/darkly/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+:root {
+  --mm-green: #32cd32;
+  --mm-dark-green: #228b22;
+  --mm-yellow: #f2cd00;
+  --mm-bg-dark: rgba(0, 0, 0, 0.7);
+}
 
 @font-face {
   font-family: 'Fredericka the Great';
@@ -78,7 +85,7 @@ textarea {
 .btn-success,
 .progress-bar,
 .form-check-input:checked {
-  background-color: #32cd32;
+  background-color: var(--mm-green);
 }
 
 .progress {
@@ -110,7 +117,7 @@ textarea {
 
 .btn-success,
 .highlight {
-  border-color: #32cd32;
+  border-color: var(--mm-green);
 }
 
 .btn-success:hover,
@@ -176,8 +183,8 @@ textarea {
 }
 
 .form-check-input {
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 2px solid #32cd32;
+  background-color: var(--mm-bg-dark);
+  border: 2px solid var(--mm-green);
 }
 
 #messageBox {
@@ -194,17 +201,17 @@ textarea {
 .btn-dark-green,
 #versionSelect,
 #installPath {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: rgb(50, 205, 50);
-  border: 2px solid #228b22;
+  background-color: var(--mm-bg-dark);
+  color: var(--mm-green);
+  border: 2px solid var(--mm-dark-green);
   font-weight: 400;
 }
 
 #versionSelect:focus,
 #installPath:focus {
   outline: none;
-  border-color: #228b22;
-  box-shadow: 0 0 10px #228b22;
+  border-color: var(--mm-dark-green);
+  box-shadow: 0 0 10px var(--mm-dark-green);
 }
 
 .navbar-brand {
@@ -217,7 +224,7 @@ textarea {
   font-family: 'Fredericka the Great', cursive; /* Lego-like font */
   padding-left: 12px; /* Add some padding */
   padding-right: 22px; /* Add some padding */
-  color: #f2cd00; /* Lego brick yellow */
+  color: var(--mm-yellow); /* Lego brick yellow */
   text-shadow: 0 0 10px rgba(50, 205, 50, 1); /* Yellow box shadow */
   transition:
     color 0.3s ease,
@@ -235,7 +242,7 @@ textarea {
   font-family: 'Fredericka the Great', cursive; /* Lego-like font */
   padding-left: 12px; /* Add some padding */
   padding-right: 22px; /* Add some padding */
-  color: #f2cd00; /* Lego brick yellow */
+  color: var(--mm-yellow); /* Lego brick yellow */
   transition: ease-in-out 0.5s;
   text-shadow: 0 0 10px rgba(50, 205, 50, 1); /* Yellow box shadow */
 }
@@ -255,7 +262,7 @@ textarea {
   -webkit-app-region: no-drag;
 }
 .footer a {
-  color: rgb(50, 205, 50, 0.8); /* Lego brick yellow text */
+  color: rgba(50, 205, 50, 0.8); /* Theme green text */
   transition: color 0.3s ease; /* Smooth color change */
 }
 .footer a * {
@@ -283,8 +290,8 @@ button.disabled {
   width: 25px; /* Adjusted for a slightly larger touch target */
   height: 25px; /* Matching width for square aspect ratio */
   margin: 5px; /* Increased margin for better spacing */
-  color: rgb(50, 205, 50); /* Theme-specific green text */
-  border: 2px solid #228b22; /* Dark green border */
+  color: var(--mm-green); /* Theme-specific green text */
+  border: 2px solid var(--mm-dark-green); /* Dark green border */
   background-color: transparent;
   border-radius: 50%; /* Circular buttons */
   transition:
@@ -296,7 +303,7 @@ button.disabled {
 .icon-button:hover {
   background-color: rgba(50, 205, 50, 0.2); /* Adjusted hover background for better visibility */
   color: #fff;
-  border-color: #32cd32;
+  border-color: var(--mm-green);
   transform: scale(1.1); /* Slight scale on hover for effect */
 }
 
@@ -309,11 +316,11 @@ button.disabled {
   font-size: 0.7rem;
 }
 #main-select-tabs a {
-  color: rgb(50, 205, 50);
+  color: var(--mm-green);
   background-color: rgba(0, 0, 0, 0.6);
   cursor: pointer !important;
 }
 .nav-link.active {
   color: rgb(0, 0, 0) !important;
-  background-color: rgb(50, 205, 50) !important;
+  background-color: var(--mm-green) !important;
 }
