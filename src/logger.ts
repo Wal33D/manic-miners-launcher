@@ -8,7 +8,7 @@ if (typeof process !== 'undefined' && (process as any).type !== 'renderer') {
 }
 
 // Flag to control verbose logging
-export const isVerbose = process.env.VERBOSE === 'true';
+export const isVerbose = typeof process !== 'undefined' && process.env ? process.env.VERBOSE === 'true' : false;
 
 /**
  * Logs a message to a file with a timestamp. Uses a specified file or a default log file if no path is provided.

@@ -3,7 +3,8 @@ import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
 
-const SERVER_BASE_URL = process.env.SERVER_BASE_URL || 'https://manic-launcher.vercel.app';
+const SERVER_BASE_URL =
+  typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
 
 interface FetchResult {
   status: boolean;
