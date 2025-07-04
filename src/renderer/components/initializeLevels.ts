@@ -1,10 +1,21 @@
 // Import IPC channels from a centralized file (adjust the import path as needed)
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { debugLog } from '../../logger';
+import { updateStatus } from './updateStatus';
 
 export const initializeLevels = (): void => {
   window.electronAPI?.removeAllListeners(IPC_CHANNELS.GET_LEVELS);
+  window.electronAPI?.removeAllListeners(IPC_CHANNELS.DOWNLOAD_LEVEL);
+  window.electronAPI?.removeAllListeners(IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS);
   window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
+
+  window.electronAPI?.receive(IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS, ({ progress, status }) => {
+    updateStatus(progress, status);
+  });
+
+  window.electronAPI?.receive(IPC_CHANNELS.DOWNLOAD_LEVEL, (result: any) => {
+    debugLog(result.message);
+  });
 
   // Handler for receiving levels data
   window.electronAPI?.receiveOnce(IPC_CHANNELS.GET_LEVELS, (response: any) => {
@@ -40,7 +51,17 @@ export const initializeLevels = (): void => {
         <td>${level.creator}</td>
         <td>${new Date(level.date).toLocaleDateString()}</td>
         <td>${level.downloadCount.toLocaleString()}</td>
+        <td><button class="btn btn-sm btn-dark-green not-draggable" data-level-id="${level.identifier}">Install</button></td>
       `;
+    });
+
+    tableBody.querySelectorAll('button[data-level-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = (btn as HTMLElement).getAttribute('data-level-id');
+        if (id) {
+          window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_LEVEL, id);
+        }
+      });
     });
   }
 };
