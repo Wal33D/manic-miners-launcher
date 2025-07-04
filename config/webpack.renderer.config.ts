@@ -13,7 +13,17 @@ export const rendererConfig: Configuration = {
     rules,
   },
   plugins,
+  externals: {
+    fs: 'commonjs2 fs',
+    path: 'commonjs2 path',
+    os: 'commonjs2 os',
+  },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.mp3'],
+    fallback: {
+      fs: false,
+      path: false,
+      os: false,
+    },
   },
 };
