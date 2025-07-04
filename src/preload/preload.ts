@@ -46,6 +46,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeAllListeners(channel);
     }
   },
-  openExternal: shell.openExternal,
+  openExternal: (url: string) => {
+    if (typeof shell?.openExternal === 'function') {
+      shell.openExternal(url);
+    }
+  },
   platform: process.platform,
 });
