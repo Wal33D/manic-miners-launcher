@@ -19,7 +19,10 @@ export const createWindow = (): void => {
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.webContents.openDevTools();
+    });
   }
 };
