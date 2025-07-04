@@ -1,4 +1,5 @@
 import { BrowserWindow, app } from 'electron';
+import path from 'path';
 import { createWindow } from './createWindow';
 import { setupVersionHandlers } from './ipcHandlers/setupVersionHandlers';
 import { setupGameLaunchHandlers } from './ipcHandlers/setupGameLaunchHandlers';
@@ -8,6 +9,9 @@ import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
 import { setupLevelHandler } from './ipcHandlers/setupLevelHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
+
+const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
+app.setPath('userData', userDataPath);
 
 const startApp = (): void => {
   app.on('ready', () => {
