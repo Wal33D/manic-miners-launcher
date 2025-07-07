@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  bootswatch:
+    hash: 4vftcho3jr2ombtedipefrdin4
+    path: patches/bootswatch.patch
   itchio-downloader@0.8.1:
     hash: kza4ynywzdqe4tzioauwbb7ixq
     path: patches/itchio-downloader@0.8.1.patch
@@ -21,7 +24,7 @@ importers:
         version: 5.3.7(@popperjs/core@2.11.8)
       bootswatch:
         specifier: ^5.3.7
-        version: 5.3.7
+        version: 5.3.7(patch_hash=4vftcho3jr2ombtedipefrdin4)
       electron-squirrel-startup:
         specifier: ^1.0.1
         version: 1.0.1
@@ -5040,7 +5043,7 @@ snapshots:
     dependencies:
       '@popperjs/core': 2.11.8
 
-  bootswatch@5.3.7: {}
+  bootswatch@5.3.7(patch_hash=4vftcho3jr2ombtedipefrdin4): {}
 
   brace-expansion@1.1.12:
     dependencies:

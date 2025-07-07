@@ -70,7 +70,8 @@
   "packageManager": "pnpm@9.15.4",
   "pnpm": {
     "patchedDependencies": {
-      "itchio-downloader@0.8.1": "patches/itchio-downloader@0.8.1.patch"
+      "itchio-downloader@0.8.1": "patches/itchio-downloader@0.8.1.patch",
+      "bootswatch": "patches/bootswatch.patch"
     }
   }
 }
