@@ -13,7 +13,7 @@ const validSendChannels = [
   IPC_CHANNELS.DOWNLOAD_LEVEL,
   IPC_CHANNELS.GET_SETTINGS,
   IPC_CHANNELS.SET_SETTINGS,
-  'open-directory-dialog',
+  IPC_CHANNELS.OPEN_DIRECTORY_DIALOG,
 ];
 
 const validReceiveChannels = [
@@ -27,7 +27,7 @@ const validReceiveChannels = [
   IPC_CHANNELS.ALL_VERSION_INFO,
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.GET_LEVELS,
-  'directory-selected',
+  IPC_CHANNELS.DIRECTORY_SELECTED,
   IPC_CHANNELS.GET_SETTINGS,
   IPC_CHANNELS.SET_SETTINGS,
 ];
