@@ -2,6 +2,7 @@
 
 Below is a detailed 5‑phase plan for modernizing the **Manic Miners Launcher** interface and features. These steps expand on the conversation guidance so contributors have clear direction.
 
+
 ## Phase 1 – Research & Asset Preparation _(completed 2025‑07‑08)_
 
 1. **Review current UI** – See `PHASE1_RESEARCH.md` for notes on the existing layout and theme variables.
