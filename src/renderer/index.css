@@ -315,6 +315,9 @@ button.disabled {
   background-color: rgba(0, 0, 0, 0.8) !important;
   font-size: 0.7rem;
 }
+#side-pane.collapsed {
+  display: none !important;
+}
 .nav-link.active {
   color: rgb(0, 0, 0) !important;
   background-color: var(--mm-green) !important;

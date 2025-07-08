@@ -1,18 +1,14 @@
 // setupTopNav.ts
-import { Modal } from 'bootstrap';
-
 /**
- * Sets up event listeners for the top navigation bar, particularly for the main menu modal.
- * @param {HTMLElement} topNavButton The navbar brand element that opens the menu modal.
+ * Toggles the sidebar when the top navigation button is clicked.
+ * @param {HTMLElement} topNavButton The navbar brand element that toggles the sidebar.
  */
 export function setupTopNav(topNavButton: HTMLElement) {
-  const mainMenuModal = document.getElementById('navbar-main-menu-modal');
-  if (!mainMenuModal) return;
+  const sidebar = document.getElementById('side-pane');
+  if (!sidebar) return;
 
-  const bsModal = Modal.getOrCreateInstance(mainMenuModal, { keyboard: true });
-
-  topNavButton.addEventListener('click', function (e) {
+  topNavButton.addEventListener('click', e => {
     e.preventDefault();
-    bsModal.show();
+    sidebar.classList.toggle('collapsed');
   });
 }
