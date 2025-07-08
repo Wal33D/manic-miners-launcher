@@ -8,8 +8,10 @@ import { setupDirectoryDialog } from './components/setupDirectoryDialog';
 import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { initializeUrls } from './components/initializeUrls';
 import { initializeLevels } from './components/initializeLevels';
+import { initializeSettings } from './components/initializeSettings';
 
 initializeVersionSelect();
+initializeSettings();
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.electronAPI.platform !== 'win32') {

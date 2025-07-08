@@ -324,3 +324,16 @@ button.disabled {
   color: rgb(0, 0, 0) !important;
   background-color: var(--mm-green) !important;
 }
+
+body.light-mode {
+  background: #f8f9fa !important;
+  color: #000;
+}
+body.light-mode .navbar,
+body.light-mode .footer {
+  background-color: #e9ecef !important;
+}
+body.light-mode #side-pane {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #000;
+}
