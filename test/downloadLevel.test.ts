@@ -3,14 +3,10 @@ import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
-import { execSync } from 'child_process';
+import { createZipFromContent, createTraversalZip } from './helpers/archive';
 import { downloadLevel } from '../src/functions/downloadLevel';
 
-function createZip(dir: string, filename: string, content: string) {
-  const file = path.join(dir, 'file.txt');
-  fs.writeFileSync(file, content);
-  execSync(`zip ${filename} file.txt`, { cwd: dir });
-}
+
 
 function startServer(filePath: string): Promise<{ url: string; close: () => void }> {
   return new Promise(resolve => {
@@ -28,7 +24,7 @@ function startServer(filePath: string): Promise<{ url: string; close: () => void
 
 test('downloadLevel downloads and unpacks zip', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
-  createZip(dir, 'level.zip', 'hello');
+  await createZipFromContent(dir, 'level.zip', 'hello');
   const { url, close } = await startServer(path.join(dir, 'level.zip'));
 
   const out = path.join(dir, 'levels');
@@ -49,12 +45,8 @@ test('downloadLevel downloads and unpacks zip', async () => {
 
 test('downloadLevel rejects zip with traversal paths', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
-  const zipDir = path.join(dir, 'zip');
-  fs.mkdirSync(zipDir);
-  const outside = path.join(dir, 'evil.txt');
-  fs.writeFileSync(outside, 'evil');
-  execSync('zip bad.zip ../evil.txt', { cwd: zipDir });
-  const zipPath = path.join(zipDir, 'bad.zip');
+  await createTraversalZip(dir, 'bad.zip');
+  const zipPath = path.join(dir, 'bad.zip');
   const { url, close } = await startServer(zipPath);
 
   const out = path.join(dir, 'levels');
