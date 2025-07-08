@@ -2,9 +2,12 @@ import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
+import { debugLog } from '../logger';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
+
+const FETCH_TIMEOUT_MS = process.env.FETCH_TIMEOUT_MS ? parseInt(process.env.FETCH_TIMEOUT_MS, 10) : 15000;
 
 interface FetchResult {
   status: boolean;
@@ -47,9 +50,12 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
       throw new Error('Expected a single endpoint, but received none or multiple.');
     }
 
-    // Fetch data from the selected endpoint
+    // Fetch data from the selected endpoint with timeout
     const endpoint = endpointResult.data; // Safely extracted single endpoint data
-    const response = await fetch(`${SERVER_BASE_URL}${endpoint.endpoint}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const response = await fetch(`${SERVER_BASE_URL}${endpoint.endpoint}`, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -60,7 +66,14 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
     // Cache the fetched data
     await fs.writeFile(cacheFilePath, JSON.stringify({ status, data, message }), 'utf8');
   } catch (error) {
-    message = `Error: ${error.message}`;
+    const err = error as Error;
+    if (err.name === 'AbortError') {
+      message = `Request to ${routeName} timed out.`;
+      await debugLog(message);
+    } else {
+      message = `Error: ${err.message}`;
+      await debugLog(`Network error fetching ${routeName}: ${err.message}`);
+    }
   }
 
   return { status, data, message };
