@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import './messageBoxElement.test';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
