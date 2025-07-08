@@ -3,6 +3,7 @@ import path from 'path';
 import StreamZip from 'node-stream-zip';
 import { fetchVersions } from '../api/fetchVersions';
 import { createDirectory } from '../fileUtils/createDirectory';
+import { validateUnpackPath, extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
 
 export const unpackVersion = async ({
   versionIdentifier,
@@ -47,54 +48,21 @@ export const unpackVersion = async ({
   const zip = new StreamZip.async({ file: zipFilePath });
 
   try {
-    const entries = await zip.entries();
-    const totalFiles = Object.keys(entries).length;
-    let extractedFiles = 0;
-
-    for (const entry of Object.values(entries)) {
-      const entryName = entry.name;
-      const resolvedPath = path.resolve(specificInstallPath, entryName);
-
-      if (entryName.includes('..') || path.isAbsolute(entryName) || !resolvedPath.startsWith(path.resolve(specificInstallPath))) {
-        throw new Error(`Invalid entry path detected: ${entryName}`);
-      }
-
-      const fullPath = path.join(specificInstallPath, entryName);
-      if (entry.isDirectory) {
-        await fs.promises.mkdir(fullPath, { recursive: true });
-      } else {
-        const dirPath = path.dirname(fullPath);
-        try {
-          await fs.promises.access(dirPath);
-        } catch {
-          await fs.promises.mkdir(dirPath, { recursive: true });
+    await extractZipEntries({
+      zip,
+      targetPath: specificInstallPath,
+      updateStatus: status => {
+        if (updateStatus) {
+          updateStatus({
+            status: status.status,
+            progress: 60 + (status.progress ?? 0) * 0.95,
+          });
         }
-        await zip.extract(entry.name, fullPath);
-      }
-      extractedFiles++;
-      if (updateStatus) {
-        updateStatus({ status: 'Extracting files...', progress: 60 + (extractedFiles / totalFiles) * 95 });
-      }
-    }
+      },
+    });
     await zip.close();
 
-    // Check for nested directory structure and flatten if necessary
-    const dirEntries = await fs.promises.readdir(specificInstallPath);
-    const subdirectories: string[] = [];
-    for (const subDir of dirEntries) {
-      const stat = await fs.promises.stat(path.join(specificInstallPath, subDir));
-      if (stat.isDirectory()) {
-        subdirectories.push(subDir);
-      }
-    }
-    if (subdirectories.length === 1) {
-      const nestedDir = path.join(specificInstallPath, subdirectories[0]);
-      const nestedFiles = await fs.promises.readdir(nestedDir);
-      for (const file of nestedFiles) {
-        await fs.promises.rename(path.join(nestedDir, file), path.join(specificInstallPath, file));
-      }
-      await fs.promises.rmdir(nestedDir);
-    }
+    await flattenSingleSubdirectory(specificInstallPath);
 
     const message = `Successfully unpacked ${versionToUnpack.title} into ${specificInstallPath}`;
     if (updateStatus) updateStatus({ status: 'Unpacking completed successfully.', progress: 100 });

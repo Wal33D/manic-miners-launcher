@@ -1,8 +1,8 @@
-import path from 'path';
 import { verifyFile } from '../fileUtils/verifyFile';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 import { debugLog } from '../logger';
+import { validateUnpackPath } from './unpackHelpers';
 
 export const downloadVersion = async ({
   versionIdentifier,
@@ -35,7 +35,7 @@ export const downloadVersion = async ({
     updateStatus({ progress: 7 });
 
     const filename = versionToProcess.filename;
-    const filePath = path.join(downloadPath, filename);
+    const filePath = validateUnpackPath({ basePath: downloadPath, entryName: filename });
     const downloadUrl = versionToProcess.downloadUrl;
 
     updateStatus({ progress: 10, status: 'Verifying existing file...' });
