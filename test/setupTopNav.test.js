@@ -4,13 +4,24 @@ import { JSDOM } from 'jsdom';
 import mock from 'mock-require';
 
 class ModalStub {
-  static toggled = false;
+  static shown = false;
   static lastElement = null;
+  static instance = null;
+
   constructor(elem) {
     ModalStub.lastElement = elem;
   }
-  toggle() {
-    ModalStub.toggled = true;
+
+  show() {
+    ModalStub.shown = true;
+  }
+
+  static getOrCreateInstance(elem) {
+    if (!ModalStub.instance) {
+      ModalStub.instance = new ModalStub(elem);
+    }
+    ModalStub.lastElement = elem;
+    return ModalStub.instance;
   }
 }
 
@@ -29,7 +40,7 @@ test('setupTopNav attaches listener and opens modal', () => {
   btn.dispatchEvent(new Event('click'));
 
   assert.strictEqual(ModalStub.lastElement, document.getElementById('navbar-main-menu-modal'));
-  assert.ok(ModalStub.toggled);
+  assert.ok(ModalStub.shown);
 
   mock.stop('bootstrap');
 });
