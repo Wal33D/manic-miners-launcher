@@ -1,7 +1,9 @@
 import { shell, contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 
-const validSendChannels = [
+type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
+
+const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.GET_DIRECTORIES,
   IPC_CHANNELS.LAUNCH_GAME,
   IPC_CHANNELS.DOWNLOAD_VERSION,
@@ -16,7 +18,7 @@ const validSendChannels = [
   IPC_CHANNELS.OPEN_DIRECTORY_DIALOG,
 ];
 
-const validReceiveChannels = [
+const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.GET_DIRECTORIES,
   IPC_CHANNELS.LAUNCH_GAME,
   IPC_CHANNELS.DOWNLOAD_PROGRESS,
@@ -33,22 +35,22 @@ const validReceiveChannels = [
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  send: (channel: string, data?: any) => {
+  send: (channel: IpcChannel, data?: any) => {
     if (validSendChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
-  receive: (channel: string, func: (...args: any[]) => void) => {
+  receive: (channel: IpcChannel, func: (...args: any[]) => void) => {
     if (validReceiveChannels.includes(channel)) {
       ipcRenderer.on(channel, (_event, ...args) => func(...args));
     }
   },
-  receiveOnce: (channel: string, func: (...args: any[]) => void) => {
+  receiveOnce: (channel: IpcChannel, func: (...args: any[]) => void) => {
     if (validReceiveChannels.includes(channel)) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     }
   },
-  removeAllListeners: (channel: string) => {
+  removeAllListeners: (channel: IpcChannel) => {
     if (validReceiveChannels.includes(channel)) {
       ipcRenderer.removeAllListeners(channel);
     }
