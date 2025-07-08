@@ -22,7 +22,9 @@ export type IpcChannel =
   | 'download-level'
   | 'level-download-progress'
   | 'open-directory-dialog'
-  | 'directory-selected';
+  | 'directory-selected'
+  | 'get-settings'
+  | 'set-settings';
 
 export interface ElectronAPI {
   send: (channel: IpcChannel, data?: unknown) => void;

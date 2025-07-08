@@ -11,6 +11,8 @@ const validSendChannels = [
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.GET_LEVELS,
   IPC_CHANNELS.DOWNLOAD_LEVEL,
+  IPC_CHANNELS.GET_SETTINGS,
+  IPC_CHANNELS.SET_SETTINGS,
   'open-directory-dialog',
 ];
 
@@ -26,6 +28,8 @@ const validReceiveChannels = [
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.GET_LEVELS,
   'directory-selected',
+  IPC_CHANNELS.GET_SETTINGS,
+  IPC_CHANNELS.SET_SETTINGS,
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
