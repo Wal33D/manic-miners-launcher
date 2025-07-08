@@ -16,8 +16,8 @@ export const createDesktopShortcuts = async ({
   let status = true;
   const filePaths: string[] = [];
 
-  if (process.platform !== 'win32' && process.platform !== 'darwin') {
-    console.warn('Shortcut creation is only supported on Windows and macOS.');
+  if (process.platform !== 'win32') {
+    console.warn('Shortcut creation is only supported on Windows.');
     return { status: false, filePaths };
   }
 
@@ -28,14 +28,8 @@ export const createDesktopShortcuts = async ({
     }
 
     const desktopPath = path.join(os.homedir(), 'Desktop');
-    const startMenuPath =
-      process.platform === 'win32'
-        ? path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs')
-        : path.join(os.homedir(), 'Applications');
-    const extrasFolderPath =
-      process.platform === 'win32'
-        ? path.join(startMenuPath, 'Manic Miners Extras')
-        : path.join(desktopPath, 'Manic Miners Extras');
+    const startMenuPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs');
+    const extrasFolderPath = path.join(startMenuPath, 'Manic Miners Extras');
     await createDirectory({ directory: extrasFolderPath });
 
     // Shortcut creation for executable and directories
@@ -65,43 +59,31 @@ export const createDesktopShortcuts = async ({
       filePaths.push(result.message);
     }
 
-    if (process.platform === 'win32') {
-      // Start Menu shortcuts
-      if (createExeShortcut) {
-        const startMenuExeResult = await createShortcut({
-          startPath: startMenuPath,
-          name: path.basename(installPath, '.exe'),
-          type: 'file',
-          options: { target: installPath, desc: 'Automatically Generated', icon: installPath, workingDir: path.dirname(installPath) },
-        });
-        filePaths.push(startMenuExeResult.message);
-      }
+    // Start Menu shortcuts
+    if (createExeShortcut) {
+      const startMenuExeResult = await createShortcut({
+        startPath: startMenuPath,
+        name: path.basename(installPath, '.exe'),
+        type: 'file',
+        options: { target: installPath, desc: 'Automatically Generated', icon: installPath, workingDir: path.dirname(installPath) },
+      });
+      filePaths.push(startMenuExeResult.message);
+    }
 
-      if (createDirShortcut) {
-        const startMenuDirName = path.basename(path.dirname(installPath)) + ' Install Directory';
-        const startMenuDirResult = await createShortcut({
-          startPath: startMenuPath,
-          name: startMenuDirName,
-          type: 'directory',
-          options: {
-            target: path.dirname(installPath),
-            icon: installPath,
-            workingDir: path.dirname(installPath),
-            desc: 'A shortcut to your ManicMiners Installation directory',
-          },
-        });
-        filePaths.push(startMenuDirResult.message);
-      }
-    } else if (process.platform === 'darwin') {
-      if (createExeShortcut) {
-        const result = await createShortcut({
-          startPath: startMenuPath,
-          name: path.basename(installPath),
-          type: 'file',
-          options: { target: installPath },
-        });
-        filePaths.push(result.message);
-      }
+    if (createDirShortcut) {
+      const startMenuDirName = path.basename(path.dirname(installPath)) + ' Install Directory';
+      const startMenuDirResult = await createShortcut({
+        startPath: startMenuPath,
+        name: startMenuDirName,
+        type: 'directory',
+        options: {
+          target: path.dirname(installPath),
+          icon: installPath,
+          workingDir: path.dirname(installPath),
+          desc: 'A shortcut to your ManicMiners Installation directory',
+        },
+      });
+      filePaths.push(startMenuDirResult.message);
     }
 
     // URLs for creating web resource shortcuts
