@@ -10,7 +10,6 @@ export function setupNavigation() {
     { id: 'nav-levels', target: 'levels' },
     { id: 'nav-library', target: 'library' },
     { id: 'nav-store', target: 'store' },
-    { id: 'nav-settings', target: 'settings' },
   ];
 
   links.forEach(({ id, target }) => {
