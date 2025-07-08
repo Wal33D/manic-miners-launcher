@@ -10,6 +10,7 @@ import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
 import { setupLevelHandler } from './ipcHandlers/setupLevelHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupLevelDownloadHandlers } from './ipcHandlers/setupLevelDownloadHandlers';
+import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
@@ -26,6 +27,7 @@ const startApp = (): void => {
     setupUrlHandler();
     setupLevelHandler();
     setupPlaySoundHandler();
+    setupSettingsHandlers();
   });
 
   app.on('window-all-closed', () => {

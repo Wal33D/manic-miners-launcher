@@ -32,9 +32,6 @@
                     <a class="nav-link" href="#levels" data-bs-toggle="tab">Levels</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#stats" data-bs-toggle="tab">Stats</a>
-                  </li>
-                  <li class="nav-item">
                     <a class="nav-link" href="#settings" data-bs-toggle="tab">Settings</a>
                   </li>
                 </ul>
@@ -66,11 +63,21 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" id="stats">
-              <div class="p-4">Statistics about the game usage...</div>
-            </div>
             <div class="tab-pane fade" id="settings">
-              <div class="p-4">Settings for the game launcher...</div>
+              <div class="p-4">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-play-sound" />
+                  <label class="form-check-label" for="setting-play-sound">Play sound after install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-auto-launch" />
+                  <label class="form-check-label" for="setting-auto-launch">Launch game after install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-dark-mode" />
+                  <label class="form-check-label" for="setting-dark-mode">Enable dark mode</label>
+                </div>
+              </div>
             </div>
           </div>
 
