@@ -39,11 +39,7 @@ export async function downloadLevel({
       const entryName = entry.name;
       const resolvedPath = path.resolve(levelsPath, entryName);
 
-      if (
-        entryName.includes('..') ||
-        path.isAbsolute(entryName) ||
-        !resolvedPath.startsWith(path.resolve(levelsPath))
-      ) {
+      if (entryName.includes('..') || path.isAbsolute(entryName) || !resolvedPath.startsWith(path.resolve(levelsPath))) {
         throw new Error(`Invalid entry path detected: ${entryName}`);
       }
 
