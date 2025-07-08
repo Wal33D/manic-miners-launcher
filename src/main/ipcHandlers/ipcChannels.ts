@@ -19,4 +19,7 @@ export const IPC_CHANNELS = {
   DIRECTORY_SELECTED: 'directory-selected',
   GET_SETTINGS: 'get-settings',
   SET_SETTINGS: 'set-settings',
+  MINIMIZE_WINDOW: 'minimize-window',
+  MAXIMIZE_WINDOW: 'maximize-window',
+  CLOSE_WINDOW: 'close-window',
 } as const;
