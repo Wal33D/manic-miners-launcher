@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
 import { downloadFile } from './downloadFile';
+import { extractZipEntries } from './unpackHelpers';
 
 export async function downloadLevel({
   downloadUrl,
@@ -31,36 +32,16 @@ export async function downloadLevel({
   updateStatus?.({ status: 'Unpacking level...', progress: 60 });
   const zip = new StreamZip.async({ file: zipPath });
   try {
-    const entries = await zip.entries();
-    const totalFiles = Object.keys(entries).length || 1;
-    let extractedFiles = 0;
-
-    for (const entry of Object.values(entries)) {
-      const entryName = entry.name;
-      const resolvedPath = path.resolve(levelsPath, entryName);
-
-      if (entryName.includes('..') || path.isAbsolute(entryName) || !resolvedPath.startsWith(path.resolve(levelsPath))) {
-        throw new Error(`Invalid entry path detected: ${entryName}`);
-      }
-
-      const fullPath = path.join(levelsPath, entryName);
-      if (entry.isDirectory) {
-        await fs.promises.mkdir(fullPath, { recursive: true });
-      } else {
-        const dirPath = path.dirname(fullPath);
-        try {
-          await fs.promises.access(dirPath);
-        } catch {
-          await fs.promises.mkdir(dirPath, { recursive: true });
-        }
-        await zip.extract(entry.name, fullPath);
-      }
-      extractedFiles++;
-      updateStatus?.({
-        status: 'Unpacking level...',
-        progress: 60 + (extractedFiles / totalFiles) * 40,
-      });
-    }
+    await extractZipEntries({
+      zip,
+      targetPath: levelsPath,
+      updateStatus: status => {
+        updateStatus?.({
+          status: status.status,
+          progress: 60 + (status.progress ?? 0) * 0.4,
+        });
+      },
+    });
     await zip.close();
     await fs.promises.unlink(zipPath).catch((): void => undefined);
     updateStatus?.({ status: 'Level installed.', progress: 100 });
