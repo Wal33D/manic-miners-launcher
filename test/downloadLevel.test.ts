@@ -6,8 +6,6 @@ import http from 'http';
 import { createZipFromContent, createTraversalZip } from './helpers/archive';
 import { downloadLevel } from '../src/functions/downloadLevel';
 
-
-
 function startServer(filePath: string): Promise<{ url: string; close: () => void }> {
   return new Promise(resolve => {
     const server = http.createServer((_req, res) => {

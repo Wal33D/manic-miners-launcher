@@ -6,7 +6,6 @@ import { createTraversalZip } from './helpers/archive';
 import { unpackVersion } from '../src/functions/unpackVersion';
 import * as fetchVersionsModule from '../src/api/fetchVersions';
 
-
 test('unpackVersion rejects archives with path traversal entries', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
   await createTraversalZip(dir, 'mal.zip');

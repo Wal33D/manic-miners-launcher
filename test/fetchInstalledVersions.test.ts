@@ -30,10 +30,7 @@ test('fetchInstalledVersions reports installed version metadata', async () => {
     },
   };
 
-  const versions = [
-    { identifier: 'v1', title: 'Version 1' } as any,
-    { identifier: 'v2', title: 'Version 2' } as any,
-  ];
+  const versions = [{ identifier: 'v1', title: 'Version 1' } as any, { identifier: 'v2', title: 'Version 2' } as any];
 
   mock('fs/promises', fsStub);
   mock('../src/functions/fetchDirectories', {
@@ -76,9 +73,7 @@ test('fetchInstalledVersions returns empty list when no directories found', asyn
     },
   };
 
-  const versions = [
-    { identifier: 'v1', title: 'Version 1' } as any,
-  ];
+  const versions = [{ identifier: 'v1', title: 'Version 1' } as any];
 
   mock('fs/promises', fsStub);
   mock('../src/functions/fetchDirectories', {
