@@ -21,3 +21,19 @@ test('getDirectories creates directories in a temporary environment', async () =
     assert.ok(fs.existsSync(dir), `directory missing: ${dir}`);
   }
 });
+
+test('getDirectories uses macOS specific paths', async () => {
+  const tmpRoot = fs.mkdtempSync(path.join(process.cwd(), 'tmp-macos-'));
+  process.env.HOME = tmpRoot;
+  delete process.env.LOCALAPPDATA;
+  const originalPlatform = process.platform;
+  Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+  const result = await getDirectories();
+  assert.ok(result.status, result.message);
+  assert.ok(result.directories);
+  const expectedBase = path.join(tmpRoot, 'Library', 'Application Support', 'ManicMinersLauncher');
+  assert.ok(result.directories.launcherInstallPath.startsWith(expectedBase));
+
+  Object.defineProperty(process, 'platform', { value: originalPlatform });
+});
