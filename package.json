@@ -75,6 +75,13 @@
   "pnpm": {
     "patchedDependencies": {
       "itchio-downloader@0.8.1": "patches/itchio-downloader@0.8.1.patch"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "puppeteer"
+    ],
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller"
+    ]
   }
 }
