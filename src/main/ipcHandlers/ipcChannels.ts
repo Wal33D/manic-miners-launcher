@@ -15,4 +15,6 @@ export const IPC_CHANNELS = {
   GET_LEVELS: 'get-levels',
   DOWNLOAD_LEVEL: 'download-level',
   LEVEL_DOWNLOAD_PROGRESS: 'level-download-progress',
+  GET_SETTINGS: 'get-settings',
+  SET_SETTINGS: 'set-settings',
 } as const;
