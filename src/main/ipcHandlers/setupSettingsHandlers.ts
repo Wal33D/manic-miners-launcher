@@ -3,7 +3,7 @@ import Store from 'electron-store';
 import { IPC_CHANNELS } from './ipcChannels';
 import { LauncherSettings } from '../../types/launcherSettings';
 
-const store = new Store();
+const store = new Store() as any;
 
 const defaultSettings: LauncherSettings = {
   playSoundOnInstall: true,
