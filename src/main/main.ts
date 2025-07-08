@@ -14,6 +14,7 @@ import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 import { setupWindowControls } from './ipcHandlers/setupWindowControls';
 import { setupNewsHandler } from './ipcHandlers/setupNewsHandler';
 
+
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
 // Prevent Chrome DevTools from attempting to use unsupported Autofill features
