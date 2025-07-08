@@ -21,9 +21,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
         downloadDirectory: downloadPath,
         onProgress: ({ bytesReceived, totalBytes, fileName }) => {
-          const progress = totalBytes
-            ? Math.floor((bytesReceived / totalBytes) * 100)
-            : 0;
+          const progress = totalBytes ? Math.floor((bytesReceived / totalBytes) * 100) : 0;
           event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, {
             progress,
             status: `Downloading ${fileName ?? 'game'}...`,
