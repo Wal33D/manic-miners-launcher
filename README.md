@@ -20,7 +20,7 @@ Welcome to the official repository of **Manic Miners Launcher**, a modern launch
 
 Before you install the Manic Miners Launcher, ensure you have the following:
 
-- **Supported OS**: Windows 7 or later. Other operating systems are currently unsupported and features such as auto-updates and shortcut creation will be disabled.
+- **Supported OS**: Windows 7 or later. macOS is supported for development, but features like auto-updates and desktop shortcuts may be limited on non-Windows platforms.
 - An internet connection for downloading the launcher and updates.
 - The original game files if you wish to apply mods or play certain versions.
 
@@ -55,6 +55,8 @@ If you want to build the launcher from source you'll need **Node.js 20.19.2 or n
 2. Install dependencies with `pnpm install`.
 3. Start the app in development mode using `pnpm start`.
 4. To create distributable packages run `pnpm run make`.
+
+macOS users can run the development build using the same commands, but some features such as auto-update and desktop shortcuts may not be fully functional.
 
 ### macOS TypeScript checks
 
