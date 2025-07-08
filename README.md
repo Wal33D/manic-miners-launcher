@@ -78,6 +78,14 @@ If not provided, the launcher defaults to `https://manic-launcher.vercel.app`.
 Set this variable before running the app if you need to target a different
 server.
 
+Example:
+
+```bash
+SERVER_BASE_URL=https://my-server.example.com pnpm start
+```
+
+This variable can also be set in your operating system's environment or in a `.env` file.
+
 ## License:
 
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
