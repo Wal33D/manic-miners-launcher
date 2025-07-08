@@ -1,5 +1,6 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { debugLog } from '../../logger';
+import { getCurrentSettings } from './initializeSettings';
 
 export function trimFilePath(fullPath: string): string | null {
   if (!fullPath) {
@@ -18,9 +19,10 @@ export function fetchDefaultDirectory(callback: (path: string) => void) {
   window.electronAPI.receiveOnce(IPC_CHANNELS.GET_DIRECTORIES, (response: any) => {
     if (response.status && response.directories) {
       const installPathInput = document.getElementById('installPath') as HTMLInputElement;
-      // Assuming 'response.directories' contains the actual directory data
-      installPathInput.value = response.directories.launcherInstallPath;
-      callback(response.directories.launcherInstallPath); // Call the callback with the path
+      const settings = getCurrentSettings();
+      const defaultPath = settings.installDir || response.directories.launcherInstallPath;
+      installPathInput.value = defaultPath;
+      callback(defaultPath); // Call the callback with the path
       debugLog(`Directory received and set: ${response.directories.launcherInstallPath}`);
     } else {
       console.error('Failed to fetch directories:', response.message);

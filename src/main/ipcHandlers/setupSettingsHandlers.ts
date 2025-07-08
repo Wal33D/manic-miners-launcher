@@ -9,6 +9,8 @@ const defaultSettings: LauncherSettings = {
   playSoundOnInstall: true,
   autoLaunchAfterInstall: false,
   darkMode: true,
+  autoUpdate: true,
+  installDir: '',
 };
 
 export const setupSettingsHandlers = async (): Promise<{ status: boolean; message: string }> => {

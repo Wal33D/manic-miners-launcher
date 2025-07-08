@@ -1,15 +1,10 @@
-import { Modal } from 'bootstrap';
-
 export function setupNavigation() {
-  const modalEl = document.getElementById('navbar-main-menu-modal');
-  if (!modalEl) return;
-  const bsModal = Modal.getOrCreateInstance(modalEl);
-
   const links: { id: string; target: string }[] = [
     { id: 'nav-home', target: 'news' },
     { id: 'nav-levels', target: 'levels' },
     { id: 'nav-library', target: 'library' },
     { id: 'nav-store', target: 'store' },
+    { id: 'nav-settings', target: 'settings' },
   ];
 
   links.forEach(({ id, target }) => {
@@ -18,7 +13,6 @@ export function setupNavigation() {
     link.addEventListener('click', e => {
       e.preventDefault();
       showTab(target);
-      bsModal.hide();
     });
   });
 

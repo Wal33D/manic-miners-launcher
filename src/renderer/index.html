@@ -18,9 +18,14 @@
                   <div id="brand-image" class="d-inline-block align-text-top"></div>
                   Manic Miners HQ
                 </a>
-                <a id="navbar-menu-btn" class="icon-button not-draggable ms-auto" href="#">
+                <a id="navbar-menu-btn" class="icon-button not-draggable" href="#">
                   <i class="fas fa-bars"></i>
                 </a>
+                <div id="window-controls" class="window-controls not-draggable ms-auto">
+                  <button id="window-minimize">_</button>
+                  <button id="window-maximize">□</button>
+                  <button id="window-close">×</button>
+                </div>
               </div>
             </nav>
           </div>
@@ -28,7 +33,7 @@
           <!-- Tab Content Area -->
           <div class="tab-content" style="flex-grow: 1">
             <div class="tab-pane fade show active" id="news">
-              <div class="p-4">Latest news and updates about the game...</div>
+              <div id="news-container" class="p-4">Loading news...</div>
             </div>
             <div class="tab-pane fade" id="levels">
               <div class="p-4">
@@ -55,6 +60,30 @@
             <div class="tab-pane fade" id="store">
               <div class="p-4">Store content coming soon.</div>
             </div>
+            <div class="tab-pane fade" id="settings">
+              <div class="p-4">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-auto-update" />
+                  <label class="form-check-label" for="setting-auto-update">Enable Auto Update</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-play-sound" />
+                  <label class="form-check-label" for="setting-play-sound">Play Sound on Install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-auto-launch" />
+                  <label class="form-check-label" for="setting-auto-launch">Auto Launch After Install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-dark-mode" />
+                  <label class="form-check-label" for="setting-dark-mode">Dark Mode</label>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label" for="setting-install-dir">Default Install Directory</label>
+                  <input type="text" class="form-control" id="setting-install-dir" />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div id="bottom-navbar-container">
@@ -79,6 +108,13 @@
 
         <!-- Side pane -->
         <div id="side-pane" class="col-12 col-sm-5 col-md-4 col-lg-3 d-flex flex-column overflow-auto min-vh-100">
+          <nav id="sidebar-nav" class="nav flex-column p-3">
+            <a id="nav-home" class="nav-link" href="#">Home</a>
+            <a id="nav-levels" class="nav-link" href="#">Levels</a>
+            <a id="nav-library" class="nav-link" href="#">Library</a>
+            <a id="nav-store" class="nav-link" href="#">Store</a>
+            <a id="nav-settings" class="nav-link" href="#">Settings</a>
+          </nav>
           <div id="install-pane-container" class="flex-grow-1 draggableArea">
             <div class="bg-dark text-light p-3 rounded draggableArea" id="install-pane">
               <div class="p-1">
@@ -113,40 +149,6 @@
           </div>
           <hr />
           <div class="p-0" id="links-pane">Links here</div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="modal fade not-draggable"
-      id="navbar-main-menu-modal"
-      tabindex="-1"
-      aria-labelledby="navbar-main-menu-modalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="navbar-main-menu-modalLabel">Navigation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <a id="nav-home" href="#" class="d-flex align-items-center justify-content-start mb-2">
-              <div id="lmsMenuImg" class="menu-icon mr-2"></div>
-              Home
-            </a>
-            <a id="nav-levels" href="#" class="d-flex align-items-center justify-content-start mb-2">
-              <div id="levelsMenuImg" class="menu-icon mr-2"></div>
-              Levels
-            </a>
-            <a id="nav-library" href="#" class="d-flex align-items-center justify-content-start mb-2">
-              <div id="teleportMenuImg" class="menu-icon mr-2"></div>
-              Library
-            </a>
-            <a id="nav-store" href="#" class="d-flex align-items-center justify-content-start mb-2">
-              <div id="tsMenuImg" class="menu-icon mr-2"></div>
-              Store
-            </a>
-          </div>
         </div>
       </div>
     </div>

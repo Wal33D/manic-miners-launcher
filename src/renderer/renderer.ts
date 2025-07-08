@@ -9,10 +9,13 @@ import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { initializeUrls } from './components/initializeUrls';
 import { initializeLevels } from './components/initializeLevels';
 import { initializeSettings } from './components/initializeSettings';
+import { initializeNews } from './components/initializeNews';
 import { setupNavigation } from './components/setupNavigation';
+import { setupWindowControls } from './components/setupWindowControls';
 
 initializeVersionSelect();
 initializeSettings();
+initializeNews();
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.electronAPI.platform !== 'win32') {
@@ -47,4 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setupNavigation();
+  setupWindowControls();
 });
