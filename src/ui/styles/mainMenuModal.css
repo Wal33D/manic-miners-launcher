@@ -26,6 +26,9 @@
 #supportMenuImg {
   background-image: url('../../../assets/supportstation.png');
 }
+#levelsMenuImg {
+  background-image: url('../../../assets/ManicMiners_alt.png');
+}
 
 .modal-header {
   display: flex;

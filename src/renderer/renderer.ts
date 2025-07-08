@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeLevels();
   }
 
-  const mainMenuBtn = document.getElementById('navbar-main-menu-modal-btn');
-  if (mainMenuBtn) {
-    setupTopNav(mainMenuBtn);
-  }
+  const menuBtns = [document.getElementById('navbar-main-menu-modal-btn'), document.getElementById('navbar-menu-btn')];
+  menuBtns.forEach(btn => {
+    if (btn) setupTopNav(btn as HTMLElement);
+  });
 });
