@@ -1,18 +1,19 @@
 import { ipcMain, dialog } from 'electron';
+import { IPC_CHANNELS } from './ipcChannels';
 
 export const setupInputPathDialog = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
   let status = false;
 
   try {
-    ipcMain.on('open-directory-dialog', async event => {
+    ipcMain.on(IPC_CHANNELS.OPEN_DIRECTORY_DIALOG, async event => {
       try {
         const result = await dialog.showOpenDialog({
           properties: ['openDirectory'],
         });
 
         if (!result.canceled && result.filePaths.length > 0) {
-          event.reply('directory-selected', result.filePaths[0]);
+          event.reply(IPC_CHANNELS.DIRECTORY_SELECTED, result.filePaths[0]);
           message = 'Directory selected successfully.';
           status = true;
         } else {
