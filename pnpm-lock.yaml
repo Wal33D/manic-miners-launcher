@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   itchio-downloader@0.8.1:
-    hash: kza4ynywzdqe4tzioauwbb7ixq
+    hash: ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6
     path: patches/itchio-downloader@0.8.1.patch
 
 importers:
@@ -30,7 +30,7 @@ importers:
         version: 10.1.0
       itchio-downloader:
         specifier: ^0.8.1
-        version: 0.8.1(patch_hash=kza4ynywzdqe4tzioauwbb7ixq)(typescript@5.8.3)
+        version: 0.8.1(patch_hash=ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6)(typescript@5.8.3)
       node-stream-zip:
         specifier: ^1.15.0
         version: 1.15.0
@@ -290,8 +290,8 @@ packages:
     resolution: {integrity: sha512-F+nKc0xW+kVbBRhFzaMgPy3KwmuNTYX1fx6+FxxoSnNgwYX6LD7AKBTWkU0MQ6IBoe7dz069CNkR673sPAgkCQ==}
     engines: {node: '>=14'}
 
-  '@electron/node-gyp@git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2':
-    resolution: {commit: 06b29aafb7708acef8b3669835c8a7857ebc92d2, repo: https://github.com/electron/node-gyp.git, type: git}
+  '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
+    resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
     version: 10.2.0-electron.1
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -4355,7 +4355,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron/node-gyp@git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2':
+  '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     dependencies:
       env-paths: 2.2.1
       exponential-backoff: 3.1.2
@@ -4416,7 +4416,7 @@ snapshots:
 
   '@electron/rebuild@3.7.2':
     dependencies:
-      '@electron/node-gyp': git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2
+      '@electron/node-gyp': https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2
       '@malept/cross-spawn-promise': 2.0.0
       chalk: 4.1.2
       debug: 4.4.1
@@ -6831,7 +6831,7 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  itchio-downloader@0.8.1(patch_hash=kza4ynywzdqe4tzioauwbb7ixq)(typescript@5.8.3):
+  itchio-downloader@0.8.1(patch_hash=ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6)(typescript@5.8.3):
     dependencies:
       puppeteer: 24.11.2(typescript@5.8.3)
       yargs: 18.0.0
