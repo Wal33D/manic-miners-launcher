@@ -12,6 +12,11 @@ import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupLevelDownloadHandlers } from './ipcHandlers/setupLevelDownloadHandlers';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 
+// Disable hardware acceleration to avoid GPU-related errors in some environments
+app.disableHardwareAcceleration();
+// Prevent Chrome DevTools from attempting to use unsupported Autofill features
+app.commandLine.appendSwitch('disable-features', 'Autofill');
+
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
 
