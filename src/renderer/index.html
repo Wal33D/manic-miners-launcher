@@ -33,7 +33,7 @@
           <!-- Tab Content Area -->
           <div class="tab-content" style="flex-grow: 1">
             <div class="tab-pane fade show active" id="news">
-              <div class="p-4">Latest news and updates about the game...</div>
+              <div id="news-container" class="p-4">Loading news...</div>
             </div>
             <div class="tab-pane fade" id="levels">
               <div class="p-4">
@@ -59,6 +59,30 @@
             </div>
             <div class="tab-pane fade" id="store">
               <div class="p-4">Store content coming soon.</div>
+            </div>
+            <div class="tab-pane fade" id="settings">
+              <div class="p-4">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-auto-update" />
+                  <label class="form-check-label" for="setting-auto-update">Enable Auto Update</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-play-sound" />
+                  <label class="form-check-label" for="setting-play-sound">Play Sound on Install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-auto-launch" />
+                  <label class="form-check-label" for="setting-auto-launch">Auto Launch After Install</label>
+                </div>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="setting-dark-mode" />
+                  <label class="form-check-label" for="setting-dark-mode">Dark Mode</label>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label" for="setting-install-dir">Default Install Directory</label>
+                  <input type="text" class="form-control" id="setting-install-dir" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -89,6 +113,8 @@
             <a id="nav-levels" class="nav-link" href="#">Levels</a>
             <a id="nav-library" class="nav-link" href="#">Library</a>
             <a id="nav-store" class="nav-link" href="#">Store</a>
+            <a id="nav-settings" class="nav-link" href="#">Settings</a>
+
           </nav>
           <div id="install-pane-container" class="flex-grow-1 draggableArea">
             <div class="bg-dark text-light p-3 rounded draggableArea" id="install-pane">

@@ -12,6 +12,8 @@ import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupLevelDownloadHandlers } from './ipcHandlers/setupLevelDownloadHandlers';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 import { setupWindowControls } from './ipcHandlers/setupWindowControls';
+import { setupNewsHandler } from './ipcHandlers/setupNewsHandler';
+
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
@@ -32,6 +34,7 @@ const startApp = (): void => {
     setupInputPathDialog();
     setupUrlHandler();
     setupLevelHandler();
+    setupNewsHandler();
     setupPlaySoundHandler();
     setupSettingsHandlers();
     setupWindowControls();

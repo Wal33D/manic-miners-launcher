@@ -4,6 +4,7 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { setDisabledAppearance } from './domUtils';
 import { debugLog } from '../../logger';
 import { getCurrentSettings } from './initializeSettings';
+import { showToast } from './showToast';
 
 export function setupInstallButton(installButton: HTMLButtonElement, installPathInput: HTMLInputElement, versionSelect: HTMLSelectElement) {
   window.electronAPI.removeAllListeners(IPC_CHANNELS.DOWNLOAD_PROGRESS);
@@ -44,9 +45,10 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
       if (settings.autoLaunchAfterInstall) {
         window.electronAPI.send(IPC_CHANNELS.LAUNCH_GAME, versionSelect.value);
       }
+      showToast('Version downloaded successfully');
       window.electronAPI.send(IPC_CHANNELS.ALL_VERSION_INFO); // Request updated version list
     } else {
-      alert('Failed to download the version: ' + result.message);
+      showToast('Failed to download the version: ' + result.message, 'error');
     }
 
     // Re-enable UI elements once the download is complete or fails

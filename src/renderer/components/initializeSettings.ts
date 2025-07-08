@@ -5,6 +5,8 @@ let currentSettings: LauncherSettings = {
   playSoundOnInstall: true,
   autoLaunchAfterInstall: false,
   darkMode: true,
+  autoUpdate: true,
+  installDir: '',
 };
 
 export const getCurrentSettings = (): LauncherSettings => currentSettings;
@@ -22,6 +24,7 @@ export const initializeSettings = (): void => {
   const map = [
     { id: 'setting-play-sound', key: 'playSoundOnInstall' },
     { id: 'setting-auto-launch', key: 'autoLaunchAfterInstall' },
+    { id: 'setting-auto-update', key: 'autoUpdate' },
     { id: 'setting-dark-mode', key: 'darkMode' },
   ] as const;
 
@@ -37,18 +40,30 @@ export const initializeSettings = (): void => {
       });
     }
   });
+
+  const dirInput = document.getElementById('setting-install-dir') as HTMLInputElement | null;
+  if (dirInput) {
+    dirInput.addEventListener('change', () => {
+      currentSettings = { ...currentSettings, installDir: dirInput.value } as LauncherSettings;
+      window.electronAPI.send(IPC_CHANNELS.SET_SETTINGS, currentSettings);
+    });
+  }
 };
 
 function applySettingsToUI() {
   const play = document.getElementById('setting-play-sound') as HTMLInputElement | null;
   const autoLaunch = document.getElementById('setting-auto-launch') as HTMLInputElement | null;
+  const autoUpdate = document.getElementById('setting-auto-update') as HTMLInputElement | null;
   const darkMode = document.getElementById('setting-dark-mode') as HTMLInputElement | null;
+  const installDir = document.getElementById('setting-install-dir') as HTMLInputElement | null;
   if (play) play.checked = currentSettings.playSoundOnInstall;
   if (autoLaunch) autoLaunch.checked = currentSettings.autoLaunchAfterInstall;
+  if (autoUpdate) autoUpdate.checked = currentSettings.autoUpdate;
   if (darkMode) {
     darkMode.checked = currentSettings.darkMode;
     toggleDarkMode(currentSettings.darkMode);
   }
+  if (installDir) installDir.value = currentSettings.installDir;
 }
 
 function toggleDarkMode(enabled: boolean) {

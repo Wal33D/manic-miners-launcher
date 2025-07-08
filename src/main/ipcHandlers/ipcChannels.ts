@@ -13,6 +13,7 @@ export const IPC_CHANNELS = {
   PLAY_SOUND: 'play-sound',
   GET_URLS: 'get-urls',
   GET_LEVELS: 'get-levels',
+  GET_NEWS: 'get-news',
   DOWNLOAD_LEVEL: 'download-level',
   LEVEL_DOWNLOAD_PROGRESS: 'level-download-progress',
   OPEN_DIRECTORY_DIALOG: 'open-directory-dialog',

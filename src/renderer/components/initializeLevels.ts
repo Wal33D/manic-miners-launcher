@@ -2,6 +2,7 @@
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { debugLog } from '../../logger';
 import { updateStatus } from './updateStatus';
+import { showToast } from './showToast';
 
 export const initializeLevels = (): void => {
   window.electronAPI?.removeAllListeners(IPC_CHANNELS.GET_LEVELS);
@@ -15,6 +16,11 @@ export const initializeLevels = (): void => {
 
   window.electronAPI?.receive(IPC_CHANNELS.DOWNLOAD_LEVEL, (result: any) => {
     debugLog(result.message);
+    if (result.downloaded) {
+      showToast('Level downloaded successfully');
+    } else {
+      showToast('Failed to download level: ' + result.message, 'error');
+    }
   });
 
   // Handler for receiving levels data
