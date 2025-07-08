@@ -39,11 +39,7 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
     const homeDirectory = os.homedir();
     const localAppData =
       process.env.LOCALAPPDATA ||
-      (process.platform === 'win32'
-        ? path.join(os.homedir(), 'AppData', 'Local')
-        : process.platform === 'darwin'
-          ? path.join(os.homedir(), 'Library', 'Application Support')
-          : path.join(os.homedir(), '.local', 'share'));
+      (process.platform === 'win32' ? path.join(os.homedir(), 'AppData', 'Local') : path.join(os.homedir(), '.local', 'share'));
 
     const launcherBasePath = path.join(localAppData, 'ManicMinersLauncher');
     const launcherInstallPath = path.join(launcherBasePath, 'installations');

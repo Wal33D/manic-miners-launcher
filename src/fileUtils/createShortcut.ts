@@ -13,44 +13,35 @@ export const createShortcut = async ({
   type: 'file' | 'url' | 'directory';
   options: { target: string; desc?: string; icon?: string; workingDir?: string };
 }): Promise<{ created: boolean; message: string }> => {
-  const shortcutExtension =
-    process.platform === 'darwin' && type === 'url' ? 'webloc' : type === 'url' ? 'url' : 'lnk';
+  const shortcutExtension = type === 'url' ? 'url' : 'lnk';
   const shortcutPath = path.join(startPath, `${name}.${shortcutExtension}`);
   let created = false;
   let message = '';
 
+  if (process.platform !== 'win32') {
+    return { created: false, message: 'Shortcut creation is only supported on Windows.' };
+  }
 
   try {
-    if (process.platform === 'win32') {
-      if (type === 'file' || type === 'directory') {
-        await new Promise<void>((resolve, reject) => {
-          const shortcutOptions = { ...options };
-          if (type === 'directory') {
-            shortcutOptions.workingDir = shortcutOptions.workingDir || options.target;
-          }
-          ws.create(shortcutPath, shortcutOptions, (err: any) => {
-            if (err) reject(new Error(`Failed to create ${type} shortcut: ${err.message}`));
-            else resolve();
-          });
+    if (type === 'file' || type === 'directory') {
+      // Handle file and directory shortcut creation
+      await new Promise<void>((resolve, reject) => {
+        const shortcutOptions = { ...options };
+        if (type === 'directory') {
+          // Ensure the working directory is set correctly for directory shortcuts
+          shortcutOptions.workingDir = shortcutOptions.workingDir || options.target;
+        }
+        ws.create(shortcutPath, shortcutOptions, (err: any) => {
+          if (err) reject(new Error(`Failed to create ${type} shortcut: ${err.message}`));
+          else resolve();
         });
-        message = `${type.charAt(0).toUpperCase() + type.slice(1)} shortcut created successfully at ${shortcutPath}`;
-      } else if (type === 'url') {
-        const shortcutContent = `[InternetShortcut]\r\nURL=${options.target}\r\n`;
-        await fs.writeFile(shortcutPath, shortcutContent);
-        message = `URL shortcut created successfully at ${shortcutPath}`;
-      }
-    } else if (process.platform === 'darwin') {
-      if (type === 'url') {
-        const content = `<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0">\n<dict>\n  <key>URL</key>\n  <string>${options.target}</string>\n</dict>\n</plist>`;
-        await fs.writeFile(shortcutPath, content);
-        message = `URL shortcut created successfully at ${shortcutPath}`;
-      } else {
-        await fs.symlink(options.target, shortcutPath);
-        message = `${type.charAt(0).toUpperCase() + type.slice(1)} shortcut created successfully at ${shortcutPath}`;
-      }
-    } else {
-      await fs.symlink(options.target, shortcutPath);
-      message = `${type.charAt(0).toUpperCase() + type.slice(1)} symlink created successfully at ${shortcutPath}`;
+      });
+      message = `${type.charAt(0).toUpperCase() + type.slice(1)} shortcut created successfully at ${shortcutPath}`;
+    } else if (type === 'url') {
+      // Handle URL shortcut creation
+      const shortcutContent = `[InternetShortcut]\r\nURL=${options.target}\r\n`;
+      await fs.writeFile(shortcutPath, shortcutContent);
+      message = `URL shortcut created successfully at ${shortcutPath}`;
     }
     created = true;
   } catch (error: unknown) {
