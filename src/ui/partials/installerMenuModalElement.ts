@@ -12,6 +12,10 @@ export const installerMenuModalElement = `
                     Home
                 </a>
                 <a href="#" class="d-flex align-items-center justify-content-start mb-2">
+                    <div id='levelsMenuImg' class="menu-icon mr-2"></div>
+                    Levels
+                </a>
+                <a href="#" class="d-flex align-items-center justify-content-start mb-2">
                     <div id='teleportMenuImg' class="menu-icon mr-2"></div>
                     Library
                 </a>
