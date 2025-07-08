@@ -7,7 +7,19 @@ import { debugLog } from '../logger';
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
 
-const FETCH_TIMEOUT_MS = process.env.FETCH_TIMEOUT_MS ? parseInt(process.env.FETCH_TIMEOUT_MS, 10) : 15000;
+const DEFAULT_FETCH_TIMEOUT_MS = 30000;
+let FETCH_TIMEOUT_MS = DEFAULT_FETCH_TIMEOUT_MS;
+
+if (process.env.FETCH_TIMEOUT_MS) {
+  const parsedTimeout = parseInt(process.env.FETCH_TIMEOUT_MS, 10);
+  if (Number.isNaN(parsedTimeout)) {
+    const warningMessage = `Invalid FETCH_TIMEOUT_MS value "${process.env.FETCH_TIMEOUT_MS}". Falling back to default of ${DEFAULT_FETCH_TIMEOUT_MS}ms.`;
+    console.warn(warningMessage);
+    void debugLog(warningMessage);
+  } else {
+    FETCH_TIMEOUT_MS = parsedTimeout;
+  }
+}
 
 interface FetchResult {
   status: boolean;
