@@ -1,6 +1,7 @@
 /* In your main stylesheet */
 @import '~bootswatch/dist/darkly/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
+
 :root {
   --mm-green: #32cd32;
   --mm-dark-green: #228b22;
@@ -37,22 +38,24 @@
 }
 
 @font-face {
-  font-family: "Fredericka the Great";
-  src: url("../../assets/FrederickatheGreat-Regular.ttf") format("truetype");
+  font-family: 'Fredericka the Great';
+  src: url('../../assets/FrederickatheGreat-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
+
 #brand-image {
   width: 50px;
   height: 50px;
   margin-right: 10px;
-  background-image: url("../../assets/ManicMiners.png");
+  background-image: url('../../assets/ManicMiners.png');
   background-size: cover; /* Resize the background image to cover the entire container */
   background-position: center; /* Center the background image */
 }
 
 body {
-  background: url("../../assets/background.jpg") no-repeat center center fixed;
+  background: url('../../assets/background.jpg') no-repeat center center fixed;
+
   background-size: cover;
   color: white;
   text-shadow: 1px 1px 2px black;
@@ -62,8 +65,7 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
   border-radius: 50px !important;
 }
-
-input[type=text],
+input[type='text'],
 select,
 textarea {
   width: 100%;
@@ -73,7 +75,6 @@ textarea {
   margin-bottom: 10px;
   box-sizing: border-box;
 }
-
 .window-controls button {
   background: #ccc;
   border: none;
@@ -88,7 +89,7 @@ textarea {
   right: 10px;
 }
 
-input[type=text],
+input[type='text'],
 select {
   color: black;
 }
@@ -97,7 +98,7 @@ textarea {
   background-color: rgba(0, 0, 0, 0.7) !important;
   border: 1px solid hsl(120, 61%, 50%);
   color: white !important;
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: small !important;
   overflow: hidden;
   max-height: 30%;
@@ -164,38 +165,31 @@ textarea {
   height: 70px;
   justify-content: space-evenly;
 }
-
 #footer a {
   background: transparent;
   box-shadow: none;
 }
-
 #footer a:hover {
   background: transparent;
   box-shadow: none;
 }
-
 .custom-progress {
   height: 20px;
   background-color: rgba(255, 255, 255, 0.1);
   width: 100%;
 }
-
 #message-pane-container {
   background-color: rgba(0, 0, 0, 0.6) !important;
-  max-height: 30vh;
+  max-height: calc(30vh);
   overflow-y: hidden;
   font-size: 0.8rem;
 }
-
 #install-pane-container {
   background-color: transparent !important;
 }
-
 #install-pane {
   background-color: transparent !important;
 }
-
 #install-pane .form-label {
   font-size: 0.9rem;
 }
@@ -250,16 +244,19 @@ textarea {
 
 .navbar-brand {
   cursor: default;
+
   color: transparent;
   font-size: 2.2rem; /* Larger text */
   transition: color 0.3s ease; /* Smooth color change */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
-  font-family: "Fredericka the Great", cursive; /* Lego-like font */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
   padding-left: 12px; /* Add some padding */
   padding-right: 22px; /* Add some padding */
   color: var(--mm-yellow); /* Lego brick yellow */
-  text-shadow: 0 0 10px rgb(50, 205, 50); /* Yellow box shadow */
-  transition: color 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow to the transition */
+  text-shadow: 0 0 10px rgba(50, 205, 50, 1); /* Yellow box shadow */
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease; /* Add box-shadow to the transition */
 }
 
 .navbar-brand:hover,
@@ -270,12 +267,12 @@ textarea {
   color: transparent;
   transition: color 0.3s ease; /* Smooth color change */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for 3D effect */
-  font-family: "Fredericka the Great", cursive; /* Lego-like font */
+  font-family: 'Fredericka the Great', cursive; /* Lego-like font */
   padding-left: 12px; /* Add some padding */
   padding-right: 22px; /* Add some padding */
   color: var(--mm-yellow); /* Lego brick yellow */
   transition: ease-in-out 0.5s;
-  text-shadow: 0 0 10px rgb(50, 205, 50); /* Yellow box shadow */
+  text-shadow: 0 0 10px rgba(50, 205, 50, 1); /* Yellow box shadow */
 }
 
 .navbar-brand img {
@@ -292,21 +289,17 @@ textarea {
 .not-draggable {
   -webkit-app-region: no-drag;
 }
-
 .footer a {
   color: rgba(50, 205, 50, 0.8); /* Theme green text */
   transition: color 0.3s ease; /* Smooth color change */
 }
-
 .footer a * {
   height: 20px;
 }
-
 button:disabled,
 button.disabled {
   cursor: not-allowed !important; /* Using !important to ensure overriding any other styles */
 }
-
 #links-pane {
   background-color: transparent !important;
   padding: 5px; /* Adjust padding for better spacing */
@@ -329,7 +322,10 @@ button.disabled {
   border: 2px solid var(--mm-dark-green); /* Dark green border */
   background-color: transparent;
   border-radius: 50%; /* Circular buttons */
-  transition: background-color 0.3s, color 0.3s, transform 0.3s; /* Added transform to transition for effect */
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.3s; /* Added transform to transition for effect */
 }
 
 .icon-button:hover {
@@ -350,16 +346,12 @@ button.disabled {
   flex-shrink: 0;
   overflow-y: auto;
 }
-
 #main-select-tabs a {
   color: var(--mm-green);
   background-color: rgba(0, 0, 0, 0.6);
   cursor: pointer !important;
 }
-
 .nav-link.active {
   color: rgb(0, 0, 0) !important;
   background-color: var(--mm-green) !important;
 }
-
-/*# sourceMappingURL=index.css.map */
