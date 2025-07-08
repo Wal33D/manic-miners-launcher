@@ -7,43 +7,39 @@
   </head>
 
   <body class="draggableArea">
-    <div class="container-fluid h-100">
-      <div class="row flex-grow-1 g-0 min-vh-100">
-        <div class="col-12 col-sm-7 col-md-8 col-lg-9 d-flex flex-column justify-content-between p-0">
-          <div id="top-navbar-container">
-            <!-- Navigation Bar -->
-            <nav class="navbar navbar-expand-lg navbar-dark py-3">
-              <div class="container-fluid">
-                <a
-                  id="navbar-main-menu-modal-btn"
-                  class="navbar-brand d-flex align-items-center not-draggable"
-                  href="#"
-                  data-bs-toggle="modal"
-                  data-bs-target="#navbar-main-menu-modal"
-                >
-                  <div id="brand-image" class="d-inline-block align-text-top"></div>
-                  Manic Miners HQ
-                </a>
-                <ul id="main-select-tabs" class="nav nav-tabs not-draggable">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#news" data-bs-toggle="tab">News</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#levels" data-bs-toggle="tab">Levels</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#stats" data-bs-toggle="tab">Stats</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#settings" data-bs-toggle="tab">Settings</a>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-
-          <!-- Tab Content Area -->
-          <div class="tab-content" style="flex-grow: 1">
+    <div class="overlay"></div>
+    <div class="app-container container-fluid">
+      <nav class="navbar navbar-expand-lg navbar-dark py-3" role="navigation">
+        <div class="container-fluid">
+          <a
+            id="navbar-main-menu-modal-btn"
+            class="navbar-brand d-flex align-items-center not-draggable"
+            href="#"
+            data-bs-toggle="modal"
+            data-bs-target="#navbar-main-menu-modal"
+          >
+            <div id="brand-image" class="d-inline-block align-text-top"></div>
+            Manic Miners HQ
+          </a>
+          <ul id="main-select-tabs" class="nav nav-tabs not-draggable" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" aria-current="page" href="#news" data-bs-toggle="tab">News</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="#levels" data-bs-toggle="tab">Levels</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="#stats" data-bs-toggle="tab">Stats</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="#settings" data-bs-toggle="tab">Settings</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="content-wrapper">
+        <main id="main-content">
+          <div class="tab-content">
             <div class="tab-pane fade show active" id="news">
               <div class="p-4">Latest news and updates about the game...</div>
             </div>
@@ -73,29 +69,24 @@
               <div class="p-4">Settings for the game launcher...</div>
             </div>
           </div>
-
-          <div id="bottom-navbar-container">
-            <nav class="navbar navbar-expand-lg navbar-dark py-3 footer">
-              <div class="container-fluid">
-                <div class="progress custom-progress not-draggable">
-                  <div
-                    id="downloadProgress"
-                    class="progress-bar progress-bar-striped progress-bar-animated"
-                    role="progressbar"
-                    style="width: 1%"
-                    aria-valuenow="1"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
-                  <span id="progressText" class="progress-text"> 1% </span>
-                </div>
+          <footer class="navbar navbar-expand-lg navbar-dark py-3 footer" role="contentinfo">
+            <div class="container-fluid">
+              <div class="progress custom-progress not-draggable">
+                <div
+                  id="downloadProgress"
+                  class="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
+                  style="width: 1%"
+                  aria-valuenow="1"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+                <span id="progressText" class="progress-text"> 1% </span>
               </div>
-            </nav>
-          </div>
-        </div>
-
-        <!-- Side pane -->
-        <div id="side-pane" class="col-12 col-sm-5 col-md-4 col-lg-3 d-flex flex-column overflow-auto min-vh-100">
+            </div>
+          </footer>
+        </main>
+        <aside id="side-pane" class="d-flex flex-column">
           <div id="install-pane-container" class="flex-grow-1 draggableArea">
             <div class="bg-dark text-light p-3 rounded draggableArea" id="install-pane">
               <div class="p-1">
@@ -130,7 +121,7 @@
           </div>
           <hr />
           <div class="p-0" id="links-pane">Links here</div>
-        </div>
+        </aside>
       </div>
     </div>
     <div
