@@ -10,6 +10,7 @@ import { initializeUrls } from './components/initializeUrls';
 import { initializeLevels } from './components/initializeLevels';
 import { initializeSettings } from './components/initializeSettings';
 import { setupNavigation } from './components/setupNavigation';
+import { setupWindowControls } from './components/setupWindowControls';
 
 initializeVersionSelect();
 initializeSettings();
@@ -47,4 +48,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setupNavigation();
+  setupWindowControls();
 });
