@@ -12,6 +12,7 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "paths": {
       "*": ["node_modules/*"]
     }
