@@ -4,6 +4,8 @@ declare module '*.partial_html' {
   export default content;
 }
 
+declare module 'mock-require';
+
 export type IpcChannel =
   | 'launch-game'
   | 'versions-updated'
