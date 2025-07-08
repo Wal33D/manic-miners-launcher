@@ -96,9 +96,11 @@ The bundled **Fredericka the Great** font is provided under the [SIL Open Font L
 
 ## Security Notes
 
-Some dependencies currently have unresolved high-severity vulnerabilities as reported by `pnpm audit`.
-These issues stem from packages such as `express`, `puppeteer`, and `tar-fs`, which are pulled in by the `itchio-downloader` dependency.
-Consider reviewing the audit report and updating or replacing these packages when patches become available.
+`pnpm audit` currently reports no high-severity issues.
+The latest available `itchio-downloader` release (0.8.1) is already in use, so
+the vulnerable dependencies (`express`, `puppeteer`, and `tar-fs`) referenced in
+earlier audits have been resolved. Only moderate vulnerabilities remain in
+`webpack-dev-server`. Keep an eye on future releases for additional fixes.
 
 Happy mining!
 
