@@ -9,6 +9,7 @@ import { initializeVersionSelect } from './components/initializeVersionSelect';
 import { initializeUrls } from './components/initializeUrls';
 import { initializeLevels } from './components/initializeLevels';
 import { initializeSettings } from './components/initializeSettings';
+import { setupNavigation } from './components/setupNavigation';
 
 initializeVersionSelect();
 initializeSettings();
@@ -44,4 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
   menuBtns.forEach(btn => {
     if (btn) setupTopNav(btn as HTMLElement);
   });
+
+  setupNavigation();
 });
