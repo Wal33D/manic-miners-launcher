@@ -2,10 +2,13 @@ import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
 import { debugLog } from '../../logger';
 
 export function trimFilePath(fullPath: string): string | null {
-  if (!fullPath || fullPath.lastIndexOf('\\') === -1) {
+  if (!fullPath) {
     return null;
   }
-  const lastSlashIndex = fullPath.lastIndexOf('\\');
+  const lastSlashIndex = Math.max(fullPath.lastIndexOf('/'), fullPath.lastIndexOf('\\'));
+  if (lastSlashIndex === -1) {
+    return null;
+  }
   return fullPath.substring(0, lastSlashIndex);
 }
 export function fetchDefaultDirectory(callback: (path: string) => void) {
