@@ -1,5 +1,5 @@
 export const progressBarElement = `
-<nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-bottom footer draggableArea">
+<nav class="navbar navbar-expand-lg navbar-dark py-3 sticky-bottom footer draggableArea">
   <div class="container-fluid footer-container draggableArea">
     <div class="progress custom-progress not-draggable draggableArea">
       <div
