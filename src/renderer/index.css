@@ -113,6 +113,9 @@ textarea {
   text-align: center;
   color: white; /* Ensures the text is readable on darker backgrounds */
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-success,
@@ -136,6 +139,12 @@ textarea {
   padding: 0;
   height: 70px;
   justify-content: space-evenly;
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 1020;
 }
 #footer a {
   background: transparent;
