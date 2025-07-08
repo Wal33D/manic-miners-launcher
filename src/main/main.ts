@@ -11,6 +11,7 @@ import { setupLevelHandler } from './ipcHandlers/setupLevelHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupLevelDownloadHandlers } from './ipcHandlers/setupLevelDownloadHandlers';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
+import { setupWindowControls } from './ipcHandlers/setupWindowControls';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
@@ -33,6 +34,7 @@ const startApp = (): void => {
     setupLevelHandler();
     setupPlaySoundHandler();
     setupSettingsHandlers();
+    setupWindowControls();
   });
 
   app.on('window-all-closed', () => {

@@ -8,7 +8,7 @@ Below is a detailed 5‑phase plan for modernizing the **Manic Miners Launcher**
 2. **Collect design references** – Example launchers and asset resources are summarized in `PHASE1_RESEARCH.md`.
 3. **Decide on tooling** – The project will stay with Bootstrap for now; React remains an option for later phases.
 
-## Phase 2 – Layout & Navigation Overhaul
+## Phase 2 – Layout & Navigation Overhaul _(completed 2025-07-08)_
 
 1. **Sidebar navigation**
    - Replace the modal menu with a permanent collapsible sidebar.
