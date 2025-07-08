@@ -2,6 +2,10 @@
 
 Below is a detailed 5-phase plan for modernizing the **Manic Miners Launcher** interface and features. These steps expand on the conversation guidance so contributors have clear direction.
 
+**2025-07-10** - Scrapped previous UI. Removed HTML, CSS, and tests to start from scratch.
+
+**2025-07-11** - Introduced new UI skeleton using Bootswatch Materia theme.
+
 ## Phase 1 – Research & Asset Preparation _(completed 2025-07-08)_
 
 1. **Review current UI**
