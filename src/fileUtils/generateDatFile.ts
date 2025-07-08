@@ -1,9 +1,7 @@
 import { spawn } from 'child_process';
 import { GenerateDatFileResponse, MapGenerationParams, MapGenerationResult } from './types';
 
-export const generateDatFile = (
-  params: MapGenerationParams | any
-): Promise<GenerateDatFileResponse> =>
+export const generateDatFile = (params: MapGenerationParams | any): Promise<GenerateDatFileResponse> =>
   new Promise((resolve, reject) => {
     let result: MapGenerationResult = {} as any;
     params.stats = true;
@@ -16,10 +14,7 @@ export const generateDatFile = (
         return acc;
       }, [] as string[]);
 
-      const pythonExecutable =
-        process.env.PYTHON_EXECUTABLE ||
-        process.env.PYTHON ||
-        (process.platform === 'win32' ? 'python' : 'python3');
+      const pythonExecutable = process.env.PYTHON_EXECUTABLE || process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 
       const pythonProcess = spawn(pythonExecutable, [pythonScriptPath, ...args]);
 
@@ -47,7 +42,6 @@ export const generateDatFile = (
       reject(error);
     }
   });
-
 
 function parseStructuredText(text: any) {
   const result = {} as any;

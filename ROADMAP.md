@@ -49,7 +49,7 @@ Below is a detailed 5-phase plan for modernizing the **Manic Miners Launcher** i
 4. **Sound and notifications**
    - Extend `setupPlaySoundHandler.ts` for UI sound effects and show toast notifications for success or failure (see `src/renderer/components/showToast.ts`).
 
-## Phase 5 – Testing & Release
+## Phase 5 – Testing & Release _(in progress 2025-07-09)_
 
 1. **Update unit tests**
    - Add tests covering the new sidebar navigation and UI logic. Existing tests such as `setupTopNav.test.js` can serve as examples.
