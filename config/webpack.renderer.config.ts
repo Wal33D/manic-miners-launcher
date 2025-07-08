@@ -7,10 +7,6 @@ rules.push({
   test: /\.css$/,
   use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
 });
-rules.push({
-  test: /\.scss$/,
-  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
-});
 
 export const rendererConfig: Configuration = {
   module: {
@@ -23,7 +19,7 @@ export const rendererConfig: Configuration = {
     os: 'commonjs2 os',
   },
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.mp3'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.mp3'],
     fallback: {
       fs: false,
       path: false,

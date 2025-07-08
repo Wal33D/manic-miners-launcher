@@ -10,7 +10,6 @@
     "publish": "electron-forge publish",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build-css": "sass src/renderer/index.scss src/renderer/index.css",
     "update-git-url": "node scripts/updatePackageJson.js",
     "test": "node --require ts-node/register --test test/*.test.ts"
   },
@@ -39,7 +38,6 @@
     "mock-require": "^3.0.3",
     "node-loader": "^2.1.0",
     "prettier": "^3.2.5",
-    "sass": "^1.69.5",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.2.2",
     "ts-node": "^10.0.0",
