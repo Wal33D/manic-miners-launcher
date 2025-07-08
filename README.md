@@ -47,6 +47,10 @@ Got questions or ran into issues? Visit our [Issues](https://github.com/Wal33D/m
 
 We welcome contributions! Whether it's submitting bug reports, feature suggestions, or contributing to the code, check out our [Contributing Guidelines](CONTRIBUTING.md) for more information on getting involved.
 
+## Code of Conduct:
+
+This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
 ## Development
 
 If you want to build the launcher from source you'll need **Node.js 20.19.2 or newer**.
