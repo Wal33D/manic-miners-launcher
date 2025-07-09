@@ -1,22 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs/promises'; // Using fs promises for asynchronous operations
-
-export interface Directories {
-  launcherInstallPath: string;
-  launcherCachePath: string;
-  launcherLogsPath: string;
-  levelsPath: string;
-  levelsBackupPath: string;
-  logsPath: string;
-  configPath: string;
-  configIniPath: string;
-  saveGamesPath: string;
-  LRRPath: string;
-  profilesPath: string;
-  minersPath: string;
-  backupSavesPath: string;
-}
+import { Directories } from '../types';
 
 // Async function to ensure the directory exists, create if it does not
 async function ensureDirectoryExists(directoryPath: string): Promise<void> {

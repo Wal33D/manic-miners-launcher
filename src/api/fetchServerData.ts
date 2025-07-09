@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
 import { debugLog } from '../logger';
+import { FetchResult } from '../types';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
@@ -21,11 +22,6 @@ if (process.env.FETCH_TIMEOUT_MS) {
   }
 }
 
-interface FetchResult {
-  status: boolean;
-  data?: any;
-  message: string;
-}
 
 export async function fetchServerData({ routeName = 'launcher.all' }: { routeName?: string }): Promise<FetchResult> {
   let message = 'Failed to fetch data.';

@@ -1,4 +1,5 @@
 import { fetchServerData } from './fetchServerData';
+import { Urls } from '../types';
 
 export async function fetchUrls(): Promise<Urls> {
   const { data, status, message } = await fetchServerData({
@@ -20,11 +21,3 @@ export async function fetchUrls(): Promise<Urls> {
   };
 }
 
-export interface Urls {
-  Website: string;
-  Discord: string;
-  Reddit: string;
-  YouTube: string;
-  Facebook: string;
-  FAQ: string;
-}
