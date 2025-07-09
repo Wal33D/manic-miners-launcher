@@ -9,18 +9,19 @@ function loadLogger() {
   return require(loggerPath);
 }
 
-test('logToFile writes to file when not in renderer', async () => {
+test('info writes to runtime log in specified directory', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
-  const file = path.join(dir, 'log.txt');
+  const file = path.join(dir, 'runtime-log.txt');
 
   const originalType = (process as any).type;
   delete (process as any).type;
   const logger = loadLogger();
-  await logger.logToFile({ message: 'hello world', filePath: file });
+  logger.setLogDirectory(dir);
+  await logger.info('hello world');
 
   assert.ok(fs.existsSync(file));
   const content = fs.readFileSync(file, 'utf-8');
-  assert.match(content, /hello world/);
+  assert.match(content, /\[INFO\].*hello world/);
 
   fs.rmSync(dir, { recursive: true, force: true });
   if (originalType === undefined) {
@@ -30,21 +31,31 @@ test('logToFile writes to file when not in renderer', async () => {
   }
 });
 
-test('logToFile falls back to console in renderer', async () => {
+test('debug logs only when VERBOSE=true', async () => {
   const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
-  const file = path.join(dir, 'log.txt');
+  const file = path.join(dir, 'runtime-log.txt');
 
   const originalType = (process as any).type;
-  (process as any).type = 'renderer';
+  const originalVerbose = process.env.VERBOSE;
+  delete (process as any).type;
+  process.env.VERBOSE = 'true';
   const logger = loadLogger();
-  await logger.logToFile({ message: 'should not write', filePath: file });
+  logger.setLogDirectory(dir);
+  await logger.debug('verbose message');
 
-  assert.ok(!fs.existsSync(file));
+  assert.ok(fs.existsSync(file));
+  const content = fs.readFileSync(file, 'utf-8');
+  assert.match(content, /\[DEBUG\].*verbose message/);
 
   fs.rmSync(dir, { recursive: true, force: true });
   if (originalType === undefined) {
     delete (process as any).type;
   } else {
     (process as any).type = originalType;
+  }
+  if (originalVerbose === undefined) {
+    delete process.env.VERBOSE;
+  } else {
+    process.env.VERBOSE = originalVerbose;
   }
 });
