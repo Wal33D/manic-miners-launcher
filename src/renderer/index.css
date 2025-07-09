@@ -1,5 +1,5 @@
 /* In your main stylesheet */
-@import '~bootswatch/dist/darkly/bootstrap.min.css';
+@import '../../assets/css/bootswatch-darkly.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 :root {

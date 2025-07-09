@@ -34,6 +34,18 @@ const config: ForgeConfig = {
           },
         ],
       },
+      devContentSecurityPolicy:
+        "default-src 'self'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data:; " +
+        "script-src 'self' 'unsafe-inline'",
+      contentSecurityPolicy:
+        "default-src 'self'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data:; " +
+        "script-src 'self' 'unsafe-inline'",
     }),
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
