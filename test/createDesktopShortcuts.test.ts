@@ -15,8 +15,8 @@ test('createDesktopShortcuts creates expected shortcuts', { skip }, async () => 
   const createdDirs: string[] = [];
   const shortcutArgs: any[] = [];
 
-  mock('../src/fileUtils/createDirectory', {
-    createDirectory: async ({ directory }: { directory: string }) => {
+  mock('../src/fileUtils/fileOps', {
+    ensureDirectory: async ({ directory }: { directory: string }) => {
       createdDirs.push(directory);
       return { created: true, existed: false };
     },
@@ -45,7 +45,7 @@ test('createDesktopShortcuts creates expected shortcuts', { skip }, async () => 
   assert.strictEqual(createdDirs[0], extrasPath);
   assert.strictEqual(shortcutArgs.length, 11);
 
-  mock.stop('../src/fileUtils/createDirectory');
+  mock.stop('../src/fileUtils/fileOps');
   mock.stop('../src/fileUtils/createShortcut');
   fs.rmSync(home, { recursive: true, force: true });
 });

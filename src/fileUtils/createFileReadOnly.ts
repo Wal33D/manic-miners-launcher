@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { verifyFile } from './verifyFile';
+import { verifyFile } from './fileOps';
 
 /**
  * Creates a file with read-only permissions. Accepts a single file creation request or an array of requests.

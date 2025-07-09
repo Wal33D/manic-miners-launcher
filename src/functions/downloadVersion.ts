@@ -1,4 +1,4 @@
-import { verifyFile } from '../fileUtils/verifyFile';
+import { verifyFile } from '../fileUtils/fileOps';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 import { debugLog } from '../logger';
