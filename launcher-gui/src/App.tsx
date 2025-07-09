@@ -21,7 +21,7 @@ const App = () => (
         <div className="flex flex-col h-screen bg-background overflow-hidden">
 
           <LauncherHeader />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto pt-32">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/levels" element={<LevelDownloader />} />
