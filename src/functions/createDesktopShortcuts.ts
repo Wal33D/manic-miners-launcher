@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
 import { createShortcut } from '../fileUtils/createShortcut';
-import { createDirectory } from '../fileUtils/createDirectory';
+import { ensureDirectory } from '../fileUtils/fileOps';
 import { findLatestVersionPath } from '../fileUtils/findLatestVersionPath';
 
 export const createDesktopShortcuts = async ({
@@ -30,7 +30,7 @@ export const createDesktopShortcuts = async ({
     const desktopPath = path.join(os.homedir(), 'Desktop');
     const startMenuPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs');
     const extrasFolderPath = path.join(startMenuPath, 'Manic Miners Extras');
-    await createDirectory({ directory: extrasFolderPath });
+    await ensureDirectory({ directory: extrasFolderPath });
 
     // Shortcut creation for executable and directories
     if (createExeShortcut) {

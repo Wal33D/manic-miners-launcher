@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
 import { fetchVersions } from '../api/fetchVersions';
-import { createDirectory } from '../fileUtils/createDirectory';
+import { ensureDirectory } from '../fileUtils/fileOps';
 import { validateUnpackPath, extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
 
 export const unpackVersion = async ({
@@ -41,7 +41,7 @@ export const unpackVersion = async ({
   }
 
   if (!dirExists) {
-    await createDirectory({ directory: specificInstallPath });
+    await ensureDirectory({ directory: specificInstallPath });
   }
 
   const zipFilePath = path.join(installationDirectory, versionToUnpack.filename);
