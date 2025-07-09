@@ -26,7 +26,7 @@ const config: ForgeConfig = {
         entryPoints: [
           {
             html: './src/renderer/index.html', // Updated path to index.html
-            js: './src/renderer/renderer.ts', // Updated path to renderer.ts
+            js: './src/renderer/renderer.tsx', // Updated path to renderer.tsx
             name: 'main_window',
             preload: {
               js: './src/preload/preload.ts', // Updated path to preload.ts

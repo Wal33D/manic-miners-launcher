@@ -11,9 +11,11 @@
     "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "node",
+    "jsx": "react-jsx",
     "resolveJsonModule": true,
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "@/*": ["src/react-app/*"]
     }
   },
   "include": ["src/**/*", "global.d.ts"]
