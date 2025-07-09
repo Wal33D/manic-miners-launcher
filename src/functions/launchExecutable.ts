@@ -16,7 +16,12 @@ export const launchExecutable = ({
     logToFile({ message: `Launching executable at: ${executablePath}` });
     const startTime = Date.now();
 
-    const process = spawn(executablePath, [], {
+    const useCompat = process.platform !== 'win32';
+    const compatCmd = process.env.COMPAT_LAUNCHER || 'wine';
+    const spawnCmd = useCompat ? compatCmd : executablePath;
+    const spawnArgs = useCompat ? [executablePath] : [];
+
+    const process = spawn(spawnCmd, spawnArgs, {
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
     });

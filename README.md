@@ -13,6 +13,7 @@ Welcome to the official repository of **Manic Miners Launcher**, a modern launch
 - **Community Hub**: Access the latest news, guides, and forums directly through the launcher.
 - **Backup and Restore**: Safely backup your saves and profiles and restore them when needed.
 - **Shortcut Creation (Windows only)**: Optionally create Start Menu or Desktop shortcuts for quick access.
+- **macOS Compatibility**: Use Wine, Proton, or another compatibility layer to run the Windows build on macOS.
 
 ## Getting Started:
 
@@ -89,6 +90,8 @@ SERVER_BASE_URL=https://my-server.example.com pnpm start
 ```
 
 This variable can also be set in your operating system's environment or in a `.env` file.
+
+`COMPAT_LAUNCHER` allows you to specify the command used to run the Windows game on non-Windows platforms. The default is `wine`, but you can set it to `proton run` or another wrapper.
 
 ## License:
 
