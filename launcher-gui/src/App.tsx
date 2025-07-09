@@ -18,9 +18,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="min-h-screen bg-background">
+        <div className="flex flex-col h-screen bg-background overflow-hidden">
           <LauncherHeader />
-          <main>
+          <main className="flex-1 overflow-y-auto">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/levels" element={<LevelDownloader />} />
