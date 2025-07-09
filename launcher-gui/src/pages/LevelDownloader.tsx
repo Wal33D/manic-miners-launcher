@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DownloadProgress } from "@/components/DownloadProgress";
 import { Map, Mountain, Zap, Star, Search, Filter, Download } from "lucide-react";
+import { useInstalledLevels } from "../hooks/useInstalledLevels";
 
 interface Level {
   id: string;
@@ -26,13 +27,14 @@ const LevelDownloader = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [downloadingLevel, setDownloadingLevel] = useState<string | null>(null);
+  const { installLevel, isInstalled } = useInstalledLevels();
 
   useEffect(() => {
     const fetchLevels = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/levels');
         const data = await response.json();
-        setLevels(Array.isArray(data) ? data : []);
+        setLevels(Array.isArray(data) ? data.map((lvl: Level) => ({ ...lvl, installed: isInstalled(lvl.id) })) : []);
       } catch (error) {
         console.error('Failed to fetch levels:', error);
         // Enhanced fallback levels for demo
@@ -47,7 +49,7 @@ const LevelDownloader = () => {
             downloads: 12543,
             rating: 4.8,
             size: '45 MB',
-            installed: true
+            installed: isInstalled('1')
           },
           {
             id: '2',
@@ -59,7 +61,7 @@ const LevelDownloader = () => {
             downloads: 8721,
             rating: 4.6,
             size: '78 MB',
-            installed: false
+            installed: isInstalled('2')
           },
           {
             id: '3',
@@ -71,7 +73,7 @@ const LevelDownloader = () => {
             downloads: 5432,
             rating: 4.9,
             size: '92 MB',
-            installed: false
+            installed: isInstalled('3')
           },
           {
             id: '4',
@@ -83,7 +85,7 @@ const LevelDownloader = () => {
             downloads: 2156,
             rating: 4.7,
             size: '156 MB',
-            installed: false
+            installed: isInstalled('4')
           },
           {
             id: '5',
@@ -95,7 +97,7 @@ const LevelDownloader = () => {
             downloads: 6789,
             rating: 4.5,
             size: '67 MB',
-            installed: false
+            installed: isInstalled('5')
           },
           {
             id: '6',
@@ -107,7 +109,7 @@ const LevelDownloader = () => {
             downloads: 4321,
             rating: 4.8,
             size: '134 MB',
-            installed: false
+            installed: isInstalled('6')
           }
         ]);
       } finally {
@@ -150,9 +152,21 @@ const LevelDownloader = () => {
     // Simulate download completion after a few seconds
     setTimeout(() => {
       setDownloadingLevel(null);
-      setLevels(prev => prev.map(level => 
-        level.id === levelId ? { ...level, installed: true } : level
-      ));
+      setLevels(prev =>
+        prev.map(level =>
+          level.id === levelId ? { ...level, installed: true } : level
+        )
+      );
+      const level = levels.find(l => l.id === levelId);
+      if (level) {
+        installLevel({
+          id: level.id,
+          name: level.name,
+          difficulty: level.difficulty,
+          author: level.author,
+          size: level.size,
+        });
+      }
     }, 5000);
   };
 
@@ -236,12 +250,14 @@ const LevelDownloader = () => {
             No levels found matching your criteria
           </div>
         ) : (
-          filteredLevels.map((level) => (
+          filteredLevels.map((level) => {
+            const installed = level.installed || isInstalled(level.id);
+            return (
             <Card
               key={level.id}
               className={`mining-surface transition-all hover:shadow-md ${
-                level.installed 
-                  ? 'border-primary/30 bg-primary/5' 
+                installed
+                  ? 'border-primary/30 bg-primary/5'
                   : 'border-border/50 hover:border-primary/30'
               }`}
             >
@@ -284,13 +300,13 @@ const LevelDownloader = () => {
                   <span>{level.size}</span>
                 </div>
 
-                <Button 
-                  variant={level.installed ? "secondary" : "energy"} 
+                <Button
+                  variant={installed ? "secondary" : "energy"}
                   className="w-full"
                   disabled={downloadingLevel === level.id}
-                  onClick={() => !level.installed && handleDownload(level.id)}
+                  onClick={() => !installed && handleDownload(level.id)}
                 >
-                  {level.installed ? (
+                  {installed ? (
                     "✓ Installed"
                   ) : downloadingLevel === level.id ? (
                     "Downloading..."
@@ -309,5 +325,4 @@ const LevelDownloader = () => {
     </div>
   );
 };
-
 export default LevelDownloader;
