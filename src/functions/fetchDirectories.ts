@@ -46,18 +46,9 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
     const launcherCachePath = path.join(launcherBasePath, 'cache');
     const launcherLogsPath = path.join(launcherBasePath, 'logs');
 
-    // Ensuring launcher directories are created
-    await ensureDirectoryExists(launcherInstallPath);
-    await ensureDirectoryExists(launcherCachePath);
-    await ensureDirectoryExists(launcherLogsPath);
-
     // Paths in user's Documents directory
     const levelsPath = path.join(homeDirectory, 'Documents', 'ManicMiners', 'Levels');
     const levelsBackupPath = path.join(levelsPath, 'Backup');
-
-    // Ensure game document directories are created
-    await ensureDirectoryExists(levelsPath);
-    await ensureDirectoryExists(levelsBackupPath);
 
     // Paths where the game stores its files
     const savedBasePath = path.join(localAppData, 'ManicMiners', 'Saved');
@@ -70,34 +61,30 @@ export async function getDirectories(): Promise<{ status: boolean; message: stri
     const minersPath = path.join(saveGamesPath, 'Miners');
     const backupSavesPath = path.join(saveGamesPath, 'Backup');
 
-    // Ensure game directories are created
-    await ensureDirectoryExists(logsPath);
-    await ensureDirectoryExists(configPath);
-    await ensureDirectoryExists(configIniPath);
-    await ensureDirectoryExists(saveGamesPath);
-    await ensureDirectoryExists(LRRPath);
-    await ensureDirectoryExists(profilesPath);
-    await ensureDirectoryExists(minersPath);
-    await ensureDirectoryExists(backupSavesPath);
+    const directories: Directories = {
+      launcherInstallPath,
+      launcherCachePath,
+      launcherLogsPath,
+      levelsPath,
+      levelsBackupPath,
+      logsPath,
+      configPath,
+      configIniPath,
+      saveGamesPath,
+      LRRPath,
+      profilesPath,
+      minersPath,
+      backupSavesPath,
+    };
+
+    for (const dir of Object.values(directories)) {
+      await ensureDirectoryExists(dir);
+    }
 
     return {
       status: true,
       message: 'Directories fetched and ensured successfully',
-      directories: {
-        launcherInstallPath,
-        launcherCachePath,
-        launcherLogsPath,
-        levelsPath,
-        levelsBackupPath,
-        logsPath,
-        configPath,
-        configIniPath,
-        saveGamesPath,
-        LRRPath,
-        profilesPath,
-        minersPath,
-        backupSavesPath,
-      },
+      directories,
     };
   } catch (error: unknown) {
     const err = error as Error;
