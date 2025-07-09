@@ -1,9 +1,9 @@
-import { Modal } from 'bootstrap';
+import { createModal } from './modalHelpers';
 
 export function setupNavigation() {
   const modalEl = document.getElementById('navbar-main-menu-modal');
   if (!modalEl) return;
-  const bsModal = Modal.getOrCreateInstance(modalEl);
+  const modal = createModal(modalEl);
 
   const links: { id: string; target: string }[] = [
     { id: 'nav-home', target: 'news' },
@@ -18,7 +18,7 @@ export function setupNavigation() {
     link.addEventListener('click', e => {
       e.preventDefault();
       showTab(target);
-      bsModal.hide();
+      modal.hide();
     });
   });
 
