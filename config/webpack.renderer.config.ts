@@ -4,6 +4,7 @@ import { rules } from './webpack.rules';
 import { plugins } from './webpack.plugins';
 
 export const rendererConfig: Configuration = {
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
   module: {
     rules,
   },
