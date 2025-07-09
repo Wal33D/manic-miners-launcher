@@ -57,7 +57,7 @@ export const initializeLevels = (): void => {
         <td>${level.creator}</td>
         <td>${new Date(level.date).toLocaleDateString()}</td>
         <td>${level.downloadCount.toLocaleString()}</td>
-        <td><button class="btn btn-sm btn-dark-green not-draggable" data-level-id="${level.identifier}">Install</button></td>
+        <td><button class="btn btn-sm btn-primary not-draggable" data-level-id="${level.identifier}">Install</button></td>
       `;
     });
 
