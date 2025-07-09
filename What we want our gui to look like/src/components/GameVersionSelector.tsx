@@ -16,33 +16,34 @@ export function GameVersionSelector() {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [installPath, setInstallPath] = useState<string>("");
 
   useEffect(() => {
-    const fetchVersions = async () => {
-      try {
-        // Fetch all version types
-        const [latest, experimental, past] = await Promise.all([
-          fetch('https://manic-launcher.vercel.app/api/versions/latest').then(r => r.json()),
-          fetch('https://manic-launcher.vercel.app/api/versions/experimental').then(r => r.json()),
-          fetch('https://manic-launcher.vercel.app/api/versions/past').then(r => r.json())
-        ]);
-
-        const allVersions: GameVersion[] = [
-          { ...latest, type: 'latest' as const },
-          ...experimental.map((v: any) => ({ ...v, type: 'experimental' as const })),
-          ...past.map((v: any) => ({ ...v, type: 'past' as const }))
-        ];
-
-        setVersions(allVersions);
-        setSelectedVersion(latest.version);
-      } catch (error) {
-        console.error('Failed to fetch versions:', error);
-      } finally {
-        setLoading(false);
+    window.electronAPI.send("get-directories");
+    window.electronAPI.receiveOnce("get-directories", (dirResult: any) => {
+      if (dirResult?.status) {
+        setInstallPath(dirResult.directories.launcherInstallPath);
       }
-    };
+    });
 
-    fetchVersions();
+    window.electronAPI.send("request-version-information");
+    window.electronAPI.receiveOnce("request-version-information", (data: any) => {
+      if (data?.versions) {
+        const allVersions: GameVersion[] = data.versions.map((v: any) => ({
+          version: v.identifier,
+          type: v.latest ? "latest" : v.experimental ? "experimental" : "past",
+          description: v.description,
+          downloadUrl: v.downloadUrl,
+        }));
+        setVersions(allVersions);
+        if (data.defaultVersion) {
+          setSelectedVersion(data.defaultVersion.identifier);
+        } else if (allVersions.length > 0) {
+          setSelectedVersion(allVersions[0].version);
+        }
+      }
+      setLoading(false);
+    });
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
@@ -129,16 +130,30 @@ export function GameVersionSelector() {
         )}
 
         <div className="flex gap-2">
-          <Button variant="energy" className="flex-1">
+          <Button
+            variant="energy"
+            className="flex-1"
+            onClick={() => {
+              window.electronAPI.send("launch-game", selectedVersion);
+            }}
+          >
             <Play className="w-4 h-4 mr-2" />
             Launch Game
           </Button>
-          <Button variant="mining">
+          <Button
+            variant="mining"
+            onClick={() => {
+              if (!installPath) return;
+              window.electronAPI.send("download-version", {
+                version: selectedVersion,
+                downloadPath: installPath,
+              });
+            }}
+          >
             <Download className="w-4 h-4 mr-2" />
             Update
           </Button>
         </div>
       </CardContent>
     </Card>
-  );
-}
+  );}
