@@ -1,4 +1,5 @@
 // renderer.ts
+import './styles.css';
 import { setupTopNav } from './components/setupTopNav';
 import { setupPlayButton } from './components/setupPlayButton';
 import { setupInstallButton } from './components/setupInstallButton';

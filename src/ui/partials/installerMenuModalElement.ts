@@ -23,6 +23,10 @@ export const installerMenuModalElement = `
                     <div id='tsMenuImg' class="menu-icon mr-2"></div>
                     Store
                 </a>
+                <a href="#" class="d-flex align-items-center justify-content-start mb-2">
+                    <div id='extensionsMenuImg' class="menu-icon mr-2"></div>
+                    Extensions
+                </a>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ declare module '*.partial_html' {
   export default content;
 }
 
+declare module '*.css';
 
 import { IPC_CHANNELS } from './src/main/ipcHandlers/ipcChannels';
 
