@@ -13,7 +13,7 @@ export async function downloadLevel({
   downloadUrl: string;
   levelIdentifier: string;
   levelsPath: string;
-  updateStatus?: (status: any) => void;
+  updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
 }): Promise<{ status: boolean; message: string }> {
   updateStatus?.({ status: 'Starting level download...', progress: 2 });
   const zipPath = path.join(levelsPath, `${levelIdentifier}.zip`);

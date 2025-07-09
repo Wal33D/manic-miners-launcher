@@ -18,11 +18,11 @@ export const initializeVersionSelect = (): void => {
   }
 
   // Handler for receiving version information
-  window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, (data: any) => {
+  window.electronAPI?.receive(IPC_CHANNELS.ALL_VERSION_INFO, (data: import('../../types/ipcMessages').VersionsResponse) => {
     updateVersionSelectUI(data);
   });
 
-  function updateVersionSelectUI(data: { versions?: any; defaultVersion?: any }) {
+  function updateVersionSelectUI(data: import('../../types/ipcMessages').VersionsResponse) {
     const { versions, defaultVersion } = data;
     if (!Array.isArray(versions)) {
       console.error('Invalid versions data received:', versions);
@@ -42,7 +42,7 @@ export const initializeVersionSelect = (): void => {
     }
 
     // Populate the select box with versions
-    versions.forEach((version: { identifier: string; displayName: string }) => {
+    versions.forEach((version: import('../../api/versionTypes').Version & { directory?: string }) => {
       const option = document.createElement('option');
       option.value = version.identifier;
       option.textContent = version.displayName;
@@ -61,16 +61,18 @@ export const initializeVersionSelect = (): void => {
     // Add change listener to version select
     versionSelect.addEventListener('change', () => {
       const selectedIdentifier = versionSelect.value;
-      const selectedVersion = versions.find((v: { identifier: string }) => v.identifier === selectedIdentifier);
+      const selectedVersion = versions.find(
+        (v: import('../../api/versionTypes').Version & { directory?: string }) => v.identifier === selectedIdentifier
+      );
       setInstallPathAndToggleButton(selectedVersion, installPathInput);
       window.electronAPI.send(IPC_CHANNELS.SET_SELECTED_VERSION, selectedVersion);
     });
   }
 };
 
-function setInstallPathAndToggleButton(version: { directory: any }, installPathInput: HTMLInputElement | any) {
+function setInstallPathAndToggleButton(version: { directory?: string } | undefined, installPathInput: HTMLInputElement) {
   if (version && !version.directory) {
-    fetchDefaultDirectory((defaultPath: any) => {
+    fetchDefaultDirectory((defaultPath: string) => {
       installPathInput.value = defaultPath; // Set the path once it's fetched
       toggleButtonVisibility(true);
     });
@@ -78,7 +80,7 @@ function setInstallPathAndToggleButton(version: { directory: any }, installPathI
     const trimmedPath = trimFilePath(version.directory);
     if (trimmedPath === null) {
       // If trimming fails (invalid path), fetch the default directory and update accordingly
-      fetchDefaultDirectory((defaultPath: any) => {
+      fetchDefaultDirectory((defaultPath: string) => {
         installPathInput.value = defaultPath;
         toggleButtonVisibility(true);
       });
@@ -89,7 +91,7 @@ function setInstallPathAndToggleButton(version: { directory: any }, installPathI
     }
   } else {
     // If no version is actively selected, fetch default directory as a fallback
-    fetchDefaultDirectory((defaultPath: any) => {
+    fetchDefaultDirectory((defaultPath: string) => {
       installPathInput.value = defaultPath;
       toggleButtonVisibility(true);
     });

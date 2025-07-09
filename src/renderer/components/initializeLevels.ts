@@ -9,26 +9,32 @@ export const initializeLevels = (): void => {
   window.electronAPI?.removeAllListeners(IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS);
   window.electronAPI?.send(IPC_CHANNELS.GET_LEVELS);
 
-  window.electronAPI?.receive(IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS, ({ progress, status }) => {
-    updateStatus(progress, status);
-  });
+  window.electronAPI?.receive(
+    IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS,
+    ({ progress, status }: import('../../types/ipcMessages').ProgressStatus) => {
+      updateStatus(progress ?? 0, status);
+    }
+  );
 
-  window.electronAPI?.receive(IPC_CHANNELS.DOWNLOAD_LEVEL, (result: any) => {
+  window.electronAPI?.receive(IPC_CHANNELS.DOWNLOAD_LEVEL, (result: import('../../types/ipcMessages').DownloadResult) => {
     debugLog(result.message);
   });
 
   // Handler for receiving levels data
-  window.electronAPI?.receiveOnce(IPC_CHANNELS.GET_LEVELS, (response: any) => {
-    if (response.status) {
-      updateLevelsTable(response.levels); // Pass only the levels array
-      debugLog(`Received levels: ${JSON.stringify(response.levels)}`);
-    } else {
-      console.error('Failed to fetch levels:', response.message);
+  window.electronAPI?.receiveOnce(
+    IPC_CHANNELS.GET_LEVELS,
+    (response: import('../../api/fetchLevels').LevelsResponse & { status: boolean; message: string }) => {
+      if (response.status) {
+        updateLevelsTable(response.levels);
+        debugLog(`Received levels: ${JSON.stringify(response.levels)}`);
+      } else {
+        console.error('Failed to fetch levels:', response.message);
+      }
     }
-  });
+  );
 
   // Update the UI with received levels data
-  function updateLevelsTable(levels: any[] | undefined | null) {
+  function updateLevelsTable(levels: import('../../api/fetchLevels').Level[] | undefined | null) {
     if (!Array.isArray(levels)) {
       console.error('Invalid levels data received:', levels);
       return;

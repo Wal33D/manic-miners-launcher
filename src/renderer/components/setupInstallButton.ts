@@ -30,11 +30,11 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     });
   });
 
-  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, ({ progress, status }) => {
-    updateStatus(progress, status);
+  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_PROGRESS, ({ progress, status }: import('../../types/ipcMessages').ProgressStatus) => {
+    updateStatus(progress ?? 0, status);
   });
 
-  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, (result: any) => {
+  window.electronAPI.receive(IPC_CHANNELS.DOWNLOAD_VERSION, (result: import('../../types/ipcMessages').DownloadResult) => {
     debugLog(result.message);
     if (result.downloaded) {
       const settings = getCurrentSettings();

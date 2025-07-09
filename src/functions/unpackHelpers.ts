@@ -28,7 +28,7 @@ export async function extractZipEntries({
 }: {
   zip: StreamZip.StreamZipAsync;
   targetPath: string;
-  updateStatus?: (status: any) => void;
+  updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
   progressStart?: number;
   progressSpan?: number;
 }): Promise<void> {

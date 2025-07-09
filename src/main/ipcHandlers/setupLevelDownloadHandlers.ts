@@ -24,7 +24,7 @@ export const setupLevelDownloadHandlers = async (): Promise<{ status: boolean; m
           downloadUrl: level.downloadUrl,
           levelIdentifier: level.identifier,
           levelsPath,
-          updateStatus: (statusObj: any) => {
+          updateStatus: (statusObj: import('../../types/ipcMessages').ProgressStatus) => {
             event.sender.send(IPC_CHANNELS.LEVEL_DOWNLOAD_PROGRESS, statusObj);
           },
         });
