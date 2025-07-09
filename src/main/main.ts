@@ -15,7 +15,10 @@ import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
 // Prevent Chrome DevTools from attempting to use unsupported Autofill features
-app.commandLine.appendSwitch('disable-features', 'Autofill');
+// Disable additional Autofill-related features to avoid protocol errors in DevTools
+// Some Chrome DevTools versions attempt to enable these features even though
+// Electron does not implement the corresponding protocol domain.
+app.commandLine.appendSwitch('disable-features', 'Autofill,AutofillAssistant,AutofillServerCommunication');
 
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
