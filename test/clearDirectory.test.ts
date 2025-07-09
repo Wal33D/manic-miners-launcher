@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
+import { createTempDir, cleanupTempDir } from './helpers/temp';
 import { clearDirectory } from '../src/fileUtils/clearDirectory';
 
 // Test that clearDirectory recursively deletes all contents
 
 test('clearDirectory recursively removes nested contents', async () => {
-  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const dir = createTempDir();
   const sub = path.join(dir, 'sub');
   const deep = path.join(sub, 'deep');
   fs.mkdirSync(deep, { recursive: true });
@@ -22,7 +23,7 @@ test('clearDirectory recursively removes nested contents', async () => {
   assert.strictEqual(remaining.length, 0);
   assert.ok(!fs.existsSync(sub));
 
-  fs.rmSync(dir, { recursive: true, force: true });
+  cleanupTempDir(dir);
 });
 
 // Test that clearDirectory creates directory if it doesn't exist
