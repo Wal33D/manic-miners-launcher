@@ -1,7 +1,7 @@
 // installHandler.ts
 import { updateStatus } from './updateStatus';
 import { IPC_CHANNELS } from '../../main/ipcHandlers/ipcChannels';
-import { setDisabledAppearance } from './domUtils';
+import { disableElements, enableElements } from './uiHelpers';
 import { debugLog } from '../../logger';
 import { getCurrentSettings } from './initializeSettings';
 
@@ -19,9 +19,7 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     }
 
     // Disable UI elements during the download process
-    setDisabledAppearance(installButton, true);
-    setDisabledAppearance(versionSelect, true);
-    setDisabledAppearance(installPathInput, true);
+    disableElements(installButton, versionSelect, installPathInput);
 
     // Send the download request to the main process
     window.electronAPI.send(IPC_CHANNELS.DOWNLOAD_VERSION, {
@@ -50,9 +48,7 @@ export function setupInstallButton(installButton: HTMLButtonElement, installPath
     }
 
     // Re-enable UI elements once the download is complete or fails
-    setDisabledAppearance(installButton, false);
-    setDisabledAppearance(versionSelect, false);
-    setDisabledAppearance(installPathInput, false);
+    enableElements(installButton, versionSelect, installPathInput);
   });
 
   window.electronAPI.receive(IPC_CHANNELS.VERSIONS_UPDATED, () => {
