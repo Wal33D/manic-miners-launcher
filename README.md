@@ -61,6 +61,11 @@ If you want to build the launcher from source you'll need **Node.js 20.19.2 or n
 3. Start the app in development mode using `pnpm start`.
 4. To create distributable packages run `pnpm run make`.
 
+> **Note**
+> The `src/fileUtils` folder now only contains the utilities currently used by
+> the launcher (`createShortcut`, `findLatestVersionPath` and the helpers in
+> `fileOps`). Older helpers were removed.
+
 ### macOS TypeScript checks
 
 On macOS the TypeScript checker used during development can crash with `EPIPE`
