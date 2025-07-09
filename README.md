@@ -102,10 +102,6 @@ This variable can also be set in your operating system's environment or in a `.e
 
 Manic Miners Launcher is released under the [MIT License](LICENSE). See the LICENSE file for more details.
 
-## Assets
-
-The bundled **Fredericka the Great** font is provided under the [SIL Open Font License](https://scripts.sil.org/OFL). See [assets/NOTICE](assets/NOTICE) for more information.
-
 ## Security Notes
 
 `pnpm audit` currently reports no high-severity issues.

@@ -1,6 +1,4 @@
 // renderer.ts
-import './index.css';
-import '../ui/styles/mainMenuModal.css';
 import { setupTopNav } from './components/setupTopNav';
 import { setupPlayButton } from './components/setupPlayButton';
 import { setupInstallButton } from './components/setupInstallButton';
