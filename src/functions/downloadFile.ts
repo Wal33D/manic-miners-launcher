@@ -26,7 +26,7 @@ export async function downloadFile({
   filePath: string;
   expectedSize?: number;
   expectedMd5?: string;
-  updateStatus?: (status: any) => void;
+  updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
   initialProgress?: number;
 }): Promise<{ status: boolean; message: string }> {
   try {

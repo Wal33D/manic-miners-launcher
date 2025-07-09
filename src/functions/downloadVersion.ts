@@ -11,7 +11,7 @@ export const downloadVersion = async ({
 }: {
   versionIdentifier?: string;
   downloadPath: string;
-  updateStatus: any;
+  updateStatus: (status: import('../types/ipcMessages').ProgressStatus) => void;
 }): Promise<{ downloaded: boolean; message: string }> => {
   updateStatus({ status: 'Starting download process...', progress: 2 });
 

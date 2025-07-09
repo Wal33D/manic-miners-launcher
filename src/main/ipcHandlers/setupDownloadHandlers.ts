@@ -36,7 +36,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         const downloadResult = await downloadVersion({
           versionIdentifier: version,
           downloadPath,
-          updateStatus: (statusObj: any) => {
+          updateStatus: (statusObj: import('../../types/ipcMessages').ProgressStatus) => {
             event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, statusObj);
           },
         });
@@ -48,7 +48,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         const unpackResult = await unpackVersion({
           versionIdentifier: version,
           installationDirectory: downloadPath,
-          updateStatus: (statusObj: any) => {
+          updateStatus: (statusObj: import('../../types/ipcMessages').ProgressStatus) => {
             event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, statusObj);
           },
         });
