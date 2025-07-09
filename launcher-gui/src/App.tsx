@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { LauncherHeader } from "@/components/LauncherHeader";
 import Index from "./pages/Index";
 import LevelDownloader from "./pages/LevelDownloader";
@@ -19,6 +19,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="flex flex-col h-screen bg-background overflow-hidden">
+
           <LauncherHeader />
           <main className="flex-1 overflow-y-auto">
             <Routes>
@@ -31,7 +32,7 @@ const App = () => (
             </Routes>
           </main>
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
