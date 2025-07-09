@@ -21,33 +21,33 @@ export const launchExecutable = ({
     const spawnCmd = useCompat ? compatCmd : executablePath;
     const spawnArgs = useCompat ? [executablePath] : [];
 
-    const process = spawn(spawnCmd, spawnArgs, {
+    const child = spawn(spawnCmd, spawnArgs, {
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     // Listen to stdout
-    process.stdout.on('data', data => {
+    child.stdout.on('data', data => {
       const stdoutMessage = `stdout: ${data}`;
       debugLog(stdoutMessage);
       logToFile({ message: stdoutMessage });
     });
 
     // Listen to stderr
-    process.stderr.on('data', data => {
+    child.stderr.on('data', data => {
       const stderrMessage = `stderr: ${data}`;
       console.error(stderrMessage);
       logToFile({ message: stderrMessage });
     });
 
-    process.on('error', err => {
+    child.on('error', err => {
       const errorMessage = `Failed to start process: ${err.message}`;
       console.error(errorMessage);
       logToFile({ message: errorMessage });
       reject({ status: false, message: `Error launching executable: ${err.message}` });
     });
 
-    process.on('exit', code => {
+    child.on('exit', code => {
       const endTime = Date.now();
       const runTime = (endTime - startTime) / 1000 / 60;
       const veryShortRun = runTime < 5;
@@ -66,6 +66,6 @@ export const launchExecutable = ({
       resolve({ status: code === 0, message: exitMessage, exitCode: code, veryShortRun });
     });
 
-    process.unref();
+    child.unref();
   });
 };

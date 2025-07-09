@@ -1,6 +1,16 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
 import { getDirectories } from './functions/fetchDirectories';
+
+let fs: typeof import('fs').promises | null = null;
+let join: ((...paths: string[]) => string) | null = null;
+
+const loadNodeModules = () => {
+  if (!fs || !join) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const req = require as NodeRequire;
+    if (!fs) fs = req('fs').promises;
+    if (!join) ({ join } = req('path'));
+  }
+};
 
 const isRenderer =
   typeof process !== 'undefined' && (process as any).type === 'renderer';
@@ -43,10 +53,11 @@ export const logToFile = async ({
     return;
   }
   try {
+    loadNodeModules();
     const dir = await ensureLogDir();
-    const finalPath = filePath || join(dir, 'default-log.txt');
+    const finalPath = filePath || join!(dir, 'default-log.txt');
     const timeStampedMessage = `${new Date().toISOString()}: ${message}\n`;
-    await fs.appendFile(finalPath, timeStampedMessage, 'utf-8');
+    await fs!.appendFile(finalPath, timeStampedMessage, 'utf-8');
   } catch (error: unknown) {
     const err = error as Error;
     console.error(`Failed to write to log file: ${err.message}`);
@@ -63,8 +74,9 @@ export const logToRuntimeLog = async ({ message }: { message: string }) => {
     return;
   }
   try {
+    loadNodeModules();
     const dir = await ensureLogDir();
-    await logToFile({ message, filePath: join(dir, 'runtime-log.txt') });
+    await logToFile({ message, filePath: join!(dir, 'runtime-log.txt') });
   } catch (error: unknown) {
     const err = error as Error;
     console.error(`Failed to log runtime message: ${err.message}`);
