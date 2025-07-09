@@ -13,7 +13,7 @@ export const unpackVersion = async ({
 }: {
   versionIdentifier?: string;
   installationDirectory?: string;
-  updateStatus?: any;
+  updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
   overwriteExisting?: boolean;
 }): Promise<{
   unpacked: boolean;

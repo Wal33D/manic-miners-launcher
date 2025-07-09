@@ -1,6 +1,6 @@
 import { fetchServerData } from './fetchServerData';
 
-interface Level {
+export interface Level {
   title: string;
   identifier: string;
   creator: string;
@@ -12,7 +12,7 @@ interface Level {
   xmlFileUrl: string;
 }
 
-interface LevelsResponse {
+export interface LevelsResponse {
   count: number;
   levels: Level[];
 }
