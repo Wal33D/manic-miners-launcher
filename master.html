@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manic Miners HQ</title>
+  </head>
+
+  <body class="draggableArea">
+    <div class="h-full p-0">
+      <div class="flex flex-col sm:flex-row flex-grow min-h-screen">
+        <div class="w-full sm:w-7/12 md:w-8/12 lg:w-9/12 flex flex-col justify-between p-0">
+          <div id="top-navbar-container">
+            <!-- Navigation Bar -->
+            <nav class="navbar bg-neutral text-neutral-content p-3">
+              <div class="flex-1">
+                <a id="navbar-main-menu-modal-btn" class="btn btn-ghost normal-case text-xl not-draggable flex items-center" href="#">
+                  <div id="brand-image" class="inline-block align-top mr-2"></div>
+                  Manic Miners HQ
+                </a>
+              </div>
+              <div class="flex-none">
+                <button id="navbar-menu-btn" class="btn btn-ghost not-draggable">
+                  <i class="fas fa-bars"></i>
+                </button>
+              </div>
+            </nav>
+          </div>
+
+          <!-- Tab Content Area -->
+          <div class="tab-content" style="flex-grow: 1">
+            <div class="tab-pane fade show active" id="news">
+              <div class="p-4">Latest news and updates about the game...</div>
+            </div>
+            <div class="tab-pane fade" id="levels">
+              <div class="p-4">
+                <div id="levels-container">
+                  <table id="levelsTable" class="table table-zebra w-full">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Creator</th>
+                        <th>Date</th>
+                        <th>Downloads</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Levels will be dynamically inserted here -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="library">
+              <div class="p-4">Your installed content will appear here.</div>
+            </div>
+            <div class="tab-pane fade" id="store">
+              <div class="p-4">Store content coming soon.</div>
+            </div>
+            <div class="tab-pane fade" id="extensions">
+              <div class="p-4">
+                <div class="alert alert-info">Extensions coming soon.</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="bottom-navbar-container">
+            <nav class="navbar bg-neutral text-neutral-content py-3 sticky-bottom">
+              <div class="w-full flex items-center px-4">
+                <progress id="downloadProgress" class="progress progress-primary w-full" value="1" max="100"></progress>
+                <span id="progressText" class="ml-2">1%</span>
+              </div>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Side pane -->
+        <div id="side-pane" class="w-full sm:w-5/12 md:w-4/12 lg:w-3/12 flex flex-col overflow-auto min-h-screen">
+          <div id="install-pane-container" class="flex-grow draggableArea">
+            <div class="bg-neutral text-neutral-content p-3 rounded draggableArea" id="install-pane">
+              <div class="p-1">
+                <label for="versionSelect" class="label">Select Version</label>
+                <select id="versionSelect" class="not-draggable select select-bordered w-full mb-3">
+                  <option value="" disabled selected>Choose a version:</option>
+                </select>
+                <label for="installPath" class="label not-draggable">Install Directory</label>
+                <input
+                  type="text"
+                  id="installPath"
+                  class="not-draggable input input-bordered w-full mb-3"
+                  placeholder="Click to select install directory"
+                />
+                <fieldset class="mb-3">
+                  <div class="flex flex-col md:flex-row mb-3">
+                    <label class="label cursor-pointer me-md-2 mb-2 md:mb-0">
+                      <input type="checkbox" class="checkbox not-draggable" id="start-menu-shortcut" />
+                      <span class="label-text ms-2">Create Start Menu Shortcut</span>
+                    </label>
+                    <label class="label cursor-pointer">
+                      <input type="checkbox" class="checkbox not-draggable" id="desktop-shortcut" />
+                      <span class="label-text ms-2">Create Desktop Shortcut</span>
+                    </label>
+                  </div>
+                </fieldset>
+                <hr />
+                <button id="installButton" style="display: none" class="btn btn-primary mb-3 w-full not-draggable">Install</button>
+                <button id="playButton" class="btn btn-success w-full not-draggable">Play Game</button>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="p-0" id="links-pane">Links here</div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal not-draggable"
+      id="navbar-main-menu-modal"
+      tabindex="-1"
+      aria-labelledby="navbar-main-menu-modalLabel"
+      aria-hidden="true"
+      style="display: none"
+    >
+      <div class="modal-box">
+        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" data-bs-dismiss="modal" aria-label="Close">
+          ✕
+        </button>
+        <h3 class="font-bold text-lg mb-4" id="navbar-main-menu-modalLabel">Navigation</h3>
+        <div class="flex flex-col space-y-2">
+          <a id="nav-home" href="#" class="flex items-center">
+            <div id="lmsMenuImg" class="menu-icon mr-2"></div>
+            Home
+          </a>
+          <a id="nav-levels" href="#" class="flex items-center">
+            <div id="levelsMenuImg" class="menu-icon mr-2"></div>
+            Levels
+          </a>
+          <a id="nav-library" href="#" class="flex items-center">
+            <div id="teleportMenuImg" class="menu-icon mr-2"></div>
+            Library
+          </a>
+          <a id="nav-store" href="#" class="flex items-center">
+            <div id="tsMenuImg" class="menu-icon mr-2"></div>
+            Store
+          </a>
+          <a id="nav-extensions" href="#" class="flex items-center">
+            <div id="extensionsMenuImg" class="menu-icon mr-2"></div>
+            Extensions
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- Additional HTML fragments collected from various TypeScript files -->
+<template id="top-navbar-element">
+<nav class="navbar bg-neutral text-neutral-content p-3 fixed-top">
+    <div class="flex-1">
+        <a id="navbar-main-menu-modal-btn" class="btn btn-ghost normal-case text-xl not-draggable flex items-center" href="#">
+            <div id="brand-image" class="inline-block align-top mr-2"></div>
+            Manic Miners HQ
+        </a>
+    </div>
+    <div class="flex-none">
+        <button id="navbar-menu-btn" class="btn btn-ghost not-draggable">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+</template>
+<template id="progress-bar-element">
+<nav class="navbar bg-neutral text-neutral-content py-3 sticky-bottom draggableArea">
+  <div class="w-full flex items-center px-4 draggableArea">
+    <progress
+      id="downloadProgress"
+      class="progress progress-primary w-full"
+      value="1"
+      max="100"
+    ></progress>
+    <span id="progressText" class="ml-2 draggableArea">1%</span>
+  </div>
+</nav>
+</template>
+<template id="message-box-element">
+<div id="message-pane-container" class="bg-neutral text-neutral-content rounded draggableArea"></div>
+<div class="p-3">
+    <label for="messageBox" class="label">Mission Updates</label>
+</div>
+</template>
+<template id="installer-menu-modal-element">
+<div class="modal not-draggable" id="navbar-main-menu-modal" tabindex="-1" aria-labelledby="navbar-main-menu-modalLabel" aria-hidden="true" style="display: none">
+    <div class="modal-box">
+        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" data-bs-dismiss="modal" aria-label="Close">✕</button>
+        <h3 class="font-bold text-lg mb-4" id="navbar-main-menu-modalLabel">Navigation</h3>
+        <div class="flex flex-col space-y-2">
+            <a href="#" class="flex items-center">
+                <div id='lmsMenuImg' class="menu-icon mr-2"></div>
+                Home
+            </a>
+            <a href="#" class="flex items-center">
+                <div id='levelsMenuImg' class="menu-icon mr-2"></div>
+                Levels
+            </a>
+            <a href="#" class="flex items-center">
+                <div id='teleportMenuImg' class="menu-icon mr-2"></div>
+                Library
+            </a>
+            <a href="#" class="flex items-center">
+                <div id='tsMenuImg' class="menu-icon mr-2"></div>
+                Store
+            </a>
+            <a href="#" class="flex items-center">
+                <div id='extensionsMenuImg' class="menu-icon mr-2"></div>
+                Extensions
+            </a>
+        </div>
+    </div>
+</div>
+
+</template>
+<!-- Template from initializeLevels.ts -->
+        row.innerHTML = `
+          <td>${level.title}</td>
+          <td>${level.creator}</td>
+          <td>${new Date(level.date).toLocaleDateString()}</td>
+          <td>${level.downloadCount.toLocaleString()}</td>
+          <td><button class="btn btn-sm btn-primary not-draggable" data-level-id="${level.identifier}">Install</button></td>
+        `;
+      });
+<!-- Template from initializeUrls.ts -->
+        link.setAttribute('data-url', url as string);
+        link.className = 'not-draggable icon-button';
+        link.innerHTML = `<i class="${getIconClass(key)}"></i>`;
+        link.addEventListener('click', event => {
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          window.electronAPI.openExternal(url as string);
+        });
+        linksContainer.appendChild(link);
+      });
+    }
+
