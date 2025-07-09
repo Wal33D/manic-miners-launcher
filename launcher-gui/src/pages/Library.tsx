@@ -1,63 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Library as LibraryIcon, Play, Trash2, Search, Folder, Calendar } from "lucide-react";
-
-interface InstalledLevel {
-  id: string;
-  name: string;
-  difficulty: 'easy' | 'medium' | 'hard' | 'extreme';
-  author: string;
-  installDate: string;
-  size: string;
-  lastPlayed?: string;
-  playTime: string;
-  highScore?: number;
-}
+import { useInstalledLevels, InstalledLevel } from "../hooks/useInstalledLevels";
 
 const Library = () => {
-  const [installedLevels, setInstalledLevels] = useState<InstalledLevel[]>([]);
+  const { levels: installedLevels, uninstallLevel } = useInstalledLevels();
   const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    // Simulate installed levels
-    setInstalledLevels([
-      {
-        id: '1',
-        name: 'Crystal Caverns',
-        difficulty: 'easy',
-        author: 'RockRaider_Dev',
-        installDate: '2024-01-15',
-        size: '45 MB',
-        lastPlayed: '2024-01-20',
-        playTime: '2h 34m',
-        highScore: 1250
-      },
-      {
-        id: '4',
-        name: 'Underground Temple',
-        difficulty: 'medium',
-        author: 'AncientMiner',
-        installDate: '2024-01-10',
-        size: '67 MB',
-        lastPlayed: '2024-01-18',
-        playTime: '4h 12m',
-        highScore: 2890
-      },
-      {
-        id: '7',
-        name: 'Volcanic Chambers',
-        difficulty: 'hard',
-        author: 'HeatSeeker',
-        installDate: '2023-12-28',
-        size: '89 MB',
-        playTime: '1h 45m',
-        highScore: 3420
-      }
-    ]);
-  }, []);
 
   const filteredLevels = installedLevels.filter(level =>
     level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,7 +26,7 @@ const Library = () => {
   };
 
   const handleUninstall = (levelId: string) => {
-    setInstalledLevels(prev => prev.filter(level => level.id !== levelId));
+    uninstallLevel(levelId);
   };
 
   return (
