@@ -15,5 +15,5 @@ export async function fetchLevels(): Promise<LevelsResponse> {
     levels: data.levels as Level[],
   };
 }
-\nexport { Level, LevelsResponse } from '../types';
 
+export type { Level, LevelsResponse } from '../types';
