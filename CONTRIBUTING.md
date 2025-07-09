@@ -10,8 +10,7 @@ Thank you for considering contributing to this project! To file issues or submit
 ## Submitting Pull Requests
 
 1. Fork the repository and create a new branch for your changes.
-2. Make your changes and ensure that any tests pass.
-3. Open a pull request against the `master` branch with a clear description of your changes.
+2. Make your changes and open a pull request against the `master` branch with a clear description of your updates.
 
 ## Installing Dependencies
 
