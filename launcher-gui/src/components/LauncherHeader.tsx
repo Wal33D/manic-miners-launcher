@@ -4,7 +4,7 @@ import { Navigation } from "./Navigation";
 
 export function LauncherHeader() {
   return (
-    <header className="border-b border-border mining-surface">
+    <header className="sticky top-0 z-50 border-b border-border mining-surface">
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -26,5 +26,4 @@ export function LauncherHeader() {
         <Navigation />
       </div>
     </header>
-  );
-}
+  );}

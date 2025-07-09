@@ -17,7 +17,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <HashRouter>
         <div className="flex flex-col h-screen bg-background overflow-hidden">
 
           <LauncherHeader />
