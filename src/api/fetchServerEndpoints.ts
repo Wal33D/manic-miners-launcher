@@ -6,7 +6,6 @@ import { Endpoint } from '../types';
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
 
-
 export async function fetchServerEndpoints({
   routeName,
 }: {

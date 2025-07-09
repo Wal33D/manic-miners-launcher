@@ -22,7 +22,6 @@ if (process.env.FETCH_TIMEOUT_MS) {
   }
 }
 
-
 export async function fetchServerData({ routeName = 'launcher.all' }: { routeName?: string }): Promise<FetchResult> {
   let message = 'Failed to fetch data.';
   let status = false;
