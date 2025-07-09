@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
-import { verifyFile } from '../src/fileUtils/verifyFile';
+import { verifyFile } from '../src/fileUtils/fileOps';
 
 // helper to create temporary directory and file
 function createTempFile(content: string): { dir: string; file: string; size: number } {
