@@ -16,38 +16,38 @@ export const launchExecutable = ({
     logToFile({ message: `Launching executable at: ${executablePath}` });
     const startTime = Date.now();
 
-    const useCompat = process.platform !== 'win32';
-    const compatCmd = process.env.COMPAT_LAUNCHER || 'wine';
-    const spawnCmd = useCompat ? compatCmd : executablePath;
-    const spawnArgs = useCompat ? [executablePath] : [];
+    const useCompat: boolean = process.platform !== 'win32';
+    const compatCmd: string = process.env.COMPAT_LAUNCHER || 'wine';
+    const spawnCmd: string = useCompat ? compatCmd : executablePath;
+    const spawnArgs: string[] = useCompat ? [executablePath] : [];
 
-    const process = spawn(spawnCmd, spawnArgs, {
+    const childProcess = spawn(spawnCmd, spawnArgs, {
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     // Listen to stdout
-    process.stdout.on('data', data => {
+    childProcess.stdout.on('data', (data: Buffer) => {
       const stdoutMessage = `stdout: ${data}`;
       debugLog(stdoutMessage);
       logToFile({ message: stdoutMessage });
     });
 
     // Listen to stderr
-    process.stderr.on('data', data => {
+    childProcess.stderr.on('data', (data: Buffer) => {
       const stderrMessage = `stderr: ${data}`;
       console.error(stderrMessage);
       logToFile({ message: stderrMessage });
     });
 
-    process.on('error', err => {
+    childProcess.on('error', (err: Error) => {
       const errorMessage = `Failed to start process: ${err.message}`;
       console.error(errorMessage);
       logToFile({ message: errorMessage });
       reject({ status: false, message: `Error launching executable: ${err.message}` });
     });
 
-    process.on('exit', code => {
+    childProcess.on('exit', (code: number | null) => {
       const endTime = Date.now();
       const runTime = (endTime - startTime) / 1000 / 60;
       const veryShortRun = runTime < 5;
@@ -66,6 +66,6 @@ export const launchExecutable = ({
       resolve({ status: code === 0, message: exitMessage, exitCode: code, veryShortRun });
     });
 
-    process.unref();
+    childProcess.unref();
   });
 };
