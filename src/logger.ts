@@ -1,32 +1,50 @@
-let fs: typeof import('fs/promises') | null = null;
-let join: ((...paths: string[]) => string) | null = null;
+import { promises as fs } from 'fs';
+import { join } from 'path';
+import { getDirectories } from './functions/fetchDirectories';
 
-if (typeof process !== 'undefined' && (process as any).type !== 'renderer') {
-  // Directly require Node modules when running outside the renderer
-  fs = require('fs').promises;
-  ({ join } = require('path'));
-}
+const isRenderer =
+  typeof process !== 'undefined' && (process as any).type === 'renderer';
 
 // Flag to control verbose logging
-export const isVerbose = typeof process !== 'undefined' && process.env ? process.env.VERBOSE === 'true' : false;
+export const isVerbose =
+  typeof process !== 'undefined' && process.env
+    ? process.env.VERBOSE === 'true'
+    : false;
+
+let configuredLogDir: string | null = null;
+
+export const setLogDirectory = (dir: string) => {
+  configuredLogDir = dir;
+};
+
+const ensureLogDir = async (): Promise<string> => {
+  if (configuredLogDir) return configuredLogDir;
+  const { status, message, directories } = await getDirectories();
+  if (!status || !directories) {
+    throw new Error(message);
+  }
+  configuredLogDir = directories.launcherLogsPath;
+  return configuredLogDir;
+};
 
 /**
  * Logs a message to a file with a timestamp. Uses a specified file or a default log file if no path is provided.
  * @param options An object containing the message and optional file path.
  */
-export const logToFile = async ({ message, filePath }: { message: string; filePath?: string }) => {
-  if (!fs || !join) {
+export const logToFile = async ({
+  message,
+  filePath,
+}: {
+  message: string;
+  filePath?: string;
+}) => {
+  if (isRenderer) {
     console.log(message);
     return;
   }
   try {
-    const { getDirectories } = await import('./functions/fetchDirectories');
-    const { status, message: dirMessage, directories } = await getDirectories();
-    if (!status) {
-      throw new Error(dirMessage);
-    }
-    const launcherLogsPath = directories.launcherLogsPath;
-    const finalPath = filePath || join(launcherLogsPath, 'default-log.txt');
+    const dir = await ensureLogDir();
+    const finalPath = filePath || join(dir, 'default-log.txt');
     const timeStampedMessage = `${new Date().toISOString()}: ${message}\n`;
     await fs.appendFile(finalPath, timeStampedMessage, 'utf-8');
   } catch (error: unknown) {
@@ -40,18 +58,13 @@ export const logToFile = async ({ message, filePath }: { message: string; filePa
  * @param message The message to log.
  */
 export const logToRuntimeLog = async ({ message }: { message: string }) => {
-  if (!fs || !join) {
+  if (isRenderer) {
     console.log(message);
     return;
   }
   try {
-    const { getDirectories } = await import('./functions/fetchDirectories');
-    const { status, message: dirMessage, directories } = await getDirectories();
-    if (!status) {
-      throw new Error(dirMessage);
-    }
-    const launcherLogsPath = directories.launcherLogsPath;
-    await logToFile({ message, filePath: join(launcherLogsPath, 'runtime-log.txt') });
+    const dir = await ensureLogDir();
+    await logToFile({ message, filePath: join(dir, 'runtime-log.txt') });
   } catch (error: unknown) {
     const err = error as Error;
     console.error(`Failed to log runtime message: ${err.message}`);
@@ -64,6 +77,16 @@ export const logToRuntimeLog = async ({ message }: { message: string }) => {
  */
 export const debugLog = async (message: string) => {
   if (isVerbose) {
-    await logToRuntimeLog({ message });
+    await logToRuntimeLog({ message: `[DEBUG] ${message}` });
   }
+};
+
+export const info = async (message: string) => {
+  await logToRuntimeLog({ message: `[INFO] ${message}` });
+};
+
+export const debug = debugLog;
+
+export const error = async (message: string) => {
+  await logToRuntimeLog({ message: `[ERROR] ${message}` });
 };
