@@ -20,4 +20,3 @@ export async function fetchUrls(): Promise<Urls> {
     FAQ: data.FAQ,
   };
 }
-
