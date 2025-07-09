@@ -1,4 +1,10 @@
-import { getDirectories } from './functions/fetchDirectories';
+let getDirectories: (() => Promise<{
+  status: boolean;
+  message: string;
+  directories?: {
+    launcherLogsPath: string;
+  };
+}>) | null = null;
 
 let fs: typeof import('fs').promises | null = null;
 let join: ((...paths: string[]) => string) | null = null;
@@ -15,6 +21,13 @@ const loadNodeModules = () => {
 const isRenderer =
   typeof process !== 'undefined' && (process as any).type === 'renderer';
 
+const loadGetDirectories = () => {
+  if (!getDirectories && !isRenderer) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    getDirectories = require('./functions/fetchDirectories').getDirectories;
+  }
+};
+
 // Flag to control verbose logging
 export const isVerbose =
   typeof process !== 'undefined' && process.env
@@ -29,6 +42,10 @@ export const setLogDirectory = (dir: string) => {
 
 const ensureLogDir = async (): Promise<string> => {
   if (configuredLogDir) return configuredLogDir;
+  loadGetDirectories();
+  if (!getDirectories) {
+    throw new Error('getDirectories is not available in renderer context');
+  }
   const { status, message, directories } = await getDirectories();
   if (!status || !directories) {
     throw new Error(message);
