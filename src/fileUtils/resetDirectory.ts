@@ -1,9 +1,9 @@
 import { destroy } from './destroy'; // Assuming this is the file path
-import { createDirectory } from './createDirectory';
+import { ensureDirectory } from './fileOps';
 
 /**
  * Resets a directory by destroying it and then recreating it.
- * This function uses the destroy and createDirectory functions to handle the operations.
+ * This function uses the destroy and ensureDirectory functions to handle the operations.
  *
  * @param {string} directoryPath - The path to the directory to reset.
  * @returns {Promise<{ overallStatus: boolean; destroyStatus: boolean; createStatus: boolean; message: string }>} - Object indicating whether the reset was successful, includes a status message.
@@ -29,7 +29,7 @@ export const resetDirectory = async ({
     destroyed = (await destroy({ pathToDestroy: directoryPath })).destroyed;
 
     // If destruction was successful, recreate the directory
-    const createResults = await createDirectory({ directory: directoryPath });
+    const createResults = await ensureDirectory({ directory: directoryPath });
     existed = createResults.existed;
     created = createResults.created;
 

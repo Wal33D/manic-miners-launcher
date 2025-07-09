@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { makeWritable } from './makeWritable';
+import { makeWritable } from './fileOps';
 import { clearDirectory } from './clearDirectory';
 import { deleteDirectoryOrFile } from './deleteDirectoryOrFile';
 
