@@ -4,6 +4,7 @@ import './messageBoxElement.test';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import { createTempDir, cleanupTempDir } from './helpers/temp';
 import { createHash } from 'crypto';
 import { downloadFile } from '../src/functions/downloadFile';
 
@@ -37,7 +38,7 @@ test('downloadFile succeeds with correct checksum', async () => {
   const content = 'hello world';
   const hash = createHash('md5').update(content).digest('hex');
   const { url, close } = await startServer(content);
-  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const dir = createTempDir();
   const file = path.join(dir, 'file.txt');
 
   const result = await downloadFile({
@@ -51,13 +52,13 @@ test('downloadFile succeeds with correct checksum', async () => {
   assert.ok(fs.existsSync(file));
 
   close();
-  fs.rmSync(dir, { recursive: true, force: true });
+  cleanupTempDir(dir);
 });
 
 test('downloadFile fails on checksum mismatch', async () => {
   const content = 'goodbye';
   const { url, close } = await startServer(content);
-  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const dir = createTempDir();
   const file = path.join(dir, 'file.txt');
 
   const result = await downloadFile({
@@ -71,14 +72,14 @@ test('downloadFile fails on checksum mismatch', async () => {
   assert.ok(!fs.existsSync(file));
 
   close();
-  fs.rmSync(dir, { recursive: true, force: true });
+  cleanupTempDir(dir);
 });
 
 test('downloadFile handles missing Content-Length', async () => {
   const content = 'no length header';
   const hash = createHash('md5').update(content).digest('hex');
   const { url, close } = await startServerNoLength(content);
-  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const dir = createTempDir();
   const file = path.join(dir, 'file.txt');
 
   const progressValues: number[] = [];
@@ -100,14 +101,14 @@ test('downloadFile handles missing Content-Length', async () => {
   progressValues.forEach(p => assert.ok(Number.isFinite(p)));
 
   close();
-  fs.rmSync(dir, { recursive: true, force: true });
+  cleanupTempDir(dir);
 });
 
 test('downloadFile handles missing Content-Length without expected size', async () => {
   const content = 'no length or size';
   const hash = createHash('md5').update(content).digest('hex');
   const { url, close } = await startServerNoLength(content);
-  const dir = fs.mkdtempSync(path.join(process.cwd(), 'tmp-'));
+  const dir = createTempDir();
   const file = path.join(dir, 'file.txt');
 
   const progressValues: number[] = [];
@@ -128,5 +129,5 @@ test('downloadFile handles missing Content-Length without expected size', async 
   progressValues.forEach(p => assert.ok(p >= 0 && p <= 100));
 
   close();
-  fs.rmSync(dir, { recursive: true, force: true });
+  cleanupTempDir(dir);
 });
