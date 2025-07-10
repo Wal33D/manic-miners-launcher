@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import path from 'path';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
