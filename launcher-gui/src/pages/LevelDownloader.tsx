@@ -27,97 +27,72 @@ const LevelDownloader = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [downloadingLevel, setDownloadingLevel] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadStatus, setDownloadStatus] = useState("");
   const { installLevel, isInstalled } = useInstalledLevels();
 
   useEffect(() => {
-    const fetchLevels = async () => {
-      try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/levels');
-        const data = await response.json();
-        setLevels(Array.isArray(data) ? data.map((lvl: Level) => ({ ...lvl, installed: isInstalled(lvl.id) })) : []);
-      } catch (error) {
-        console.error('Failed to fetch levels:', error);
-        // Enhanced fallback levels for demo
-        setLevels([
-          {
-            id: '1',
-            name: 'Crystal Caverns',
-            difficulty: 'easy',
-            description: 'Your first mining expedition into the energy-rich caverns. Perfect for beginners.',
-            crystals: 15,
-            author: 'RockRaider_Dev',
-            downloads: 12543,
-            rating: 4.8,
-            size: '45 MB',
-            installed: isInstalled('1')
-          },
-          {
-            id: '2',
-            name: 'Deep Core Descent', 
-            difficulty: 'medium',
-            description: 'Navigate treacherous underground passages to reach the planetary core.',
-            crystals: 32,
-            author: 'MiningMaster',
-            downloads: 8721,
-            rating: 4.6,
-            size: '78 MB',
-            installed: isInstalled('2')
-          },
-          {
-            id: '3',
-            name: 'Thermal Vents',
-            difficulty: 'hard',
-            description: 'Extreme heat and volatile energy sources test your mining skills.',
-            crystals: 48,
-            author: 'DrillCommander',
-            downloads: 5432,
-            rating: 4.9,
-            size: '92 MB',
-            installed: isInstalled('3')
-          },
-          {
-            id: '4',
-            name: 'Lava Flow Laboratory',
-            difficulty: 'extreme',
-            description: 'The ultimate challenge - mine through active lava flows and unstable terrain.',
-            crystals: 75,
-            author: 'ExtremeExcavator',
-            downloads: 2156,
-            rating: 4.7,
-            size: '156 MB',
-            installed: isInstalled('4')
-          },
-          {
-            id: '5',
-            name: 'Ice Age Expedition',
-            difficulty: 'medium',
-            description: 'Frozen underground lakes and crystal formations await your drilling team.',
-            crystals: 28,
-            author: 'FrostMiner',
-            downloads: 6789,
-            rating: 4.5,
-            size: '67 MB',
-            installed: isInstalled('5')
-          },
-          {
-            id: '6',
-            name: 'Radioactive Ruins',
-            difficulty: 'hard',
-            description: 'Ancient alien technology and dangerous radiation levels complicate this dig.',
-            crystals: 55,
-            author: 'AlienArchaeologist',
-            downloads: 4321,
-            rating: 4.8,
-            size: '134 MB',
-            installed: isInstalled('6')
-          }
-        ]);
-      } finally {
-        setLoading(false);
+    const fallbackLevels: Level[] = [
+      {
+        id: 'demo-1',
+        name: 'Crystal Caverns',
+        difficulty: 'easy',
+        description: 'Your first mining expedition into the energy-rich caverns. Perfect for beginners.',
+        crystals: 15,
+        author: 'RockRaider_Dev',
+        downloads: 12543,
+        rating: 4.8,
+        size: '45 MB',
+        installed: isInstalled('demo-1')
+      },
+      {
+        id: 'demo-2',
+        name: 'Deep Core Descent',
+        difficulty: 'medium',
+        description: 'Navigate treacherous underground passages to reach the planetary core.',
+        crystals: 32,
+        author: 'MiningMaster',
+        downloads: 8721,
+        rating: 4.6,
+        size: '78 MB',
+        installed: isInstalled('demo-2')
+      },
+      {
+        id: 'demo-3',
+        name: 'Thermal Vents',
+        difficulty: 'hard',
+        description: 'Extreme heat and volatile energy sources test your mining skills.',
+        crystals: 48,
+        author: 'DrillCommander',
+        downloads: 5432,
+        rating: 4.9,
+        size: '92 MB',
+        installed: isInstalled('demo-3')
       }
-    };
+    ];
 
-    fetchLevels();
+    window.electronAPI.send('get-levels');
+    window.electronAPI.receiveOnce('get-levels', (result: any) => {
+      if (result?.status && Array.isArray(result.levels)) {
+        const fetched: Level[] = result.levels.map((lvl: any) => ({
+          id: lvl.identifier,
+          name: lvl.title,
+          difficulty: 'medium',
+          description: lvl.description,
+          crystals: 0,
+          author: lvl.creator,
+          downloads: lvl.downloadCount,
+          rating: 0,
+          size: '0 MB',
+          installed: isInstalled(lvl.identifier),
+        }));
+        setLevels(fetched);
+      } else {
+        console.error('Failed to fetch levels:', result?.message);
+        setLevels(fallbackLevels);
+      }
+      setLoading(false);
+    });
   }, []);
 
   const filteredLevels = levels.filter(level => {
@@ -149,25 +124,41 @@ const LevelDownloader = () => {
 
   const handleDownload = (levelId: string) => {
     setDownloadingLevel(levelId);
-    // Simulate download completion after a few seconds
-    setTimeout(() => {
+    setDownloadProgress(0);
+    setDownloadStatus('Starting level download...');
+
+    window.electronAPI.send('download-level', levelId);
+
+    const progressHandler = (status: { progress?: number; status?: string }) => {
+      if (status.progress !== undefined) setDownloadProgress(status.progress);
+      if (status.status) setDownloadStatus(status.status);
+    };
+
+    window.electronAPI.receive('level-download-progress', progressHandler);
+
+    window.electronAPI.receiveOnce('download-level', (result: any) => {
+      window.electronAPI.removeAllListeners('level-download-progress');
       setDownloadingLevel(null);
-      setLevels(prev =>
-        prev.map(level =>
-          level.id === levelId ? { ...level, installed: true } : level
-        )
-      );
-      const level = levels.find(l => l.id === levelId);
-      if (level) {
-        installLevel({
-          id: level.id,
-          name: level.name,
-          difficulty: level.difficulty,
-          author: level.author,
-          size: level.size,
-        });
+      if (result?.status) {
+        setLevels(prev =>
+          prev.map(level =>
+            level.id === levelId ? { ...level, installed: true } : level
+          )
+        );
+        const level = levels.find(l => l.id === levelId);
+        if (level) {
+          installLevel({
+            id: level.id,
+            name: level.name,
+            difficulty: level.difficulty,
+            author: level.author,
+            size: level.size,
+          });
+        }
+      } else {
+        console.error(result?.message);
       }
-    }, 5000);
+    });
   };
 
   if (loading) {
@@ -196,6 +187,8 @@ const LevelDownloader = () => {
           fileName={`${levels.find(l => l.id === downloadingLevel)?.name || 'Level'}.zip`}
           totalSize={levels.find(l => l.id === downloadingLevel)?.size || '0 MB'}
           downloadType="level"
+          progress={downloadProgress}
+          statusText={downloadStatus}
           onCancel={() => setDownloadingLevel(null)}
           onPause={() => console.log('Paused')}
           onResume={() => console.log('Resumed')}
@@ -319,7 +312,8 @@ const LevelDownloader = () => {
                 </Button>
               </CardContent>
             </Card>
-          ))
+          );
+        })
         )}
       </div>
     </div>
