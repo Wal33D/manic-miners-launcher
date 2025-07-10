@@ -2,7 +2,6 @@ import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
-import { debugLog } from '../logger';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
@@ -15,7 +14,6 @@ if (process.env.FETCH_TIMEOUT_MS) {
   if (Number.isNaN(parsedTimeout)) {
     const warningMessage = `Invalid FETCH_TIMEOUT_MS value "${process.env.FETCH_TIMEOUT_MS}". Falling back to default of ${DEFAULT_FETCH_TIMEOUT_MS}ms.`;
     console.warn(warningMessage);
-    void debugLog(warningMessage);
   } else {
     FETCH_TIMEOUT_MS = parsedTimeout;
   }
@@ -81,10 +79,8 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
     const err = error as Error;
     if (err.name === 'AbortError') {
       message = `Request to ${routeName} timed out.`;
-      await debugLog(message);
     } else {
       message = `Error: ${err.message}`;
-      await debugLog(`Network error fetching ${routeName}: ${err.message}`);
     }
   }
 

@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { getDirectories } from '../../functions/fetchDirectories';
-import { debugLog } from '../../logger';
 import { withIpcHandler } from './withIpcHandler';
 
 export const setupDirectoryHandler = async (): Promise<{ status: boolean; message: string }> => {
@@ -16,7 +15,6 @@ export const setupDirectoryHandler = async (): Promise<{ status: boolean; messag
         if (!dirResult.status) {
           throw new Error(dirResult.message);
         }
-        debugLog(`Sending directory data: ${JSON.stringify(dirResult.directories)}`);
         return {
           status: true,
           message: 'Directories fetched successfully',
