@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron';
+import path from 'path';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -18,10 +19,18 @@ export const createWindow = (): void => {
     frame: false, // This will remove the frame
   });
 
-  // Ensure the renderer starts at the application's home page
-  // by appending the root hash to the URL. Without this, HashRouter
-  // would receive an empty path and render the 404 page.
-  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
+  // Ensure the renderer starts on the Home page in both dev and prod.
+  // When packaged, loadFile lets us explicitly set the hash portion so
+  // React Router's HashRouter receives '/'. During development
+  // MAIN_WINDOW_WEBPACK_ENTRY points to the dev server URL, so we
+  // continue using loadURL with the '#/' hash appended.
+  if (MAIN_WINDOW_WEBPACK_ENTRY.startsWith('http')) {
+    mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
+  } else {
+    const indexPath = path.join(__dirname, '../renderer/index.html');
+    mainWindow.loadFile(indexPath, { hash: '/' });
+  }
+
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.once('did-finish-load', () => {
