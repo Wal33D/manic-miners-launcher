@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { Zap } from "lucide-react";
-import { Navigation } from "./Navigation";
+import { Badge } from '@/components/ui/badge';
+import { Zap } from 'lucide-react';
+import { Navigation } from './Navigation';
 
 export function LauncherHeader() {
   return (
@@ -22,7 +22,9 @@ export function LauncherHeader() {
             </Badge>
           </div>
         </div>
-        
+
         <Navigation />
       </div>
-    </header>  );}
+    </header>
+  );
+}

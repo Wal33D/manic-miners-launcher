@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
 
 export interface InstalledLevel {
   id: string;
@@ -59,9 +59,7 @@ export const InstalledLevelsProvider: React.FC<{ children: React.ReactNode }> = 
   const isInstalled = (id: string) => levels.some(l => l.id === id);
 
   return (
-    <InstalledLevelsCtx.Provider value={{ levels, installLevel, uninstallLevel, isInstalled }}>
-      {children}
-    </InstalledLevelsCtx.Provider>
+    <InstalledLevelsCtx.Provider value={{ levels, installLevel, uninstallLevel, isInstalled }}>{children}</InstalledLevelsCtx.Provider>
   );
 };
 
