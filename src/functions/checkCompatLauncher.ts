@@ -21,17 +21,33 @@ export const checkCompatLauncher = async (): Promise<{
     return { status: true, message: 'Windows does not require Wine.' };
   }
 
-  const testCommand = (cmd: string): boolean => {
+  // On macOS the packaged Wine build is not compatible, so we only use a
+  // user-provided or system-installed Wine executable. If none is found we
+  // instruct the user to install one manually.
+  if (process.platform === 'darwin') {
+    const envCmd = process.env.COMPAT_LAUNCHER;
+    const candidateCommands = envCmd ? [envCmd, 'wine64', 'wine'] : ['wine64', 'wine'];
+    const compatCmd = pickFirstWorking(candidateCommands);
+    if (compatCmd) {
+      return { status: true, message: '', compatPath: compatCmd };
+    }
+    return {
+      status: false,
+      message: 'Wine is required on macOS. Install Wine and optionally set COMPAT_LAUNCHER to its path.',
+    };
+  }
+
+  function testCommand(cmd: string): boolean {
     const result = spawnSync(cmd, ['--version'], { stdio: 'ignore' });
     return !result.error && result.status === 0;
-  };
+  }
 
-  const pickFirstWorking = (commands: string[]): string | undefined => {
+  function pickFirstWorking(commands: string[]): string | undefined {
     for (const c of commands) {
       if (testCommand(c)) return c;
     }
     return undefined;
-  };
+  }
 
   const envCmd = process.env.COMPAT_LAUNCHER;
   if (envCmd && testCommand(envCmd)) {
