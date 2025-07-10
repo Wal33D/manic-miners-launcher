@@ -76,7 +76,7 @@ export function NewsPanel({ className }: NewsPanelProps) {
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
       {/* Card content should scroll independently to avoid the page itself scrolling */}
-      <CardContent className="flex-1 overflow-y-auto pr-2">
+      <CardContent className="flex-1 overflow-y-auto pr-2 min-h-0">
         <div className="flex flex-col gap-4 pb-2">
           {messages.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No messages available</p>
