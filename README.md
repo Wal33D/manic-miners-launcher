@@ -6,9 +6,9 @@ This project is an Electron-based launcher for the game **Manic Miners**. The la
 
 - Node.js 20 or later
 - pnpm package manager
-- On Linux and macOS a Windows compatibility layer such as **Wine** is required to run the Windows game binaries. The launcher will attempt to use the command from the `COMPAT_LAUNCHER` environment variable and falls back to `wine`.
+- On Linux and macOS a Windows compatibility layer such as **Wine** is required to run the Windows game binaries. The launcher will attempt to use the command from the `COMPAT_LAUNCHER` environment variable. If no compatible command is found, the launcher will automatically download a portable Wine build and use it.
 
-Make sure Wine is installed and available in your `PATH` when running the launcher on non-Windows systems.
+No manual Wine installation is necessary on supported platforms.
 
 ## Development
 
