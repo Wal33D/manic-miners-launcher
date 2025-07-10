@@ -60,17 +60,21 @@ export function NewsPanel() {
     );
   }
 
+  // Restrict the card's height based on the available viewport so the page
+  // itself never becomes scrollable. When the content exceeds this space the
+  // inner list will scroll instead.
   return (
-    <Card className="mining-surface">
-      <CardHeader>
+    <Card className="mining-surface flex flex-col max-h-[calc(100dvh-theme(spacing.40)-theme(spacing.12))]">
+      <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <MessageSquare className="w-5 h-5" />
           Launcher News
         </CardTitle>
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="max-h-[calc(100svh-theme(spacing.40))] pr-2">
+      <CardContent className="flex-1">
+        {/* The list fills the remaining space and becomes scrollable when needed */}
+        <ScrollArea className="h-full pr-2">
           <div className="space-y-4 pb-2">
             {messages.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No messages available</p>
