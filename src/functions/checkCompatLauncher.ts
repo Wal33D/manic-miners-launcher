@@ -26,6 +26,13 @@ export const checkCompatLauncher = async (): Promise<{
     return !result.error && result.status === 0;
   };
 
+  const pickFirstWorking = (commands: string[]): string | undefined => {
+    for (const c of commands) {
+      if (testCommand(c)) return c;
+    }
+    return undefined;
+  };
+
   const envCmd = process.env.COMPAT_LAUNCHER;
   if (envCmd && testCommand(envCmd)) {
     return { status: true, message: '', compatPath: envCmd };
@@ -36,6 +43,7 @@ export const checkCompatLauncher = async (): Promise<{
     if (testCommand(cmd)) {
       return { status: true, message: '', compatPath: cmd };
     }
+
   }
 
   try {
