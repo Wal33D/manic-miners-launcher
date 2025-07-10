@@ -1,15 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Download, Library, Map, Settings, Power } from 'lucide-react';
+import { Home, Settings, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Navigation() {
-  const navItems = [
-    { to: '/', icon: Home, label: 'Home' },
-    { to: '/levels', icon: Download, label: 'Level Downloader' },
-    { to: '/library', icon: Library, label: 'Library' },
-    { to: '/map-generator', icon: Map, label: 'Map Generator' },
-  ];
+  const navItems = [{ to: '/', icon: Home, label: 'Home' }];
 
   return (
     <nav className="flex items-center justify-between w-full">
