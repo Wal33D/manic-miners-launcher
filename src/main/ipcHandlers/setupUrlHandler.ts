@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchUrls } from '../../api/fetchUrls';
-import { debugLog } from '../../logger';
 
 export const setupUrlHandler = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
@@ -11,7 +10,6 @@ export const setupUrlHandler = async (): Promise<{ status: boolean; message: str
     ipcMain.on(IPC_CHANNELS.GET_URLS, async event => {
       try {
         const urlResult = await fetchUrls();
-        debugLog(`Sending URL data: ${JSON.stringify(urlResult)}`);
 
         event.reply(IPC_CHANNELS.GET_URLS, {
           status: true,

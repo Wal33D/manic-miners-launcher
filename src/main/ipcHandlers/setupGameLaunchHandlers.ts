@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { handleGameLaunch } from '../../functions/handleGameLaunch';
-import { debugLog } from '../../logger';
 import { withIpcHandler } from './withIpcHandler';
 
 export const setupGameLaunchHandlers = async (): Promise<{ status: boolean; message: string }> => {
@@ -12,7 +11,6 @@ export const setupGameLaunchHandlers = async (): Promise<{ status: boolean; mess
     ipcMain.on(
       IPC_CHANNELS.LAUNCH_GAME,
       withIpcHandler(IPC_CHANNELS.LAUNCH_GAME, async (event, versionIdentifier) => {
-        debugLog(`Launching game with version: ${versionIdentifier}`);
         const success = await handleGameLaunch({ versionIdentifier });
         return {
           success,

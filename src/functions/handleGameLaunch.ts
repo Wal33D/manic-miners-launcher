@@ -1,4 +1,3 @@
-import { logToFile } from '../logger';
 import { launchExecutable } from './launchExecutable';
 import { fetchInstalledVersions } from './fetchInstalledVersions';
 
@@ -9,11 +8,11 @@ import { fetchInstalledVersions } from './fetchInstalledVersions';
  */
 export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifier?: string }): Promise<boolean> => {
   try {
-    logToFile({ message: `Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'` });
+    console.log(`Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'`);
     const installedVersions = await fetchInstalledVersions();
 
     if (!installedVersions.status || !installedVersions.installedVersions || installedVersions.installedVersions.length === 0) {
-      logToFile({ message: 'No installations found or failed to fetch installations.' });
+      console.log('No installations found or failed to fetch installations.');
       return false;
     }
 
@@ -21,28 +20,28 @@ export const handleGameLaunch = async ({ versionIdentifier }: { versionIdentifie
     const versionToLaunch: any =
       installedVersions.installedVersions.find(v => v.identifier === versionIdentifier) || installedVersions.installedVersions[0];
 
-    logToFile({
-      message: `Attempting to launch version: '${versionToLaunch.identifier}' (Requested: '${versionIdentifier || 'default'}')`,
-    });
+    console.log(
+      `Attempting to launch version: '${versionToLaunch.identifier}' (Requested: '${versionIdentifier || 'default'}')`
+    );
 
     // Check if the version has an executable to launch
     if (!versionToLaunch.executablePath) {
-      logToFile({ message: `No executable files found for the selected version: ${versionToLaunch.identifier}` });
+      console.log(`No executable files found for the selected version: ${versionToLaunch.identifier}`);
       return false;
     }
 
     const launchResults = await launchExecutable({ executablePath: versionToLaunch.executablePath });
-    logToFile({ message: launchResults.message });
+    console.log(launchResults.message);
 
     if (launchResults.status) {
-      logToFile({ message: `The executable for version '${versionToLaunch.identifier}' ran successfully.` });
+      console.log(`The executable for version '${versionToLaunch.identifier}' ran successfully.`);
       return true;
     } else {
-      logToFile({ message: `The executable for version '${versionToLaunch.identifier}' failed with exit code: ${launchResults.exitCode}` });
+      console.log(`The executable for version '${versionToLaunch.identifier}' failed with exit code: ${launchResults.exitCode}`);
       return false;
     }
   } catch (error) {
-    logToFile({ message: `Failed to launch game: ${error.message}` });
+    console.error(`Failed to launch game: ${error.message}`);
     return false;
   }
 };
