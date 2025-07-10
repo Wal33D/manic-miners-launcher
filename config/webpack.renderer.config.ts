@@ -1,4 +1,5 @@
 import type { Configuration } from 'webpack';
+import path from 'path';
 
 import { rules } from './webpack.rules';
 import { plugins } from './webpack.plugins';
@@ -20,6 +21,9 @@ export const rendererConfig: Configuration = {
   },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.mp3'],
+    alias: {
+      '/assets': path.resolve(__dirname, '../src/renderer/assets'),
+    },
     fallback: {
       fs: false,
       path: false,
