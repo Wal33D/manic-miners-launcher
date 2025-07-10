@@ -70,7 +70,12 @@ export function NewsPanel() {
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="max-h-[calc(100svh-theme(spacing.40))] pr-2">
+        {/*
+         * Subtract extra spacing for the page container padding so the
+         * panel never exceeds the viewport even with the fixed header
+         * and outer margins.
+         */}
+        <ScrollArea className="max-h-[calc(100svh-theme(spacing.40)-theme(spacing.12))] pr-2">
           <div className="space-y-4 pb-2">
             {messages.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No messages available</p>
