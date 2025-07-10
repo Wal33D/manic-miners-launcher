@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, Play, AlertTriangle, Star, Zap } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Download, Play, AlertTriangle, Star, Zap } from 'lucide-react';
 
 interface GameVersion {
   version: string;
@@ -14,24 +14,24 @@ interface GameVersion {
 
 export function GameVersionSelector() {
   const [versions, setVersions] = useState<GameVersion[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<string>("");
+  const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [installPath, setInstallPath] = useState<string>("");
+  const [installPath, setInstallPath] = useState<string>('');
 
   useEffect(() => {
-    window.electronAPI.send("get-directories");
-    window.electronAPI.receiveOnce("get-directories", (dirResult: any) => {
+    window.electronAPI.send('get-directories');
+    window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
       if (dirResult?.status) {
         setInstallPath(dirResult.directories.launcherInstallPath);
       }
     });
 
-    window.electronAPI.send("request-version-information");
-    window.electronAPI.receiveOnce("request-version-information", (data: any) => {
+    window.electronAPI.send('request-version-information');
+    window.electronAPI.receiveOnce('request-version-information', (data: any) => {
       if (data?.versions) {
         const allVersions: GameVersion[] = data.versions.map((v: any) => ({
           version: v.identifier,
-          type: v.latest ? "latest" : v.experimental ? "experimental" : "past",
+          type: v.latest ? 'latest' : v.experimental ? 'experimental' : 'past',
           description: v.description,
           downloadUrl: v.downloadUrl,
         }));
@@ -50,17 +50,23 @@ export function GameVersionSelector() {
 
   const getVersionIcon = (type: GameVersion['type']) => {
     switch (type) {
-      case 'latest': return <Star className="w-4 h-4" />;
-      case 'experimental': return <AlertTriangle className="w-4 h-4" />;
-      default: return null;
+      case 'latest':
+        return <Star className="w-4 h-4" />;
+      case 'experimental':
+        return <AlertTriangle className="w-4 h-4" />;
+      default:
+        return null;
     }
   };
 
   const getVersionVariant = (type: GameVersion['type']) => {
     switch (type) {
-      case 'latest': return 'default';
-      case 'experimental': return 'secondary';
-      default: return 'outline';
+      case 'latest':
+        return 'default';
+      case 'experimental':
+        return 'secondary';
+      default:
+        return 'outline';
     }
   };
 
@@ -87,9 +93,7 @@ export function GameVersionSelector() {
           <Zap className="w-5 h-5" />
           Game Version
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Select and launch your preferred game version
-        </CardDescription>
+        <CardDescription className="text-muted-foreground">Select and launch your preferred game version</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Select value={selectedVersion} onValueChange={setSelectedVersion}>
@@ -97,7 +101,7 @@ export function GameVersionSelector() {
             <SelectValue placeholder="Select version..." />
           </SelectTrigger>
           <SelectContent className="bg-popover border-border">
-            {versions.map((version) => (
+            {versions.map(version => (
               <SelectItem key={version.version} value={version.version}>
                 <div className="flex items-center gap-2">
                   {getVersionIcon(version.type)}
@@ -114,18 +118,10 @@ export function GameVersionSelector() {
         {selectedVersionData && (
           <div className="p-4 rounded-lg bg-secondary/50 border border-border">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-secondary-foreground">
-                {selectedVersionData.version}
-              </h4>
-              <Badge variant={getVersionVariant(selectedVersionData.type)}>
-                {selectedVersionData.type}
-              </Badge>
+              <h4 className="font-medium text-secondary-foreground">{selectedVersionData.version}</h4>
+              <Badge variant={getVersionVariant(selectedVersionData.type)}>{selectedVersionData.type}</Badge>
             </div>
-            {selectedVersionData.description && (
-              <p className="text-sm text-muted-foreground mb-3">
-                {selectedVersionData.description}
-              </p>
-            )}
+            {selectedVersionData.description && <p className="text-sm text-muted-foreground mb-3">{selectedVersionData.description}</p>}
           </div>
         )}
 
@@ -134,7 +130,7 @@ export function GameVersionSelector() {
             variant="energy"
             className="flex-1"
             onClick={() => {
-              window.electronAPI.send("launch-game", selectedVersion);
+              window.electronAPI.send('launch-game', selectedVersion);
             }}
           >
             <Play className="w-4 h-4 mr-2" />
@@ -144,7 +140,7 @@ export function GameVersionSelector() {
             variant="mining"
             onClick={() => {
               if (!installPath) return;
-              window.electronAPI.send("download-version", {
+              window.electronAPI.send('download-version', {
                 version: selectedVersion,
                 downloadPath: installPath,
               });
@@ -156,4 +152,5 @@ export function GameVersionSelector() {
         </div>
       </CardContent>
     </Card>
-  );}
+  );
+}
