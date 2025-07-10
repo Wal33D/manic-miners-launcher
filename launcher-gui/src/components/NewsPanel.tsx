@@ -85,7 +85,7 @@ export function NewsPanel() {
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 max-h-64 overflow-y-auto">
+        <div className="space-y-4">
           {messages.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No messages available</p>
           ) : (
