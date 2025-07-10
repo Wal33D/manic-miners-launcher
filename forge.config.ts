@@ -35,7 +35,7 @@ const config: ForgeConfig = {
         ],
       },
       devContentSecurityPolicy:
-        "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://manic-launcher.vercel.app;",
+        "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://manic-launcher.vercel.app; img-src 'self' https: data:;",
     }),
     new FusesPlugin({
       version: FuseVersion.V1,
