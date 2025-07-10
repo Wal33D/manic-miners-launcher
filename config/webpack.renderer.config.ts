@@ -3,6 +3,7 @@ import path from 'path';
 
 import { rules } from './webpack.rules';
 import { plugins } from './webpack.plugins';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 rules.push({
   test: /\.css$/,
@@ -13,7 +14,21 @@ export const rendererConfig: Configuration = {
   module: {
     rules,
   },
-  plugins,
+  plugins: [
+    ...plugins,
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../src/renderer/assets/index.css'),
+          to: 'assets/index.css',
+        },
+        {
+          from: path.resolve(__dirname, '../src/renderer/assets/index.js'),
+          to: 'assets/index.js',
+        },
+      ],
+    }),
+  ],
   externals: {
     fs: 'commonjs2 fs',
     path: 'commonjs2 path',
