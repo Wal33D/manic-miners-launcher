@@ -1,10 +1,12 @@
-let getDirectories: (() => Promise<{
-  status: boolean;
-  message: string;
-  directories?: {
-    launcherLogsPath: string;
-  };
-}>) | null = null;
+let getDirectories:
+  | (() => Promise<{
+      status: boolean;
+      message: string;
+      directories?: {
+        launcherLogsPath: string;
+      };
+    }>)
+  | null = null;
 
 let fs: typeof import('fs').promises | null = null;
 let join: ((...paths: string[]) => string) | null = null;
@@ -18,8 +20,7 @@ const loadNodeModules = () => {
   }
 };
 
-const isRenderer =
-  typeof process !== 'undefined' && (process as any).type === 'renderer';
+const isRenderer = typeof process !== 'undefined' && (process as any).type === 'renderer';
 
 const loadGetDirectories = () => {
   if (!getDirectories && !isRenderer) {
@@ -29,10 +30,7 @@ const loadGetDirectories = () => {
 };
 
 // Flag to control verbose logging
-export const isVerbose =
-  typeof process !== 'undefined' && process.env
-    ? process.env.VERBOSE === 'true'
-    : false;
+export const isVerbose = typeof process !== 'undefined' && process.env ? process.env.VERBOSE === 'true' : false;
 
 let configuredLogDir: string | null = null;
 
@@ -58,13 +56,7 @@ const ensureLogDir = async (): Promise<string> => {
  * Logs a message to a file with a timestamp. Uses a specified file or a default log file if no path is provided.
  * @param options An object containing the message and optional file path.
  */
-export const logToFile = async ({
-  message,
-  filePath,
-}: {
-  message: string;
-  filePath?: string;
-}) => {
+export const logToFile = async ({ message, filePath }: { message: string; filePath?: string }) => {
   if (isRenderer) {
     console.log(message);
     return;

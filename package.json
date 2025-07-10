@@ -8,7 +8,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint .",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
     "update-git-url": "node scripts/updatePackageJson.js"
   },
