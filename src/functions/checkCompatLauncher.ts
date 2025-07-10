@@ -31,8 +31,11 @@ export const checkCompatLauncher = async (): Promise<{
     return { status: true, message: '', compatPath: envCmd };
   }
 
-  if (testCommand('wine')) {
-    return { status: true, message: '', compatPath: 'wine' };
+  const candidateCommands = ['wine', 'wine64'];
+  for (const cmd of candidateCommands) {
+    if (testCommand(cmd)) {
+      return { status: true, message: '', compatPath: cmd };
+    }
   }
 
   try {
