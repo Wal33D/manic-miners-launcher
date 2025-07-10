@@ -9,6 +9,10 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: ['**/node_modules/**', 'launcher-gui/dist/**', 'src/renderer/assets/**'],
+  },
   ...compat.config({
     ...require('./.eslintrc.json'),
     rules: {

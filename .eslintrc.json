@@ -15,6 +15,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "prettier"],
 
+  "ignorePatterns": ["node_modules/**"],
+
   "root": true,
 
   "rules": {
