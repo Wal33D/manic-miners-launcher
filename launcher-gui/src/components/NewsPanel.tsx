@@ -74,7 +74,7 @@ export function NewsPanel() {
       <CardContent className="flex-1">
         {/* Horizontally scroll when the list overflows */}
         <div className="h-full pr-2 overflow-x-auto">
-          <div className="flex gap-4 pb-2">
+          <div className="flex gap-4 pb-2 flex-nowrap whitespace-nowrap">
             {messages.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No messages available</p>
             ) : (
