@@ -2,8 +2,10 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Ensure the first launch always lands on the Home page.
-if (!window.location.hash || window.location.hash === '#') {
+// Always land on the same route as the Home button ("/").
+// This avoids hitting the NotFound page on first launch.
+if (window.location.hash !== '#/') {
+
   window.location.hash = '#/';
 }
 
