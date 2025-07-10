@@ -19,7 +19,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename="/main_window">
           <div className="flex flex-col h-screen bg-background overflow-hidden">
             <LauncherHeader />
             <main className="flex-1 overflow-y-auto pt-32">
