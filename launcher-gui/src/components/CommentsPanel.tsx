@@ -62,7 +62,6 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
           <MessageCircle className="w-5 h-5" />
           Comments
         </CardTitle>
-        <CardDescription className="text-muted-foreground">Recent user feedback</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2 min-h-0">
         <div className="grid grid-cols-2 gap-4 pb-2">
