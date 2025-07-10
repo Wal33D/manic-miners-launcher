@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ export function GameVersionSelector() {
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [installPath, setInstallPath] = useState<string>('');
+  const { toast } = useToast();
 
   useEffect(() => {
     window.electronAPI.send('get-directories');
@@ -44,6 +46,19 @@ export function GameVersionSelector() {
       }
       setLoading(false);
     });
+
+    const launchHandler = (result: { success: boolean; message: string }) => {
+      toast({
+        title: result.success ? 'Launch successful' : 'Launch failed',
+        description: result.message,
+        variant: result.success ? 'default' : 'destructive',
+      });
+    };
+    window.electronAPI.receive('launch-game', launchHandler);
+
+    return () => {
+      window.electronAPI.removeAllListeners('launch-game');
+    };
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
