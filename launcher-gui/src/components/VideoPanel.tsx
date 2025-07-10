@@ -4,7 +4,7 @@ import { PlayCircle } from 'lucide-react';
 
 export function VideoPanel() {
   return (
-    <Card className="mining-surface flex flex-col overflow-hidden">
+    <Card className="mining-surface flex flex-col overflow-hidden max-w-md mx-auto">
       <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <PlayCircle className="w-5 h-5" />
