@@ -23,19 +23,7 @@ export const launchExecutable = ({
 
     const child = spawn(spawnCmd, spawnArgs, {
       detached: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-
-    // Listen to stdout
-    child.stdout.on('data', data => {
-      const stdoutMessage = `stdout: ${data}`;
-      console.log(stdoutMessage);
-    });
-
-    // Listen to stderr
-    child.stderr.on('data', data => {
-      const stderrMessage = `stderr: ${data}`;
-      console.error(stderrMessage);
+      stdio: 'ignore',
     });
 
     child.on('error', err => {
