@@ -8,14 +8,16 @@ import { spawn } from 'child_process';
 
 export const launchExecutable = ({
   executablePath,
+  compatLauncher,
 }: {
   executablePath: string;
+  compatLauncher?: string;
 }): Promise<{ status: boolean; message: string; exitCode?: number; veryShortRun?: boolean }> => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 
     const useCompat = process.platform !== 'win32';
-    const compatCmd = process.env.COMPAT_LAUNCHER || 'wine';
+    const compatCmd = compatLauncher || process.env.COMPAT_LAUNCHER || 'wine';
     const spawnCmd = useCompat ? compatCmd : executablePath;
     const spawnArgs = useCompat ? [executablePath] : [];
 

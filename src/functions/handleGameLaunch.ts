@@ -13,11 +13,9 @@ export const handleGameLaunch = async ({
   versionIdentifier?: string;
 }): Promise<{ status: boolean; message: string }> => {
   try {
-
-    // Ensure Wine is available on non-Windows
-    if (!checkCompatLauncher()) {
-      const message = 'Wine is required to launch the game on non-Windows systems.';
-      return { status: false, message };
+    const { status: compatOK, compatPath, message: compatMessage } = await checkCompatLauncher();
+    if (!compatOK) {
+      return { status: false, message: compatMessage };
     }
 
     const installed = await fetchInstalledVersions();
@@ -27,17 +25,17 @@ export const handleGameLaunch = async ({
     }
 
     // Pick requested version or fallback
-    const versionToLaunch =
-      installed.installedVersions.find(v => v.identifier === versionIdentifier) ||
-      installed.installedVersions[0];
-
+    const versionToLaunch = installed.installedVersions.find(v => v.identifier === versionIdentifier) || installed.installedVersions[0];
 
     if (!versionToLaunch.executablePath) {
       const message = `No executable files found for the selected version: ${versionToLaunch.identifier}`;
       return { status: false, message };
     }
 
-    const launchResults = await launchExecutable({ executablePath: versionToLaunch.executablePath });
+    const launchResults = await launchExecutable({
+      executablePath: versionToLaunch.executablePath,
+      compatLauncher: compatPath,
+    });
 
     if (launchResults.status) {
       const message = `The executable for version '${versionToLaunch.identifier}' ran successfully.`;

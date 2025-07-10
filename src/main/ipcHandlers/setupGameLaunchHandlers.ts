@@ -11,7 +11,9 @@ export const setupGameLaunchHandlers = async (): Promise<{ status: boolean; mess
     ipcMain.on(
       IPC_CHANNELS.LAUNCH_GAME,
       withIpcHandler(IPC_CHANNELS.LAUNCH_GAME, async (event, versionIdentifier) => {
-        const success = await handleGameLaunch({ versionIdentifier });
+        const { status: success, message: launchMessage } = await handleGameLaunch({
+          versionIdentifier,
+        });
         return {
           success,
           message: launchMessage,
