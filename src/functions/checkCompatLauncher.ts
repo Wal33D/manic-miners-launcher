@@ -44,7 +44,9 @@ export const checkCompatLauncher = async (): Promise<{
       if (testCommand(wineExe)) {
         return { status: true, message: '', compatPath: wineExe };
       }
-    } catch {}
+    } catch {
+      // Ignore errors if the bundled Wine executable is not present
+    }
 
     const wineZip = path.join(directories.launcherInstallPath, 'wine.zip');
     const downloadResult = await downloadFile({
