@@ -21,7 +21,7 @@ export function CommentsPanel() {
         const response = await fetch('https://manic-launcher.vercel.app/api/comments');
         const data = await response.json();
         if (Array.isArray(data?.comments)) {
-          setComments(data.comments.slice(0, 5));
+          setComments(data.comments.slice(0, 4));
         }
       } catch (error) {
         console.error('Failed to fetch comments:', error);
@@ -58,15 +58,15 @@ export function CommentsPanel() {
         <CardDescription className="text-muted-foreground">Recent user feedback</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
-        <div className="h-full pr-2 overflow-x-auto">
-          <div className="flex gap-4 pb-2">
+        <div className="h-full pr-2 overflow-y-auto">
+          <div className="grid grid-cols-2 gap-4 pb-2">
             {comments.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No comments available</p>
             ) : (
               comments.map(comment => (
                 <div
                   key={comment.id}
-                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors min-w-[16rem]"
+                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors w-full"
                 >
                   <Avatar className="w-6 h-6">
                     <AvatarImage src={comment.avatarUrl} alt={comment.author} />
