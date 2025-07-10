@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageSquare, Calendar } from 'lucide-react';
 
 interface LauncherMessage {
@@ -40,10 +41,8 @@ export function NewsPanel() {
         setLoading(false);
       }
     };
-
     fetchMessages();
   }, []);
-
 
   if (loading) {
     return (
@@ -71,27 +70,34 @@ export function NewsPanel() {
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {messages.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">No messages available</p>
-          ) : (
-            messages.map(message => (
-              <div
-                key={message.id}
-                className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
-              >
-                <div className="mb-2">
-                  <h4 className="font-medium text-secondary-foreground text-sm">{message.title}</h4>
+        {/*
+         * Subtract extra spacing for the page container padding so the
+         * panel never exceeds the viewport even with the fixed header
+         * and outer margins.
+         */}
+        <ScrollArea className="max-h-[calc(100svh-theme(spacing.40)-theme(spacing.12))] pr-2">
+          <div className="space-y-4 pb-2">
+            {messages.length === 0 ? (
+              <p className="text-muted-foreground text-center py-4">No messages available</p>
+            ) : (
+              messages.map(message => (
+                <div
+                  key={message.id}
+                  className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
+                >
+                  <div className="mb-2">
+                    <h4 className="font-medium text-secondary-foreground text-sm">{message.title}</h4>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-2">{message.content}</p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(message.date).toLocaleDateString()}
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mb-2">{message.content}</p>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="w-3 h-3" />
-                  {new Date(message.date).toLocaleDateString()}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
