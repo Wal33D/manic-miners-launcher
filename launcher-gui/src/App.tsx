@@ -17,7 +17,12 @@ const App = () => (
       <HashRouter>
         <div className="flex flex-col h-screen bg-background overflow-hidden">
           <LauncherHeader />
-          <main className="flex-1 overflow-y-auto pt-32">
+          {/*
+           * Provide enough top padding so content isn't hidden beneath the
+           * fixed header/navigation bar. This value was increased to
+           * accommodate the header height.
+           */}
+          <main className="flex-1 overflow-y-auto pt-36">
             <Routes>
               <Route path="/" element={<Index />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
