@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, Calendar } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface LauncherMessage {
   id: number;
@@ -9,7 +10,11 @@ interface LauncherMessage {
   date: string;
 }
 
-export function NewsPanel() {
+interface NewsPanelProps {
+  className?: string;
+}
+
+export function NewsPanel({ className }: NewsPanelProps) {
   const [messages, setMessages] = useState<LauncherMessage[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,11 +64,10 @@ export function NewsPanel() {
     );
   }
 
-  // Restrict the card's height based on the available viewport so the page
-  // itself never becomes scrollable. When the content exceeds this space the
-  // inner list will scroll instead.
+  // Allow the card to stretch within its container and let the inner list
+  // scroll independently when it exceeds the available space.
   return (
-    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(90dvh-theme(spacing.44)-theme(spacing.12))]">
+    <Card className={cn('mining-surface flex flex-col h-full overflow-hidden', className)}>
       <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <MessageSquare className="w-5 h-5" />

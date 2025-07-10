@@ -9,7 +9,7 @@ const Home = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6 h-full flex flex-col">
       {isDownloading && (
         <DownloadProgress
           isActive={isDownloading}
@@ -22,17 +22,17 @@ const Home = () => {
         />
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
         {/* Main Game Controls */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 flex flex-col space-y-6 h-full">
           <GameVersionSelector />
-          <CommentsPanel />
+          <CommentsPanel className="flex-1" />
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="flex flex-col space-y-6 h-full">
           <VideoPanel />
-          <NewsPanel />
+          <NewsPanel className="flex-1" />
         </div>
       </div>
     </div>
