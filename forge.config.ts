@@ -25,32 +25,16 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/renderer/index.html', // Updated path to index.html
-            js: './src/renderer/renderer.ts', // Updated path to renderer.ts
+            html: './src/renderer/index.html', 
+            js: './src/renderer/renderer.ts',
             name: 'main_window',
             preload: {
-              js: './src/preload/preload.ts', // Updated path to preload.ts
+              js: './src/preload/preload.ts',
             },
           },
         ],
       },
-      devContentSecurityPolicy:
-        "default-src 'self'; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data:; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "connect-src 'self' https://manic-launcher.vercel.app",
-      contentSecurityPolicy:
-        "default-src 'self'; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
-        "img-src 'self' data:; " +
-        "script-src 'self' 'unsafe-inline'; " +
-        "connect-src 'self' https://manic-launcher.vercel.app",
     }),
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
