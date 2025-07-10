@@ -14,7 +14,7 @@ export const setupGameLaunchHandlers = async (): Promise<{ status: boolean; mess
         const success = await handleGameLaunch({ versionIdentifier });
         return {
           success,
-          message: success ? 'Game launched successfully.' : 'Failed to launch game.',
+          message: launchMessage,
         };
       })
     );

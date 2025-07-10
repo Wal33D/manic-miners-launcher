@@ -19,10 +19,10 @@ const App = () => (
           <LauncherHeader />
           {/*
            * Provide enough top padding so content isn't hidden beneath the
-           * fixed header/navigation bar. This value was increased to
-           * accommodate the header height.
+           * fixed header/navigation bar. This value was slightly increased
+           * again to ensure the page content clears the navigation bar.
            */}
-          <main className="flex-1 overflow-y-auto pt-36">
+          <main className="flex-1 overflow-y-auto pt-40">
             <Routes>
               <Route path="/" element={<Index />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
