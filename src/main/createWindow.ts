@@ -18,7 +18,10 @@ export const createWindow = (): void => {
     frame: false, // This will remove the frame
   });
 
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  // Ensure the renderer starts at the application's home page
+  // by appending the root hash to the URL. Without this, HashRouter
+  // would receive an empty path and render the 404 page.
+  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.once('did-finish-load', () => {
