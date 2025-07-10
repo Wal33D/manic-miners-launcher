@@ -45,7 +45,6 @@ const startApp = (): void => {
 };
 
 if (process.platform !== 'win32') {
-  console.warn('This launcher is primarily designed for Windows. Some features like shortcut creation and auto-update will be disabled.');
 } else if (require('electron-squirrel-startup')) {
   app.quit();
 }
