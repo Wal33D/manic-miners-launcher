@@ -1,7 +1,7 @@
-import { logToFile } from '../logger';
 import { launchExecutable } from './launchExecutable';
 import { fetchInstalledVersions } from './fetchInstalledVersions';
 import { checkCompatLauncher } from './checkCompatLauncher';
+import { logToFile } from './logToFile';
 
 /**
  * Function to handle the launching of a specific game version or the first available version if no identifier is provided.
@@ -16,28 +16,29 @@ export const handleGameLaunch = async ({
   try {
     logToFile({ message: `Received request to launch game version: '${versionIdentifier || 'No specific version requested'}'` });
 
+    // Ensure Wine is available on non-Windows
     if (!checkCompatLauncher()) {
       const message = 'Wine is required to launch the game on non-Windows systems.';
+      logToFile({ message });
       return { status: false, message };
     }
 
-    const installedVersions = await fetchInstalledVersions();
-
-    if (!installedVersions.status || !installedVersions.installedVersions || installedVersions.installedVersions.length === 0) {
+    const installed = await fetchInstalledVersions();
+    if (!installed.status || !installed.installedVersions?.length) {
       const message = 'No installations found or failed to fetch installations.';
       logToFile({ message });
       return { status: false, message };
     }
 
-    // Determine which version to launch
-    const versionToLaunch: any =
-      installedVersions.installedVersions.find(v => v.identifier === versionIdentifier) || installedVersions.installedVersions[0];
+    // Pick requested version or fallback
+    const versionToLaunch =
+      installed.installedVersions.find(v => v.identifier === versionIdentifier) ||
+      installed.installedVersions[0];
 
     logToFile({
       message: `Attempting to launch version: '${versionToLaunch.identifier}' (Requested: '${versionIdentifier || 'default'}')`,
     });
 
-    // Check if the version has an executable to launch
     if (!versionToLaunch.executablePath) {
       const message = `No executable files found for the selected version: ${versionToLaunch.identifier}`;
       logToFile({ message });
@@ -56,9 +57,8 @@ export const handleGameLaunch = async ({
       logToFile({ message });
       return { status: false, message };
     }
-  } catch (error) {
-    const err = error as Error;
-    const message = `Failed to launch game: ${err.message}`;
+  } catch (err) {
+    const message = `Failed to launch game: ${(err as Error).message}`;
     logToFile({ message });
     return { status: false, message };
   }

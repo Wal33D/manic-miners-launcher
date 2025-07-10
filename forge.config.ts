@@ -34,9 +34,6 @@ const config: ForgeConfig = {
           },
         ],
       },
-      // Avoid collisions with other applications by using a
-      // non-default port for the web-multi-logger.
-      loggerPort: 9010,
       devContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
     }),
     new FusesPlugin({
