@@ -27,6 +27,8 @@ const LevelDownloader = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [downloadingLevel, setDownloadingLevel] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadStatus, setDownloadStatus] = useState("");
   const { installLevel, isInstalled } = useInstalledLevels();
 
   useEffect(() => {
@@ -149,25 +151,41 @@ const LevelDownloader = () => {
 
   const handleDownload = (levelId: string) => {
     setDownloadingLevel(levelId);
-    // Simulate download completion after a few seconds
-    setTimeout(() => {
+    setDownloadProgress(0);
+    setDownloadStatus('Starting level download...');
+
+    window.electronAPI.send('download-level', levelId);
+
+    const progressHandler = (status: { progress?: number; status?: string }) => {
+      if (status.progress !== undefined) setDownloadProgress(status.progress);
+      if (status.status) setDownloadStatus(status.status);
+    };
+
+    window.electronAPI.receive('level-download-progress', progressHandler);
+
+    window.electronAPI.receiveOnce('download-level', (result: any) => {
+      window.electronAPI.removeAllListeners('level-download-progress');
       setDownloadingLevel(null);
-      setLevels(prev =>
-        prev.map(level =>
-          level.id === levelId ? { ...level, installed: true } : level
-        )
-      );
-      const level = levels.find(l => l.id === levelId);
-      if (level) {
-        installLevel({
-          id: level.id,
-          name: level.name,
-          difficulty: level.difficulty,
-          author: level.author,
-          size: level.size,
-        });
+      if (result?.status) {
+        setLevels(prev =>
+          prev.map(level =>
+            level.id === levelId ? { ...level, installed: true } : level
+          )
+        );
+        const level = levels.find(l => l.id === levelId);
+        if (level) {
+          installLevel({
+            id: level.id,
+            name: level.name,
+            difficulty: level.difficulty,
+            author: level.author,
+            size: level.size,
+          });
+        }
+      } else {
+        console.error(result?.message);
       }
-    }, 5000);
+    });
   };
 
   if (loading) {
@@ -196,6 +214,8 @@ const LevelDownloader = () => {
           fileName={`${levels.find(l => l.id === downloadingLevel)?.name || 'Level'}.zip`}
           totalSize={levels.find(l => l.id === downloadingLevel)?.size || '0 MB'}
           downloadType="level"
+          progress={downloadProgress}
+          statusText={downloadStatus}
           onCancel={() => setDownloadingLevel(null)}
           onPause={() => console.log('Paused')}
           onResume={() => console.log('Resumed')}
@@ -319,7 +339,8 @@ const LevelDownloader = () => {
                 </Button>
               </CardContent>
             </Card>
-          ))
+          );
+        })
         )}
       </div>
     </div>
