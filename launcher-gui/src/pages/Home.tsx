@@ -25,14 +25,14 @@ const Home = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Game Controls */}
         <div className="lg:col-span-2 space-y-6">
-          <VideoPanel />
           <GameVersionSelector />
+          <CommentsPanel />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
+          <VideoPanel />
           <NewsPanel />
-          <CommentsPanel />
         </div>
       </div>
     </div>
