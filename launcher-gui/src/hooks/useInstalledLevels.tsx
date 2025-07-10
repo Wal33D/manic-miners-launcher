@@ -40,9 +40,15 @@ export const InstalledLevelsProvider: React.FC<{ children: React.ReactNode }> = 
   }, [levels]);
 
   const installLevel = (level: InstalledLevel) => {
+    const now = new Date().toISOString();
+    const levelWithDefaults: InstalledLevel = {
+      installDate: now,
+      playTime: '0h 0m',
+      ...level,
+    };
     setLevels(prev => {
       if (prev.find(l => l.id === level.id)) return prev;
-      return [...prev, level];
+      return [...prev, levelWithDefaults];
     });
   };
 
