@@ -10,6 +10,7 @@ const Home = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6 h-full flex flex-col min-h-0">
+
       {isDownloading && (
         <DownloadProgress
           isActive={isDownloading}
@@ -33,6 +34,7 @@ const Home = () => {
         <div className="flex flex-col space-y-6 h-full min-h-0">
           <VideoPanel />
           <NewsPanel className="flex-1 min-h-0" />
+
         </div>
       </div>
     </div>
