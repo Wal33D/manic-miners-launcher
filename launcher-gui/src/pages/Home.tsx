@@ -1,5 +1,6 @@
 import { GameVersionSelector } from '@/components/GameVersionSelector';
 import { NewsPanel } from '@/components/NewsPanel';
+import { CommentsPanel } from '@/components/CommentsPanel';
 import { DownloadProgress } from '@/components/DownloadProgress';
 import { useState } from 'react';
 
@@ -27,8 +28,9 @@ const Home = () => {
         </div>
 
         {/* Sidebar */}
-        <div>
+        <div className="space-y-6">
           <NewsPanel />
+          <CommentsPanel />
         </div>
       </div>
     </div>
