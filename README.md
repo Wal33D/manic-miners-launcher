@@ -8,7 +8,7 @@ This project is an Electron-based launcher for the game **Manic Miners**. The la
 - pnpm package manager
 - On Linux and macOS a Windows compatibility layer such as **Wine** is required to run the Windows game binaries. The launcher will attempt to use the command from the `COMPAT_LAUNCHER` environment variable. If no compatible command is found, it searches for common Wine executables such as `wine` or `wine64`.
 
-Automatic Wine download is currently only supported on Linux. On macOS you must install Wine manually and optionally set `COMPAT_LAUNCHER` to the path of the Wine executable. You can run `pnpm run download:wine` on Linux to prefetch the Wine bundle before packaging or launching.
+Automatic Wine download is supported on Linux and macOS. On macOS the launcher attempts to install Wine via Homebrew if it is not already available. You can run `pnpm run download:wine` on Linux to prefetch the Wine bundle before packaging or launching.
 
 ## Development
 
