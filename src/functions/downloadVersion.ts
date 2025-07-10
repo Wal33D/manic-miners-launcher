@@ -39,6 +39,21 @@ export const downloadVersion = async ({
     const baseName = path.basename(filename, ext);
     const filePath = validateUnpackPath({ basePath: downloadPath, entryName: filename });
 
+    // Remove any stale downloads to avoid "-1" suffixes added by the browser
+    const potentialOldFiles = [
+      filePath,
+      `${filePath}.crdownload`,
+      path.join(downloadPath, baseName),
+      path.join(downloadPath, `${baseName}${ext}`),
+    ];
+    for (const oldFile of potentialOldFiles) {
+      try {
+        await fs.unlink(oldFile);
+      } catch {
+        // Ignore if the file doesn't exist
+      }
+    }
+
     updateStatus({ progress: 10, status: 'Verifying existing file...' });
     const fileDetails = await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes });
 
@@ -71,6 +86,18 @@ export const downloadVersion = async ({
       if (!result.status) {
         return { downloaded: false, message: result.message };
       }
+
+      // Ensure the downloaded file has the expected name
+      try {
+        await fs.access(filePath);
+      } catch {
+        const files = await fs.readdir(downloadPath);
+        const found = files.find(f => f.startsWith(baseName) && f.endsWith(ext));
+        if (found) {
+          await fs.rename(path.join(downloadPath, found), filePath);
+        }
+      }
+
       return { downloaded: true, message: result.message };
     }
   } catch (error) {
