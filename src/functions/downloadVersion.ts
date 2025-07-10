@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+import path from 'path';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
@@ -33,6 +35,8 @@ export const downloadVersion = async ({
     updateStatus({ progress: 7 });
 
     const filename = versionToProcess.filename;
+    const ext = path.extname(filename);
+    const baseName = path.basename(filename, ext);
     const filePath = validateUnpackPath({ basePath: downloadPath, entryName: filename });
 
     updateStatus({ progress: 10, status: 'Verifying existing file...' });
@@ -45,9 +49,16 @@ export const downloadVersion = async ({
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
       updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading using itch.io...' });
+      if (fileDetails.exists) {
+        try {
+          await fs.unlink(filePath);
+        } catch {
+          // Ignore failure to remove existing file
+        }
+      }
       const result = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
-        desiredFileName: filename,
+        desiredFileName: baseName,
         downloadDirectory: downloadPath,
         onProgress: ({ bytesReceived, totalBytes }) => {
           if (totalBytes) {
