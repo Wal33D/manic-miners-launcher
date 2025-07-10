@@ -7,9 +7,9 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 export const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     width: 1180,
-    height: 900,
+    height: 1180,
     minWidth: 1180, // Minimum width of the window
-    minHeight: 900, // Minimum height of the window
+    minHeight: 1180, // Minimum height of the window
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: false,
