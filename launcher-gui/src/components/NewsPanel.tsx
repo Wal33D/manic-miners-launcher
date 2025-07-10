@@ -71,30 +71,28 @@ export function NewsPanel() {
         </CardTitle>
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1">
-        {/* Scroll vertically when the list overflows */}
-        <div className="h-full pr-2 overflow-y-auto">
-          <div className="flex flex-col gap-4 pb-2">
-            {messages.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">No messages available</p>
-            ) : (
-              messages.map(message => (
-                <div
-                  key={message.id}
-                  className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
-                >
-                  <div className="mb-2">
-                    <h4 className="font-medium text-secondary-foreground text-sm">{message.title}</h4>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-2">{message.content}</p>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(message.date).toLocaleDateString()}
-                  </div>
+      {/* Card content should scroll independently to avoid the page itself scrolling */}
+      <CardContent className="flex-1 overflow-y-auto pr-2">
+        <div className="flex flex-col gap-4 pb-2">
+          {messages.length === 0 ? (
+            <p className="text-muted-foreground text-center py-4">No messages available</p>
+          ) : (
+            messages.map(message => (
+              <div
+                key={message.id}
+                className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
+              >
+                <div className="mb-2">
+                  <h4 className="font-medium text-secondary-foreground text-sm">{message.title}</h4>
                 </div>
-              ))
-            )}
-          </div>
+                <p className="text-xs text-muted-foreground mb-2">{message.content}</p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="w-3 h-3" />
+                  {new Date(message.date).toLocaleDateString()}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>
