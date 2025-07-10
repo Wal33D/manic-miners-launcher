@@ -21,7 +21,7 @@ export function CommentsPanel() {
         const response = await fetch('https://manic-launcher.vercel.app/api/comments');
         const data = await response.json();
         if (Array.isArray(data?.comments)) {
-          setComments(data.comments.slice(0, 4));
+          setComments(data.comments);
         }
       } catch (error) {
         console.error('Failed to fetch comments:', error);
@@ -48,6 +48,9 @@ export function CommentsPanel() {
     );
   }
 
+  // Restrict the card's height based on the available viewport so the page
+  // itself never becomes scrollable. When the content exceeds this space the
+  // inner list will scroll instead.
   return (
     <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(60dvh-theme(spacing.40)-theme(spacing.12))]">
       <CardHeader className="shrink-0">
