@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
@@ -45,6 +46,13 @@ export const downloadVersion = async ({
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
       updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading using itch.io...' });
+      if (fileDetails.exists) {
+        try {
+          await fs.unlink(filePath);
+        } catch {
+          // Ignore failure to remove existing file
+        }
+      }
       const result = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
         desiredFileName: filename,
