@@ -7,9 +7,7 @@ import { setupDownloadHandlers } from './ipcHandlers/setupDownloadHandlers';
 import { setupDirectoryHandler } from './ipcHandlers/getDirectoriesIPC';
 import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
-import { setupLevelHandler } from './ipcHandlers/setupLevelHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
-import { setupLevelDownloadHandlers } from './ipcHandlers/setupLevelDownloadHandlers';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
@@ -27,10 +25,8 @@ const startApp = (): void => {
     setupVersionHandlers();
     setupGameLaunchHandlers();
     setupDownloadHandlers();
-    setupLevelDownloadHandlers();
     setupInputPathDialog();
     setupUrlHandler();
-    setupLevelHandler();
     setupPlaySoundHandler();
     setupSettingsHandlers();
   });
