@@ -72,7 +72,7 @@ export function GameVersionSelector() {
 
   if (loading) {
     return (
-      <Card className="mining-surface energy-glow">
+      <Card className="mining-surface energy-glow-static">
         <CardHeader>
           <CardTitle className="text-primary">Loading Versions...</CardTitle>
         </CardHeader>
@@ -87,7 +87,7 @@ export function GameVersionSelector() {
   }
 
   return (
-    <Card className="mining-surface energy-glow">
+    <Card className="mining-surface energy-glow-static">
       <CardHeader>
         <CardTitle className="text-primary flex items-center gap-2">
           <Zap className="w-5 h-5" />
