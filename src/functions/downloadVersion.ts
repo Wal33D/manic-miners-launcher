@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import path from 'path';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
@@ -58,7 +59,6 @@ export const downloadVersion = async ({
       const result = (await downloadGame({
         itchGameUrl: 'https://baraklava.itch.io/manic-miners',
         desiredFileName: baseName,
-        desiredFileExt: ext.replace('.', ''),
         downloadDirectory: downloadPath,
         onProgress: ({ bytesReceived, totalBytes }) => {
           if (totalBytes) {
