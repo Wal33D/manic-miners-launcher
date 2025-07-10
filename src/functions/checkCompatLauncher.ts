@@ -6,7 +6,7 @@ import { downloadFile } from './downloadFile';
 import { extractTarGz, flattenSingleSubdirectory } from './unpackHelpers';
 
 const DEFAULT_WINE_URL =
-  process.env.WINE_DOWNLOAD_URL || 'https://dl.winehq.org/wine-builds/macosx/pool/portable-winehq-stable-5.7-osx64.tar.gz';
+  process.env.WINE_DOWNLOAD_URL || 'https://dl.winehq.org/wine-builds/macosx/pool/portable-winehq-stable-5.0-osx64.tar.gz';
 
 /**
  * Ensures a compatibility launcher (Wine or custom) is available.
