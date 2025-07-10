@@ -21,19 +21,35 @@ export const checkCompatLauncher = async (): Promise<{
     return { status: true, message: 'Windows does not require Wine.' };
   }
 
-  // On macOS the packaged Wine build is not compatible, so we only use a
-  // user-provided or system-installed Wine executable. If none is found we
-  // instruct the user to install one manually.
+  // On macOS first try user-provided or system Wine. If none exists, attempt to
+  // install Wine via Homebrew for a smoother out-of-box experience.
   if (process.platform === 'darwin') {
     const envCmd = process.env.COMPAT_LAUNCHER;
     const candidateCommands = envCmd ? [envCmd, 'wine64', 'wine'] : ['wine64', 'wine'];
-    const compatCmd = pickFirstWorking(candidateCommands);
+    let compatCmd = pickFirstWorking(candidateCommands);
     if (compatCmd) {
       return { status: true, message: '', compatPath: compatCmd };
     }
+
+    const brewCheck = spawnSync('brew', ['--version'], { stdio: 'ignore' });
+    if (brewCheck.status === 0) {
+      const brewInstall = spawnSync('brew', ['install', '--cask', 'wine-stable'], { stdio: 'ignore' });
+      if (brewInstall.status === 0) {
+        compatCmd = pickFirstWorking(candidateCommands);
+        if (compatCmd) {
+          return { status: true, message: 'Wine installed via Homebrew.', compatPath: compatCmd };
+        }
+      }
+      return {
+        status: false,
+        message: 'Attempted to install Wine via Homebrew but it was not detected afterwards.',
+      };
+    }
+
     return {
       status: false,
-      message: 'Wine is required on macOS. Install Wine and optionally set COMPAT_LAUNCHER to its path.',
+      message:
+        'Wine is required on macOS. Homebrew was not found for automatic install. Please install Wine manually or set COMPAT_LAUNCHER.',
     };
   }
 
