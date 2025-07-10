@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Comment {
   id: string;
@@ -11,7 +12,11 @@ interface Comment {
   avatarUrl: string;
 }
 
-export function CommentsPanel() {
+interface CommentsPanelProps {
+  className?: string;
+}
+
+export function CommentsPanel({ className }: CommentsPanelProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,11 +53,10 @@ export function CommentsPanel() {
     );
   }
 
-  // Restrict the card's height based on the available viewport so the page
-  // itself never becomes scrollable. When the content exceeds this space the
-  // inner list will scroll instead.
+  // Allow the card to stretch within its container and let the inner list
+  // scroll independently when it exceeds the available space.
   return (
-    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(60dvh-theme(spacing.44)-theme(spacing.12))]">
+    <Card className={cn('mining-surface flex flex-col h-full overflow-hidden', className)}>
       <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <MessageCircle className="w-5 h-5" />
