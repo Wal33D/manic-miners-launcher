@@ -1,7 +1,7 @@
 import { verifyFile } from '../fileUtils/fileOps';
-import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
+import { downloadGame } from 'itchio-downloader';
 
 export const downloadVersion = async ({
   versionIdentifier,
@@ -34,7 +34,6 @@ export const downloadVersion = async ({
 
     const filename = versionToProcess.filename;
     const filePath = validateUnpackPath({ basePath: downloadPath, entryName: filename });
-    const downloadUrl = versionToProcess.downloadUrl;
 
     updateStatus({ progress: 10, status: 'Verifying existing file...' });
     const fileDetails = await verifyFile({ filePath, expectedSize: versionToProcess.sizeInBytes });
@@ -45,16 +44,23 @@ export const downloadVersion = async ({
       updateStatus({ status: `File verified successfully. No action needed.`, progress: 17 });
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
-      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading...' });
-      const downloadResult = await downloadFile({
-        downloadUrl,
-        filePath,
-        expectedSize: versionToProcess.sizeInBytes,
-        expectedMd5: versionToProcess.md5Hash,
-        updateStatus,
-        initialProgress: 20,
-      });
-      return { downloaded: downloadResult.status, message: downloadResult.message };
+      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading using itch.io...' });
+      const result = (await downloadGame({
+        itchGameUrl: 'https://baraklava.itch.io/manic-miners',
+        desiredFileName: filename,
+        downloadDirectory: downloadPath,
+        onProgress: ({ bytesReceived, totalBytes }) => {
+          if (totalBytes) {
+            const progress = Math.floor((bytesReceived / totalBytes) * 80) + 20;
+            updateStatus({ progress: progress > 100 ? 100 : progress });
+          }
+        },
+      })) as { status: boolean; message: string };
+
+      if (!result.status) {
+        return { downloaded: false, message: result.message };
+      }
+      return { downloaded: true, message: result.message };
     }
   } catch (error) {
     updateStatus({ status: `Error: ${error.message}`, progress: 60 });
