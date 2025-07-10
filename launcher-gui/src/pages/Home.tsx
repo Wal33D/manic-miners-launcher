@@ -2,6 +2,7 @@ import { GameVersionSelector } from '@/components/GameVersionSelector';
 import { NewsPanel } from '@/components/NewsPanel';
 import { CommentsPanel } from '@/components/CommentsPanel';
 import { DownloadProgress } from '@/components/DownloadProgress';
+import { VideoPanel } from '@/components/VideoPanel';
 import { useState } from 'react';
 
 const Home = () => {
@@ -23,7 +24,8 @@ const Home = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Game Controls */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
+          <VideoPanel />
           <GameVersionSelector />
         </div>
 
