@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageSquare, Calendar } from 'lucide-react';
 
 interface LauncherMessage {
@@ -73,16 +72,16 @@ export function NewsPanel() {
         <CardDescription className="text-muted-foreground">Latest updates and announcements</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
-        {/* The list fills the remaining space and becomes scrollable when needed */}
-        <ScrollArea className="h-full pr-2">
-          <div className="space-y-4 pb-2">
+        {/* Horizontally scroll when the list overflows */}
+        <div className="h-full pr-2 overflow-x-auto">
+          <div className="flex gap-4 pb-2">
             {messages.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No messages available</p>
             ) : (
               messages.map(message => (
                 <div
                   key={message.id}
-                  className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
+                  className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors min-w-[16rem]"
                 >
                   <div className="mb-2">
                     <h4 className="font-medium text-secondary-foreground text-sm">{message.title}</h4>
@@ -96,7 +95,7 @@ export function NewsPanel() {
               ))
             )}
           </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );
