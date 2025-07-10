@@ -7,7 +7,7 @@ export function Navigation() {
   const navItems = [{ to: '/', icon: Home, label: 'Home' }];
 
   return (
-    <nav className="flex items-center justify-between w-full">
+    <nav className="drag flex items-center justify-between w-full">
       <div className="flex items-center gap-1">
         {navItems.map(item => (
           <NavLink
@@ -15,7 +15,7 @@ export function Navigation() {
             to={item.to}
             className={({ isActive }) =>
               cn(
-                'inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
+                'no-drag inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
                 'hover:bg-primary/10 hover:text-primary',
                 isActive ? 'bg-primary/20 text-primary border border-primary/30' : 'text-muted-foreground'
               )
@@ -28,10 +28,10 @@ export function Navigation() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="mining" size="icon">
+        <Button variant="mining" size="icon" className="no-drag">
           <Settings className="w-4 h-4" />
         </Button>
-        <Button variant="destructive" size="icon" onClick={() => window.electronAPI.send('window-minimize')}>
+        <Button variant="destructive" size="icon" className="no-drag" onClick={() => window.electronAPI.send('window-minimize')}>
           <Power className="w-4 h-4" />
         </Button>
       </div>
