@@ -64,7 +64,7 @@ export function NewsPanel() {
   // itself never becomes scrollable. When the content exceeds this space the
   // inner list will scroll instead.
   return (
-    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(100dvh-theme(spacing.40)-theme(spacing.12))]">
+    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(90dvh-theme(spacing.40)-theme(spacing.12))]">
       <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <MessageSquare className="w-5 h-5" />

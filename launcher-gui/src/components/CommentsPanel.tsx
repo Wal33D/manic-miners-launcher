@@ -50,7 +50,7 @@ export function CommentsPanel() {
   }
 
   return (
-    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(50dvh-theme(spacing.40)-theme(spacing.12))]">
+    <Card className="mining-surface flex flex-col h-full overflow-hidden max-h-[calc(60dvh-theme(spacing.40)-theme(spacing.12))]">
       <CardHeader className="shrink-0">
         <CardTitle className="text-primary flex items-center gap-2">
           <MessageCircle className="w-5 h-5" />
