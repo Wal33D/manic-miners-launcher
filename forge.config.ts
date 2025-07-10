@@ -39,13 +39,15 @@ const config: ForgeConfig = {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
         "font-src 'self' https://fonts.gstatic.com; " +
         "img-src 'self' data:; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "connect-src 'self' https://manic-launcher.vercel.app",
       contentSecurityPolicy:
         "default-src 'self'; " +
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
         "font-src 'self' https://fonts.gstatic.com; " +
         "img-src 'self' data:; " +
-        "script-src 'self' 'unsafe-inline'",
+        "script-src 'self' 'unsafe-inline'; " +
+        "connect-src 'self' https://manic-launcher.vercel.app",
     }),
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
