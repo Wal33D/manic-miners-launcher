@@ -25,7 +25,7 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/renderer/index.html', 
+            html: './src/renderer/index.html',
             js: './src/renderer/renderer.ts',
             name: 'main_window',
             preload: {
@@ -34,6 +34,8 @@ const config: ForgeConfig = {
           },
         ],
       },
+      devContentSecurityPolicy:
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';",
     }),
     new FusesPlugin({
       version: FuseVersion.V1,
