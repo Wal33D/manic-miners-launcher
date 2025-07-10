@@ -2,7 +2,6 @@ import type { Configuration } from 'webpack';
 import path from 'path';
 
 import { rules } from './webpack.rules';
-import { plugins } from './webpack.plugins';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 rules.push({
@@ -15,7 +14,6 @@ export const rendererConfig: Configuration = {
     rules,
   },
   plugins: [
-    ...plugins,
     new CopyWebpackPlugin({
       patterns: [
         {
