@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { getDirectories } from './fetchDirectories';
-import { debugLog } from '../logger';
 
 /**
  * Checks if a specific version is installed by looking for its directory and executable.
@@ -17,7 +16,6 @@ export const isVersionInstalled = async (versionIdentifier: string): Promise<boo
     try {
       await fs.access(versionDirPath);
     } catch (error) {
-      debugLog(`Version directory not found for ${versionIdentifier}: ${error}`);
       return false; // Directory does not exist
     }
 
@@ -26,10 +24,8 @@ export const isVersionInstalled = async (versionIdentifier: string): Promise<boo
     const hasExecutable = filesInDir.some(file => file.endsWith('.exe'));
 
     if (hasExecutable) {
-      debugLog(`Executable found in ${versionDirPath}.`);
       return true; // Installation is considered present if there's at least one executable
     } else {
-      debugLog(`No executable found in ${versionDirPath}.`);
       return false; // Installation is considered absent without executables
     }
   } catch (error) {

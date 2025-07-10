@@ -1,7 +1,6 @@
 import { verifyFile } from '../fileUtils/fileOps';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
-import { debugLog } from '../logger';
 import { validateUnpackPath } from './unpackHelpers';
 
 export const downloadVersion = async ({
@@ -21,7 +20,6 @@ export const downloadVersion = async ({
     const versions = versionData.versions; // Ensure this is an array
 
     updateStatus({ progress: 5 });
-    debugLog(`Available versions: ${JSON.stringify(versions)}`);
 
     if (!Array.isArray(versions)) {
       throw new Error('Fetched versions data is not an array');
