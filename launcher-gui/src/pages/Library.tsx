@@ -93,7 +93,7 @@ const Library = () => {
                           <span>•</span>
                           <span>{level.size}</span>
                           <span>•</span>
-                          <span>Played: {level.playTime}</span>
+                          <span>Played: {level.playTime ?? '0h 0m'}</span>
                           {level.lastPlayed && (
                             <>
                               <span>•</span>
@@ -146,9 +146,10 @@ const Library = () => {
               <div className="text-center p-4 rounded-lg bg-secondary/30">
                 <div className="text-2xl font-bold text-primary">
                   {installedLevels.reduce((acc, level) => {
-                    const hours = parseInt(level.playTime.split('h')[0]) || 0;
-                    const minutes = parseInt(level.playTime.split('h')[1]?.split('m')[0]) || 0;
-                    return acc + hours + (minutes / 60);
+                    const playTime = level.playTime ?? '0h 0m';
+                    const hours = parseInt(playTime.split('h')[0]) || 0;
+                    const minutes = parseInt(playTime.split('h')[1]?.split('m')[0]) || 0;
+                    return acc + hours + minutes / 60;
                   }, 0).toFixed(1)}h
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -165,7 +166,7 @@ const Library = () => {
               </div>
               <div className="text-center p-4 rounded-lg bg-secondary/30">
                 <div className="text-2xl font-bold text-primary">
-                  {installedLevels.reduce((acc, level) => acc + parseInt(level.size), 0)} MB
+                  {installedLevels.reduce((acc, level) => acc + parseInt(level.size || '0'), 0)} MB
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Storage Used
