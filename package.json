@@ -55,6 +55,7 @@
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
+    "tar": "^7.4.3",
     "windows-shortcuts": "^0.1.6"
   },
   "repository": {

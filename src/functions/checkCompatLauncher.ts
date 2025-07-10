@@ -1,12 +1,12 @@
 import { spawnSync } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
-import StreamZip from 'node-stream-zip';
 import { getDirectories } from './fetchDirectories';
 import { downloadFile } from './downloadFile';
-import { extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
+import { extractTarGz, flattenSingleSubdirectory } from './unpackHelpers';
 
-const DEFAULT_WINE_URL = process.env.WINE_DOWNLOAD_URL || 'https://manic-launcher.vercel.app/wine/wine-portable.zip';
+const DEFAULT_WINE_URL =
+  process.env.WINE_DOWNLOAD_URL || 'https://dl.winehq.org/wine-builds/macosx/pool/portable-winehq-stable-5.7-osx64.tar.gz';
 
 /**
  * Ensures a compatibility launcher (Wine or custom) is available.
@@ -90,20 +90,18 @@ export const checkCompatLauncher = async (): Promise<{
       // Ignore errors if the bundled Wine executable is not present
     }
 
-    const wineZip = path.join(directories.launcherInstallPath, 'wine.zip');
+    const archivePath = path.join(directories.launcherInstallPath, 'wine.tar.gz');
     const downloadResult = await downloadFile({
       downloadUrl: DEFAULT_WINE_URL,
-      filePath: wineZip,
+      filePath: archivePath,
     });
     if (!downloadResult.status) {
       return { status: false, message: downloadResult.message };
     }
 
-    const zip = new StreamZip.async({ file: wineZip });
-    await extractZipEntries({ zip, targetPath: wineDir });
-    await zip.close();
+    await extractTarGz({ filePath: archivePath, targetPath: wineDir });
     await flattenSingleSubdirectory(wineDir);
-    await fs.unlink(wineZip);
+    await fs.unlink(archivePath);
     await fs.chmod(wineExe, 0o755);
 
     if (testCommand(wineExe)) {

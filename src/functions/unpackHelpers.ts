@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
+import tar from 'tar';
 
 /**
  * Validates a zip entry name against a target base directory to
@@ -81,4 +82,11 @@ export async function flattenSingleSubdirectory(targetPath: string): Promise<voi
     }
     await fs.promises.rmdir(nestedDir);
   }
+}
+
+/**
+ * Extracts a .tar.gz archive into the target directory.
+ */
+export async function extractTarGz({ filePath, targetPath }: { filePath: string; targetPath: string }): Promise<void> {
+  await tar.x({ file: filePath, cwd: targetPath, strict: true });
 }
