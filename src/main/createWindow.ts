@@ -19,14 +19,16 @@ export const createWindow = (): void => {
     frame: false, // This will remove the frame
   });
 
-  // Load the root path without a hash in both dev and production.
-  // In development MAIN_WINDOW_WEBPACK_ENTRY is a URL; in production
-  // we load the packaged HTML file directly.
+  // Ensure the renderer starts on the Home page in both dev and prod.
+  // When packaged, loadFile lets us explicitly set the hash portion so
+  // React Router's HashRouter receives '/'. During development
+  // MAIN_WINDOW_WEBPACK_ENTRY points to the dev server URL, so we
+  // continue using loadURL with the '#/' hash appended.
   if (MAIN_WINDOW_WEBPACK_ENTRY.startsWith('http')) {
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
   } else {
     const indexPath = path.join(__dirname, '../renderer/index.html');
-    mainWindow.loadFile(indexPath);
+    mainWindow.loadFile(indexPath, { hash: '/' });
   }
 
 
