@@ -43,7 +43,6 @@ export const checkCompatLauncher = async (): Promise<{
     if (testCommand(cmd)) {
       return { status: true, message: '', compatPath: cmd };
     }
-
   }
 
   try {
