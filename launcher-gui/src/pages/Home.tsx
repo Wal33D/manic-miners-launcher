@@ -1,7 +1,7 @@
-import { GameVersionSelector } from "@/components/GameVersionSelector";
-import { NewsPanel } from "@/components/NewsPanel";
-import { DownloadProgress } from "@/components/DownloadProgress";
-import { useState } from "react";
+import { GameVersionSelector } from '@/components/GameVersionSelector';
+import { NewsPanel } from '@/components/NewsPanel';
+import { DownloadProgress } from '@/components/DownloadProgress';
+import { useState } from 'react';
 
 const Home = () => {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -25,7 +25,7 @@ const Home = () => {
         <div className="lg:col-span-2">
           <GameVersionSelector />
         </div>
-        
+
         {/* Sidebar */}
         <div>
           <NewsPanel />

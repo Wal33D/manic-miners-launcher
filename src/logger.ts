@@ -13,7 +13,6 @@ let join: ((...paths: string[]) => string) | null = null;
 
 const loadNodeModules = () => {
   if (!fs || !join) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const req = require as NodeRequire;
     if (!fs) fs = req('fs').promises;
     if (!join) ({ join } = req('path'));
@@ -24,7 +23,6 @@ const isRenderer = typeof process !== 'undefined' && (process as any).type === '
 
 const loadGetDirectories = () => {
   if (!getDirectories && !isRenderer) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     getDirectories = require('./functions/fetchDirectories').getDirectories;
   }
 };

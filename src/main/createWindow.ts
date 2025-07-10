@@ -31,7 +31,6 @@ export const createWindow = (): void => {
     mainWindow.loadFile(indexPath, { hash: '/' });
   }
 
-
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.once('did-finish-load', () => {
       mainWindow.webContents.openDevTools();

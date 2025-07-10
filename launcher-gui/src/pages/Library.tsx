@@ -1,27 +1,31 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Library as LibraryIcon, Play, Trash2, Search, Folder, Calendar } from "lucide-react";
-import { useInstalledLevels, InstalledLevel } from "../hooks/useInstalledLevels";
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Library as LibraryIcon, Play, Trash2, Search, Folder, Calendar } from 'lucide-react';
+import { useInstalledLevels, InstalledLevel } from '../hooks/useInstalledLevels';
 
 const Library = () => {
   const { levels: installedLevels, uninstallLevel } = useInstalledLevels();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredLevels = installedLevels.filter(level =>
-    level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    level.author.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredLevels = installedLevels.filter(
+    level => level.name.toLowerCase().includes(searchTerm.toLowerCase()) || level.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getDifficultyVariant = (difficulty: InstalledLevel['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return 'secondary';
-      case 'medium': return 'default';
-      case 'hard': return 'destructive';
-      case 'extreme': return 'outline';
-      default: return 'secondary';
+      case 'easy':
+        return 'secondary';
+      case 'medium':
+        return 'default';
+      case 'hard':
+        return 'destructive';
+      case 'extreme':
+        return 'outline';
+      default:
+        return 'secondary';
     }
   };
 
@@ -37,9 +41,7 @@ const Library = () => {
             <LibraryIcon className="w-5 h-5" />
             My Library
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Manage your installed levels and view play statistics
-          </CardDescription>
+          <CardDescription className="text-muted-foreground">Manage your installed levels and view play statistics</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-6">
@@ -49,7 +51,7 @@ const Library = () => {
                 <Input
                   placeholder="Search your library..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 bg-input border-border"
                 />
               </div>
@@ -66,28 +68,21 @@ const Library = () => {
                 {searchTerm ? 'No levels found matching your search' : 'No levels installed yet'}
               </div>
             ) : (
-              filteredLevels.map((level) => (
-                <Card
-                  key={level.id}
-                  className="bg-secondary/30 border-border/50 hover:bg-secondary/50 transition-colors"
-                >
+              filteredLevels.map(level => (
+                <Card key={level.id} className="bg-secondary/30 border-border/50 hover:bg-secondary/50 transition-colors">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center gap-3">
-                          <h3 className="font-medium text-secondary-foreground">
-                            {level.name}
-                          </h3>
-                          <Badge variant={getDifficultyVariant(level.difficulty)}>
-                            {level.difficulty}
-                          </Badge>
+                          <h3 className="font-medium text-secondary-foreground">{level.name}</h3>
+                          <Badge variant={getDifficultyVariant(level.difficulty)}>{level.difficulty}</Badge>
                           {level.highScore && (
                             <Badge variant="outline" className="border-primary/50 text-primary">
                               Best: {level.highScore.toLocaleString()}
                             </Badge>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>by {level.author}</span>
                           <span>•</span>
@@ -111,11 +106,7 @@ const Library = () => {
                           <Play className="w-4 h-4 mr-2" />
                           Play
                         </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleUninstall(level.id)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleUninstall(level.id)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -136,41 +127,34 @@ const Library = () => {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 rounded-lg bg-secondary/30">
-                <div className="text-2xl font-bold text-primary">
-                  {installedLevels.length}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Levels Installed
-                </div>
+                <div className="text-2xl font-bold text-primary">{installedLevels.length}</div>
+                <div className="text-sm text-muted-foreground">Levels Installed</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-secondary/30">
                 <div className="text-2xl font-bold text-primary">
-                  {installedLevels.reduce((acc, level) => {
-                    const playTime = level.playTime ?? '0h 0m';
-                    const hours = parseInt(playTime.split('h')[0]) || 0;
-                    const minutes = parseInt(playTime.split('h')[1]?.split('m')[0]) || 0;
-                    return acc + hours + minutes / 60;
-                  }, 0).toFixed(1)}h
+                  {installedLevels
+                    .reduce((acc, level) => {
+                      const playTime = level.playTime ?? '0h 0m';
+                      const hours = parseInt(playTime.split('h')[0]) || 0;
+                      const minutes = parseInt(playTime.split('h')[1]?.split('m')[0]) || 0;
+                      return acc + hours + minutes / 60;
+                    }, 0)
+                    .toFixed(1)}
+                  h
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Total Playtime
-                </div>
+                <div className="text-sm text-muted-foreground">Total Playtime</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-secondary/30">
                 <div className="text-2xl font-bold text-primary">
                   {Math.max(...installedLevels.map(l => l.highScore || 0)).toLocaleString()}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Best Score
-                </div>
+                <div className="text-sm text-muted-foreground">Best Score</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-secondary/30">
                 <div className="text-2xl font-bold text-primary">
                   {installedLevels.reduce((acc, level) => acc + parseInt(level.size || '0'), 0)} MB
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Storage Used
-                </div>
+                <div className="text-sm text-muted-foreground">Storage Used</div>
               </div>
             </div>
           </CardContent>

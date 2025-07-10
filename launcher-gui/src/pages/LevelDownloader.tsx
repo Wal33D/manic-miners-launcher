@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DownloadProgress } from "@/components/DownloadProgress";
-import { Map, Mountain, Zap, Star, Search, Filter, Download } from "lucide-react";
-import { useInstalledLevels } from "../hooks/useInstalledLevels";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DownloadProgress } from '@/components/DownloadProgress';
+import { Map, Mountain, Zap, Star, Search, Filter, Download } from 'lucide-react';
+import { useInstalledLevels } from '../hooks/useInstalledLevels';
 
 interface Level {
   id: string;
@@ -24,11 +24,11 @@ interface Level {
 const LevelDownloader = () => {
   const [levels, setLevels] = useState<Level[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [downloadingLevel, setDownloadingLevel] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadStatus, setDownloadStatus] = useState("");
+  const [downloadStatus, setDownloadStatus] = useState('');
   const { installLevel, isInstalled } = useInstalledLevels();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const LevelDownloader = () => {
         downloads: 12543,
         rating: 4.8,
         size: '45 MB',
-        installed: isInstalled('demo-1')
+        installed: isInstalled('demo-1'),
       },
       {
         id: 'demo-2',
@@ -55,7 +55,7 @@ const LevelDownloader = () => {
         downloads: 8721,
         rating: 4.6,
         size: '78 MB',
-        installed: isInstalled('demo-2')
+        installed: isInstalled('demo-2'),
       },
       {
         id: 'demo-3',
@@ -67,8 +67,8 @@ const LevelDownloader = () => {
         downloads: 5432,
         rating: 4.9,
         size: '92 MB',
-        installed: isInstalled('demo-3')
-      }
+        installed: isInstalled('demo-3'),
+      },
     ];
 
     window.electronAPI.send('get-levels');
@@ -96,29 +96,39 @@ const LevelDownloader = () => {
   }, []);
 
   const filteredLevels = levels.filter(level => {
-    const matchesSearch = level.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         level.author.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      level.name.toLowerCase().includes(searchTerm.toLowerCase()) || level.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDifficulty = difficultyFilter === 'all' || level.difficulty === difficultyFilter;
     return matchesSearch && matchesDifficulty;
   });
 
   const getDifficultyVariant = (difficulty: Level['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return 'secondary';
-      case 'medium': return 'default';
-      case 'hard': return 'destructive';
-      case 'extreme': return 'outline';
-      default: return 'secondary';
+      case 'easy':
+        return 'secondary';
+      case 'medium':
+        return 'default';
+      case 'hard':
+        return 'destructive';
+      case 'extreme':
+        return 'outline';
+      default:
+        return 'secondary';
     }
   };
 
   const getDifficultyIcon = (difficulty: Level['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return <Mountain className="w-3 h-3" />;
-      case 'medium': return <Map className="w-3 h-3" />;
-      case 'hard': return <Zap className="w-3 h-3" />;
-      case 'extreme': return <Star className="w-3 h-3" />;
-      default: return <Mountain className="w-3 h-3" />;
+      case 'easy':
+        return <Mountain className="w-3 h-3" />;
+      case 'medium':
+        return <Map className="w-3 h-3" />;
+      case 'hard':
+        return <Zap className="w-3 h-3" />;
+      case 'extreme':
+        return <Star className="w-3 h-3" />;
+      default:
+        return <Mountain className="w-3 h-3" />;
     }
   };
 
@@ -140,11 +150,7 @@ const LevelDownloader = () => {
       window.electronAPI.removeAllListeners('level-download-progress');
       setDownloadingLevel(null);
       if (result?.status) {
-        setLevels(prev =>
-          prev.map(level =>
-            level.id === levelId ? { ...level, installed: true } : level
-          )
-        );
+        setLevels(prev => prev.map(level => (level.id === levelId ? { ...level, installed: true } : level)));
         const level = levels.find(l => l.id === levelId);
         if (level) {
           installLevel({
@@ -201,9 +207,7 @@ const LevelDownloader = () => {
             <Download className="w-5 h-5" />
             Level Downloader
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Discover and download community-created mining levels
-          </CardDescription>
+          <CardDescription className="text-muted-foreground">Discover and download community-created mining levels</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-4">
@@ -213,7 +217,7 @@ const LevelDownloader = () => {
                 <Input
                   placeholder="Search levels or authors..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 bg-input border-border"
                 />
               </div>
@@ -239,81 +243,69 @@ const LevelDownloader = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredLevels.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
-            No levels found matching your criteria
-          </div>
+          <div className="col-span-full text-center py-12 text-muted-foreground">No levels found matching your criteria</div>
         ) : (
-          filteredLevels.map((level) => {
+          filteredLevels.map(level => {
             const installed = level.installed || isInstalled(level.id);
             return (
-            <Card
-              key={level.id}
-              className={`mining-surface transition-all hover:shadow-md ${
-                installed
-                  ? 'border-primary/30 bg-primary/5'
-                  : 'border-border/50 hover:border-primary/30'
-              }`}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg text-secondary-foreground">
-                      {level.name}
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      by {level.author}
-                    </p>
-                  </div>
-                  <Badge variant={getDifficultyVariant(level.difficulty)}>
-                    <div className="flex items-center gap-1">
-                      {getDifficultyIcon(level.difficulty)}
-                      {level.difficulty}
+              <Card
+                key={level.id}
+                className={`mining-surface transition-all hover:shadow-md ${
+                  installed ? 'border-primary/30 bg-primary/5' : 'border-border/50 hover:border-primary/30'
+                }`}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg text-secondary-foreground">{level.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">by {level.author}</p>
                     </div>
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  {level.description}
-                </p>
-                
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-1 text-primary">
-                    <Zap className="w-4 h-4" />
-                    {level.crystals} crystals
+                    <Badge variant={getDifficultyVariant(level.difficulty)}>
+                      <div className="flex items-center gap-1">
+                        {getDifficultyIcon(level.difficulty)}
+                        {level.difficulty}
+                      </div>
+                    </Badge>
                   </div>
-                  <div className="text-muted-foreground">
-                    ⭐ {level.rating}
+                </CardHeader>
+
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">{level.description}</p>
+
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1 text-primary">
+                      <Zap className="w-4 h-4" />
+                      {level.crystals} crystals
+                    </div>
+                    <div className="text-muted-foreground">⭐ {level.rating}</div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{level.downloads.toLocaleString()} downloads</span>
-                  <span>{level.size}</span>
-                </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{level.downloads.toLocaleString()} downloads</span>
+                    <span>{level.size}</span>
+                  </div>
 
-                <Button
-                  variant={installed ? "secondary" : "energy"}
-                  className="w-full"
-                  disabled={downloadingLevel === level.id}
-                  onClick={() => !installed && handleDownload(level.id)}
-                >
-                  {installed ? (
-                    "✓ Installed"
-                  ) : downloadingLevel === level.id ? (
-                    "Downloading..."
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })
+                  <Button
+                    variant={installed ? 'secondary' : 'energy'}
+                    className="w-full"
+                    disabled={downloadingLevel === level.id}
+                    onClick={() => !installed && handleDownload(level.id)}
+                  >
+                    {installed ? (
+                      '✓ Installed'
+                    ) : downloadingLevel === level.id ? (
+                      'Downloading...'
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })
         )}
       </div>
     </div>
