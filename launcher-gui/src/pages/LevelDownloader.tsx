@@ -319,7 +319,8 @@ const LevelDownloader = () => {
                 </Button>
               </CardContent>
             </Card>
-          ))
+          );
+        })
         )}
       </div>
     </div>
