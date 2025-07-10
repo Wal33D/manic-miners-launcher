@@ -31,7 +31,7 @@ export function Navigation() {
         <Button variant="mining" size="icon">
           <Settings className="w-4 h-4" />
         </Button>
-        <Button variant="destructive" size="icon">
+        <Button variant="destructive" size="icon" onClick={() => window.electronAPI.send('window-minimize')}>
           <Power className="w-4 h-4" />
         </Button>
       </div>

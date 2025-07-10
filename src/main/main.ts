@@ -9,6 +9,7 @@ import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
+import { setupWindowControlHandlers } from './ipcHandlers/setupWindowControlHandlers';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
@@ -29,6 +30,7 @@ const startApp = (): void => {
     setupUrlHandler();
     setupPlaySoundHandler();
     setupSettingsHandlers();
+    setupWindowControlHandlers();
   });
 
   app.on('window-all-closed', () => {
@@ -44,8 +46,7 @@ const startApp = (): void => {
   });
 };
 
-if (process.platform !== 'win32') {
-} else if (require('electron-squirrel-startup')) {
+if (process.platform === 'win32' && require('electron-squirrel-startup')) {
   app.quit();
 }
 
