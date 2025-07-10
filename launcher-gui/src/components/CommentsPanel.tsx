@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageCircle } from 'lucide-react';
 
@@ -59,15 +58,15 @@ export function CommentsPanel() {
         <CardDescription className="text-muted-foreground">Recent user feedback</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
-        <ScrollArea className="h-full pr-2">
-          <div className="space-y-4 pb-2">
+        <div className="h-full pr-2 overflow-x-auto">
+          <div className="flex gap-4 pb-2">
             {comments.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">No comments available</p>
             ) : (
               comments.map(comment => (
                 <div
                   key={comment.id}
-                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
+                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors min-w-[16rem]"
                 >
                   <Avatar className="w-6 h-6">
                     <AvatarImage src={comment.avatarUrl} alt={comment.author} />
@@ -84,7 +83,7 @@ export function CommentsPanel() {
               ))
             )}
           </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );
