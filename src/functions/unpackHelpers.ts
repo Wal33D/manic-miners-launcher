@@ -82,4 +82,3 @@ export async function flattenSingleSubdirectory(targetPath: string): Promise<voi
     await fs.promises.rmdir(nestedDir);
   }
 }
-
