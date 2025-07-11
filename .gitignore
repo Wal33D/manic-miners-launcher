@@ -95,3 +95,5 @@ src/renderer/assets/index.css
 
 # Electron-Forge
 out/
+/launcher-gui/dist/assets
+launcher-gui/dist/index.html
