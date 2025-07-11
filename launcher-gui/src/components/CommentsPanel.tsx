@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,7 +19,6 @@ interface CommentsPanelProps {
 export function CommentsPanel({ className }: CommentsPanelProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -65,22 +64,15 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2 min-h-0">
-        <div className="grid grid-cols-2 gap-4 pb-2">
+        <div className="columns-2 gap-4 pb-2">
           {comments.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No comments available</p>
           ) : (
             comments.map(comment => {
-              const truncated =
-                comment.text.length > 350
-                  ? `${comment.text.slice(0, 350)}...`
-                  : comment.text;
-              const isHovered = hoveredId === comment.id;
               return (
                 <div
                   key={comment.id}
-                  onMouseEnter={() => setHoveredId(comment.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors w-full"
+                  className="break-inside-avoid-column flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors w-full"
                 >
                   <Avatar className="w-6 h-6">
                     <AvatarImage src={comment.avatarUrl} alt={comment.author} />
@@ -91,11 +83,8 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
                       <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
                       <span className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</span>
                     </div>
-                    <p
-                      className="text-xs text-muted-foreground break-words"
-                      title={comment.text}
-                    >
-                      {isHovered ? comment.text : truncated}
+                    <p className="text-xs text-muted-foreground break-words" title={comment.text}>
+                      {comment.text}
                     </p>
                   </div>
                 </div>
