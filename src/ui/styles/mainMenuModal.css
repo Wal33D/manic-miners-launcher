@@ -15,19 +15,19 @@
 }
 
 #lmsMenuImg {
-  background-image: url('../../../assets/lms.png');
+  background-image: url('../../../assets/manic-miners-lms.png');
 }
 #tsMenuImg {
-  background-image: url('../../../assets/toolstore.png');
+  background-image: url('../../../assets/manic-miners-toolstore.png');
 }
 #teleportMenuImg {
-  background-image: url('../../../assets/teleportstation.png');
+  background-image: url('../../../assets/manic-miners-teleportstation.png');
 }
 #supportMenuImg {
-  background-image: url('../../../assets/supportstation.png');
+  background-image: url('../../../assets/manic-miners-supportstation.png');
 }
 #levelsMenuImg {
-  background-image: url('../../../assets/ManicMiners_alt.png');
+  background-image: url('../../../assets/manic-miners-alt.png');
 }
 
 .modal-header {
