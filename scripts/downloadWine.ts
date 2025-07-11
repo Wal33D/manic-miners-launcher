@@ -5,7 +5,7 @@ import { checkCompatLauncher } from '../src/functions/checkCompatLauncher';
   if (result.status) {
     console.log(`Compatibility layer available at: ${result.compatPath || 'system default'}`);
   } else {
-    console.error(`Failed to set up Proton: ${result.message}`);
+    console.error(`Failed to set up Wine: ${result.message}`);
     process.exit(1);
   }
 })();

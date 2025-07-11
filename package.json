@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "update-git-url": "node scripts/updatePackageJson.js",
     "generate:assets": "ts-node scripts/generateAssets.ts",
-    "check:proton": "ts-node scripts/checkProton.ts"
+    "download:wine": "ts-node scripts/downloadWine.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
