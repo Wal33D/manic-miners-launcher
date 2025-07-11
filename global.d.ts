@@ -1,10 +1,3 @@
-// In custom.d.ts
-declare module '*.partial_html' {
-  const content: string;
-  export default content;
-}
-
-
 import { IPC_CHANNELS } from './src/main/ipcHandlers/ipcChannels';
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
