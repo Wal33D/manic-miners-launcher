@@ -10,7 +10,6 @@
     "publish": "electron-forge publish",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
-    "update-git-url": "node scripts/updatePackageJson.js",
     "generate:assets": "ts-node scripts/generateAssets.ts"
   },
   "devDependencies": {
