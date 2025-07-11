@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import Masonry from 'react-masonry-css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,6 +22,7 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -66,7 +68,8 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2 min-h-0">
-        <Masonry breakpointCols={2} className="my-masonry-grid pb-2" columnClassName="my-masonry-grid_column">
+        <div ref={parent}>
+          <Masonry breakpointCols={2} className="my-masonry-grid pb-2" columnClassName="my-masonry-grid_column">
           {comments.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No comments available</p>
           ) : (
@@ -89,13 +92,16 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
                       <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
                       <span className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground break-words">{isHovered ? comment.text : truncated}</p>
+                    <p className="text-xs text-muted-foreground break-words transition-all duration-300">
+                      {isHovered ? comment.text : truncated}
+                    </p>
                   </div>
                 </div>
               );
             })
           )}
-        </Masonry>
+          </Masonry>
+        </div>
       </CardContent>
     </Card>
   );
