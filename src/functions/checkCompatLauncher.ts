@@ -9,8 +9,8 @@ const DEFAULT_WINE_URL =
   process.env.WINE_DOWNLOAD_URL || 'https://dl.winehq.org/wine-builds/macosx/pool/portable-winehq-stable-5.0-osx64.tar.gz';
 
 /**
- * Ensures a compatibility launcher (Wine or custom) is available.
- * If not found, attempts to download a portable Wine distribution.
+ * Ensures a compatibility launcher (Proton, Wine or custom) is available.
+ * If none is found, attempts to download a portable Wine distribution.
  */
 export const checkCompatLauncher = async (): Promise<{
   status: boolean;
@@ -18,14 +18,14 @@ export const checkCompatLauncher = async (): Promise<{
   compatPath?: string;
 }> => {
   if (process.platform === 'win32') {
-    return { status: true, message: 'Windows does not require Wine.' };
+    return { status: true, message: 'Windows does not require Proton or Wine.' };
   }
 
-  // On macOS first try user-provided or system Wine. If none exists, attempt to
+  // On macOS first try user-provided or system Proton/Wine. If none exists, attempt to
   // install Wine via Homebrew for a smoother out-of-box experience.
   if (process.platform === 'darwin') {
     const envCmd = process.env.COMPAT_LAUNCHER;
-    const candidateCommands = envCmd ? [envCmd, 'wine64', 'wine'] : ['wine64', 'wine'];
+    const candidateCommands = envCmd ? [envCmd, 'proton', 'wine64', 'wine'] : ['proton', 'wine64', 'wine'];
     let compatCmd = pickFirstWorking(candidateCommands);
     if (compatCmd) {
       return { status: true, message: '', compatPath: compatCmd };
@@ -37,7 +37,7 @@ export const checkCompatLauncher = async (): Promise<{
       if (brewInstall.status === 0) {
         compatCmd = pickFirstWorking(candidateCommands);
         if (compatCmd) {
-          return { status: true, message: 'Wine installed via Homebrew.', compatPath: compatCmd };
+          return { status: true, message: 'Compatibility layer installed via Homebrew.', compatPath: compatCmd };
         }
       }
       return {
@@ -49,7 +49,7 @@ export const checkCompatLauncher = async (): Promise<{
     return {
       status: false,
       message:
-        'Wine is required on macOS. Homebrew was not found for automatic install. Please install Wine manually or set COMPAT_LAUNCHER.',
+        'A compatibility layer (Proton or Wine) is required on macOS. Homebrew was not found for automatic install. Please install Wine or Proton manually or set COMPAT_LAUNCHER.',
     };
   }
 
@@ -70,7 +70,7 @@ export const checkCompatLauncher = async (): Promise<{
     return { status: true, message: '', compatPath: envCmd };
   }
 
-  const candidateCommands = ['wine', 'wine64'];
+  const candidateCommands = ['proton', 'wine', 'wine64'];
   for (const cmd of candidateCommands) {
     if (testCommand(cmd)) {
       return { status: true, message: '', compatPath: cmd };
@@ -105,7 +105,7 @@ export const checkCompatLauncher = async (): Promise<{
     await fs.chmod(wineExe, 0o755);
 
     if (testCommand(wineExe)) {
-      return { status: true, message: 'Wine downloaded.', compatPath: wineExe };
+      return { status: true, message: 'Wine downloaded as compatibility layer.', compatPath: wineExe };
     }
 
     return { status: false, message: 'Wine download failed to run.' };
