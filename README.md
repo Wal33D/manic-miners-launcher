@@ -6,9 +6,9 @@ This project is an Electron-based launcher for the game **Manic Miners**. The la
 
 - Node.js 20 or later
 - pnpm package manager
-- On Linux and macOS a Windows compatibility layer such as **Wine** is required to run the Windows game binaries. The launcher will attempt to use the command from the `COMPAT_LAUNCHER` environment variable. If no compatible command is found, it searches for common Wine executables such as `wine` or `wine64`.
+- On Linux and macOS a Windows compatibility layer using **Proton** is required to run the Windows game binaries. The launcher will attempt to use the command from the `COMPAT_LAUNCHER` environment variable or a Proton installation detected on the system. Proton is an open-source compatibility tool built on Wine for running Windows games through Steam [[Proton README](https://github.com/ValveSoftware/Proton)].
 
-Automatic Wine download is supported on Linux and macOS. On macOS the launcher attempts to install Wine via Homebrew if it is not already available. You can run `pnpm run download:wine` on Linux to prefetch the Wine bundle before packaging or launching.
+The launcher no longer downloads Wine automatically. Proton currently has no official macOS distribution, so macOS users must supply their own Proton build (for example community ports). Run `pnpm run check:proton` to verify that Proton is available before packaging or launching.
 
 ## Development
 
