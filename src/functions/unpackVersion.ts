@@ -21,7 +21,7 @@ export const unpackVersion = async ({
   message: string;
 }> => {
   if (updateStatus) updateStatus({ status: 'Starting the unpacking process...', progress: 60 });
-  const { versions } = await fetchVersions({ versionType: 'all' });
+  const { versions } = await fetchVersions({ versionType: 'archived' });
 
   const versionToUnpack = versions.find(v => v.identifier === versionIdentifier) || versions[0];
   if (!versionToUnpack) {

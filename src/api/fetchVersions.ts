@@ -1,7 +1,7 @@
 import { fetchServerData } from './fetchServerData';
 import { Version, Versions, VersionSelectionType } from './versionTypes';
 
-export async function fetchVersions({ versionType = 'all' }: { versionType?: VersionSelectionType }): Promise<Versions> {
+export async function fetchVersions({ versionType = 'archived' }: { versionType?: VersionSelectionType }): Promise<Versions> {
   const formattedVersionType = `versions.${versionType}`;
 
   const { data, status, message } = await fetchServerData({

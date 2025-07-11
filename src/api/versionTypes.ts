@@ -19,7 +19,7 @@ export interface Version {
   detailsUrl: string;
   description: string;
 }
-export type VersionSelectionType = 'all' | 'latest' | 'past' | 'experimental';
+export type VersionSelectionType = 'all' | 'latest' | 'past' | 'experimental' | 'archived';
 
 export interface Versions {
   versions: Version[];
