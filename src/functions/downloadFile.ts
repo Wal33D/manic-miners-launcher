@@ -10,6 +10,7 @@ import crypto from 'crypto';
  * @param {string} params.filePath - The path where the file will be saved.
  * @param {number} params.expectedSize - Expected size of the downloaded file.
  * @param {string} [params.expectedMd5] - Expected MD5 hash of the file.
+ * @param {string} [params.expectedSha512] - Expected SHA-512 hash of the file.
  * @param {Function} [params.updateStatus] - Optional function to update progress or send status messages.
  * @param {number} [params.initialProgress=0] - The initial progress value from which to start progress updates, defaults to 0.
  * @returns {Promise<{ status: boolean; message: string }>}
@@ -19,6 +20,7 @@ export async function downloadFile({
   filePath,
   expectedSize,
   expectedMd5,
+  expectedSha512,
   updateStatus,
   initialProgress = 0,
 }: {
@@ -26,6 +28,7 @@ export async function downloadFile({
   filePath: string;
   expectedSize?: number;
   expectedMd5?: string;
+  expectedSha512?: string;
   updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
   initialProgress?: number;
 }): Promise<{ status: boolean; message: string }> {
@@ -75,12 +78,21 @@ export async function downloadFile({
       };
     }
 
-    if (expectedMd5) {
+    if (expectedMd5 || expectedSha512) {
       const buffer = await fs.promises.readFile(filePath);
-      const hash = crypto.createHash('md5').update(buffer).digest('hex');
-      if (hash !== expectedMd5) {
-        await fs.promises.unlink(filePath);
-        return { status: false, message: 'MD5 checksum mismatch.' };
+      if (expectedMd5) {
+        const md5 = crypto.createHash('md5').update(buffer).digest('hex');
+        if (md5 !== expectedMd5) {
+          await fs.promises.unlink(filePath);
+          return { status: false, message: 'MD5 checksum mismatch.' };
+        }
+      }
+      if (expectedSha512) {
+        const sha512 = crypto.createHash('sha512').update(buffer).digest('hex');
+        if (sha512 !== expectedSha512) {
+          await fs.promises.unlink(filePath);
+          return { status: false, message: 'SHA-512 checksum mismatch.' };
+        }
       }
     }
 
