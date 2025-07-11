@@ -10,6 +10,7 @@ import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 import { setupWindowControlHandlers } from './ipcHandlers/setupWindowControlHandlers';
+import { checkItchUpdate } from '../functions/checkItchUpdate';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
@@ -20,8 +21,9 @@ const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
 
 const startApp = (): void => {
-  app.on('ready', () => {
+  app.on('ready', async () => {
     setupDirectoryHandler();
+    await checkItchUpdate();
     createWindow();
     setupVersionHandlers();
     setupGameLaunchHandlers();
