@@ -89,9 +89,7 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
                       <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
                       <span className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground break-words" title={comment.text}>
-                      {isHovered ? comment.text : truncated}
-                    </p>
+                    <p className="text-xs text-muted-foreground break-words">{isHovered ? comment.text : truncated}</p>
                   </div>
                 </div>
               );
