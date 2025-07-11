@@ -80,6 +80,26 @@ async function findProtonFromSteam(): Promise<string | undefined> {
   return undefined;
 }
 
+async function findProtonOnMac(): Promise<string | undefined> {
+  const home = process.env.HOME;
+  const possiblePaths = ['/Applications/Proton.app/Contents/MacOS/proton', '/Applications/Proton\u2010GE.app/Contents/MacOS/proton'];
+  if (home) {
+    possiblePaths.push(path.join(home, 'Applications/Proton.app/Contents/MacOS/proton'));
+    possiblePaths.push(path.join(home, 'Applications/Proton\u2010GE.app/Contents/MacOS/proton'));
+  }
+
+  for (const p of possiblePaths) {
+    try {
+      await fs.access(p);
+      return p;
+    } catch {
+      // ignore if path doesn't exist
+    }
+  }
+
+  return undefined;
+}
+
 /**
  * Ensures a Proton launcher is available.
  */
@@ -112,6 +132,13 @@ export const checkCompatLauncher = async (): Promise<{
   const steamProton = await findProtonFromSteam();
   if (steamProton) {
     return { status: true, message: '', compatPath: steamProton };
+  }
+
+  if (process.platform === 'darwin') {
+    const macProton = await findProtonOnMac();
+    if (macProton) {
+      return { status: true, message: '', compatPath: macProton };
+    }
   }
 
   if (process.platform === 'linux') {
