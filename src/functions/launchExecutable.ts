@@ -17,9 +17,10 @@ export const launchExecutable = ({
     const startTime = Date.now();
 
     const useCompat = process.platform !== 'win32';
-    const compatCmd = compatLauncher || process.env.COMPAT_LAUNCHER || 'wine';
+    const compatCmd = compatLauncher || process.env.COMPAT_LAUNCHER || 'proton';
     const spawnCmd = useCompat ? compatCmd : executablePath;
-    const spawnArgs = useCompat ? [executablePath] : [];
+    const isProton = useCompat && compatCmd.toLowerCase().includes('proton');
+    const spawnArgs = useCompat ? (isProton ? ['run', executablePath] : [executablePath]) : [];
 
     const child = spawn(spawnCmd, spawnArgs, {
       detached: true,
