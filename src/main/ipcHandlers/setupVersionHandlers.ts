@@ -28,7 +28,7 @@ export const setupVersionHandlers = () => {
 };
 
 const getVersionDetails = async () => {
-  const versionData = await fetchVersions({ versionType: 'all' });
+  const versionData = await fetchVersions({ versionType: 'archived' });
   const installedVersionsResult = await fetchInstalledVersions();
 
   const enhancedVersions = versionData.versions.map(version => {

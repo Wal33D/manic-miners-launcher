@@ -18,7 +18,7 @@ export const downloadVersion = async ({
 
   try {
     updateStatus({ status: 'Fetching version index...', progress: 7 });
-    const versionData = await fetchVersions({});
+    const versionData = await fetchVersions({ versionType: 'archived' });
     const versions = versionData.versions; // Ensure this is an array
 
     updateStatus({ progress: 5 });
