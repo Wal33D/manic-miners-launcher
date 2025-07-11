@@ -23,7 +23,7 @@ export const fetchInstalledVersions = async (): Promise<{
       throw new Error(dirMessage);
     }
 
-    const versionsData: Versions = await fetchVersions({ versionType: 'all' });
+    const versionsData: Versions = await fetchVersions({ versionType: 'archived' });
     const filesAndDirs = await fs.readdir(launcherInstallPath);
     const dirStats = await Promise.all(filesAndDirs.map(name => fs.stat(path.join(launcherInstallPath, name))));
     const dirs = filesAndDirs.filter((_, index) => dirStats[index].isDirectory());
