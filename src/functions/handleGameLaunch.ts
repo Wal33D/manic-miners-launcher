@@ -1,6 +1,5 @@
 import { launchExecutable } from './launchExecutable';
 import { fetchInstalledVersions } from './fetchInstalledVersions';
-import { checkCompatLauncher } from './checkCompatLauncher';
 
 /**
  * Function to handle the launching of a specific game version or the first available version if no identifier is provided.
@@ -13,9 +12,8 @@ export const handleGameLaunch = async ({
   versionIdentifier?: string;
 }): Promise<{ status: boolean; message: string }> => {
   try {
-    const { status: compatOK, compatPath, message: compatMessage } = await checkCompatLauncher();
-    if (!compatOK) {
-      return { status: false, message: compatMessage };
+    if (process.platform !== 'win32') {
+      return { status: false, message: 'Game launch is supported only on Windows.' };
     }
 
     const installed = await fetchInstalledVersions();
@@ -34,7 +32,6 @@ export const handleGameLaunch = async ({
 
     const launchResults = await launchExecutable({
       executablePath: versionToLaunch.executablePath,
-      compatLauncher: compatPath,
     });
 
     if (launchResults.status) {

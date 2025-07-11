@@ -8,19 +8,20 @@ import { spawn } from 'child_process';
 
 export const launchExecutable = ({
   executablePath,
-  compatLauncher,
 }: {
   executablePath: string;
-  compatLauncher?: string;
 }): Promise<{ status: boolean; message: string; exitCode?: number; veryShortRun?: boolean }> => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 
-    const useCompat = process.platform !== 'win32';
-    const compatCmd = compatLauncher || process.env.COMPAT_LAUNCHER || 'proton';
-    const spawnCmd = useCompat ? compatCmd : executablePath;
-    const isProton = useCompat && compatCmd.toLowerCase().includes('proton');
-    const spawnArgs = useCompat ? (isProton ? ['run', executablePath] : [executablePath]) : [];
+    if (process.platform !== 'win32') {
+      const message = 'Game launch is supported only on Windows.';
+      console.error(message);
+      return resolve({ status: false, message });
+    }
+
+    const spawnCmd = executablePath;
+    const spawnArgs: string[] = [];
 
     const child = spawn(spawnCmd, spawnArgs, {
       detached: true,
