@@ -5,44 +5,12 @@ import { getDirectories } from './fetchDirectories';
 import { downloadFile } from './downloadFile';
 import { extractTarGz, flattenSingleSubdirectory } from './unpackHelpers';
 
-async function findProtonFromSteam(): Promise<string | undefined> {
-  const home = process.env.HOME;
-  if (!home) return undefined;
-
-  const possibleDirs = [
-    path.join(home, '.steam/steam/steamapps/common'),
-    path.join(home, '.local/share/Steam/steamapps/common'),
-    path.join(home, 'Library/Application Support/Steam/steamapps/common'),
-  ];
-
-  for (const dir of possibleDirs) {
-    try {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isDirectory() && entry.name.startsWith('Proton')) {
-          const candidate = path.join(dir, entry.name, 'proton');
-          try {
-            await fs.access(candidate);
-            return candidate;
-          } catch {
-            // continue searching
-          }
-        }
-      }
-    } catch {
-      // ignore if directory doesn't exist
-    }
-  }
-
-  return undefined;
-}
-
 const DEFAULT_WINE_URL =
   process.env.WINE_DOWNLOAD_URL || 'https://dl.winehq.org/wine-builds/macosx/pool/portable-winehq-stable-5.0-osx64.tar.gz';
 
 /**
- * Ensures a compatibility launcher (Proton, Wine or custom) is available.
- * If none is found, attempts to download a portable Wine distribution.
+ * Ensures a compatibility launcher (Wine or custom) is available.
+ * If not found, attempts to download a portable Wine distribution.
  */
 export const checkCompatLauncher = async (): Promise<{
   status: boolean;
@@ -50,14 +18,14 @@ export const checkCompatLauncher = async (): Promise<{
   compatPath?: string;
 }> => {
   if (process.platform === 'win32') {
-    return { status: true, message: 'Windows does not require Proton or Wine.' };
+    return { status: true, message: 'Windows does not require Wine.' };
   }
 
-  // On macOS first try user-provided or system Proton/Wine. If none exists, attempt to
+  // On macOS first try user-provided or system Wine. If none exists, attempt to
   // install Wine via Homebrew for a smoother out-of-box experience.
   if (process.platform === 'darwin') {
     const envCmd = process.env.COMPAT_LAUNCHER;
-    const candidateCommands = envCmd ? [envCmd, 'proton', 'wine64', 'wine'] : ['proton', 'wine64', 'wine'];
+    const candidateCommands = envCmd ? [envCmd, 'wine64', 'wine'] : ['wine64', 'wine'];
     let compatCmd = pickFirstWorking(candidateCommands);
     if (compatCmd) {
       return { status: true, message: '', compatPath: compatCmd };
@@ -69,7 +37,7 @@ export const checkCompatLauncher = async (): Promise<{
       if (brewInstall.status === 0) {
         compatCmd = pickFirstWorking(candidateCommands);
         if (compatCmd) {
-          return { status: true, message: 'Compatibility layer installed via Homebrew.', compatPath: compatCmd };
+          return { status: true, message: 'Wine installed via Homebrew.', compatPath: compatCmd };
         }
       }
       return {
@@ -81,13 +49,13 @@ export const checkCompatLauncher = async (): Promise<{
     return {
       status: false,
       message:
-        'A compatibility layer (Proton or Wine) is required on macOS. Homebrew was not found for automatic install. Please install Wine or Proton manually or set COMPAT_LAUNCHER.',
+        'Wine is required on macOS. Homebrew was not found for automatic install. Please install Wine manually or set COMPAT_LAUNCHER.',
     };
   }
 
   function testCommand(cmd: string): boolean {
     const result = spawnSync(cmd, ['--version'], { stdio: 'ignore' });
-    return !result.error && result.status !== null;
+    return !result.error && result.status === 0;
   }
 
   function pickFirstWorking(commands: string[]): string | undefined {
@@ -102,16 +70,11 @@ export const checkCompatLauncher = async (): Promise<{
     return { status: true, message: '', compatPath: envCmd };
   }
 
-  const candidateCommands = ['proton', 'wine', 'wine64'];
+  const candidateCommands = ['wine', 'wine64'];
   for (const cmd of candidateCommands) {
     if (testCommand(cmd)) {
       return { status: true, message: '', compatPath: cmd };
     }
-  }
-
-  const steamProton = await findProtonFromSteam();
-  if (steamProton) {
-    return { status: true, message: '', compatPath: steamProton };
   }
 
   try {
@@ -142,7 +105,7 @@ export const checkCompatLauncher = async (): Promise<{
     await fs.chmod(wineExe, 0o755);
 
     if (testCommand(wineExe)) {
-      return { status: true, message: 'Wine downloaded as compatibility layer.', compatPath: wineExe };
+      return { status: true, message: 'Wine downloaded.', compatPath: wineExe };
     }
 
     return { status: false, message: 'Wine download failed to run.' };
