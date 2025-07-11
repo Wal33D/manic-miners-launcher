@@ -19,6 +19,7 @@ interface CommentsPanelProps {
 export function CommentsPanel({ className }: CommentsPanelProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -68,24 +69,38 @@ export function CommentsPanel({ className }: CommentsPanelProps) {
           {comments.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No comments available</p>
           ) : (
-            comments.map(comment => (
-              <div
-                key={comment.id}
-                className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors w-full"
-              >
-                <Avatar className="w-6 h-6">
-                  <AvatarImage src={comment.avatarUrl} alt={comment.author} />
-                  <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
-                    <span className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</span>
+            comments.map(comment => {
+              const truncated =
+                comment.text.length > 350
+                  ? `${comment.text.slice(0, 350)}...`
+                  : comment.text;
+              const isHovered = hoveredId === comment.id;
+              return (
+                <div
+                  key={comment.id}
+                  onMouseEnter={() => setHoveredId(comment.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  className="flex gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors w-full"
+                >
+                  <Avatar className="w-6 h-6">
+                    <AvatarImage src={comment.avatarUrl} alt={comment.author} />
+                    <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
+                      <span className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</span>
+                    </div>
+                    <p
+                      className="text-xs text-muted-foreground break-words"
+                      title={comment.text}
+                    >
+                      {isHovered ? comment.text : truncated}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground break-words">{comment.text}</p>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </CardContent>
