@@ -10,9 +10,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
-    "generate:assets": "ts-node scripts/generateAssets.ts",
-    "hide-gui-git": "mv launcher-gui/.git launcher-gui/.git_hidden",
-    "restore-gui-git": "mv launcher-gui/.git_hidden launcher-gui/.git"
+    "generate:assets": "ts-node scripts/generateAssets.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
