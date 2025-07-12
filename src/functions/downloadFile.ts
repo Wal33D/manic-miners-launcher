@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { Transform, Readable } from 'stream';
 import crypto from 'crypto';
+import path from 'path';
 
 /**
  * Downloads a file from a given URL to a specified path, optionally updates progress starting from a given initial progress value.
@@ -39,8 +40,16 @@ export async function downloadFile({
     }
 
     const totalBytesHeader = response.headers.get('content-length');
-    const totalBytes = totalBytesHeader ? parseInt(totalBytesHeader) : 0;
+    const totalBytes = totalBytesHeader ? parseInt(totalBytesHeader) : (expectedSize ?? 0);
     let downloadedBytes = 0;
+    const fileName = path.basename(filePath);
+
+    if (updateStatus) {
+      updateStatus({ fileName, totalSize: totalBytes });
+    }
+
+    let lastTime = Date.now();
+    let lastBytes = 0;
 
     const progressStream = new Transform({
       transform(chunk, encoding, callback) {
@@ -51,7 +60,24 @@ export async function downloadFile({
           const denominator = totalBytes || expectedSize || downloadedBytes || 1;
           const progressIncrement = (downloadedBytes / denominator) * (100 - initialProgress);
           const currentProgress = initialProgress + progressIncrement;
-          updateStatus({ progress: Math.min(Math.floor(currentProgress), 100) });
+          const now = Date.now();
+          const elapsed = (now - lastTime) / 1000;
+          let speedBytesPerSec = 0;
+          let etaSeconds = 0;
+          if (elapsed > 0.5) {
+            speedBytesPerSec = (downloadedBytes - lastBytes) / elapsed;
+            const remaining = denominator - downloadedBytes;
+            etaSeconds = speedBytesPerSec > 0 ? remaining / speedBytesPerSec : 0;
+            lastTime = now;
+            lastBytes = downloadedBytes;
+          }
+          updateStatus({
+            progress: Math.min(Math.floor(currentProgress), 100),
+            speedBytesPerSec,
+            etaSeconds,
+            fileName,
+            totalSize: totalBytes,
+          });
         }
         callback(null, chunk);
       },
