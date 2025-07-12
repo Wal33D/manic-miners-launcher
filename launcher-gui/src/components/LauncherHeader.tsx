@@ -7,7 +7,7 @@ import { SettingsModal } from "./SettingsModal";
 export function LauncherHeader() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   return (
-    <header className="border-b border-border mining-surface">
+    <header className="border-b border-border mining-surface drag-region">
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
