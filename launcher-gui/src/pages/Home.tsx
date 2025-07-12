@@ -1,15 +1,15 @@
-import { GameVersionSelector } from '@/components/GameVersionSelector';
-import { NewsPanel } from '@/components/NewsPanel';
-import { CommentsPanel } from '@/components/CommentsPanel';
-import { DownloadProgress } from '@/components/DownloadProgress';
-import { VideoPanel } from '@/components/VideoPanel';
-import { useState } from 'react';
+import { GameVersionSelector } from "@/components/GameVersionSelector";
+import { NewsPanel } from "@/components/NewsPanel";
+import { GameTrailer } from "@/components/GameTrailer";
+import { Comments } from "@/components/Comments";
+import { DownloadProgress } from "@/components/DownloadProgress";
+import { useState } from "react";
 
 const Home = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   return (
-    <div className="container mx-auto p-6 space-y-6 h-full flex flex-col min-h-0">
+    <div className="container mx-auto p-6 space-y-6">
       {isDownloading && (
         <DownloadProgress
           isActive={isDownloading}
@@ -22,17 +22,17 @@ const Home = () => {
         />
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-0">
-        {/* Main Game Controls */}
-        <div className="lg:col-span-2 flex flex-col space-y-6 h-full min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
           <GameVersionSelector />
-          <CommentsPanel className="flex-1 min-h-0" />
+          <Comments />
         </div>
-
-        {/* Sidebar */}
-        <div className="flex flex-col space-y-6 h-full min-h-0">
-          <VideoPanel />
-          <NewsPanel className="flex-1 min-h-0" />
+        
+        {/* Right Column */}
+        <div className="space-y-6">
+          <GameTrailer />
+          <NewsPanel />
         </div>
       </div>
     </div>
