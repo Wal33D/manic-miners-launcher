@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Settings, Folder, Download, Volume2, Monitor, Gamepad2 } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Settings, Folder, Download, Volume2, Monitor, Gamepad2 } from 'lucide-react';
 
 interface SettingsModalProps {
   open: boolean;
@@ -14,11 +14,11 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
-  const [installPath, setInstallPath] = useState("");
+  const [installPath, setInstallPath] = useState('');
   const [autoUpdate, setAutoUpdate] = useState(true);
-  const [downloadLimit, setDownloadLimit] = useState("unlimited");
-  const [soundVolume, setSoundVolume] = useState("80");
-  const [resolution, setResolution] = useState("1920x1080");
+  const [downloadLimit, setDownloadLimit] = useState('unlimited');
+  const [soundVolume, setSoundVolume] = useState('80');
+  const [resolution, setResolution] = useState('1920x1080');
   const [fullscreen, setFullscreen] = useState(false);
   const [controllerEnabled, setControllerEnabled] = useState(false);
 
@@ -42,14 +42,14 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   const handleSave = () => {
     // In a real app, this would save settings to localStorage or backend
-    console.log("Settings saved:", {
+    console.log('Settings saved:', {
       installPath,
       autoUpdate,
       downloadLimit,
       soundVolume,
       resolution,
       fullscreen,
-      controllerEnabled
+      controllerEnabled,
     });
     onOpenChange(false);
   };
@@ -64,9 +64,9 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
       }
     });
     setAutoUpdate(true);
-    setDownloadLimit("unlimited");
-    setSoundVolume("80");
-    setResolution("1920x1080");
+    setDownloadLimit('unlimited');
+    setSoundVolume('80');
+    setResolution('1920x1080');
     setFullscreen(false);
     setControllerEnabled(false);
   };
@@ -79,9 +79,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             <Settings className="w-5 h-5" />
             Launcher Settings
           </DialogTitle>
-          <DialogDescription>
-            Configure your Manic Miners launcher preferences
-          </DialogDescription>
+          <DialogDescription>Configure your Manic Miners launcher preferences</DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="general" className="mt-4">
@@ -106,117 +104,95 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
           <div className="min-h-[300px]">
             <TabsContent value="general" className="space-y-4 mt-6">
-            <div className="space-y-2">
-              <Label htmlFor="install-path">Installation Path</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="install-path"
-                  value={installPath}
-                  onChange={(e) => setInstallPath(e.target.value)}
-                  className="flex-1"
-                />
-                <Button variant="outline" onClick={handleBrowseFolder}>
-                  <Folder className="w-4 h-4 mr-2" />
-                  Browse
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="install-path">Installation Path</Label>
+                <div className="flex gap-2">
+                  <Input id="install-path" value={installPath} onChange={e => setInstallPath(e.target.value)} className="flex-1" />
+                  <Button variant="outline" onClick={handleBrowseFolder}>
+                    <Folder className="w-4 h-4 mr-2" />
+                    Browse
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Auto-update Game</Label>
-                <p className="text-sm text-muted-foreground">
-                  Automatically download and install game updates
-                </p>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Auto-update Game</Label>
+                  <p className="text-sm text-muted-foreground">Automatically download and install game updates</p>
+                </div>
+                <Switch checked={autoUpdate} onCheckedChange={setAutoUpdate} />
               </div>
-              <Switch
-                checked={autoUpdate}
-                onCheckedChange={setAutoUpdate}
-              />
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="downloads" className="space-y-4 mt-6">
-            <div className="space-y-2">
-              <Label htmlFor="download-limit">Download Speed Limit</Label>
-              <Select value={downloadLimit} onValueChange={setDownloadLimit}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="unlimited">Unlimited</SelectItem>
-                  <SelectItem value="1mb">1 MB/s</SelectItem>
-                  <SelectItem value="5mb">5 MB/s</SelectItem>
-                  <SelectItem value="10mb">10 MB/s</SelectItem>
-                  <SelectItem value="25mb">25 MB/s</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="display" className="space-y-4 mt-6">
-            <div className="space-y-2">
-              <Label htmlFor="sound-volume">Master Volume</Label>
-              <div className="flex items-center gap-3">
-                <Input
-                  id="sound-volume"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={soundVolume}
-                  onChange={(e) => setSoundVolume(e.target.value)}
-                  className="flex-1"
-                />
-                <span className="text-sm text-muted-foreground w-12">
-                  {soundVolume}%
-                </span>
+            <TabsContent value="downloads" className="space-y-4 mt-6">
+              <div className="space-y-2">
+                <Label htmlFor="download-limit">Download Speed Limit</Label>
+                <Select value={downloadLimit} onValueChange={setDownloadLimit}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unlimited">Unlimited</SelectItem>
+                    <SelectItem value="1mb">1 MB/s</SelectItem>
+                    <SelectItem value="5mb">5 MB/s</SelectItem>
+                    <SelectItem value="10mb">10 MB/s</SelectItem>
+                    <SelectItem value="25mb">25 MB/s</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
+            </TabsContent>
 
-            <div className="space-y-2">
-              <Label htmlFor="resolution">Resolution</Label>
-              <Select value={resolution} onValueChange={setResolution}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1920x1080">1920 x 1080 (Full HD)</SelectItem>
-                  <SelectItem value="2560x1440">2560 x 1440 (2K)</SelectItem>
-                  <SelectItem value="3840x2160">3840 x 2160 (4K)</SelectItem>
-                  <SelectItem value="1366x768">1366 x 768</SelectItem>
-                  <SelectItem value="1280x720">1280 x 720 (HD)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Fullscreen Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Launch game in fullscreen by default
-                </p>
+            <TabsContent value="display" className="space-y-4 mt-6">
+              <div className="space-y-2">
+                <Label htmlFor="sound-volume">Master Volume</Label>
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="sound-volume"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={soundVolume}
+                    onChange={e => setSoundVolume(e.target.value)}
+                    className="flex-1"
+                  />
+                  <span className="text-sm text-muted-foreground w-12">{soundVolume}%</span>
+                </div>
               </div>
-              <Switch
-                checked={fullscreen}
-                onCheckedChange={setFullscreen}
-              />
-            </div>
-          </TabsContent>
 
-          <TabsContent value="input" className="space-y-4 mt-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Controller Support</Label>
-                <p className="text-sm text-muted-foreground">
-                  Enable gamepad/controller input
-                </p>
+              <div className="space-y-2">
+                <Label htmlFor="resolution">Resolution</Label>
+                <Select value={resolution} onValueChange={setResolution}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1920x1080">1920 x 1080 (Full HD)</SelectItem>
+                    <SelectItem value="2560x1440">2560 x 1440 (2K)</SelectItem>
+                    <SelectItem value="3840x2160">3840 x 2160 (4K)</SelectItem>
+                    <SelectItem value="1366x768">1366 x 768</SelectItem>
+                    <SelectItem value="1280x720">1280 x 720 (HD)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Switch
-                checked={controllerEnabled}
-                onCheckedChange={setControllerEnabled}
-              />
-            </div>
-           </TabsContent>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Fullscreen Mode</Label>
+                  <p className="text-sm text-muted-foreground">Launch game in fullscreen by default</p>
+                </div>
+                <Switch checked={fullscreen} onCheckedChange={setFullscreen} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="input" className="space-y-4 mt-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Controller Support</Label>
+                  <p className="text-sm text-muted-foreground">Enable gamepad/controller input</p>
+                </div>
+                <Switch checked={controllerEnabled} onCheckedChange={setControllerEnabled} />
+              </div>
+            </TabsContent>
           </div>
         </Tabs>
 
@@ -229,9 +205,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              Save Changes
-            </Button>
+            <Button onClick={handleSave}>Save Changes</Button>
           </div>
         </div>
       </DialogContent>
