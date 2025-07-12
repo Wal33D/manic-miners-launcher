@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,7 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
-  const [installPath, setInstallPath] = useState("C:\\Program Files\\Manic Miners");
+  const [installPath, setInstallPath] = useState("");
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [downloadLimit, setDownloadLimit] = useState("unlimited");
   const [soundVolume, setSoundVolume] = useState("80");
@@ -22,9 +22,22 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const [fullscreen, setFullscreen] = useState(false);
   const [controllerEnabled, setControllerEnabled] = useState(false);
 
+  useEffect(() => {
+    window.electronAPI.send('get-directories');
+    window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      if (dirResult?.status) {
+        setInstallPath(dirResult.directories.launcherInstallPath);
+      }
+    });
+  }, []);
+
   const handleBrowseFolder = () => {
-    // In a real app, this would open a folder picker dialog
-    alert("Folder picker would open here");
+    window.electronAPI.send('open-directory-dialog');
+    window.electronAPI.receiveOnce('directory-selected', (selectedPath: string) => {
+      if (selectedPath) {
+        setInstallPath(selectedPath);
+      }
+    });
   };
 
   const handleSave = () => {
@@ -42,7 +55,14 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   };
 
   const handleReset = () => {
-    setInstallPath("C:\\Program Files\\Manic Miners");
+    window.electronAPI.send('get-directories');
+    window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      if (dirResult?.status) {
+        setInstallPath(dirResult.directories.launcherInstallPath);
+      } else {
+        setInstallPath('');
+      }
+    });
     setAutoUpdate(true);
     setDownloadLimit("unlimited");
     setSoundVolume("80");
