@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Download, Play, AlertTriangle, Star, Zap, ChevronDown, Menu, Shield, Trash2, RotateCcw } from "lucide-react";
-import { DownloadProgress } from "@/components/DownloadProgress";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Download, Play, AlertTriangle, Star, Zap, ChevronDown, Menu, Shield, Trash2, RotateCcw } from 'lucide-react';
+import { DownloadProgress } from '@/components/DownloadProgress';
 
 interface GameVersion {
   gameId: number;
@@ -34,14 +34,14 @@ interface GameVersionSelectorProps {
 
 export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVersionSelectorProps) {
   const [versions, setVersions] = useState<GameVersion[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<string>("");
+  const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [installedVersions, setInstalledVersions] = useState<Set<string>>(new Set());
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [installPath, setInstallPath] = useState<string>("");
+  const [installPath, setInstallPath] = useState<string>('');
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadStatus, setDownloadStatus] = useState("");
+  const [downloadStatus, setDownloadStatus] = useState('');
 
   useEffect(() => {
     window.electronAPI.send('get-directories');
@@ -177,151 +177,139 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
         }}
       />
       <Card className="mining-surface">
-      <CardHeader>
-        <CardTitle className="text-primary flex items-center gap-2">
-          <Zap className="w-5 h-5" />
-          Game Versions
-        </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Install and manage Manic Miners releases
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Select value={selectedVersion} onValueChange={setSelectedVersion}>
-          <SelectTrigger className="bg-input border-border">
-            <SelectValue placeholder="Select version..." />
-          </SelectTrigger>
-          <SelectContent className="bg-popover border-border">
-            {versions.map((version) => (
-              <SelectItem key={version.version} value={version.version}>
-                <div className="flex items-center gap-2">
-                  {getVersionIcon(version.experimental)}
-                  {version.displayName}
-                  <Badge variant={getVersionVariant(version.experimental)} className="ml-2">
-                    {version.experimental ? 'experimental' : 'stable'}
-                  </Badge>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <CardHeader>
+          <CardTitle className="text-primary flex items-center gap-2">
+            <Zap className="w-5 h-5" />
+            Game Versions
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">Install and manage Manic Miners releases</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Select value={selectedVersion} onValueChange={setSelectedVersion}>
+            <SelectTrigger className="bg-input border-border">
+              <SelectValue placeholder="Select version..." />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border">
+              {versions.map(version => (
+                <SelectItem key={version.version} value={version.version}>
+                  <div className="flex items-center gap-2">
+                    {getVersionIcon(version.experimental)}
+                    {version.displayName}
+                    <Badge variant={getVersionVariant(version.experimental)} className="ml-2">
+                      {version.experimental ? 'experimental' : 'stable'}
+                    </Badge>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        {selectedVersionData && (
-          <div className="p-4 rounded-lg bg-secondary/50 border border-border hover:bg-secondary/50">
-            <div className="flex gap-4">
-              {/* Thumbnail */}
-              <div className="flex-shrink-0">
-                <img 
-                  src={selectedVersionData.thumbnailUrl} 
-                  alt={`${selectedVersionData.title} thumbnail`}
-                  className="w-16 h-16 rounded object-cover border border-border"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-              
-              {/* Version Info */}
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-secondary-foreground">
-                    {selectedVersionData.title}
-                  </h4>
-                  <Badge variant={getVersionVariant(selectedVersionData.experimental)}>
-                    {selectedVersionData.experimental ? 'experimental' : 'stable'}
-                  </Badge>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                  <div>
-                    <span className="font-medium">Release Date:</span> {new Date(selectedVersionData.releaseDate).toLocaleDateString()}
-                  </div>
-                  <div>
-                    <span className="font-medium">File Size:</span> {selectedVersionData.size}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-3 relative">
-              <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  isDescriptionExpanded ? 'max-h-96' : 'max-h-24'
-                }`}
-              >
-                <p className="text-sm text-muted-foreground">
-                  {selectedVersionData.description || "No description available."}
-                </p>
-              </div>
-              
-              {/* Expand/Collapse Button */}
-              <div className="flex justify-center mt-2">
-                <button
-                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/80 hover:bg-secondary transition-colors"
-                  aria-label={isDescriptionExpanded ? "Collapse description" : "Expand description"}
-                >
-                  <ChevronDown 
-                    className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                      isDescriptionExpanded ? 'rotate-180' : ''
-                    }`} 
+          {selectedVersionData && (
+            <div className="p-4 rounded-lg bg-secondary/50 border border-border hover:bg-secondary/50">
+              <div className="flex gap-4">
+                {/* Thumbnail */}
+                <div className="flex-shrink-0">
+                  <img
+                    src={selectedVersionData.thumbnailUrl}
+                    alt={`${selectedVersionData.title} thumbnail`}
+                    className="w-16 h-16 rounded object-cover border border-border"
+                    onError={e => {
+                      e.currentTarget.style.display = 'none';
+                    }}
                   />
-                </button>
+                </div>
+
+                {/* Version Info */}
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-secondary-foreground">{selectedVersionData.title}</h4>
+                    <Badge variant={getVersionVariant(selectedVersionData.experimental)}>
+                      {selectedVersionData.experimental ? 'experimental' : 'stable'}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                    <div>
+                      <span className="font-medium">Release Date:</span> {new Date(selectedVersionData.releaseDate).toLocaleDateString()}
+                    </div>
+                    <div>
+                      <span className="font-medium">File Size:</span> {selectedVersionData.size}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 relative">
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${isDescriptionExpanded ? 'max-h-96' : 'max-h-24'}`}
+                >
+                  <p className="text-sm text-muted-foreground">{selectedVersionData.description || 'No description available.'}</p>
+                </div>
+
+                {/* Expand/Collapse Button */}
+                <div className="flex justify-center mt-2">
+                  <button
+                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/80 hover:bg-secondary transition-colors"
+                    aria-label={isDescriptionExpanded ? 'Collapse description' : 'Expand description'}
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                        isDescriptionExpanded ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="flex gap-2">
-          <Button 
-            variant="energy" 
-            className="flex-1" 
-            onClick={handleInstallOrLaunch}
-          >
-            {selectedVersionData && isVersionInstalled(selectedVersionData.version) ? (
-              <>
-                <Play className="w-4 h-4 mr-2" />
-                Launch Game
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4 mr-2" />
-                Install Game
-              </>
-            )}
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="mining">
-                <Menu className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-popover border-border" align="end">
-              <DropdownMenuItem onClick={handleVerify} className="cursor-pointer">
-                <Shield className="w-4 h-4 mr-2" />
-                Verify
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleDelete} 
-                className="cursor-pointer text-destructive hover:text-destructive"
-                disabled={!selectedVersionData || !isVersionInstalled(selectedVersionData.version)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleReinstall} 
-                className="cursor-pointer"
-                disabled={!selectedVersionData || !isVersionInstalled(selectedVersionData.version)}
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reinstall
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex gap-2">
+            <Button variant="energy" className="flex-1" onClick={handleInstallOrLaunch}>
+              {selectedVersionData && isVersionInstalled(selectedVersionData.version) ? (
+                <>
+                  <Play className="w-4 h-4 mr-2" />
+                  Launch Game
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  Install Game
+                </>
+              )}
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="mining">
+                  <Menu className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-popover border-border" align="end">
+                <DropdownMenuItem onClick={handleVerify} className="cursor-pointer">
+                  <Shield className="w-4 h-4 mr-2" />
+                  Verify
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className="cursor-pointer text-destructive hover:text-destructive"
+                  disabled={!selectedVersionData || !isVersionInstalled(selectedVersionData.version)}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleReinstall}
+                  className="cursor-pointer"
+                  disabled={!selectedVersionData || !isVersionInstalled(selectedVersionData.version)}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reinstall
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardContent>
+      </Card>
     </>
   );
 }

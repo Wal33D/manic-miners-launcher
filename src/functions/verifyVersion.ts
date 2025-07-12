@@ -1,6 +1,10 @@
 import { isVersionInstalled } from './isVersionInstalled';
 
-export const verifyVersion = async ({ versionIdentifier }: { versionIdentifier: string }): Promise<{ verified: boolean; message: string }> => {
+export const verifyVersion = async ({
+  versionIdentifier,
+}: {
+  versionIdentifier: string;
+}): Promise<{ verified: boolean; message: string }> => {
   try {
     const installed = await isVersionInstalled(versionIdentifier);
     return { verified: installed, message: installed ? 'Version verified' : 'Version not installed' };
