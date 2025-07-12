@@ -3,7 +3,8 @@ import path from 'path';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
-import { downloadGame } from 'itchio-downloader';
+// import { downloadGame } from 'itchio-downloader';
+import { downloadFile } from './downloadFile';
 
 export const downloadVersion = async ({
   versionIdentifier,
@@ -63,7 +64,7 @@ export const downloadVersion = async ({
       updateStatus({ status: `File verified successfully. No action needed.`, progress: 17 });
       return { downloaded: true, message: 'File verified successfully. No action needed.' };
     } else {
-      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading using itch.io...' });
+      updateStatus({ status: fileDetails.exists ? 'File size mismatch, re-downloading.' : 'Downloading version file...' });
       if (fileDetails.exists) {
         try {
           await fs.unlink(filePath);
@@ -71,17 +72,25 @@ export const downloadVersion = async ({
           // Ignore failure to remove existing file
         }
       }
-      const result = (await downloadGame({
-        itchGameUrl: 'https://baraklava.itch.io/manic-miners',
-        desiredFileName: baseName,
-        downloadDirectory: downloadPath,
-        onProgress: ({ bytesReceived, totalBytes }) => {
-          if (totalBytes) {
-            const progress = Math.floor((bytesReceived / totalBytes) * 80) + 20;
-            updateStatus({ progress: progress > 100 ? 100 : progress });
-          }
-        },
-      })) as { status: boolean; message: string };
+      // const result = (await downloadGame({
+      //   itchGameUrl: 'https://baraklava.itch.io/manic-miners',
+      //   desiredFileName: baseName,
+      //   downloadDirectory: downloadPath,
+      //   onProgress: ({ bytesReceived, totalBytes }) => {
+      //     if (totalBytes) {
+      //       const progress = Math.floor((bytesReceived / totalBytes) * 80) + 20;
+      //       updateStatus({ progress: progress > 100 ? 100 : progress });
+      //     }
+      //   },
+      // })) as { status: boolean; message: string };
+      const result = await downloadFile({
+        downloadUrl: versionToProcess.downloadUrl,
+        filePath,
+        expectedSize: versionToProcess.sizeInBytes,
+        expectedMd5: versionToProcess.md5Hash,
+        updateStatus,
+        initialProgress: 20,
+      });
 
       if (!result.status) {
         return { downloaded: false, message: result.message };
