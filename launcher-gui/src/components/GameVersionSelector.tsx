@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Download, Play, AlertTriangle, Star, Zap, ChevronDown, Menu, Shield, Trash2, RotateCcw } from "lucide-react";
+import { DownloadProgress } from "@/components/DownloadProgress";
 
 interface GameVersion {
   gameId: number;
@@ -26,56 +27,63 @@ interface GameVersion {
   description: string;
 }
 
-export function GameVersionSelector() {
+interface GameVersionSelectorProps {
+  onDownloadStart?: () => void;
+  onDownloadEnd?: () => void;
+}
+
+export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVersionSelectorProps) {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [installedVersions, setInstalledVersions] = useState<Set<string>>(new Set());
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [installPath, setInstallPath] = useState<string>("");
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadStatus, setDownloadStatus] = useState("");
 
   useEffect(() => {
-    const fetchVersions = async () => {
-      try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
-        const data = await response.json();
-        
-        if (data.versions && Array.isArray(data.versions)) {
-          const sortedVersions = data.versions.sort((a: GameVersion, b: GameVersion) => {
-            // Function to parse version strings for comparison
-            const parseVersion = (version: string) => {
-              // Handle versions like "0.0.22.05.08" or "0.3.5"
-              return version.split('.').map(num => parseInt(num, 10));
-            };
-            
-            const versionA = parseVersion(a.version);
-            const versionB = parseVersion(b.version);
-            
-            // Compare version numbers part by part
-            for (let i = 0; i < Math.max(versionA.length, versionB.length); i++) {
-              const numA = versionA[i] || 0;
-              const numB = versionB[i] || 0;
-              
-              if (numA !== numB) {
-                return numB - numA; // Newer version first (descending)
-              }
-            }
-            
-            return 0; // Versions are equal
-          });
-          
-          setVersions(sortedVersions);
-          if (sortedVersions.length > 0) {
-            setSelectedVersion(sortedVersions[0].version);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch versions:', error);
-      } finally {
-        setLoading(false);
+    window.electronAPI.send('get-directories');
+    window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      if (dirResult?.status) {
+        setInstallPath(dirResult.directories.launcherInstallPath);
       }
-    };
+    });
 
-    fetchVersions();
+    window.electronAPI.send('request-version-information');
+    window.electronAPI.receiveOnce('request-version-information', (data: any) => {
+      if (data?.versions) {
+        const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
+          const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
+          const aParts = parseVersion(a.version);
+          const bParts = parseVersion(b.version);
+          for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+            const numA = aParts[i] || 0;
+            const numB = bParts[i] || 0;
+            if (numA !== numB) return numB - numA;
+          }
+          return 0;
+        });
+        setVersions(sorted);
+        if (data.defaultVersion) {
+          setSelectedVersion(data.defaultVersion.identifier);
+        } else if (sorted.length > 0) {
+          setSelectedVersion(sorted[0].identifier || sorted[0].version);
+        }
+        const installed = new Set(sorted.filter((v: any) => v.directory).map(v => v.version));
+        setInstalledVersions(installed);
+      }
+      setLoading(false);
+    });
+
+    window.electronAPI.receive('download-progress', (status: any) => {
+      if (status.progress !== undefined) setDownloadProgress(status.progress);
+      if (status.status) setDownloadStatus(status.status);
+    });
+    return () => {
+      window.electronAPI.removeAllListeners('download-progress');
+    };
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
@@ -94,45 +102,51 @@ export function GameVersionSelector() {
 
   const handleInstallOrLaunch = () => {
     if (!selectedVersionData) return;
-    
+
     if (isVersionInstalled(selectedVersionData.version)) {
-      // Launch the game
-      console.log('Launching game version:', selectedVersionData.version);
+      window.electronAPI.send('launch-game', selectedVersionData.identifier);
     } else {
-      // Install the game
-      console.log('Installing game version:', selectedVersionData.version);
-      // Simulate installation (in real app, this would trigger actual download)
-      setInstalledVersions(prev => new Set([...prev, selectedVersionData.version]));
+      if (!installPath) return;
+      onDownloadStart?.();
+      setIsDownloading(true);
+      setDownloadProgress(0);
+      window.electronAPI.send('download-version', {
+        version: selectedVersionData.identifier,
+        downloadPath: installPath,
+      });
+      window.electronAPI.receiveOnce('download-version', (result: any) => {
+        setIsDownloading(false);
+        onDownloadEnd?.();
+        if (result?.downloaded) {
+          setInstalledVersions(prev => new Set([...prev, selectedVersionData.version]));
+        }
+      });
     }
   };
 
   const handleVerify = () => {
     if (!selectedVersionData) return;
-    console.log('Verifying game version:', selectedVersionData.version);
+    window.electronAPI.send('verify-version', selectedVersionData.identifier);
   };
 
   const handleDelete = () => {
     if (!selectedVersionData) return;
-    console.log('Deleting game version:', selectedVersionData.version);
-    setInstalledVersions(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(selectedVersionData.version);
-      return newSet;
+    window.electronAPI.send('delete-version', selectedVersionData.identifier);
+    window.electronAPI.receiveOnce('delete-version', (result: any) => {
+      if (result?.deleted) {
+        setInstalledVersions(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(selectedVersionData.version);
+          return newSet;
+        });
+      }
     });
   };
 
-  const handleReinstall = () => {
+  const handleReinstall = async () => {
     if (!selectedVersionData) return;
-    console.log('Reinstalling game version:', selectedVersionData.version);
-    // Remove from installed versions first, then add back (simulate reinstall)
-    setInstalledVersions(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(selectedVersionData.version);
-      return newSet;
-    });
-    setTimeout(() => {
-      setInstalledVersions(prev => new Set([...prev, selectedVersionData.version]));
-    }, 100);
+    handleDelete();
+    setTimeout(() => handleInstallOrLaunch(), 100);
   };
 
   if (loading) {
@@ -152,7 +166,17 @@ export function GameVersionSelector() {
   }
 
   return (
-    <Card className="mining-surface">
+    <>
+      <DownloadProgress
+        isActive={isDownloading}
+        progress={downloadProgress}
+        statusText={downloadStatus}
+        onCancel={() => {
+          setIsDownloading(false);
+          onDownloadEnd?.();
+        }}
+      />
+      <Card className="mining-surface">
       <CardHeader>
         <CardTitle className="text-primary flex items-center gap-2">
           <Zap className="w-5 h-5" />
@@ -298,5 +322,6 @@ export function GameVersionSelector() {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }
