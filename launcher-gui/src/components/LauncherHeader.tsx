@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Zap } from "lucide-react";
-import { Navigation } from "./Navigation";
-import { SettingsModal } from "./SettingsModal";
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Zap } from 'lucide-react';
+import { Navigation } from './Navigation';
+import { SettingsModal } from './SettingsModal';
 
 export function LauncherHeader() {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -25,13 +25,10 @@ export function LauncherHeader() {
             </Badge>
           </div>
         </div>
-        
+
         <Navigation onSettingsClick={() => setSettingsOpen(true)} />
-        
-        <SettingsModal 
-          open={settingsOpen} 
-          onOpenChange={setSettingsOpen} 
-        />
+
+        <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       </div>
     </header>
   );
