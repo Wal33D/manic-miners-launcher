@@ -40,6 +40,8 @@ export const downloadVersion = async ({
     const baseName = path.basename(filename, ext);
     const filePath = validateUnpackPath({ basePath: downloadPath, entryName: filename });
 
+    updateStatus({ fileName: filename, totalSize: versionToProcess.sizeInBytes });
+
     // Remove any stale downloads to avoid "-1" suffixes added by the browser
     const potentialOldFiles = [
       filePath,
