@@ -8,6 +8,8 @@ interface DownloadProgressProps {
   isActive: boolean;
   fileName?: string;
   totalSize?: string;
+  downloadSpeed?: string;
+  eta?: string;
   onCancel?: () => void;
   onPause?: () => void;
   onResume?: () => void;
@@ -20,6 +22,8 @@ export function DownloadProgress({
   isActive,
   fileName = 'Unknown file',
   totalSize = '0 MB',
+  downloadSpeed: externalSpeed = '0 MB/s',
+  eta: externalEta = '--:--',
   onCancel,
   onPause,
   onResume,
@@ -29,12 +33,14 @@ export function DownloadProgress({
 }: DownloadProgressProps) {
   const [progress, setProgress] = useState(externalProgress ?? 0);
   const [status, setStatus] = useState<'downloading' | 'paused' | 'completed' | 'error'>('downloading');
-  const [downloadSpeed, setDownloadSpeed] = useState('0 MB/s');
-  const [eta, setEta] = useState('--:--');
+  const [downloadSpeed, setDownloadSpeed] = useState(externalSpeed);
+  const [eta, setEta] = useState(externalEta);
 
   useEffect(() => {
     if (externalProgress !== undefined) {
       setProgress(externalProgress);
+      setDownloadSpeed(externalSpeed);
+      setEta(externalEta);
       if (externalProgress >= 100) {
         setStatus('completed');
       }
@@ -67,7 +73,7 @@ export function DownloadProgress({
     }, 200);
 
     return () => clearInterval(interval);
-  }, [isActive, status, externalProgress]);
+  }, [isActive, status, externalProgress, externalSpeed, externalEta]);
 
   const getStatusIcon = () => {
     switch (status) {
