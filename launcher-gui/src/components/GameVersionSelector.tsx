@@ -42,10 +42,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState('');
-  const [downloadFileName, setDownloadFileName] = useState('');
-  const [downloadTotalSize, setDownloadTotalSize] = useState(0);
-  const [downloadSpeed, setDownloadSpeed] = useState('0 MB/s');
-  const [downloadEta, setDownloadEta] = useState('--:--');
 
   useEffect(() => {
     window.electronAPI.send('get-directories');
@@ -84,17 +80,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
     window.electronAPI.receive('download-progress', (status: any) => {
       if (status.progress !== undefined) setDownloadProgress(status.progress);
       if (status.status) setDownloadStatus(status.status);
-      if (status.fileName) setDownloadFileName(status.fileName);
-      if (status.totalSize) setDownloadTotalSize(status.totalSize);
-      if (status.speedBytesPerSec !== undefined) {
-        const mb = status.speedBytesPerSec / 1024 / 1024;
-        setDownloadSpeed(`${mb.toFixed(1)} MB/s`);
-      }
-      if (status.etaSeconds !== undefined) {
-        const minutes = Math.floor(status.etaSeconds / 60);
-        const seconds = Math.floor(status.etaSeconds % 60);
-        setDownloadEta(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-      }
     });
     return () => {
       window.electronAPI.removeAllListeners('download-progress');
@@ -186,10 +171,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
         isActive={isDownloading}
         progress={downloadProgress}
         statusText={downloadStatus}
-        fileName={downloadFileName}
-        totalSize={`${(downloadTotalSize / 1024 / 1024).toFixed(1)} MB`}
-        downloadSpeed={downloadSpeed}
-        eta={downloadEta}
         onCancel={() => {
           setIsDownloading(false);
           onDownloadEnd?.();
