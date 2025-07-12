@@ -17,4 +17,6 @@ export const IPC_CHANNELS = {
   GET_SETTINGS: 'get-settings',
   SET_SETTINGS: 'set-settings',
   WINDOW_MINIMIZE: 'window-minimize',
+  VERIFY_VERSION: 'verify-version',
+  DELETE_VERSION: 'delete-version',
 } as const;

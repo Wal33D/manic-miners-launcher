@@ -4,6 +4,7 @@ import { createWindow } from './createWindow';
 import { setupVersionHandlers } from './ipcHandlers/setupVersionHandlers';
 import { setupGameLaunchHandlers } from './ipcHandlers/setupGameLaunchHandlers';
 import { setupDownloadHandlers } from './ipcHandlers/setupDownloadHandlers';
+import { setupMaintenanceHandlers } from './ipcHandlers/setupMaintenanceHandlers';
 import { setupDirectoryHandler } from './ipcHandlers/getDirectoriesIPC';
 import { setupInputPathDialog } from './ipcHandlers/setupInputPathDialog';
 import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
@@ -28,6 +29,7 @@ const startApp = (): void => {
     setupVersionHandlers();
     setupGameLaunchHandlers();
     setupDownloadHandlers();
+    setupMaintenanceHandlers();
     setupInputPathDialog();
     setupUrlHandler();
     setupPlaySoundHandler();

@@ -12,23 +12,34 @@ interface DownloadProgressProps {
   onPause?: () => void;
   onResume?: () => void;
   downloadType?: 'game' | 'level' | 'update';
+  progress?: number;
+  statusText?: string;
 }
 
-export function DownloadProgress({ 
-  isActive, 
-  fileName = "Unknown file", 
+export function DownloadProgress({
+  isActive,
+  fileName = "Unknown file",
   totalSize = "0 MB",
   onCancel,
   onPause,
   onResume,
-  downloadType = 'game'
+  downloadType = 'game',
+  progress: externalProgress,
+  statusText,
 }: DownloadProgressProps) {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(externalProgress ?? 0);
   const [status, setStatus] = useState<'downloading' | 'paused' | 'completed' | 'error'>('downloading');
   const [downloadSpeed, setDownloadSpeed] = useState("0 MB/s");
   const [eta, setEta] = useState("--:--");
 
   useEffect(() => {
+    if (externalProgress !== undefined) {
+      setProgress(externalProgress);
+      if (externalProgress >= 100) {
+        setStatus('completed');
+      }
+      return;
+    }
     if (!isActive || status === 'completed' || status === 'error' || status === 'paused') return;
 
     const interval = setInterval(() => {
