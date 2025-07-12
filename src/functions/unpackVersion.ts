@@ -55,7 +55,8 @@ export const unpackVersion = async ({
         if (updateStatus) {
           updateStatus({
             status: status.status,
-            progress: 60 + (status.progress ?? 0) * 0.95,
+            // Scale extraction progress to fit within the final 40% of overall progress
+            progress: 60 + (status.progress ?? 0) * 0.4,
           });
         }
       },

@@ -38,7 +38,7 @@ export function DownloadProgress({
 
   useEffect(() => {
     if (externalProgress !== undefined) {
-      setProgress(externalProgress);
+      setProgress(Math.min(externalProgress, 100));
       setDownloadSpeed(externalSpeed);
       setEta(externalEta);
       if (externalProgress >= 100) {
