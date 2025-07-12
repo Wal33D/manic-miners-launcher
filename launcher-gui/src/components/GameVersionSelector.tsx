@@ -67,9 +67,9 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
         });
         setVersions(sorted);
         if (data.defaultVersion) {
-          setSelectedVersion(data.defaultVersion.identifier);
+          setSelectedVersion(data.defaultVersion.version);
         } else if (sorted.length > 0) {
-          setSelectedVersion(sorted[0].identifier || sorted[0].version);
+          setSelectedVersion(sorted[0].version);
         }
         const installed = new Set(sorted.filter((v: any) => v.directory).map(v => v.version));
         setInstalledVersions(installed);
