@@ -19,7 +19,7 @@ export function Navigation({ onSettingsClick }: NavigationProps) {
   ];
 
   return (
-    <nav className="flex items-center justify-between w-full">
+    <nav className="flex items-center justify-between w-full no-drag">
       <div className="flex items-center gap-1">
         {navItems.map((item) => (
           <NavLink
