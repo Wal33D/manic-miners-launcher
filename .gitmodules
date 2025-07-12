@@ -1,0 +1,3 @@
+[submodule "launcher-gui"]
+	path = launcher-gui
+	url = https://github.com/Wal33D/manic-miner-portal-launch
