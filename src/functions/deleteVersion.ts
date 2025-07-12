@@ -2,7 +2,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import { getDirectories } from './fetchDirectories';
 
-export const deleteVersion = async ({ versionIdentifier }: { versionIdentifier: string }): Promise<{ deleted: boolean; message: string }> => {
+export const deleteVersion = async ({
+  versionIdentifier,
+}: {
+  versionIdentifier: string;
+}): Promise<{ deleted: boolean; message: string }> => {
   try {
     const { directories } = await getDirectories();
     const dirPath = path.join(directories.launcherInstallPath, versionIdentifier);

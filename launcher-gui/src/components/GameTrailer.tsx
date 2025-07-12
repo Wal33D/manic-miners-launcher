@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Play } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Play } from 'lucide-react';
 
 interface TrailerData {
   youtubeUrl: string;
@@ -21,8 +21,8 @@ export function GameTrailer() {
         console.error('Failed to fetch trailer:', error);
         // Fallback trailer data
         setTrailer({
-          youtubeUrl: "https://www.youtube.com/watch?v=1mQacGNeNVA",
-          localUrl: "/intro-video.mp4"
+          youtubeUrl: 'https://www.youtube.com/watch?v=1mQacGNeNVA',
+          localUrl: '/intro-video.mp4',
         });
       } finally {
         setLoading(false);
@@ -59,9 +59,7 @@ export function GameTrailer() {
           <Play className="w-5 h-5" />
           Game Trailer
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Watch the latest trailer
-        </CardDescription>
+        <CardDescription className="text-muted-foreground">Watch the latest trailer</CardDescription>
       </CardHeader>
       <CardContent>
         {trailer && (
