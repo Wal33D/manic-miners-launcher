@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { Transform, Readable } from 'stream';
 import crypto from 'crypto';
+import path from 'path';
 
 /**
  * Downloads a file from a given URL to a specified path, optionally updates progress starting from a given initial progress value.
@@ -39,19 +40,34 @@ export async function downloadFile({
     }
 
     const totalBytesHeader = response.headers.get('content-length');
-    const totalBytes = totalBytesHeader ? parseInt(totalBytesHeader) : 0;
+    const totalBytes = totalBytesHeader ? parseInt(totalBytesHeader) : (expectedSize ?? 0);
     let downloadedBytes = 0;
+    const fileName = path.basename(filePath);
+
+    if (updateStatus) {
+      updateStatus({ fileName, totalSize: totalBytes });
+    }
+
+    const startTime = Date.now();
 
     const progressStream = new Transform({
       transform(chunk, encoding, callback) {
         downloadedBytes += chunk.length;
         if (updateStatus) {
-          // Use expectedSize or bytes received when Content-Length is missing
-          // Progress is capped at 100
           const denominator = totalBytes || expectedSize || downloadedBytes || 1;
           const progressIncrement = (downloadedBytes / denominator) * (100 - initialProgress);
           const currentProgress = initialProgress + progressIncrement;
-          updateStatus({ progress: Math.min(Math.floor(currentProgress), 100) });
+          const elapsed = (Date.now() - startTime) / 1000;
+          const speedBytesPerSec = elapsed > 0 ? downloadedBytes / elapsed : 0;
+          const remaining = denominator - downloadedBytes;
+          const etaSeconds = speedBytesPerSec > 0 ? remaining / speedBytesPerSec : 0;
+          updateStatus({
+            progress: Math.min(Math.floor(currentProgress), 100),
+            speedBytesPerSec,
+            etaSeconds,
+            fileName,
+            totalSize: totalBytes,
+          });
         }
         callback(null, chunk);
       },
