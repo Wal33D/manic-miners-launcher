@@ -1,7 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
-import { downloadGame } from 'itchio-downloader';
+// import { downloadGame } from 'itchio-downloader';
+import { downloadFile } from './downloadFile';
+import { fetchVersions } from '../api/fetchVersions';
 import { getDirectories } from './fetchDirectories';
 import { extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
 import Store from 'electron-store';
@@ -37,22 +39,25 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
     }
 
     if (updateStatus) updateStatus({ status: 'Downloading latest version...', progress: 5 });
-    const result = (await downloadGame({
-      itchGameUrl: ITCH_URL,
-      desiredFileName: identifier,
-      downloadDirectory: cacheDir,
-      onProgress: info => {
-        if (info.totalBytes && updateStatus) {
-          const pct = Math.floor((info.bytesReceived / info.totalBytes) * 40);
-          updateStatus({ status: 'Downloading latest version...', progress: pct });
-        }
-      },
-    })) as { status: boolean; message: string; filePath?: string };
 
-    if (!result.status || !result.filePath) throw new Error(result.message);
+    const versions = await fetchVersions({ versionType: 'archived' });
+    const info = versions.versions.find(v => v.identifier === identifier);
+    if (!info) throw new Error('Version info not found');
+
+    const filePath = path.join(cacheDir, info.filename);
+    const result = await downloadFile({
+      downloadUrl: info.downloadUrl,
+      filePath,
+      expectedSize: info.sizeInBytes,
+      expectedMd5: info.md5Hash,
+      updateStatus: updateStatus ? s => updateStatus(s) : undefined,
+      initialProgress: 5,
+    });
+
+    if (!result.status) throw new Error(result.message);
 
     await fs.mkdir(installPath, { recursive: true });
-    const zip = new StreamZip.async({ file: result.filePath });
+    const zip = new StreamZip.async({ file: filePath });
     await extractZipEntries({
       zip,
       targetPath: installPath,
