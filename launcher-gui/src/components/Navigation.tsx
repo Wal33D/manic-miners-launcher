@@ -52,11 +52,15 @@ export function Navigation({ onSettingsClick }: NavigationProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => window.electronAPI.send('window-minimize')}
+            >
               <Minus className="w-4 h-4 mr-2" />
               Minimize
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => window.electronAPI.send('window-exit')}
+            >
               <X className="w-4 h-4 mr-2" />
               Exit
             </DropdownMenuItem>

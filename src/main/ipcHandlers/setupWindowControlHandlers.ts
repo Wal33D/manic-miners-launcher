@@ -13,6 +13,13 @@ export const setupWindowControlHandlers = async (): Promise<{ status: boolean; m
       }
     });
 
+    ipcMain.on(IPC_CHANNELS.WINDOW_EXIT, event => {
+      const window = BrowserWindow.fromWebContents(event.sender);
+      if (window) {
+        window.close();
+      }
+    });
+
     message = 'Window control handlers set up successfully.';
     status = true;
   } catch (error: unknown) {
