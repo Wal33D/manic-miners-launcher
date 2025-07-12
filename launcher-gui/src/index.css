@@ -127,12 +127,6 @@ All colors MUST be HSL.
     transition: var(--transition-energy);
   }
 
-  /* Same appearance without the hover animation */
-  .energy-glow-static {
-    box-shadow: var(--shadow-energy);
-    transition: var(--transition-energy);
-  }
-
   .energy-glow:hover {
     box-shadow: var(--shadow-glow);
     transform: translateY(-2px);
@@ -169,28 +163,4 @@ All colors MUST be HSL.
     opacity: 0.8;
     box-shadow: 0 0 40px hsl(120 90% 60% / 0.8);
   }
-}
-
-@layer utilities {
-  .drag {
-    -webkit-app-region: drag;
-  }
-
-  .no-drag {
-    -webkit-app-region: no-drag;
-  }
-}
-
-/* Masonry layout classes for react-masonry-css */
-.my-masonry-grid {
-  display: flex;
-  margin-left: -1rem; /* gutter size offset */
-  width: auto;
-}
-.my-masonry-grid_column {
-  padding-left: 1rem; /* gutter size */
-  background-clip: padding-box;
-}
-.my-masonry-grid_column > div {
-  margin-bottom: 1rem;
 }

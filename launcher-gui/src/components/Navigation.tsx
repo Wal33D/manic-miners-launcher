@@ -1,23 +1,37 @@
-import { NavLink } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Home, Settings, Power } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Home, Settings, Power, Minus, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function Navigation() {
-  const navItems = [{ to: '/', icon: Home, label: 'Home' }];
+interface NavigationProps {
+  onSettingsClick?: () => void;
+}
+
+export function Navigation({ onSettingsClick }: NavigationProps) {
+  const navItems = [
+    { to: "/", icon: Home, label: "Home" },
+  ];
 
   return (
-    <nav className="drag flex items-center justify-between w-full">
+    <nav className="flex items-center justify-between w-full">
       <div className="flex items-center gap-1">
-        {navItems.map(item => (
+        {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
               cn(
-                'no-drag inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
-                'hover:bg-primary/10 hover:text-primary',
-                isActive ? 'bg-primary/20 text-primary border border-primary/30' : 'text-muted-foreground'
+                "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "hover:bg-primary/10 hover:text-primary",
+                isActive
+                  ? "bg-primary/20 text-primary border border-primary/30"
+                  : "text-muted-foreground"
               )
             }
           >
@@ -28,12 +42,26 @@ export function Navigation() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="mining" size="icon" className="no-drag">
+        <Button variant="mining" size="icon" onClick={onSettingsClick}>
           <Settings className="w-4 h-4" />
         </Button>
-        <Button variant="destructive" size="icon" className="no-drag" onClick={() => window.electronAPI.send('window-minimize')}>
-          <Power className="w-4 h-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="destructive" size="icon">
+              <Power className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Minus className="w-4 h-4 mr-2" />
+              Minimize
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <X className="w-4 h-4 mr-2" />
+              Exit
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   );

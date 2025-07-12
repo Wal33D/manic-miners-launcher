@@ -1,11 +1,11 @@
-import { Toaster } from '@/components/ui/toaster';
-import { Toaster as Sonner } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import { LauncherHeader } from '@/components/LauncherHeader';
-import Index from './pages/Index';
-import NotFound from './pages/NotFound';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LauncherHeader } from "@/components/LauncherHeader";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -14,15 +14,10 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <HashRouter>
-        <div className="flex flex-col h-screen bg-background overflow-hidden">
+      <BrowserRouter>
+        <div className="min-h-screen bg-background">
           <LauncherHeader />
-          {/*
-           * Provide enough top padding so content isn't hidden beneath the
-           * fixed header/navigation bar. This value was increased once more
-           * to account for the slightly taller navigation section.
-           */}
-          <main className="flex-1 overflow-hidden pt-44">
+          <main>
             <Routes>
               <Route path="/" element={<Index />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -30,7 +25,7 @@ const App = () => (
             </Routes>
           </main>
         </div>
-      </HashRouter>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
