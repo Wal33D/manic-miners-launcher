@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { MessageSquare, ThumbsUp, ThumbsDown, Calendar } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { MessageSquare, ThumbsUp, ThumbsDown, Calendar } from 'lucide-react';
 
 interface Comment {
   id: string;
@@ -34,7 +34,7 @@ export function Comments() {
         // Fallback comments data
         setCommentsData({
           count: 0,
-          comments: []
+          comments: [],
         });
       } finally {
         setLoading(false);
@@ -49,7 +49,12 @@ export function Comments() {
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   if (loading) {
@@ -60,7 +65,7 @@ export function Comments() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map(i => (
               <div key={i} className="flex gap-3">
                 <div className="w-8 h-8 bg-muted rounded-full"></div>
                 <div className="flex-1 space-y-2">
@@ -82,18 +87,14 @@ export function Comments() {
           <MessageSquare className="w-5 h-5" />
           Comments
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          {commentsData?.count || 0} community comments
-        </CardDescription>
+        <CardDescription className="text-muted-foreground">{commentsData?.count || 0} community comments</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {!commentsData?.comments.length ? (
-            <p className="text-muted-foreground text-center py-4">
-              No comments available
-            </p>
+            <p className="text-muted-foreground text-center py-4">No comments available</p>
           ) : (
-            commentsData.comments.map((comment) => (
+            commentsData.comments.map(comment => (
               <div
                 key={comment.id}
                 className="p-3 rounded-lg bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors"
@@ -101,28 +102,22 @@ export function Comments() {
                 <div className="flex gap-3">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={comment.avatarUrl} alt={comment.author} />
-                    <AvatarFallback className="text-xs">
-                      {getInitials(comment.author)}
-                    </AvatarFallback>
+                    <AvatarFallback className="text-xs">{getInitials(comment.author)}</AvatarFallback>
                   </Avatar>
-                  
+
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-secondary-foreground text-sm">
-                          {comment.author}
-                        </span>
+                        <span className="font-medium text-secondary-foreground text-sm">{comment.author}</span>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3" />
                           {formatDate(comment.date)}
                         </div>
                       </div>
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {comment.text}
-                    </p>
-                    
+
+                    <p className="text-sm text-muted-foreground leading-relaxed">{comment.text}</p>
+
                     <div className="flex items-center gap-3">
                       {comment.upvotes > 0 && (
                         <div className="flex items-center gap-1">

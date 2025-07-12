@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Map, Mountain, Zap, Star } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Map, Mountain, Zap, Star } from 'lucide-react';
 
 interface Level {
   id: string;
@@ -33,15 +33,15 @@ export function LevelBrowser() {
             difficulty: 'easy',
             description: 'Your first mining expedition into the energy-rich caverns.',
             crystals: 15,
-            completed: true
+            completed: true,
           },
           {
             id: '2',
-            name: 'Deep Core Descent', 
+            name: 'Deep Core Descent',
             difficulty: 'medium',
             description: 'Navigate treacherous underground passages to reach the core.',
             crystals: 32,
-            completed: false
+            completed: false,
           },
           {
             id: '3',
@@ -49,8 +49,8 @@ export function LevelBrowser() {
             difficulty: 'hard',
             description: 'Extreme heat and volatile energy sources test your skills.',
             crystals: 48,
-            completed: false
-          }
+            completed: false,
+          },
         ]);
       } finally {
         setLoading(false);
@@ -62,21 +62,31 @@ export function LevelBrowser() {
 
   const getDifficultyVariant = (difficulty: Level['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return 'secondary';
-      case 'medium': return 'default';
-      case 'hard': return 'destructive';
-      case 'extreme': return 'outline';
-      default: return 'secondary';
+      case 'easy':
+        return 'secondary';
+      case 'medium':
+        return 'default';
+      case 'hard':
+        return 'destructive';
+      case 'extreme':
+        return 'outline';
+      default:
+        return 'secondary';
     }
   };
 
   const getDifficultyIcon = (difficulty: Level['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return <Mountain className="w-3 h-3" />;
-      case 'medium': return <Map className="w-3 h-3" />;
-      case 'hard': return <Zap className="w-3 h-3" />;
-      case 'extreme': return <Star className="w-3 h-3" />;
-      default: return <Mountain className="w-3 h-3" />;
+      case 'easy':
+        return <Mountain className="w-3 h-3" />;
+      case 'medium':
+        return <Map className="w-3 h-3" />;
+      case 'hard':
+        return <Zap className="w-3 h-3" />;
+      case 'extreme':
+        return <Star className="w-3 h-3" />;
+      default:
+        return <Mountain className="w-3 h-3" />;
     }
   };
 
@@ -103,31 +113,23 @@ export function LevelBrowser() {
           <Map className="w-5 h-5" />
           Mining Levels
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Choose your next excavation site
-        </CardDescription>
+        <CardDescription className="text-muted-foreground">Choose your next excavation site</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3 max-h-80 overflow-y-auto">
           {levels.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
-              No levels available
-            </p>
+            <p className="text-muted-foreground text-center py-8">No levels available</p>
           ) : (
-            levels.map((level) => (
+            levels.map(level => (
               <div
                 key={level.id}
                 className={`p-4 rounded-lg border transition-all hover:shadow-md ${
-                  level.completed 
-                    ? 'bg-primary/10 border-primary/30' 
-                    : 'bg-secondary/30 border-border/50 hover:bg-secondary/50'
+                  level.completed ? 'bg-primary/10 border-primary/30' : 'bg-secondary/30 border-border/50 hover:bg-secondary/50'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-medium text-secondary-foreground">
-                      {level.name}
-                    </h4>
+                    <h4 className="font-medium text-secondary-foreground">{level.name}</h4>
                     {level.completed && (
                       <Badge variant="default" className="bg-primary/20 text-primary">
                         ✓ Complete
@@ -141,23 +143,16 @@ export function LevelBrowser() {
                     </div>
                   </Badge>
                 </div>
-                
-                {level.description && (
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {level.description}
-                  </p>
-                )}
-                
+
+                {level.description && <p className="text-sm text-muted-foreground mb-3">{level.description}</p>}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-sm text-primary">
                     <Zap className="w-4 h-4" />
                     {level.crystals} crystals
                   </div>
-                  <Button 
-                    variant={level.completed ? "mining" : "energy"} 
-                    size="sm"
-                  >
-                    {level.completed ? "Replay" : "Start"}
+                  <Button variant={level.completed ? 'mining' : 'energy'} size="sm">
+                    {level.completed ? 'Replay' : 'Start'}
                   </Button>
                 </div>
               </div>
