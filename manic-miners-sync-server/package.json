@@ -1,0 +1,36 @@
+{
+	"name": "manic-miners-sync-server",
+	"version": "1.1.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"resetdist": "rimraf dist",
+		"build": "tsc",
+		"start": "npm run build && node dist/index.js",
+		"dev": "nodemon --watch 'src/**/*.ts' --exec \"npm run build && node dist/index.js\""
+	},
+	"author": "Waleed Judah",
+	"license": "MIT",
+	"description": "A Node.js server that keeps the latest Manic Miners version up to date and downloadable from our servers.",
+	"dependencies": {
+		"body-parser": "^1.20.2",
+		"cheerio": "^1.0.0-rc.12",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2",
+		"gdrive-node-uploader": "^0.9.5",
+		"gmail-node-mailer": "^1.9.1",
+		"itchio-downloader": "^0.7.7",
+		"itchio-metadata": "^1.0.4",
+		"node-html-parser": "^6.1.13",
+		"nodemon": "^3.1.2",
+		"xml2js": "^0.6.2"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.13",
+		"@types/node": "^18.0.0",
+		"@types/xml2js": "^0.4.14",
+		"cross-env": "^7.0.3",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.6.4"
+	}
+}

@@ -97,3 +97,4 @@ src/renderer/assets/index.css
 out/
 /launcher-gui/dist/assets
 launcher-gui/dist/index.html
+manic-miners-sync-server/.env.local

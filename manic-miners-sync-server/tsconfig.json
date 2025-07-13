@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ES2020", // Updated to ES2020 for modern features
+		"module": "commonjs",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "./dist",
+		"allowJs": true, // Allow JavaScript files to be compiled
+		"checkJs": true, // Enable error reporting in JavaScript files
+		"rootDir": "./src" // Ensure source files are properly organized
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules"]
+}
