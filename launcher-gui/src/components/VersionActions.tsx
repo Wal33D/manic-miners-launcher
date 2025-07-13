@@ -27,15 +27,15 @@ interface VersionActionsProps {
   isInstalled: boolean;
   onInstallOrLaunch: () => void;
   onDelete: () => void;
-  onReinstall: () => void;
+  onRepair: () => void;
 }
 
-export function VersionActions({ 
-  version, 
-  isInstalled, 
-  onInstallOrLaunch, 
-  onDelete, 
-  onReinstall 
+export function VersionActions({
+  version,
+  isInstalled,
+  onInstallOrLaunch,
+  onDelete,
+  onRepair
 }: VersionActionsProps) {
   if (!version) return null;
 
@@ -63,7 +63,7 @@ export function VersionActions({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mining-surface border-primary/20">
-            <DropdownMenuItem onClick={onReinstall} className="flex items-center gap-2">
+            <DropdownMenuItem onClick={onRepair} className="flex items-center gap-2">
               <RotateCcw className="w-4 h-4" />
               Repair
             </DropdownMenuItem>
