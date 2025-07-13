@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { deleteVersion } from '../../functions/deleteVersion';
 import { verifyVersion } from '../../functions/verifyVersion';
-import { reinstallVersion } from '../../functions/reinstallVersion';
+import { repairVersion } from '../../functions/repairVersion';
 import { IPC_CHANNELS } from './ipcChannels';
 import { withIpcHandler } from './withIpcHandler';
 
@@ -24,9 +24,9 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
     );
 
     ipcMain.on(
-      IPC_CHANNELS.REINSTALL_VERSION,
-      withIpcHandler(IPC_CHANNELS.REINSTALL_VERSION, async (event, versionIdentifier: string) => {
-        return await reinstallVersion({
+      IPC_CHANNELS.REPAIR_VERSION,
+      withIpcHandler(IPC_CHANNELS.REPAIR_VERSION, async (event, versionIdentifier: string) => {
+        return await repairVersion({
           versionIdentifier,
           updateStatus: statusObj => {
             event.sender.send(IPC_CHANNELS.DOWNLOAD_PROGRESS, statusObj);

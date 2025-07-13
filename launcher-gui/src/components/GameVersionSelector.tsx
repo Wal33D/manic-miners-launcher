@@ -52,10 +52,10 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
   const [verifyProgress, setVerifyProgress] = useState(0);
   const [verifyStatus, setVerifyStatus] = useState('');
 
-  // Reinstall states  
-  const [isReinstalling, setIsReinstalling] = useState(false);
-  const [reinstallProgress, setReinstallProgress] = useState(0);
-  const [reinstallStatus, setReinstallStatus] = useState('');
+  // Repair states
+  const [isRepairing, setIsRepairing] = useState(false);
+  const [repairProgress, setRepairProgress] = useState(0);
+  const [repairStatus, setRepairStatus] = useState('');
 
   // Delete states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -218,14 +218,14 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
       });
     }
 
-    if (isReinstalling) {
+    if (isRepairing) {
       notifications.push({
-        id: 'reinstall',
-        type: 'reinstall',
-        title: 'Game Reinstall',
+        id: 'repair',
+        type: 'repair',
+        title: 'Game Repair',
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
-        progress: reinstallProgress,
-        status: reinstallStatus,
+        progress: repairProgress,
+        status: repairStatus,
         isActive: true
       });
     }
@@ -245,7 +245,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     onNotificationUpdate(notifications);
   }, [isDownloading, downloadProgress, downloadFileName, downloadTotalSize, downloadSpeed, downloadEta, downloadStatus,
       isVerifying, verifyProgress, verifyStatus,
-      isReinstalling, reinstallProgress, reinstallStatus,
+      isRepairing, repairProgress, repairStatus,
       isDeleting, deleteProgress, deleteStatus,
       selectedVersionData?.filename, onNotificationUpdate]);
 
@@ -303,31 +303,26 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     });
   };
 
-  const handleReinstall = async () => {
-    if (!selectedVersionData) return;
-    setIsReinstalling(true);
-    setReinstallProgress(0);
-    setReinstallStatus('Removing existing installation...');
-    
-    // Simulate reinstall progress
-    const reinstallInterval = setInterval(() => {
-      setReinstallProgress(prev => {
+  const handleRepair = async () => {
+    if (!selectedVersionData || !window.electronAPI) return;
+    setIsRepairing(true);
+    setRepairProgress(0);
+    setRepairStatus('Checking files...');
+
+    window.electronAPI.send('repair-version', selectedVersionData.identifier);
+
+    const repairInterval = setInterval(() => {
+      setRepairProgress(prev => {
         const newProgress = prev + Math.random() * 10;
-        if (newProgress >= 50 && newProgress < 60) {
-          setReinstallStatus('Starting fresh download...');
-        }
         if (newProgress >= 100) {
-          clearInterval(reinstallInterval);
-          setReinstallStatus('Reinstallation completed successfully!');
-          setTimeout(() => setIsReinstalling(false), 2000);
+          clearInterval(repairInterval);
+          setRepairStatus('Repair completed successfully!');
+          setTimeout(() => setIsRepairing(false), 2000);
           return 100;
         }
         return newProgress;
       });
     }, 400);
-    
-    handleDelete();
-    setTimeout(() => handleInstallOrLaunch(), 100);
   };
 
 
@@ -374,7 +369,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
             onInstallOrLaunch={handleInstallOrLaunch}
             onVerify={handleVerify}
             onDelete={handleDelete}
-            onReinstall={handleReinstall}
+            onRepair={handleRepair}
           />
         </CardContent>
       </Card>
