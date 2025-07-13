@@ -15,6 +15,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [cachePath, setCachePath] = useState<string>('');
 
   // Mock data for latest version
   const latestVersion = {
@@ -33,10 +34,12 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     const checkInstallStatus = () => {
       if (window.electronAPI) {
         // In Electron environment
-        window.electronAPI.send('get-directory-info');
-        window.electronAPI.receive('directory-info', (directoryInfo: any) => {
-          if (directoryInfo.versions) {
-            setIsInstalled(directoryInfo.versions.includes(latestVersion.version));
+        window.electronAPI.send('get-directories');
+        window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+          if (dirResult?.status) {
+            const versions = dirResult.versions || [];
+            setIsInstalled(versions.includes(latestVersion.version));
+            setCachePath(dirResult.directories.launcherCachePath);
           }
         });
       } else {
@@ -86,13 +89,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     }, 200);
 
     if (window.electronAPI) {
-      // In Electron environment, trigger actual download
-      window.electronAPI.send('download-version', {
-        version: latestVersion.version,
-        downloadUrl: `https://example.com/download/${latestVersion.version}`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        size: latestVersion.sizeInBytes
-      });
+      window.electronAPI.send('download-latest', { downloadPath: cachePath });
     }
   };
 
