@@ -30,7 +30,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={e => {
-                    if (window.electronAPI) {
+                    if (window.electronAPI?.openExternal) {
                       e.preventDefault();
                       window.electronAPI.openExternal(url);
                     }
