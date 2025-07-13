@@ -49,8 +49,8 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={e => {
+                    e.preventDefault();
                     if (window.electronAPI?.openExternal) {
-                      e.preventDefault();
                       window.electronAPI.openExternal(url);
                     } else {
                       window.open(url, '_blank');
