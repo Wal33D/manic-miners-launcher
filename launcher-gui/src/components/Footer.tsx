@@ -41,21 +41,27 @@ export function Footer() {
           {Object.entries(urls)
             .filter(([name]) => name !== 'FAQ' && name !== 'Email')
             .map(([name, url]) => {
-            const Icon = iconMap[name as keyof typeof iconMap];
-            return (
-              <a
-                key={name}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-                title={name}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{name}</span>
-              </a>
-            );
-          })}
+              const Icon = iconMap[name as keyof typeof iconMap];
+              return (
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => {
+                    if (window.electronAPI) {
+                      e.preventDefault();
+                      window.electronAPI.openExternal(url);
+                    }
+                  }}
+                  className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
+                  title={name}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{name}</span>
+                </a>
+              );
+            })}
           <Link
             to="/faq"
             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
