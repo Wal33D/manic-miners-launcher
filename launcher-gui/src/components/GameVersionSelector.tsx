@@ -37,7 +37,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [installedVersions, setInstalledVersions] = useState<Set<string>>(new Set());
-  
+
   const [installPath, setInstallPath] = useState<string>('');
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -67,7 +67,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
         const data = await response.json();
-        
+
         if (data?.versions) {
           const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
             const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
@@ -150,7 +150,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
           setDownloadEta(`${minutes}:${seconds.toString().padStart(2, '0')}`);
         }
       });
-      
+
       return () => {
         window.electronAPI?.removeAllListeners('download-progress');
       };
@@ -202,7 +202,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         speed: downloadSpeed,
         eta: downloadEta,
         status: downloadStatus || 'Downloading version file...',
-        isActive: true
+        isActive: true,
       });
     }
 
@@ -214,7 +214,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
         progress: verifyProgress,
         status: verifyStatus,
-        isActive: true
+        isActive: true,
       });
     }
 
@@ -226,7 +226,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
         progress: repairProgress,
         status: repairStatus,
-        isActive: true
+        isActive: true,
       });
     }
 
@@ -238,16 +238,31 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
         progress: deleteProgress,
         status: deleteStatus,
-        isActive: true
+        isActive: true,
       });
     }
 
     onNotificationUpdate(notifications);
-  }, [isDownloading, downloadProgress, downloadFileName, downloadTotalSize, downloadSpeed, downloadEta, downloadStatus,
-      isVerifying, verifyProgress, verifyStatus,
-      isRepairing, repairProgress, repairStatus,
-      isDeleting, deleteProgress, deleteStatus,
-      selectedVersionData?.filename, onNotificationUpdate]);
+  }, [
+    isDownloading,
+    downloadProgress,
+    downloadFileName,
+    downloadTotalSize,
+    downloadSpeed,
+    downloadEta,
+    downloadStatus,
+    isVerifying,
+    verifyProgress,
+    verifyStatus,
+    isRepairing,
+    repairProgress,
+    repairStatus,
+    isDeleting,
+    deleteProgress,
+    deleteStatus,
+    selectedVersionData?.filename,
+    onNotificationUpdate,
+  ]);
 
   const handleVerify = () => {
     if (!selectedVersionData || !window.electronAPI) return;
@@ -255,7 +270,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     setVerifyProgress(0);
     setVerifyStatus('Starting file verification...');
     window.electronAPI.send('verify-version', selectedVersionData.identifier);
-    
+
     // Simulate verification progress (in real app, this would come from electron)
     const verifyInterval = setInterval(() => {
       setVerifyProgress(prev => {
@@ -276,7 +291,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     setIsDeleting(true);
     setDeleteProgress(0);
     setDeleteStatus('Removing game files...');
-    
+
     // Simulate delete progress
     const deleteInterval = setInterval(() => {
       setDeleteProgress(prev => {
@@ -290,7 +305,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         return newProgress;
       });
     }, 300);
-    
+
     window.electronAPI.send('delete-version', selectedVersionData.identifier);
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
       if (result?.deleted) {
@@ -325,6 +340,9 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     }, 400);
   };
 
+  const installed = selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false;
+
+  const actionDisabled = (!installed && isDownloading) || (installed && (isRepairing || isDeleting));
 
   if (loading) {
     return (
@@ -353,22 +371,17 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
           <CardDescription className="text-muted-foreground">Install and manage Manic Miners releases</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <VersionSelector 
-            versions={versions}
-            selectedVersion={selectedVersion}
-            onVersionChange={setSelectedVersion}
-          />
+          <VersionSelector versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />
 
-          {selectedVersionData && (
-            <VersionDetails version={selectedVersionData} />
-          )}
+          {selectedVersionData && <VersionDetails version={selectedVersionData} />}
 
           <VersionActions
             version={selectedVersionData}
-            isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
+            isInstalled={installed}
             onInstallOrLaunch={handleInstallOrLaunch}
             onDelete={handleDelete}
             onRepair={handleRepair}
+            disabled={actionDisabled}
           />
         </CardContent>
       </Card>

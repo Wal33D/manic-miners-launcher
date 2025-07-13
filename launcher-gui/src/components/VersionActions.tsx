@@ -28,14 +28,15 @@ interface VersionActionsProps {
   onInstallOrLaunch: () => void;
   onDelete: () => void;
   onRepair: () => void;
+  disabled?: boolean;
 }
 
-export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair }: VersionActionsProps) {
+export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair, disabled = false }: VersionActionsProps) {
   if (!version) return null;
 
   return (
     <div className="flex gap-2">
-      <Button variant="energy" className="flex-1" onClick={onInstallOrLaunch}>
+      <Button variant="energy" className="flex-1" onClick={onInstallOrLaunch} disabled={disabled}>
         {isInstalled ? (
           <>
             <Play className="w-4 h-4 mr-2" />
