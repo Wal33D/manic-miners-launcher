@@ -37,7 +37,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [installedVersions, setInstalledVersions] = useState<Set<string>>(new Set());
-
+  
   const [installPath, setInstallPath] = useState<string>('');
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -47,15 +47,11 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
   const [downloadSpeed, setDownloadSpeed] = useState('0 MB/s');
   const [downloadEta, setDownloadEta] = useState('--:--');
 
-  // Verify states
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verifyProgress, setVerifyProgress] = useState(0);
-  const [verifyStatus, setVerifyStatus] = useState('');
 
-  // Repair states
-  const [isRepairing, setIsRepairing] = useState(false);
-  const [repairProgress, setRepairProgress] = useState(0);
-  const [repairStatus, setRepairStatus] = useState('');
+  // Reinstall states  
+  const [isReinstalling, setIsReinstalling] = useState(false);
+  const [reinstallProgress, setReinstallProgress] = useState(0);
+  const [reinstallStatus, setReinstallStatus] = useState('');
 
   // Delete states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -67,7 +63,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
         const data = await response.json();
-
+        
         if (data?.versions) {
           const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
             const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
@@ -150,7 +146,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
           setDownloadEta(`${minutes}:${seconds.toString().padStart(2, '0')}`);
         }
       });
-
+      
       return () => {
         window.electronAPI?.removeAllListeners('download-progress');
       };
@@ -202,31 +198,20 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         speed: downloadSpeed,
         eta: downloadEta,
         status: downloadStatus || 'Downloading version file...',
-        isActive: true,
+        isActive: true
       });
     }
 
-    if (isVerifying) {
-      notifications.push({
-        id: 'verify',
-        type: 'verify',
-        title: 'File Verification',
-        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
-        progress: verifyProgress,
-        status: verifyStatus,
-        isActive: true,
-      });
-    }
 
-    if (isRepairing) {
+    if (isReinstalling) {
       notifications.push({
-        id: 'repair',
-        type: 'repair',
-        title: 'Game Repair',
+        id: 'reinstall',
+        type: 'reinstall',
+        title: 'Game Reinstall',
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
-        progress: repairProgress,
-        status: repairStatus,
-        isActive: true,
+        progress: reinstallProgress,
+        status: reinstallStatus,
+        isActive: true
       });
     }
 
@@ -238,60 +223,23 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
         progress: deleteProgress,
         status: deleteStatus,
-        isActive: true,
+        isActive: true
       });
     }
 
     onNotificationUpdate(notifications);
-  }, [
-    isDownloading,
-    downloadProgress,
-    downloadFileName,
-    downloadTotalSize,
-    downloadSpeed,
-    downloadEta,
-    downloadStatus,
-    isVerifying,
-    verifyProgress,
-    verifyStatus,
-    isRepairing,
-    repairProgress,
-    repairStatus,
-    isDeleting,
-    deleteProgress,
-    deleteStatus,
-    selectedVersionData?.filename,
-    onNotificationUpdate,
-  ]);
+  }, [isDownloading, downloadProgress, downloadFileName, downloadTotalSize, downloadSpeed, downloadEta, downloadStatus,
+      isReinstalling, reinstallProgress, reinstallStatus,
+      isDeleting, deleteProgress, deleteStatus,
+      selectedVersionData?.filename, onNotificationUpdate]);
 
-  const handleVerify = () => {
-    if (!selectedVersionData || !window.electronAPI) return;
-    setIsVerifying(true);
-    setVerifyProgress(0);
-    setVerifyStatus('Starting file verification...');
-    window.electronAPI.send('verify-version', selectedVersionData.identifier);
-
-    // Simulate verification progress (in real app, this would come from electron)
-    const verifyInterval = setInterval(() => {
-      setVerifyProgress(prev => {
-        const newProgress = prev + Math.random() * 15;
-        if (newProgress >= 100) {
-          clearInterval(verifyInterval);
-          setVerifyStatus('Verification completed successfully!');
-          setTimeout(() => setIsVerifying(false), 2000);
-          return 100;
-        }
-        return newProgress;
-      });
-    }, 500);
-  };
 
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;
     setIsDeleting(true);
     setDeleteProgress(0);
     setDeleteStatus('Removing game files...');
-
+    
     // Simulate delete progress
     const deleteInterval = setInterval(() => {
       setDeleteProgress(prev => {
@@ -305,7 +253,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         return newProgress;
       });
     }, 300);
-
+    
     window.electronAPI.send('delete-version', selectedVersionData.identifier);
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
       if (result?.deleted) {
@@ -318,73 +266,149 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     });
   };
 
-  const handleRepair = async () => {
-    if (!selectedVersionData || !window.electronAPI) return;
-    setIsRepairing(true);
-    setRepairProgress(0);
-    setRepairStatus('Checking files...');
-
-    window.electronAPI.send('repair-version', selectedVersionData.identifier);
-
-    const repairInterval = setInterval(() => {
-      setRepairProgress(prev => {
+  const handleReinstall = async () => {
+    if (!selectedVersionData) return;
+    setIsReinstalling(true);
+    setReinstallProgress(0);
+    setReinstallStatus('Removing existing installation...');
+    
+    // Simulate reinstall progress
+    const reinstallInterval = setInterval(() => {
+      setReinstallProgress(prev => {
         const newProgress = prev + Math.random() * 10;
+        if (newProgress >= 50 && newProgress < 60) {
+          setReinstallStatus('Starting fresh download...');
+        }
         if (newProgress >= 100) {
-          clearInterval(repairInterval);
-          setRepairStatus('Repair completed successfully!');
-          setTimeout(() => setIsRepairing(false), 2000);
+          clearInterval(reinstallInterval);
+          setReinstallStatus('Reinstallation completed successfully!');
+          setTimeout(() => setIsReinstalling(false), 2000);
           return 100;
         }
         return newProgress;
       });
     }, 400);
+    
+    handleDelete();
+    setTimeout(() => handleInstallOrLaunch(), 100);
   };
 
-  const installed = selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false;
-
-  const actionDisabled = (!installed && isDownloading) || (installed && (isRepairing || isDeleting));
 
   if (loading) {
     return (
-      <Card className="mining-surface energy-glow">
-        <CardHeader>
-          <CardTitle className="text-primary">Loading Versions...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-muted rounded"></div>
-            <div className="h-4 bg-muted rounded w-3/4"></div>
+      <div className="w-full">
+        <div className="container mx-auto px-4 py-6">
+          {/* Loading Cards */}
+          <div className="space-y-6">
+            <Card className="mining-surface energy-glow border-primary/20">
+              <CardHeader className="pb-6">
+                <div className="animate-pulse space-y-3">
+                  <div className="h-6 bg-muted rounded w-1/3"></div>
+                  <div className="h-4 bg-muted rounded w-2/3"></div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="animate-pulse space-y-4">
+                  <div className="h-12 bg-muted rounded"></div>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
-      <Card className="mining-surface">
-        <CardHeader>
-          <CardTitle className="text-primary flex items-center gap-2">
-            <Zap className="w-5 h-5" />
-            Game Versions
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">Install and manage Manic Miners releases</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <VersionSelector versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />
+    <div className="w-full">
+      <div className="container mx-auto px-4 py-6">
+        {/* Header Section */}
+        <div className="mb-8 flex justify-center">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center energy-glow">
+              <Zap className="w-6 h-6 text-primary-foreground animate-pulse-energy" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Archived Versions</h1>
+              <p className="text-muted-foreground">
+                Manage and install past versions of ManicMiners
+              </p>
+            </div>
+          </div>
+        </div>
 
-          {selectedVersionData && <VersionDetails version={selectedVersionData} />}
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Version Selection Section */}
+          <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+            <CardHeader className="border-b border-border/50 pb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-primary">Select Version</CardTitle>
+                  <CardDescription>Choose from stable releases and experimental builds</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <VersionSelector 
+                versions={versions}
+                selectedVersion={selectedVersion}
+                onVersionChange={setSelectedVersion}
+              />
+            </CardContent>
+          </Card>
 
-          <VersionActions
-            version={selectedVersionData}
-            isInstalled={installed}
-            onInstallOrLaunch={handleInstallOrLaunch}
-            onDelete={handleDelete}
-            onRepair={handleRepair}
-            disabled={actionDisabled}
-          />
-        </CardContent>
-      </Card>
-    </>
+          {/* Details and Actions Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Version Details Card - Takes 2 columns on xl screens */}
+            {selectedVersionData && (
+              <Card className="mining-surface border-primary/20 shadow-lg xl:col-span-2 overflow-hidden">
+                <CardHeader className="border-b border-border/50 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-primary">Version Details</CardTitle>
+                      <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <VersionDetails version={selectedVersionData} />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Actions Card - Takes 1 column */}
+            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden self-start">
+              <CardHeader className="border-b border-border/50 pb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg text-primary">Actions</CardTitle>
+                    <CardDescription>Install, launch, or manage</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <VersionActions
+                  version={selectedVersionData}
+                  isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
+                  onInstallOrLaunch={handleInstallOrLaunch}
+                  onDelete={handleDelete}
+                  onReinstall={handleReinstall}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, AlertTriangle, Star } from 'lucide-react';
+import { AlertTriangle, Star } from 'lucide-react';
 
 interface GameVersion {
   gameId: number;
@@ -27,7 +26,6 @@ interface VersionDetailsProps {
 }
 
 export function VersionDetails({ version }: VersionDetailsProps) {
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const getVersionVariant = (experimental: boolean) => {
     return experimental ? 'secondary' : 'default';
@@ -68,27 +66,8 @@ export function VersionDetails({ version }: VersionDetailsProps) {
         </div>
       </div>
 
-      <div className="mt-3 relative">
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${isDescriptionExpanded ? 'max-h-96' : 'max-h-24'}`}
-        >
-          <p className="text-sm text-muted-foreground">{version.description || 'No description available.'}</p>
-        </div>
-
-        {/* Expand/Collapse Button */}
-        <div className="flex justify-center mt-2">
-          <button
-            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/80 hover:bg-secondary transition-colors"
-            aria-label={isDescriptionExpanded ? 'Collapse description' : 'Expand description'}
-          >
-            <ChevronDown
-              className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                isDescriptionExpanded ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-        </div>
+      <div className="mt-3">
+        <p className="text-sm text-muted-foreground">{version.description || 'No description available.'}</p>
       </div>
     </div>
   );
