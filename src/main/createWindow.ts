@@ -28,6 +28,14 @@ export const createWindow = (): void => {
     return { action: 'deny' };
   });
 
+  // Handle navigation to external URLs within the same window
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url !== mainWindow.webContents.getURL()) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
+
   // Ensure the renderer starts on the Home page in both dev and prod.
   // When packaged, loadFile lets us explicitly set the hash portion so
   // React Router's HashRouter receives '/'. During development
