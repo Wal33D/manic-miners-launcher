@@ -367,7 +367,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
             version={selectedVersionData}
             isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
             onInstallOrLaunch={handleInstallOrLaunch}
-            onVerify={handleVerify}
             onDelete={handleDelete}
             onRepair={handleRepair}
           />

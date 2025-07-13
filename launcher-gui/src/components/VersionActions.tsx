@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Play, Download, Menu, Shield, Trash2, RotateCcw } from 'lucide-react';
+import { Play, Download, Menu, Trash2, RotateCcw } from 'lucide-react';
 
 interface GameVersion {
   gameId: number;
@@ -26,12 +26,11 @@ interface VersionActionsProps {
   version: GameVersion | null;
   isInstalled: boolean;
   onInstallOrLaunch: () => void;
-  onVerify: () => void;
   onDelete: () => void;
   onRepair: () => void;
 }
 
-export function VersionActions({ version, isInstalled, onInstallOrLaunch, onVerify, onDelete, onRepair }: VersionActionsProps) {
+export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair }: VersionActionsProps) {
   if (!version) return null;
 
   return (
@@ -58,10 +57,6 @@ export function VersionActions({ version, isInstalled, onInstallOrLaunch, onVeri
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mining-surface border-primary/20">
-            <DropdownMenuItem onClick={onVerify} className="flex items-center gap-2">
-              <Shield className="w-4 h-4" />
-              Verify Files
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={onRepair} className="flex items-center gap-2">
               <RotateCcw className="w-4 h-4" />
               Repair
