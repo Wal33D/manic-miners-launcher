@@ -17,6 +17,9 @@ export const createWindow = (): void => {
     },
     autoHideMenuBar: true, // This will hide the menu bar
     frame: false, // This will remove the frame
+    // Display our icon in the taskbar when running the packaged app
+    icon: path.join(__dirname, '../assets/manic-miners.ico'),
+    title: 'Manic Miners Launcher',
   });
 
   // Ensure the renderer starts on the Home page in both dev and prod.
