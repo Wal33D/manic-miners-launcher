@@ -19,7 +19,6 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
-  IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG,
 ];
 
 const validReceiveChannels: IpcChannel[] = [
@@ -36,7 +35,6 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
-  IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG,
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {

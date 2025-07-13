@@ -11,7 +11,6 @@ import { setupUrlHandler } from './ipcHandlers/setupUrlHandler';
 import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 import { setupWindowControlHandlers } from './ipcHandlers/setupWindowControlHandlers';
-import { setupLatestItchCatalogHandler } from './ipcHandlers/setupLatestItchCatalogHandler';
 import { checkItchUpdate } from '../functions/checkItchUpdate';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
@@ -39,7 +38,6 @@ const startApp = (): void => {
     setupInputPathDialog();
     setupUrlHandler();
     setupPlaySoundHandler();
-    setupLatestItchCatalogHandler();
     setupSettingsHandlers();
     setupWindowControlHandlers();
   });
