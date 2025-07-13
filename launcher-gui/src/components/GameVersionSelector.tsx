@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { Download, Play, AlertTriangle, Star, Zap, ChevronDown, Menu, Shield, Trash2, RotateCcw, CheckCircle, XCircle, Pause } from 'lucide-react';
+import { NotificationData } from './GameNotifications';
 
 interface GameVersion {
   gameId: number;
@@ -30,9 +31,10 @@ interface GameVersion {
 interface GameVersionSelectorProps {
   onDownloadStart?: () => void;
   onDownloadEnd?: () => void;
+  onNotificationUpdate: (notifications: NotificationData[]) => void;
 }
 
-export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVersionSelectorProps) {
+export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotificationUpdate }: GameVersionSelectorProps) {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -56,6 +58,11 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
   const [isReinstalling, setIsReinstalling] = useState(false);
   const [reinstallProgress, setReinstallProgress] = useState(0);
   const [reinstallStatus, setReinstallStatus] = useState('');
+
+  // Delete states
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deleteStatus, setDeleteStatus] = useState('');
 
   useEffect(() => {
     const fetchVersions = async () => {
@@ -190,6 +197,68 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
     }
   };
 
+  // Update notifications whenever states change
+  useEffect(() => {
+    const notifications: NotificationData[] = [];
+
+    if (isDownloading) {
+      notifications.push({
+        id: 'download',
+        type: 'download',
+        title: 'Game Download',
+        fileName: downloadFileName || 'ManicMiners2020-05-09.zip',
+        fileSize: downloadTotalSize ? `${(downloadTotalSize / 1024 / 1024).toFixed(1)} MB` : '528.0 MB',
+        progress: downloadProgress,
+        speed: downloadSpeed,
+        eta: downloadEta,
+        status: downloadStatus || 'Downloading version file...',
+        isActive: true
+      });
+    }
+
+    if (isVerifying) {
+      notifications.push({
+        id: 'verify',
+        type: 'verify',
+        title: 'File Verification',
+        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
+        progress: verifyProgress,
+        status: verifyStatus,
+        isActive: true
+      });
+    }
+
+    if (isReinstalling) {
+      notifications.push({
+        id: 'reinstall',
+        type: 'reinstall',
+        title: 'Game Reinstall',
+        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
+        progress: reinstallProgress,
+        status: reinstallStatus,
+        isActive: true
+      });
+    }
+
+    if (isDeleting) {
+      notifications.push({
+        id: 'delete',
+        type: 'delete',
+        title: 'Game Deletion',
+        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
+        progress: deleteProgress,
+        status: deleteStatus,
+        isActive: true
+      });
+    }
+
+    onNotificationUpdate(notifications);
+  }, [isDownloading, downloadProgress, downloadFileName, downloadTotalSize, downloadSpeed, downloadEta, downloadStatus,
+      isVerifying, verifyProgress, verifyStatus,
+      isReinstalling, reinstallProgress, reinstallStatus,
+      isDeleting, deleteProgress, deleteStatus,
+      selectedVersionData?.filename, onNotificationUpdate]);
+
   const handleVerify = () => {
     if (!selectedVersionData || !window.electronAPI) return;
     setIsVerifying(true);
@@ -214,6 +283,24 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
 
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;
+    setIsDeleting(true);
+    setDeleteProgress(0);
+    setDeleteStatus('Removing game files...');
+    
+    // Simulate delete progress
+    const deleteInterval = setInterval(() => {
+      setDeleteProgress(prev => {
+        const newProgress = prev + Math.random() * 20;
+        if (newProgress >= 100) {
+          clearInterval(deleteInterval);
+          setDeleteStatus('Deletion completed successfully!');
+          setTimeout(() => setIsDeleting(false), 2000);
+          return 100;
+        }
+        return newProgress;
+      });
+    }, 300);
+    
     window.electronAPI.send('delete-version', selectedVersionData.identifier);
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
       if (result?.deleted) {
@@ -360,81 +447,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd }: GameVers
                       }`}
                     />
                   </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Download Status Section - Only When Downloading */}
-          {isDownloading && (
-            <div className="p-3 rounded-lg bg-secondary/30 border border-border space-y-2">
-              <div className="flex items-center gap-2">
-                {getDownloadStatusIcon()}
-                <span className="text-sm font-medium text-secondary-foreground">Game Download</span>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">
-                  {downloadFileName || 'ManicMiners2020-05-09.zip'}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {downloadTotalSize ? `${(downloadTotalSize / 1024 / 1024).toFixed(1)} MB` : '528.0 MB'}
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-primary">{downloadProgress.toFixed(1)}% complete</span>
-                  <span className="text-muted-foreground">{downloadSpeed}</span>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  ETA: {downloadEta}
-                </div>
-                <div className="text-xs text-muted-foreground italic">
-                  {downloadStatus || 'Downloading version file...'}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Verify Status Section - Only When Verifying */}
-          {isVerifying && (
-            <div className="p-3 rounded-lg bg-secondary/30 border border-border space-y-2">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-primary animate-pulse" />
-                <span className="text-sm font-medium text-secondary-foreground">File Verification</span>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">
-                  {selectedVersionData?.filename || 'ManicMiners2020-05-09.zip'}
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-primary">{verifyProgress.toFixed(1)}% complete</span>
-                  <span className="text-muted-foreground">Checking integrity...</span>
-                </div>
-                <div className="text-xs text-muted-foreground italic">
-                  {verifyStatus}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Reinstall Status Section - Only When Reinstalling */}
-          {isReinstalling && (
-            <div className="p-3 rounded-lg bg-secondary/30 border border-border space-y-2">
-              <div className="flex items-center gap-2">
-                <RotateCcw className="w-4 h-4 text-primary animate-spin" />
-                <span className="text-sm font-medium text-secondary-foreground">Game Reinstall</span>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">
-                  {selectedVersionData?.filename || 'ManicMiners2020-05-09.zip'}
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-primary">{reinstallProgress.toFixed(1)}% complete</span>
-                  <span className="text-muted-foreground">Processing...</span>
-                </div>
-                <div className="text-xs text-muted-foreground italic">
-                  {reinstallStatus}
                 </div>
               </div>
             </div>
