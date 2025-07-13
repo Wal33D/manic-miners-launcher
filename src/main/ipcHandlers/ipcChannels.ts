@@ -20,5 +20,4 @@ export const IPC_CHANNELS = {
   WINDOW_EXIT: 'window-exit',
   VERIFY_VERSION: 'verify-version',
   DELETE_VERSION: 'delete-version',
-  REINSTALL_VERSION: 'reinstall-version',
 } as const;
