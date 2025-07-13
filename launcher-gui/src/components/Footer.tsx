@@ -49,11 +49,9 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={e => {
-                    if (window.electronAPI?.openExternal) {
+                    if (window.electronAPI) {
                       e.preventDefault();
                       window.electronAPI.openExternal(url);
-                    } else {
-                      window.open(url, '_blank');
                     }
                   }}
                   className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
