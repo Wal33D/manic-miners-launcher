@@ -51,6 +51,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",
     "itchio-downloader": "^0.8.1",
+    "itchio-metadata": "^1.0.4",
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
