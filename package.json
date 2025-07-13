@@ -11,7 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
-    "generate:assets": "ts-node scripts/generateAssets.ts"
+    "generate:assets": "ts-node scripts/generateAssets.ts",
+    "test": "pnpm exec ts-node tests/latestVersion.test.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
@@ -23,6 +24,7 @@
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-webpack": "^7.8.1",
     "@electron/fuses": "^1.8.0",
+    "@eslint/eslintrc": "^3.3.1",
     "@types/bootstrap": "^5.2.10",
     "@types/node": "^24.0.10",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
@@ -51,6 +53,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",
     "itchio-downloader": "^0.8.1",
+    "itchio-metadata": "^1.0.4",
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
