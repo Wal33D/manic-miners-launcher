@@ -9,7 +9,7 @@ interface TrailerData {
 
 export function GameTrailer() {
   const [trailer, setTrailer] = useState<TrailerData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [trailerLoading, setTrailerLoading] = useState(true);
 
   useEffect(() => {
     const fetchTrailer = async () => {
@@ -25,7 +25,7 @@ export function GameTrailer() {
           localUrl: '/intro-video.mp4',
         });
       } finally {
-        setLoading(false);
+        setTrailerLoading(false);
       }
     };
 
@@ -37,19 +37,27 @@ export function GameTrailer() {
     return `https://www.youtube.com/embed/${videoId}`;
   };
 
-  if (loading) {
+  if (trailerLoading) {
     return (
       <Card className="mining-surface">
         <CardHeader>
-          <CardTitle className="text-primary">Loading Trailer...</CardTitle>
+          <CardTitle className="text-primary flex items-center gap-2">
+            <Play className="w-5 h-5" />
+            Game Trailer
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">Watch the official launch trailer</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse">
-            <div className="h-48 bg-muted rounded"></div>
+            <div className="h-48 bg-muted rounded-lg"></div>
           </div>
         </CardContent>
       </Card>
     );
+  }
+
+  if (!trailer) {
+    return null;
   }
 
   return (
@@ -59,21 +67,19 @@ export function GameTrailer() {
           <Play className="w-5 h-5" />
           Game Trailer
         </CardTitle>
-        
+        <CardDescription className="text-muted-foreground">Watch the official launch trailer</CardDescription>
       </CardHeader>
       <CardContent>
-        {trailer && (
-          <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
-            <iframe
-              src={getYouTubeEmbedUrl(trailer.youtubeUrl)}
-              title="Manic Miners Trailer"
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )}
+        <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
+          <iframe
+            src={getYouTubeEmbedUrl(trailer.youtubeUrl)}
+            title="Manic Miners Trailer"
+            className="w-full h-full"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
       </CardContent>
     </Card>
   );

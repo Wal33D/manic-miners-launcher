@@ -27,16 +27,21 @@ interface VersionActionsProps {
   isInstalled: boolean;
   onInstallOrLaunch: () => void;
   onDelete: () => void;
-  onRepair: () => void;
-  disabled?: boolean;
+  onReinstall: () => void;
 }
 
-export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair, disabled = false }: VersionActionsProps) {
+export function VersionActions({ 
+  version, 
+  isInstalled, 
+  onInstallOrLaunch, 
+  onDelete, 
+  onReinstall 
+}: VersionActionsProps) {
   if (!version) return null;
 
   return (
     <div className="flex gap-2">
-      <Button variant="energy" className="flex-1" onClick={onInstallOrLaunch} disabled={disabled}>
+      <Button variant="energy" className="flex-1" onClick={onInstallOrLaunch}>
         {isInstalled ? (
           <>
             <Play className="w-4 h-4 mr-2" />
@@ -58,7 +63,7 @@ export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDele
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mining-surface border-primary/20">
-            <DropdownMenuItem onClick={onRepair} className="flex items-center gap-2">
+            <DropdownMenuItem onClick={onReinstall} className="flex items-center gap-2">
               <RotateCcw className="w-4 h-4" />
               Repair
             </DropdownMenuItem>

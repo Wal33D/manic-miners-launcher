@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { LauncherHeader } from '@/components/LauncherHeader';
 import Index from './pages/Index';
+import GameVersions from './pages/GameVersions';
+import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <main className="flex-1 overflow-hidden">
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/game-versions" element={<GameVersions />} />
+              <Route path="/faq" element={<FAQ />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

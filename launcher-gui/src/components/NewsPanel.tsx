@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageSquare, Calendar, ThumbsUp, ThumbsDown, Play } from 'lucide-react';
+import { MessageSquare, Calendar, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface NewsItem {
   id: number;
@@ -27,18 +27,11 @@ interface CommentsData {
   comments: Comment[];
 }
 
-interface TrailerData {
-  youtubeUrl: string;
-  localUrl: string;
-}
-
 export function NewsPanel() {
   const [messages, setMessages] = useState<NewsItem[]>([]);
   const [commentsData, setCommentsData] = useState<CommentsData | null>(null);
-  const [trailer, setTrailer] = useState<TrailerData | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
   const [commentsLoading, setCommentsLoading] = useState(true);
-  const [trailerLoading, setTrailerLoading] = useState(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -83,26 +76,8 @@ export function NewsPanel() {
       }
     };
 
-    const fetchTrailer = async () => {
-      try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/intro-video');
-        const data = await response.json();
-        setTrailer(data);
-      } catch (error) {
-        console.error('Failed to fetch trailer:', error);
-        // Fallback trailer data
-        setTrailer({
-          youtubeUrl: 'https://www.youtube.com/watch?v=1mQacGNeNVA',
-          localUrl: '/intro-video.mp4',
-        });
-      } finally {
-        setTrailerLoading(false);
-      }
-    };
-
     fetchMessages();
     fetchComments();
-    fetchTrailer();
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -118,12 +93,7 @@ export function NewsPanel() {
       .slice(0, 2);
   };
 
-  const getYouTubeEmbedUrl = (url: string) => {
-    const videoId = url.split('v=')[1]?.split('&')[0];
-    return `https://www.youtube.com/embed/${videoId}`;
-  };
-
-  if (newsLoading && commentsLoading && trailerLoading) {
+  if (newsLoading && commentsLoading) {
     return (
       <Card className="mining-surface">
         <CardHeader>
@@ -149,26 +119,6 @@ export function NewsPanel() {
         <CardDescription className="text-muted-foreground">Latest news and community discussions</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Trailer Video - Always Visible */}
-        <div className="mb-6">
-          {trailerLoading ? (
-            <div className="animate-pulse">
-              <div className="h-48 bg-muted rounded-lg"></div>
-            </div>
-          ) : trailer ? (
-            <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
-              <iframe
-                src={getYouTubeEmbedUrl(trailer.youtubeUrl)}
-                title="Manic Miners Trailer"
-                className="w-full h-full"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : null}
-        </div>
-
         <Tabs defaultValue="news" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="news">News</TabsTrigger>
