@@ -291,35 +291,34 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
 
   if (loading) {
     return (
-      <div className="w-full">
-        <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto p-6 flex-1 min-h-0">
+        <div className="space-y-8">
           {/* Loading Cards */}
-          <div className="space-y-6">
-            <Card className="mining-surface energy-glow border-primary/20">
-              <CardHeader className="pb-6">
-                <div className="animate-pulse space-y-3">
-                  <div className="h-6 bg-muted rounded w-1/3"></div>
-                  <div className="h-4 bg-muted rounded w-2/3"></div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="animate-pulse space-y-4">
-                  <div className="h-12 bg-muted rounded"></div>
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="mining-surface energy-glow border-primary/20">
+            <CardHeader className="pb-6">
+              <div className="animate-pulse space-y-3">
+                <div className="h-6 bg-muted rounded w-1/3"></div>
+                <div className="h-4 bg-muted rounded w-2/3"></div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="animate-pulse space-y-4">
+                <div className="h-12 bg-muted rounded"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+        <div className="h-20"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto p-6 flex-1 min-h-0">
+      <div className="space-y-8">
         {/* Header Section */}
-        <div className="mb-8 flex justify-center">
+        <div className="flex justify-center">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center energy-glow">
               <Zap className="w-6 h-6 text-primary-foreground animate-pulse-energy" />
@@ -333,8 +332,30 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Version Selection Section */}
+        {/* Version Selection Section */}
+        <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+          <CardHeader className="border-b border-border/50 pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg text-primary">Select Version</CardTitle>
+                <CardDescription>Choose from stable releases and experimental builds</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <VersionSelector 
+              versions={versions}
+              selectedVersion={selectedVersion}
+              onVersionChange={setSelectedVersion}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Mobile Layout: Actions after Version Selection */}
+        <div className="xl:hidden">
           <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
             <CardHeader className="border-b border-border/50 pb-4">
               <div className="flex items-center gap-2">
@@ -342,22 +363,73 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
                   <Zap className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-primary">Select Version</CardTitle>
-                  <CardDescription>Choose from stable releases and experimental builds</CardDescription>
+                  <CardTitle className="text-lg text-primary">Actions</CardTitle>
+                  <CardDescription>Install, launch, or manage</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-6">
-              <VersionSelector 
-                versions={versions}
-                selectedVersion={selectedVersion}
-                onVersionChange={setSelectedVersion}
+              <VersionActions
+                version={selectedVersionData}
+                isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
+                onInstallOrLaunch={handleInstallOrLaunch}
+                onDelete={handleDelete}
+                onRepair={handleRepair}
               />
             </CardContent>
           </Card>
+        </div>
 
-          {/* Mobile Layout: Actions after Version Selection */}
-          <div className="xl:hidden">
+        {/* Desktop Layout: Details and Actions Grid */}
+        <div className="hidden xl:grid xl:grid-cols-3 gap-6">
+          {/* Version Details Card - Takes 2 columns on xl screens */}
+          {selectedVersionData && (
+            <Card className="mining-surface border-primary/20 shadow-lg xl:col-span-2 overflow-hidden">
+              <CardHeader className="border-b border-border/50 pb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg text-primary">Version Details</CardTitle>
+                    <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <VersionDetails version={selectedVersionData} />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Actions Card - Takes 1 column */}
+          <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden self-start">
+            <CardHeader className="border-b border-border/50 pb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-primary">Actions</CardTitle>
+                  <CardDescription>Install, launch, or manage</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <VersionActions
+                version={selectedVersionData}
+                isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
+                onInstallOrLaunch={handleInstallOrLaunch}
+                onDelete={handleDelete}
+                onRepair={handleRepair}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mobile Layout: Version Details */}
+        <div className="xl:hidden">
+          {selectedVersionData && (
             <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
               <CardHeader className="border-b border-border/50 pb-4">
                 <div className="flex items-center gap-2">
@@ -365,93 +437,19 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
                     <Zap className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg text-primary">Actions</CardTitle>
-                    <CardDescription>Install, launch, or manage</CardDescription>
+                    <CardTitle className="text-lg text-primary">Version Details</CardTitle>
+                    <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <VersionActions
-                  version={selectedVersionData}
-                  isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
-                  onInstallOrLaunch={handleInstallOrLaunch}
-                  onDelete={handleDelete}
-                  onRepair={handleRepair}
-                />
+                <VersionDetails version={selectedVersionData} />
               </CardContent>
             </Card>
-          </div>
-
-          {/* Desktop Layout: Details and Actions Grid */}
-          <div className="hidden xl:grid xl:grid-cols-3 gap-6">
-            {/* Version Details Card - Takes 2 columns on xl screens */}
-            {selectedVersionData && (
-              <Card className="mining-surface border-primary/20 shadow-lg xl:col-span-2 overflow-hidden">
-                <CardHeader className="border-b border-border/50 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg text-primary">Version Details</CardTitle>
-                      <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <VersionDetails version={selectedVersionData} />
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Actions Card - Takes 1 column */}
-            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden self-start">
-              <CardHeader className="border-b border-border/50 pb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg text-primary">Actions</CardTitle>
-                    <CardDescription>Install, launch, or manage</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <VersionActions
-                  version={selectedVersionData}
-                  isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
-                  onInstallOrLaunch={handleInstallOrLaunch}
-                  onDelete={handleDelete}
-                  onRepair={handleRepair}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Mobile Layout: Version Details */}
-          <div className="xl:hidden">
-            {selectedVersionData && (
-              <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
-                <CardHeader className="border-b border-border/50 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg text-primary">Version Details</CardTitle>
-                      <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <VersionDetails version={selectedVersionData} />
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          )}
         </div>
       </div>
+      <div className="h-20"></div>
     </div>
   );
 }
