@@ -1,6 +1,5 @@
 {
   "name": "manic-miners-launcher",
-  "productName": "Manic Miners Launcher",
   "version": "1.0.0",
   "description": "A dedicated launcher for Manic Miners, an adventurous underground mining game that pays homage to classic resource management and strategy games.",
   "main": ".webpack/main",
