@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 import path from 'path';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -20,6 +20,12 @@ export const createWindow = (): void => {
     // Display our icon in the taskbar when running the packaged app
     icon: path.join(__dirname, '../assets/manic-miners.ico'),
     title: 'Manic Miners Launcher',
+  });
+
+  // Open external links in the user's default browser
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
   });
 
   // Ensure the renderer starts on the Home page in both dev and prod.
