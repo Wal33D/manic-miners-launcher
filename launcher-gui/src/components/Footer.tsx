@@ -1,16 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'lucide-react';
-
-interface UrlData {
-  Website: string;
-  Discord: string;
-  Reddit: string;
-  YouTube: string;
-  Facebook: string;
-  FAQ: string;
-  Email: string;
-}
+import { FOOTER_URLS } from '../lib/footerUrls';
 
 const iconMap = {
   Website: Globe,
@@ -23,16 +13,7 @@ const iconMap = {
 };
 
 export function Footer() {
-  const [urls, setUrls] = useState<UrlData | null>(null);
-
-  useEffect(() => {
-    fetch('https://manic-launcher.vercel.app/api/urls')
-      .then(response => response.json())
-      .then((data: UrlData) => setUrls(data))
-      .catch(error => console.error('Failed to fetch URLs:', error));
-  }, []);
-
-  if (!urls) return null;
+  const urls = FOOTER_URLS;
 
   return (
     <footer className="border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

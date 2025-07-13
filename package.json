@@ -11,7 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
-    "generate:assets": "ts-node scripts/generateAssets.ts"
+    "generate:assets": "ts-node scripts/generateAssets.ts",
+    "test": "node --test"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
