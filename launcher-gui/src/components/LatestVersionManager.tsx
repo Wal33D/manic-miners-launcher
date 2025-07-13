@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Play, Download, RotateCcw, Check } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
+import { IPC_CHANNELS } from '../../../src/main/ipcHandlers/ipcChannels';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -15,47 +16,38 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
-
-  // Mock data for latest version
-  const latestVersion = {
-    version: '1.0.4',
-    title: 'ManicMiners',
-    displayName: 'ManicMiners v1.0.4',
-    releaseDate: '2024-07-13',
-    size: '582.3 MB',
-    sizeInBytes: 610871296,
-    description: 'Latest stable release with bug fixes and performance improvements.',
-    experimental: false
-  };
+  const [latestVersion, setLatestVersion] = useState<any>(null);
 
   useEffect(() => {
-    // Check if latest version is installed (mock check)
-    const checkInstallStatus = () => {
-      if (window.electronAPI) {
-        // In Electron environment
-        window.electronAPI.send('get-directory-info');
-        window.electronAPI.receive('directory-info', (directoryInfo: any) => {
-          if (directoryInfo.versions) {
-            setIsInstalled(directoryInfo.versions.includes(latestVersion.version));
+    if (window.electronAPI) {
+      window.electronAPI.send(IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG);
+      window.electronAPI.receiveOnce(
+        IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG,
+        (result: any) => {
+          if (result?.status && result.catalog) {
+            setLatestVersion(result.catalog);
           }
-        });
-      } else {
-        // In web preview, randomly set as installed or not
-        setIsInstalled(Math.random() > 0.5);
-      }
-    };
-
-    checkInstallStatus();
+        }
+      );
+    } else {
+      setLatestVersion({
+        versionDisplayName: 'ManicMiners v1.0.4',
+        versionReleaseDate: '2024-07-13',
+        fileSize: 610871296,
+        description: 'Latest stable release with bug fixes and performance improvements.',
+        versionFilename: 'ManicMiners.zip',
+      });
+    }
   }, []);
 
   useEffect(() => {
-    if (isDownloading && downloadProgress > 0) {
+    if (isDownloading && downloadProgress > 0 && latestVersion) {
       const notifications: NotificationData[] = [{
         id: 'latest-download',
         type: 'download',
         title: `Game Download`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        fileSize: latestVersion.size,
+        fileName: latestVersion.versionFilename,
+        fileSize: `${(latestVersion.fileSize / 1024 / 1024).toFixed(1)} MB`,
         progress: downloadProgress,
         speed: '15.2 MB/s',
         eta: '0:24',
@@ -71,28 +63,25 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const handleInstall = async () => {
     setIsDownloading(true);
     setDownloadProgress(0);
-
-    // Simulate download progress
-    const interval = setInterval(() => {
-      setDownloadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          setIsInstalled(true);
-          return 100;
-        }
-        return prev + Math.random() * 5;
-      });
-    }, 200);
-
     if (window.electronAPI) {
-      // In Electron environment, trigger actual download
-      window.electronAPI.send('download-version', {
-        version: latestVersion.version,
-        downloadUrl: `https://example.com/download/${latestVersion.version}`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        size: latestVersion.sizeInBytes
+      window.electronAPI.send(IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG);
+      window.electronAPI.receiveOnce(IPC_CHANNELS.FETCH_LATEST_ITCH_CATALOG, () => {
+        setDownloadProgress(100);
+        setIsDownloading(false);
+        setIsInstalled(true);
       });
+    } else {
+      const interval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsDownloading(false);
+            setIsInstalled(true);
+            return 100;
+          }
+          return prev + Math.random() * 5;
+        });
+      }, 200);
     }
   };
 
@@ -100,7 +89,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     setIsLaunching(true);
     
     if (window.electronAPI) {
-      window.electronAPI.send('launch-version', latestVersion.version);
+      window.electronAPI.send('launch-game', 'latest');
     }
     
     // Simulate launch delay
@@ -114,6 +103,10 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     await handleInstall();
   };
 
+  if (!latestVersion) {
+    return null;
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -126,7 +119,8 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
               </Badge>
             </CardTitle>
             <CardDescription>
-              Released {latestVersion.releaseDate} • {latestVersion.size}
+              Released {latestVersion.versionReleaseDate} •{' '}
+              {(latestVersion.fileSize / 1024 / 1024).toFixed(1)} MB
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
