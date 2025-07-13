@@ -11,8 +11,7 @@ interface NavigationProps {
 export function Navigation({ onSettingsClick }: NavigationProps) {
   const navItems = [
     { to: '/', icon: Home, label: 'Home' },
-    { to: '/game-versions', icon: Archive, label: 'Archived Versions' },
-    { to: '/faq', icon: HelpCircle, label: 'FAQ' }
+    { to: '/game-versions', icon: Archive, label: 'Archived Versions' }
   ];
 
   return (
