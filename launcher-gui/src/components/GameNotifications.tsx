@@ -56,7 +56,7 @@ export function GameNotifications({ notifications, onDismiss }: GameNotification
   if (activeNotifications.length === 0) return null;
 
   return (
-    <div className="fixed top-32 right-4 z-50 space-y-3 w-80">
+    <div className="fixed top-44 right-4 z-50 space-y-3 w-80">
       {activeNotifications.map((notification) => (
         <Card 
           key={notification.id}
