@@ -48,10 +48,10 @@ const FAQ = () => {
 
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      <div className="w-full">
-        <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto p-6 flex-1 min-h-0">
+        <div className="space-y-8">
           {/* Header Section */}
-          <div className="mb-8 flex justify-center">
+          <div className="flex justify-center">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center energy-glow">
                 <Info className="w-6 h-6 text-primary-foreground animate-pulse-energy" />
@@ -65,72 +65,71 @@ const FAQ = () => {
             </div>
           </div>
 
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Launcher Info */}
-            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
-              <CardContent className="p-6">
-                <p className="text-center text-muted-foreground">
-                  <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience 
-                  in homage to Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - 
-                  feel free to contribute on{' '}
-                  <Button 
-                    variant="link" 
-                    className="p-0 h-auto text-muted-foreground underline"
-                    onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
-                  >
-                    GitHub
-                  </Button>!
-                </p>
-              </CardContent>
-            </Card>
+          {/* Launcher Info */}
+          <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+            <CardContent className="p-6">
+              <p className="text-center text-muted-foreground">
+                <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience 
+                in homage to Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - 
+                feel free to contribute on{' '}
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto text-muted-foreground underline"
+                  onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
+                >
+                  GitHub
+                </Button>!
+              </p>
+            </CardContent>
+          </Card>
 
-            {/* Discord Button */}
-            <div className="mb-8 flex justify-center">
-              <Button 
-                variant="outline" 
-                onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Join Discord
-              </Button>
-            </div>
+          {/* Discord Button */}
+          <div className="flex justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Join Discord
+            </Button>
+          </div>
 
-            <div className="space-y-6">
-              {faqs.map((faq, index) => (
-                <Card key={index} className="mining-surface border-primary/20 shadow-lg overflow-hidden">
-                  <CardHeader className="border-b border-border/50 pb-4">
-                    <CardTitle className="text-lg text-primary">{faq.question}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="text-muted-foreground whitespace-pre-line">
-                      {faq.answer}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <div className="mt-8 text-center">
-              <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+          <div className="space-y-6">
+            {faqs.map((faq, index) => (
+              <Card key={index} className="mining-surface border-primary/20 shadow-lg overflow-hidden">
                 <CardHeader className="border-b border-border/50 pb-4">
-                  <CardTitle className="text-lg text-primary">Still have questions?</CardTitle>
-                  <CardDescription>
-                    Join our Discord community to get help from other players and the developer!
-                  </CardDescription>
+                  <CardTitle className="text-lg text-primary">{faq.question}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
-                  <Button 
-                    onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
-                    className="w-full"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Join Discord Community
-                  </Button>
+                  <div className="text-muted-foreground whitespace-pre-line">
+                    {faq.answer}
+                  </div>
                 </CardContent>
               </Card>
-            </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+              <CardHeader className="border-b border-border/50 pb-4">
+                <CardTitle className="text-lg text-primary">Still have questions?</CardTitle>
+                <CardDescription>
+                  Join our Discord community to get help from other players and the developer!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Button 
+                  onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+                  className="w-full"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Join Discord Community
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
+        <div className="h-20"></div>
       </div>
     </div>
   );
