@@ -18927,11 +18927,14 @@ function aM() {
           : (console.log('Installing game version:', f.version), a(h => new Set([...h, f.version]))));
     },
     g = () => {
-      f && console.log('Verifying game version:', f.version);
+      f &&
+        (console.log('Verifying game version:', f.version),
+        window.electronAPI.send('verify-version', f.version));
     },
     w = () => {
       f &&
         (console.log('Deleting game version:', f.version),
+        window.electronAPI.send('delete-version', f.version),
         a(h => {
           const y = new Set(h);
           return (y.delete(f.version), y);
@@ -18940,6 +18943,7 @@ function aM() {
     x = () => {
       f &&
         (console.log('Reinstalling game version:', f.version),
+        window.electronAPI.send('reinstall-version', f.version),
         a(h => {
           const y = new Set(h);
           return (y.delete(f.version), y);
