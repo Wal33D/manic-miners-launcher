@@ -50,7 +50,7 @@
     "bootswatch": "^5.3.7",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",
-    "itchio-downloader": "^0.8.1",
+    "itchio-downloader": "github:Wal33D/itchio-downloader",
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
@@ -69,9 +69,6 @@
   },
   "packageManager": "pnpm@10.12.4",
   "pnpm": {
-    "patchedDependencies": {
-      "itchio-downloader@0.8.1": "patches/itchio-downloader@0.8.1.patch"
-    },
     "ignoredBuiltDependencies": [
       "puppeteer"
     ],

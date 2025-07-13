@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  itchio-downloader@0.8.1:
-    hash: ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6
-    path: patches/itchio-downloader@0.8.1.patch
-
 importers:
 
   .:
@@ -29,8 +24,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       itchio-downloader:
-        specifier: ^0.8.1
-        version: 0.8.1(patch_hash=ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6)(typescript@5.8.3)
+        specifier: github:Wal33D/itchio-downloader
+        version: https://codeload.github.com/Wal33D/itchio-downloader/tar.gz/46491e68c8bca0a872d19aa91127f9305bfd7a2e(typescript@5.8.3)
       node-stream-zip:
         specifier: ^1.15.0
         version: 1.15.0
@@ -1317,6 +1312,10 @@ packages:
     resolution: {integrity: sha512-1gxPBJpI/pcjQhKgIU91II6Wkay+dLcN3M6rf2uwP8hRur3HtQXjVrdAK3sjC0piaEuxzMwjXChcETiJl47lAQ==}
     engines: {node: '>=18'}
 
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
+
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
@@ -2230,8 +2229,9 @@ packages:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
 
-  itchio-downloader@0.8.1:
-    resolution: {integrity: sha512-DRRDAwW9dcKau6lOnweAKRQ6+mVH9MQPyVp6A6PfY9mTfdvo34MR0YOScBr1sT3tvXk4KXc4bvL0/HNi+fQKIw==}
+  itchio-downloader@https://codeload.github.com/Wal33D/itchio-downloader/tar.gz/46491e68c8bca0a872d19aa91127f9305bfd7a2e:
+    resolution: {tarball: https://codeload.github.com/Wal33D/itchio-downloader/tar.gz/46491e68c8bca0a872d19aa91127f9305bfd7a2e}
+    version: 0.8.1
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5377,6 +5377,8 @@ snapshots:
     dependencies:
       type-fest: 4.41.0
 
+  dotenv@16.6.1: {}
+
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -6496,8 +6498,9 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  itchio-downloader@0.8.1(patch_hash=ee07306e2551b24ad976a64568111639325dffb1cce5795e693e9c72e9c7b9c6)(typescript@5.8.3):
+  itchio-downloader@https://codeload.github.com/Wal33D/itchio-downloader/tar.gz/46491e68c8bca0a872d19aa91127f9305bfd7a2e(typescript@5.8.3):
     dependencies:
+      dotenv: 16.6.1
       puppeteer: 24.11.2(typescript@5.8.3)
       yargs: 18.0.0
     transitivePeerDependencies:
