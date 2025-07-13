@@ -52,10 +52,6 @@ export function Footer() {
                     if (window.electronAPI) {
                       e.preventDefault();
                       window.electronAPI.openExternal(url);
-                    } else {
-                      // Fallback for browser builds
-                      e.preventDefault();
-                      window.open(url, '_blank', 'noopener');
                     }
                   }}
                   className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
