@@ -47,9 +47,9 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col overflow-y-auto">
-      <div className="container mx-auto p-6 flex-1 min-h-0">
-        <div className="max-w-4xl mx-auto">
+    <div className="h-full flex flex-col overflow-y-auto relative">
+      <div className="w-full">
+        <div className="container mx-auto px-4 py-6">
           {/* Header Section */}
           <div className="mb-8 flex justify-center">
             <div className="flex items-center gap-4 mb-4">
@@ -59,74 +59,76 @@ const FAQ = () => {
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Frequently Asked Questions</h1>
                 <p className="text-muted-foreground">
-                  Find answers to the most common questions about Manic Miners. If you can't find what you're looking for, feel free to ask on our Discord server!
+                  Find answers to the most common questions about Manic Miners
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Launcher Info */}
-          <Card className="mining-surface mb-6">
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">
-                <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience 
-                in homage to Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - 
-                feel free to contribute on{' '}
-                <Button 
-                  variant="link" 
-                  className="p-0 h-auto text-muted-foreground underline"
-                  onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
-                >
-                  GitHub
-                </Button>!
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Discord Button */}
-          <div className="mb-8 flex justify-center">
-            <Button 
-              variant="outline" 
-              onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Join Discord
-            </Button>
-          </div>
-
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="mining-surface">
-                <CardHeader>
-                  <CardTitle className="text-primary">{faq.question}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-muted-foreground whitespace-pre-line">
-                    {faq.answer}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Card className="mining-surface">
-              <CardHeader>
-                <CardTitle className="text-primary">Still have questions?</CardTitle>
-                <CardDescription>
-                  Join our Discord community to get help from other players and the developer!
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
-                  className="w-full"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Join Discord Community
-                </Button>
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Launcher Info */}
+            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground">
+                  <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience 
+                  in homage to Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - 
+                  feel free to contribute on{' '}
+                  <Button 
+                    variant="link" 
+                    className="p-0 h-auto text-muted-foreground underline"
+                    onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
+                  >
+                    GitHub
+                  </Button>!
+                </p>
               </CardContent>
             </Card>
+
+            {/* Discord Button */}
+            <div className="mb-8 flex justify-center">
+              <Button 
+                variant="outline" 
+                onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Join Discord
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              {faqs.map((faq, index) => (
+                <Card key={index} className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+                  <CardHeader className="border-b border-border/50 pb-4">
+                    <CardTitle className="text-lg text-primary">{faq.question}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="text-muted-foreground whitespace-pre-line">
+                      {faq.answer}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="mt-8 text-center">
+              <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+                <CardHeader className="border-b border-border/50 pb-4">
+                  <CardTitle className="text-lg text-primary">Still have questions?</CardTitle>
+                  <CardDescription>
+                    Join our Discord community to get help from other players and the developer!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <Button 
+                    onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+                    className="w-full"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Join Discord Community
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

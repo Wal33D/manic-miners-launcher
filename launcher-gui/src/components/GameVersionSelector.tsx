@@ -356,8 +356,34 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
             </CardContent>
           </Card>
 
-          {/* Details and Actions Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Mobile Layout: Actions after Version Selection */}
+          <div className="xl:hidden">
+            <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+              <CardHeader className="border-b border-border/50 pb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg text-primary">Actions</CardTitle>
+                    <CardDescription>Install, launch, or manage</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <VersionActions
+                  version={selectedVersionData}
+                  isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
+                  onInstallOrLaunch={handleInstallOrLaunch}
+                  onDelete={handleDelete}
+                  onRepair={handleRepair}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Desktop Layout: Details and Actions Grid */}
+          <div className="hidden xl:grid xl:grid-cols-3 gap-6">
             {/* Version Details Card - Takes 2 columns on xl screens */}
             {selectedVersionData && (
               <Card className="mining-surface border-primary/20 shadow-lg xl:col-span-2 overflow-hidden">
@@ -401,6 +427,28 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
                 />
               </CardContent>
             </Card>
+          </div>
+
+          {/* Mobile Layout: Version Details */}
+          <div className="xl:hidden">
+            {selectedVersionData && (
+              <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
+                <CardHeader className="border-b border-border/50 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-primary">Version Details</CardTitle>
+                      <CardDescription>Information about {selectedVersionData.displayName}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <VersionDetails version={selectedVersionData} />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
