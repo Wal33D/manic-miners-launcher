@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 
 export interface NotificationData {
   id: string;
-  type: 'download' | 'verify' | 'reinstall' | 'delete';
+  type: 'download' | 'verify' | 'repair' | 'delete';
   title: string;
   fileName?: string;
   fileSize?: string;
@@ -31,7 +31,7 @@ export function GameNotifications({ notifications, onDismiss }: GameNotification
       case 'verify':
         if (progress >= 100) return <CheckCircle className="w-5 h-5 text-primary" />;
         return <Shield className="w-5 h-5 text-primary animate-pulse" />;
-      case 'reinstall':
+      case 'repair':
         if (progress >= 100) return <CheckCircle className="w-5 h-5 text-primary" />;
         return <RotateCcw className="w-5 h-5 text-primary animate-spin" />;
       case 'delete':

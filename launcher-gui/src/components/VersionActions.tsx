@@ -28,17 +28,10 @@ interface VersionActionsProps {
   onInstallOrLaunch: () => void;
   onVerify: () => void;
   onDelete: () => void;
-  onReinstall: () => void;
+  onRepair: () => void;
 }
 
-export function VersionActions({ 
-  version, 
-  isInstalled, 
-  onInstallOrLaunch, 
-  onVerify, 
-  onDelete, 
-  onReinstall 
-}: VersionActionsProps) {
+export function VersionActions({ version, isInstalled, onInstallOrLaunch, onVerify, onDelete, onRepair }: VersionActionsProps) {
   if (!version) return null;
 
   return (
@@ -69,9 +62,9 @@ export function VersionActions({
               <Shield className="w-4 h-4" />
               Verify Files
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onReinstall} className="flex items-center gap-2">
+            <DropdownMenuItem onClick={onRepair} className="flex items-center gap-2">
               <RotateCcw className="w-4 h-4" />
-              Reinstall
+              Repair
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onDelete} className="flex items-center gap-2 text-destructive">
               <Trash2 className="w-4 h-4" />
