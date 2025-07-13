@@ -21,11 +21,6 @@ app.commandLine.appendSwitch('disable-features', 'Autofill');
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
 
-app.setName('Manic Miners Launcher');
-if (process.platform === 'win32') {
-  app.setAppUserModelId('com.manicminers.launcher');
-}
-
 const startApp = (): void => {
   app.on('ready', async () => {
     setupDirectoryHandler();
