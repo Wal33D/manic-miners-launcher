@@ -34,10 +34,16 @@ export const createWindow = (): void => {
     mainWindow.loadFile(indexPath, { hash: '/' });
   }
 
-  // Suppress DevTools autofill-related console errors
+  // Suppress DevTools autofill-related and GPU console errors
   mainWindow.webContents.on('console-message', (event, level, message) => {
     // Filter out autofill-related DevTools protocol errors
-    if (message.includes('Autofill.enable') || message.includes('Autofill.setAddresses') || message.includes("wasn't found")) {
+    if (message.includes('Autofill.enable') || 
+        message.includes('Autofill.setAddresses') || 
+        message.includes("wasn't found") ||
+        // Filter out GPU SharedImageManager errors during navigation
+        message.includes('SharedImageManager::ProduceMemory') ||
+        message.includes('non-existent mailbox') ||
+        message.includes('gpu/command_buffer/service')) {
       event.preventDefault();
     }
   });
