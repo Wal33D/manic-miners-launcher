@@ -17,16 +17,17 @@ class MockElectronAPI extends EventEmitter {
     }
   }
 
-  receive(channel: string, callback: Function) {
+  receive(channel: string, callback: (...args: any[]) => void) {
     this.on(channel, callback);
   }
 
-  removeAllListeners(channel?: string) {
+  removeAllListeners(channel?: string): this {
     if (channel) {
       super.removeAllListeners(channel);
     } else {
       super.removeAllListeners();
     }
+    return this;
   }
 
   // Test helpers to simulate backend responses

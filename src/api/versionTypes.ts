@@ -1,23 +1,25 @@
 export interface Version {
   directory: string | null;
-  gameId: number;
+  gameId?: number;
   title: string;
   displayName: string;
   experimental: boolean;
-  latest: boolean;
+  latest?: boolean;
   identifier: string;
   version: string;
   releaseDate: string;
-  filename: string;
-  type: string;
-  md5Hash: string;
+  filename?: string;
+  type?: string;
+  md5Hash?: string;
   size: string;
   sizeInBytes: number;
-  downloadUrl: string;
-  coverImage: string;
-  thumbnailUrl: string;
-  detailsUrl: string;
+  downloadUrl?: string;
+  coverImage?: string;
+  thumbnailUrl?: string;
+  detailsUrl?: string;
   description: string;
+  executablePath?: string;
+  installationSize?: number;
 }
 export type VersionSelectionType = 'all' | 'latest' | 'past' | 'experimental' | 'archived';
 

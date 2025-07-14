@@ -9,9 +9,10 @@ import { logger } from '../utils/logger';
 class MockIpcMain extends EventEmitter {
   private handlers: Map<string, Function> = new Map();
 
-  on(channel: string, handler: Function) {
+  on(channel: string, handler: (...args: any[]) => void): this {
     this.handlers.set(channel, handler);
     super.on(channel, handler);
+    return this;
   }
 
   removeAllListeners(channel?: string) {
@@ -504,7 +505,7 @@ describe('IPC Handlers Integration Tests', () => {
       ipcMain.on('request-latest-version-information', async (event) => {
         try {
           const items = await fs.readdir(testDir);
-          const versions = items.filter(item => item === 'latest').map(() => null).filter(Boolean);
+          const versions = items.filter(item => item === 'latest').map((): null => null).filter(Boolean);
           
           event.sender.send('request-latest-version-information', {
             versions

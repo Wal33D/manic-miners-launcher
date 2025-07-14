@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { app } from 'electron';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -27,7 +26,16 @@ class Logger {
 
   constructor() {
     // Create logs directory in user data path
-    const userDataPath = app.getPath('userData');
+    let userDataPath: string;
+    try {
+      // Try to use electron app.getPath, fallback to temp directory for tests
+      const { app } = require('electron');
+      userDataPath = app.getPath('userData');
+    } catch (error) {
+      // In test environment, use a temp directory
+      userDataPath = path.join(process.cwd(), 'temp', 'test-logs');
+    }
+    
     const logsDir = path.join(userDataPath, 'logs');
     this.logPath = path.join(logsDir, 'manic-miners-launcher.log');
     
@@ -89,11 +97,11 @@ class Logger {
     
     this.isWriting = true;
     
+    const entriesToWrite = [...this.logQueue];
+    this.logQueue = [];
+    
     try {
       await this.rotateLogFile();
-      
-      const entriesToWrite = [...this.logQueue];
-      this.logQueue = [];
       
       const logContent = entriesToWrite.map(entry => this.formatLogEntry(entry)).join('');
       await fs.appendFile(this.logPath, logContent);
