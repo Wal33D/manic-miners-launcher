@@ -87,7 +87,38 @@ export async function verifyAndRepairInstallation({
     await fs.mkdir(referenceDir, { recursive: true });
 
     const zip = new StreamZip.async({ file: actualZipPath });
-    await zip.extract(null, referenceDir);
+    
+    // Extract with detailed progress
+    const entries = await zip.entries();
+    const entryArray = Object.values(entries);
+    const totalExtractFiles = entryArray.length;
+    let extractedFiles = 0;
+
+    onProgress({ status: `Extracting ${totalExtractFiles} reference files...`, progress: 45 });
+
+    for (const entry of entryArray) {
+      const progress = 45 + Math.floor((extractedFiles / totalExtractFiles) * 3); // 45-48% range
+      
+      if (entry.isDirectory) {
+        await zip.extract(entry.name, referenceDir);
+        onProgress({ 
+          status: `Created reference directory: ${path.basename(entry.name)}`, 
+          progress 
+        });
+      } else {
+        await zip.extract(entry.name, referenceDir);
+        onProgress({ 
+          status: `Extracted reference: ${path.basename(entry.name)}`, 
+          progress 
+        });
+      }
+      
+      extractedFiles++;
+      
+      // Small delay to make progress visible
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    
     await zip.close();
 
     // Flatten single subdirectory if needed
@@ -168,13 +199,20 @@ export async function verifyAndRepairInstallation({
     // Step 5: Repair files if needed
     if (repairsNeeded > 0) {
       let filesRepaired = 0;
+      
+      onProgress({
+        status: `Starting repair of ${repairsNeeded} files...`,
+        progress: 80,
+        repairsNeeded,
+      });
+      
       for (const result of verificationResults) {
         if (result.needsRepair) {
           const sourceFile = path.join(referenceDir, result.path);
           const targetFile = path.join(installPath, result.path);
 
           onProgress({
-            status: `Repairing: ${result.path}`,
+            status: `Repairing: ${path.basename(result.path)}`,
             progress: 80 + Math.floor((filesRepaired / repairsNeeded) * 15),
             repairsNeeded,
             currentFile: result.path,
@@ -186,8 +224,17 @@ export async function verifyAndRepairInstallation({
           // Copy the correct file
           await fs.copyFile(sourceFile, targetFile);
           filesRepaired++;
+          
+          // Small delay to make progress visible
+          await new Promise(resolve => setTimeout(resolve, 20));
         }
       }
+      
+      onProgress({
+        status: `Completed repair of ${repairsNeeded} files`,
+        progress: 95,
+        repairsNeeded,
+      });
     }
 
     // Step 6: Cleanup

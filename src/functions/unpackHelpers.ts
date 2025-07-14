@@ -41,6 +41,10 @@ export async function extractZipEntries({
 
     if (entry.isDirectory) {
       await fs.promises.mkdir(fullPath, { recursive: true });
+      if (updateStatus) {
+        const progress = progressStart + (extractedFiles / totalFiles) * progressSpan;
+        updateStatus({ status: `Created directory: ${path.basename(entry.name)}`, progress });
+      }
     } else {
       const dirPath = path.dirname(fullPath);
       try {
@@ -49,12 +53,17 @@ export async function extractZipEntries({
         await fs.promises.mkdir(dirPath, { recursive: true });
       }
       await zip.extract(entry.name, fullPath);
+      if (updateStatus) {
+        const progress = progressStart + (extractedFiles / totalFiles) * progressSpan;
+        updateStatus({ status: `Extracted: ${path.basename(entry.name)}`, progress });
+      }
     }
 
     extractedFiles++;
+    
+    // Small delay to make progress visible
     if (updateStatus) {
-      const progress = progressStart + (extractedFiles / totalFiles) * progressSpan;
-      updateStatus({ status: 'Extracting files...', progress });
+      await new Promise(resolve => setTimeout(resolve, 10));
     }
   }
 }
