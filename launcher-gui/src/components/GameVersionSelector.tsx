@@ -375,7 +375,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
                 onInstallOrLaunch={handleInstallOrLaunch}
                 onDelete={handleDelete}
                 onRepair={handleRepair}
-                isProcessing={isDownloading}
               />
             </CardContent>
           </Card>
@@ -423,7 +422,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
                 onInstallOrLaunch={handleInstallOrLaunch}
                 onDelete={handleDelete}
                 onRepair={handleRepair}
-                isProcessing={isDownloading}
               />
             </CardContent>
           </Card>
