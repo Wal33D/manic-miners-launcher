@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { getDirectories } from '../../functions/fetchDirectories';
 import { verifyAndRepairInstallation } from '../../functions/verifyAndRepairInstallation';
 import { withIpcHandler } from './withIpcHandler';
+import { IPC_CHANNELS } from './ipcChannels';
 import path from 'path';
 import fs from 'fs/promises';
 import { logger } from '../../utils/logger';
@@ -12,8 +13,8 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
 
   try {
     ipcMain.on(
-      'verify-and-repair-installation',
-      withIpcHandler('verify-and-repair-installation', async (event, { version }) => {
+      IPC_CHANNELS.VERIFY_AND_REPAIR_INSTALLATION,
+      withIpcHandler(IPC_CHANNELS.VERIFY_AND_REPAIR_INSTALLATION, async (event, { version }) => {
         const { directories } = await getDirectories();
         const installDir = directories.launcherInstallPath;
         const cacheDir = directories.launcherCachePath;

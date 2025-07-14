@@ -14,8 +14,8 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
   try {
     ipcMain.on(
-      'download-latest-version',
-      withIpcHandler('download-latest-version', async (event, { version, forceDownload = false }) => {
+      IPC_CHANNELS.DOWNLOAD_LATEST_VERSION,
+      withIpcHandler(IPC_CHANNELS.DOWNLOAD_LATEST_VERSION, async (event, { version, forceDownload = false }) => {
         logger.downloadLog('Starting latest version download', { version, forceDownload });
 
         const { directories } = await getDirectories();

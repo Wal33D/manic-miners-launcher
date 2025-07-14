@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { logger } from '../../utils/logger';
+import { IPC_CHANNELS } from './ipcChannels';
 
 interface FrontendLogData {
   category: string;
@@ -11,7 +12,7 @@ interface FrontendLogData {
 
 export const setupLoggingHandler = (): void => {
   // Handle frontend log messages
-  ipcMain.on('frontend-log', (event, logData: FrontendLogData) => {
+  ipcMain.on(IPC_CHANNELS.FRONTEND_LOG, (event, logData: FrontendLogData) => {
     const { category, message, data, level } = logData;
 
     // Add FRONTEND prefix to distinguish from backend logs
