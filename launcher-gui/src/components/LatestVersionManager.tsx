@@ -5,50 +5,79 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Play, Download, RotateCcw, Check } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
+import { Version } from '@/api/versionTypes';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
 }
 
 export function LatestVersionManager({ onNotificationUpdate }: LatestVersionManagerProps) {
+  const [latestVersion, setLatestVersion] = useState<Version | null>(null);
+  const [installPath, setInstallPath] = useState('');
   const [isInstalled, setIsInstalled] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
 
-  // Mock data for latest version
-  const latestVersion = {
-    version: '1.0.4',
-    title: 'ManicMiners',
-    displayName: 'ManicMiners v1.0.4',
-    releaseDate: '2024-07-13',
-    size: '582.3 MB',
-    sizeInBytes: 610871296,
-    description: 'Latest stable release with bug fixes and performance improvements.',
-    experimental: false,
-  };
-
   useEffect(() => {
-    // Check if latest version is installed (mock check)
-    const checkInstallStatus = () => {
+    const fetchLatest = async () => {
       if (window.electronAPI) {
-        // In Electron environment
-        window.electronAPI.send('get-directory-info');
-        window.electronAPI.receive('directory-info', (directoryInfo: any) => {
-          if (directoryInfo.versions) {
-            setIsInstalled(directoryInfo.versions.includes(latestVersion.version));
+        window.electronAPI.send('get-directories');
+        window.electronAPI.receiveOnce('get-directories', dirResult => {
+          if (dirResult?.status) {
+            setInstallPath(dirResult.directories.launcherInstallPath);
+          }
+        });
+
+        window.electronAPI.send('request-version-information');
+        window.electronAPI.receiveOnce('request-version-information', data => {
+          if (data?.versions?.length) {
+            const sorted = data.versions.sort((a: Version, b: Version) => {
+              const parse = (v: string) => v.split('.').map(n => parseInt(n, 10));
+              const aParts = parse(a.version);
+              const bParts = parse(b.version);
+              for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                const numA = aParts[i] || 0;
+                const numB = bParts[i] || 0;
+                if (numA !== numB) return numB - numA;
+              }
+              return 0;
+            });
+            const latest = sorted[0];
+            setLatestVersion(latest);
+            setIsInstalled(!!latest.directory);
           }
         });
       } else {
-        // In web preview, randomly set as installed or not
-        setIsInstalled(Math.random() > 0.5);
+        try {
+          const resp = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
+          const json = await resp.json();
+          if (json?.versions?.length) {
+            const sorted = json.versions.sort((a: Version, b: Version) => {
+              const parse = (v: string) => v.split('.').map((n: string) => parseInt(n, 10));
+              const aParts = parse(a.version);
+              const bParts = parse(b.version);
+              for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                const numA = aParts[i] || 0;
+                const numB = bParts[i] || 0;
+                if (numA !== numB) return numB - numA;
+              }
+              return 0;
+            });
+            setLatestVersion(sorted[0]);
+            setIsInstalled(false);
+          }
+        } catch {
+          // ignore fetch errors in preview mode
+        }
       }
     };
 
-    checkInstallStatus();
+    fetchLatest();
   }, []);
 
   useEffect(() => {
+    if (!latestVersion) return;
     if (isDownloading && downloadProgress > 0) {
       const notifications: NotificationData[] = [
         {
@@ -68,53 +97,69 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     } else if (!isDownloading) {
       onNotificationUpdate([]);
     }
-  }, [isDownloading, downloadProgress, onNotificationUpdate]);
+  }, [isDownloading, downloadProgress, latestVersion, onNotificationUpdate]);
 
   const handleInstall = async () => {
-    setIsDownloading(true);
-    setDownloadProgress(0);
-
-    // Simulate download progress
-    const interval = setInterval(() => {
-      setDownloadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          setIsInstalled(true);
-          return 100;
-        }
-        return prev + Math.random() * 5;
-      });
-    }, 200);
-
+    if (!latestVersion) return;
     if (window.electronAPI) {
-      // In Electron environment, trigger actual download
+      setIsDownloading(true);
+      setDownloadProgress(0);
+
       window.electronAPI.send('download-version', {
-        version: latestVersion.version,
-        downloadUrl: `https://example.com/download/${latestVersion.version}`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        size: latestVersion.sizeInBytes,
+        version: latestVersion.identifier,
+        downloadPath: installPath,
       });
+
+      window.electronAPI.receive('download-progress', status => {
+        if (status.progress !== undefined) setDownloadProgress(status.progress);
+      });
+
+      window.electronAPI.receiveOnce('download-version', result => {
+        setIsDownloading(false);
+        if (result?.downloaded) {
+          setIsInstalled(true);
+        }
+      });
+    } else {
+      // Web preview simulation
+      setIsDownloading(true);
+      const interval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsDownloading(false);
+            setIsInstalled(true);
+            return 100;
+          }
+          return prev + Math.random() * 5;
+        });
+      }, 200);
     }
   };
 
   const handleLaunch = async () => {
+    if (!latestVersion) return;
     setIsLaunching(true);
 
     if (window.electronAPI) {
-      window.electronAPI.send('launch-version', latestVersion.version);
+      window.electronAPI.send('launch-game', latestVersion.identifier);
+      window.electronAPI.receiveOnce('launch-game', () => {
+        setIsLaunching(false);
+      });
+    } else {
+      setTimeout(() => {
+        setIsLaunching(false);
+      }, 2000);
     }
-
-    // Simulate launch delay
-    setTimeout(() => {
-      setIsLaunching(false);
-    }, 2000);
   };
 
   const handleUpdate = async () => {
-    // For now, just re-install
     await handleInstall();
   };
+
+  if (!latestVersion) {
+    return null;
+  }
 
   return (
     <Card className="w-full">
