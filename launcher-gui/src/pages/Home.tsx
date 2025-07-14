@@ -23,25 +23,19 @@ interface HomeProps {
 }
 
 const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
-
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      
       {/* Hero Section */}
-      <div 
+      <div
         className="relative h-80 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${backgroundImage}')` 
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${backgroundImage}')`,
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white space-y-4 px-6">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <img 
-                src={logoImage} 
-                alt="Manic Miners Logo" 
-                className="h-16 w-auto"
-              />
+              <img src={logoImage} alt="Manic Miners Logo" className="h-16 w-auto" />
               <div>
                 <h1 className="text-4xl font-bold">Manic Miners</h1>
                 <Badge variant="secondary" className="mt-1">
@@ -51,8 +45,8 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
               </div>
             </div>
             <p className="text-xl text-gray-200 max-w-2xl">
-              A free Rock Raiders remake after 20 years! Experience the classic LEGO mining adventure 
-              rebuilt with modern graphics, enhanced AI, and extensive customization.
+              A free Rock Raiders remake after 20 years! Experience the classic LEGO mining adventure rebuilt with modern graphics, enhanced
+              AI, and extensive customization.
             </p>
             <div className="flex items-center justify-center gap-6 text-sm text-gray-300">
               <div className="flex items-center gap-1">
@@ -147,7 +141,7 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
             <div className="lg:col-span-5 space-y-6">
               <GameTrailer />
               <NewsPanel />
-              
+
               {/* Legal Disclaimer */}
               <Card>
                 <CardHeader>
@@ -159,8 +153,9 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm leading-relaxed">
-                    <strong>DISCLAIMER:</strong> This project and site are in no way officially supported, endorsed, or recognized by The LEGO Group. 
-                    Manic Miners is a fan-made tribute to the original LEGO Rock Raiders game and is developed independently by the community.
+                    <strong>DISCLAIMER:</strong> This project and site are in no way officially supported, endorsed, or recognized by The
+                    LEGO Group. Manic Miners is a fan-made tribute to the original LEGO Rock Raiders game and is developed independently by
+                    the community.
                   </p>
                 </CardContent>
               </Card>

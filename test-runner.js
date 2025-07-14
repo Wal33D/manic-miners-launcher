@@ -6,11 +6,7 @@ const path = require('path');
 console.log('🧪 Running Manic Miners Launcher Test Suite');
 console.log('============================================\n');
 
-const testFiles = [
-  'src/tests/installDetection.test.ts',
-  'src/tests/latestVersionOperations.test.ts',
-  'src/tests/ipcHandlers.test.ts'
-];
+const testFiles = ['src/tests/installDetection.test.ts', 'src/tests/latestVersionOperations.test.ts', 'src/tests/ipcHandlers.test.ts'];
 
 console.log('📋 Test Files:');
 testFiles.forEach((file, index) => {

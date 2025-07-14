@@ -2,15 +2,19 @@ export const IPC_CHANNELS = {
   LAUNCH_GAME: 'launch-game',
   VERSIONS_UPDATED: 'versions-updated',
   ALL_VERSION_INFO: 'request-version-information',
-  
+
   // Archived versions (Internet Archive only)
   ARCHIVED_VERSIONS_INFO: 'request-archived-versions-information',
   SET_SELECTED_ARCHIVED_VERSION: 'set-selected-archived-version',
   GET_SELECTED_ARCHIVED_VERSION: 'get-selected-archived-version',
-  
+
   // Latest version (itch.io only)
   LATEST_VERSION_INFO: 'request-latest-version-information',
-  
+
+  // Legacy channels for backward compatibility
+  SET_SELECTED_VERSION: 'set-selected-version',
+  GET_SELECTED_VERSION: 'get-selected-version',
+
   CHECK_VERSION_INSTALLED: 'check-version-installed',
   SELECT_INSTALL_DIRECTORY: 'select-install-directory',
   DOWNLOAD_VERSION: 'download-version',
@@ -32,6 +36,13 @@ export const IPC_CHANNELS = {
   UPDATE_LATEST_VERSION: 'update-latest-version',
   UPDATE_PROGRESS: 'update-progress',
   UPDATE_ERROR: 'update-error',
+  DOWNLOAD_LATEST_PROGRESS: 'download-latest-progress',
+  VERIFY_REPAIR_PROGRESS: 'verify-repair-progress',
+  DELETE_LATEST_PROGRESS: 'delete-latest-progress',
   CREATE_SHORTCUTS: 'create-shortcuts',
   CREATE_SHORTCUTS_PROGRESS: 'create-shortcuts-progress',
+  OPEN_EXTERNAL_URL: 'OPEN_EXTERNAL_URL',
+  DOWNLOAD_LATEST_VERSION: 'download-latest-version',
+  VERIFY_AND_REPAIR_INSTALLATION: 'verify-and-repair-installation',
+  FRONTEND_LOG: 'frontend-log',
 } as const;

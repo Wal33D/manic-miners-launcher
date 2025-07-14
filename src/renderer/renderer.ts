@@ -2,4 +2,4 @@
 import '/assets/index.css';
 import '/assets/index.js';
 
-console.log('New GUI assets loaded');
+// New GUI assets loaded - no logging needed in renderer

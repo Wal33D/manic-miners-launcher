@@ -12,6 +12,7 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.ARCHIVED_VERSIONS_INFO,
   IPC_CHANNELS.LATEST_VERSION_INFO,
   IPC_CHANNELS.SET_SELECTED_VERSION,
+  IPC_CHANNELS.GET_SELECTED_VERSION,
   IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION,
   IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION,
   IPC_CHANNELS.GET_URLS,
@@ -23,12 +24,13 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
-  'OPEN_EXTERNAL_URL', // Add new channel for opening external URLs
-  'download-latest-version', // Add new channel for itch.io downloads
-  'verify-and-repair-installation', // Add new channel for verification and repair
-  'delete-latest-version', // Add new channel for deleting latest version
-  'update-latest-version', // Add new channel for updating latest version
+  IPC_CHANNELS.OPEN_EXTERNAL_URL, // Add new channel for opening external URLs
+  IPC_CHANNELS.DOWNLOAD_LATEST_VERSION, // Add new channel for itch.io downloads
+  IPC_CHANNELS.VERIFY_AND_REPAIR_INSTALLATION, // Add new channel for verification and repair
+  IPC_CHANNELS.DELETE_LATEST_VERSION, // Add new channel for deleting latest version
+  IPC_CHANNELS.UPDATE_LATEST_VERSION, // Add new channel for updating latest version
   IPC_CHANNELS.CREATE_SHORTCUTS, // Add new channel for creating shortcuts
+  IPC_CHANNELS.FRONTEND_LOG, // Add new channel for frontend logging
 ];
 
 const validReceiveChannels: IpcChannel[] = [
@@ -40,6 +42,7 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.ALL_VERSION_INFO,
   IPC_CHANNELS.ARCHIVED_VERSIONS_INFO,
   IPC_CHANNELS.LATEST_VERSION_INFO,
+  IPC_CHANNELS.GET_SELECTED_VERSION,
   IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION,
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.DIRECTORY_SELECTED,
@@ -48,12 +51,12 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
-  'download-latest-progress', // Add new channel for itch.io download progress
-  'verify-repair-progress', // Add new channel for verification progress
-  'delete-latest-progress', // Add new channel for uninstall progress
-  'update-progress', // Add new channel for update progress
-  'update-error', // Add new channel for update errors
-  'versions-updated', // Add channel for version updates
+  IPC_CHANNELS.DOWNLOAD_LATEST_PROGRESS, // Add new channel for itch.io download progress
+  IPC_CHANNELS.VERIFY_REPAIR_PROGRESS, // Add new channel for verification progress
+  IPC_CHANNELS.DELETE_LATEST_PROGRESS, // Add new channel for uninstall progress
+  IPC_CHANNELS.UPDATE_PROGRESS, // Add new channel for update progress
+  IPC_CHANNELS.UPDATE_ERROR, // Add new channel for update errors
+  IPC_CHANNELS.VERSIONS_UPDATED, // Add channel for version updates
   IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, // Add new channel for shortcut creation progress
 ];
 
@@ -79,10 +82,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
   openExternal: (url: string) => {
-    console.log('preload openExternal called with:', url);
-    console.log('Using IPC to main process for external URL');
+    // Opening external URL via IPC to main process
     // Always use IPC since shell is not available in preload context
-    ipcRenderer.send('OPEN_EXTERNAL_URL', url);
+    ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL_URL, url);
   },
   platform: process.platform,
 });

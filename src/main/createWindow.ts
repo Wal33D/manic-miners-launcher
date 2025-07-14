@@ -37,9 +37,7 @@ export const createWindow = (): void => {
   // Suppress DevTools autofill-related console errors
   mainWindow.webContents.on('console-message', (event, level, message) => {
     // Filter out autofill-related DevTools protocol errors
-    if (message.includes('Autofill.enable') || 
-        message.includes('Autofill.setAddresses') ||
-        message.includes("wasn't found")) {
+    if (message.includes('Autofill.enable') || message.includes('Autofill.setAddresses') || message.includes("wasn't found")) {
       event.preventDefault();
     }
   });

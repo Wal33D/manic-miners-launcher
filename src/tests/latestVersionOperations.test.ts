@@ -8,7 +8,7 @@ import { logger } from '../utils/logger';
 // Mock electron IPC for testing
 class MockElectronAPI extends EventEmitter {
   private handlers: Map<string, Function> = new Map();
-  
+
   send(channel: string, ...args: any[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
@@ -58,17 +58,17 @@ describe('Latest Version Operations Tests', () => {
     // Create a temporary test directory
     testDir = path.join(process.cwd(), 'test-latest-operations');
     await fs.mkdir(testDir, { recursive: true });
-    
+
     // Set environment variable to use test directory
     originalEnv = process.env.MANIC_MINERS_INSTALL_PATH;
     process.env.MANIC_MINERS_INSTALL_PATH = testDir;
-    
+
     // Setup mock electron API
     mockAPI = new MockElectronAPI();
     (global as any).window = {
-      electronAPI: mockAPI
+      electronAPI: mockAPI,
     };
-    
+
     await logger.clearLogs();
   });
 
@@ -79,7 +79,7 @@ describe('Latest Version Operations Tests', () => {
     } catch (error) {
       // Ignore cleanup errors
     }
-    
+
     // Restore environment
     if (originalEnv) {
       process.env.MANIC_MINERS_INSTALL_PATH = originalEnv;
@@ -94,17 +94,17 @@ describe('Latest Version Operations Tests', () => {
   describe('Install Operation Tests', () => {
     it('should successfully install latest version', async () => {
       const latestDir = path.join(testDir, 'latest');
-      
+
       // Simulate install process
       mockAPI.setHandler('download-latest-version', async (options: any) => {
         expect(options.version).to.equal('latest');
-        
+
         // Create the installation directory and files
         await fs.mkdir(latestDir, { recursive: true });
         await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'fake game executable');
         await fs.writeFile(path.join(latestDir, 'game.dat'), 'fake game data');
         await fs.writeFile(path.join(latestDir, 'config.ini'), 'fake config file');
-        
+
         // Simulate progress updates
         mockAPI.simulateProgress('download-latest-progress', 25, 'Downloading from itch.io...');
         mockAPI.simulateProgress('download-latest-progress', 50, 'Download complete, extracting...');
@@ -128,10 +128,11 @@ describe('Latest Version Operations Tests', () => {
       });
 
       // Verify installation
-      const exeExists = await fs.access(path.join(latestDir, 'ManicMiners.exe'))
+      const exeExists = await fs
+        .access(path.join(latestDir, 'ManicMiners.exe'))
         .then(() => true)
         .catch(() => false);
-      
+
       expect(exeExists).to.be.true;
       expect(progressUpdates.length).to.be.greaterThan(0);
       expect(progressUpdates[progressUpdates.length - 1].progress).to.equal(100);
@@ -178,9 +179,7 @@ describe('Latest Version Operations Tests', () => {
 
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      expect(progressUpdates.some(update => 
-        update.status.includes('already installed')
-      )).to.be.true;
+      expect(progressUpdates.some(update => update.status.includes('already installed'))).to.be.true;
     });
   });
 
@@ -196,7 +195,7 @@ describe('Latest Version Operations Tests', () => {
     it('should successfully verify installation', async () => {
       mockAPI.setHandler('verify-and-repair-installation', async (options: any) => {
         expect(options.version).to.equal('latest');
-        
+
         // Simulate verification process
         mockAPI.simulateProgress('verify-repair-progress', 20, 'Scanning installation files...');
         mockAPI.simulateProgress('verify-repair-progress', 50, 'Verifying file integrity...');
@@ -227,10 +226,10 @@ describe('Latest Version Operations Tests', () => {
         // Simulate repair process
         mockAPI.simulateProgress('verify-repair-progress', 10, 'Scanning installation files...');
         mockAPI.simulateProgress('verify-repair-progress', 30, 'Found missing files, downloading...');
-        
+
         // Recreate the missing file
         await fs.writeFile(path.join(testDir, 'latest', 'game.dat'), 'repaired game data');
-        
+
         mockAPI.simulateProgress('verify-repair-progress', 70, 'Repairing files...');
         mockAPI.simulateCompletion('verify-repair-progress');
       });
@@ -249,10 +248,8 @@ describe('Latest Version Operations Tests', () => {
       // Verify file was repaired
       const repairedFile = await fs.readFile(path.join(testDir, 'latest', 'game.dat'), 'utf-8');
       expect(repairedFile).to.equal('repaired game data');
-      
-      expect(progressUpdates.some(update => 
-        update.status.includes('missing files')
-      )).to.be.true;
+
+      expect(progressUpdates.some(update => update.status.includes('missing files'))).to.be.true;
     });
 
     it('should handle verification errors', async () => {
@@ -281,7 +278,7 @@ describe('Latest Version Operations Tests', () => {
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'game executable');
       await fs.writeFile(path.join(latestDir, 'game.dat'), 'large game data file'.repeat(1000));
       await fs.writeFile(path.join(latestDir, 'config.ini'), 'config data');
-      
+
       // Create subdirectory with files
       const assetsDir = path.join(latestDir, 'assets');
       await fs.mkdir(assetsDir);
@@ -294,7 +291,7 @@ describe('Latest Version Operations Tests', () => {
 
       mockAPI.setHandler('delete-latest-version', async (options: any) => {
         expect(options.version).to.equal('latest');
-        
+
         // Simulate deletion process with file-by-file progress
         mockAPI.simulateProgress('delete-latest-progress', 5, 'Scanning latest installation...');
         mockAPI.simulateProgress('delete-latest-progress', 15, 'Removing 5 files from latest...');
@@ -302,10 +299,10 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateProgress('delete-latest-progress', 60, 'Deleted: game.dat');
         mockAPI.simulateProgress('delete-latest-progress', 80, 'Deleted: texture.png');
         mockAPI.simulateProgress('delete-latest-progress', 95, 'Removed latest directory');
-        
+
         // Actually remove the directory
         await fs.rm(latestDir, { recursive: true });
-        
+
         mockAPI.simulateCompletion('delete-latest-progress');
       });
 
@@ -321,21 +318,18 @@ describe('Latest Version Operations Tests', () => {
       });
 
       // Verify directory is gone
-      const dirExists = await fs.access(latestDir)
+      const dirExists = await fs
+        .access(latestDir)
         .then(() => true)
         .catch(() => false);
-      
+
       expect(dirExists).to.be.false;
       expect(progressUpdates.length).to.be.greaterThan(0);
       expect(progressUpdates[progressUpdates.length - 1].progress).to.equal(100);
-      
+
       // Verify progress messages
-      expect(progressUpdates.some(update => 
-        update.status.includes('Scanning')
-      )).to.be.true;
-      expect(progressUpdates.some(update => 
-        update.status.includes('Deleted:')
-      )).to.be.true;
+      expect(progressUpdates.some(update => update.status.includes('Scanning'))).to.be.true;
+      expect(progressUpdates.some(update => update.status.includes('Deleted:'))).to.be.true;
     });
 
     it('should handle uninstall when no installation exists', async () => {
@@ -355,9 +349,7 @@ describe('Latest Version Operations Tests', () => {
 
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      expect(progressUpdates.some(update => 
-        update.status.includes('No installation found')
-      )).to.be.true;
+      expect(progressUpdates.some(update => update.status.includes('No installation found'))).to.be.true;
     });
 
     it('should handle partial uninstall failures', async () => {
@@ -395,18 +387,18 @@ describe('Latest Version Operations Tests', () => {
 
       mockAPI.setHandler('update-latest-version', async (options: any) => {
         expect(options.version).to.equal('latest');
-        
+
         // Simulate update process (remove old, download new)
         mockAPI.simulateProgress('update-progress', 5, 'Removing existing installation...');
         mockAPI.simulateProgress('update-progress', 15, 'Starting update...');
         mockAPI.simulateProgress('update-progress', 40, 'Downloading updated files...');
         mockAPI.simulateProgress('update-progress', 70, 'Extracting new version...');
-        
+
         // Update the files
         await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'updated game executable');
         await fs.writeFile(path.join(latestDir, 'game.dat'), 'updated game data');
         await fs.writeFile(path.join(latestDir, 'changelog.txt'), 'New features and bug fixes');
-        
+
         mockAPI.simulateCompletion('update-progress');
       });
 
@@ -424,8 +416,9 @@ describe('Latest Version Operations Tests', () => {
       // Verify files were updated
       const exeContent = await fs.readFile(path.join(latestDir, 'ManicMiners.exe'), 'utf-8');
       expect(exeContent).to.equal('updated game executable');
-      
-      const changelogExists = await fs.access(path.join(latestDir, 'changelog.txt'))
+
+      const changelogExists = await fs
+        .access(path.join(latestDir, 'changelog.txt'))
         .then(() => true)
         .catch(() => false);
       expect(changelogExists).to.be.true;
@@ -442,11 +435,11 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: any[] = [];
       const errorUpdates: any[] = [];
-      
+
       mockAPI.receive('update-progress', (data: any) => {
         progressUpdates.push(data);
       });
-      
+
       mockAPI.receive('update-error', (data: any) => {
         errorUpdates.push(data);
       });
@@ -457,7 +450,8 @@ describe('Latest Version Operations Tests', () => {
 
       expect(errorUpdates.length).to.be.greaterThan(0);
       expect(errorUpdates[0]).to.exist;
-      const errorMessage = typeof errorUpdates[0] === 'string' ? errorUpdates[0] : (errorUpdates[0].message || JSON.stringify(errorUpdates[0]));
+      const errorMessage =
+        typeof errorUpdates[0] === 'string' ? errorUpdates[0] : errorUpdates[0].message || JSON.stringify(errorUpdates[0]);
       expect(errorMessage).to.include('Server unavailable');
     });
   });
@@ -512,10 +506,10 @@ describe('Latest Version Operations Tests', () => {
         // Log events that would normally happen in the backend
         logger.downloadLog('Starting latest version download', { version: 'latest' });
         logger.downloadLog('Download completed successfully');
-        
+
         await fs.mkdir(latestDir, { recursive: true });
         await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'game');
-        
+
         mockAPI.simulateCompletion('download-latest-progress');
       });
 
@@ -527,12 +521,8 @@ describe('Latest Version Operations Tests', () => {
 
       // Verify logging occurred
       const recentLogs = await logger.getRecentLogs(10);
-      expect(recentLogs.some(log => 
-        log.includes('Starting latest version download')
-      )).to.be.true;
-      expect(recentLogs.some(log => 
-        log.includes('Download completed successfully')
-      )).to.be.true;
+      expect(recentLogs.some(log => log.includes('Starting latest version download'))).to.be.true;
+      expect(recentLogs.some(log => log.includes('Download completed successfully'))).to.be.true;
     });
   });
 });

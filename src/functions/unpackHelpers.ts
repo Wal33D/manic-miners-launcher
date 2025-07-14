@@ -60,7 +60,7 @@ export async function extractZipEntries({
     }
 
     extractedFiles++;
-    
+
     // Small delay to make progress visible
     if (updateStatus) {
       await new Promise(resolve => setTimeout(resolve, 10));

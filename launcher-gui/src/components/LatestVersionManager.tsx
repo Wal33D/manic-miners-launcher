@@ -6,12 +6,8 @@ import { Progress } from '@/components/ui/progress';
 import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { logger } from '@/utils/frontendLogger';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -50,7 +46,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   // Note: Removed itch.io data.json fetch due to CSP restrictions and limited usefulness
 
-
   // Function to check installation status with fresh retry state
   const checkInstallStatus = useCallback(() => {
     if (!window.electronAPI) {
@@ -65,7 +60,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     const retryDelay = 5000; // 5 seconds - give more time for file system operations
 
     const performCheck = () => {
-      console.log(`Checking installation status (attempt ${retryCount + 1}/${maxRetries})`);
+      logger.componentLog('LatestVersionManager', `Checking installation status (attempt ${retryCount + 1}/${maxRetries})`);
 
       let responseReceived = false;
 
@@ -79,15 +74,18 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
           const identifier = 'latest'; // Use 'latest' as the identifier
           const installedVersion = data.versions.find((v: any) => v.identifier === identifier && v.directory);
           setIsInstalled(!!installedVersion);
-          console.log('Installation check result:', !!installedVersion, 'for identifier:', identifier);
+          logger.stateLog('LatestVersionManager', 'Installation check result', {
+            isInstalled: !!installedVersion,
+            identifier: identifier,
+          });
 
           // Clean up listener
           window.electronAPI.removeAllListeners('request-latest-version-information');
         } else if (data?.error) {
-          console.error('Version check error:', data.error);
+          logger.error('LatestVersionManager', 'Version check error', { error: data.error });
           retryCheck();
         } else {
-          console.log('No versions data in response, retrying...');
+          logger.warn('LatestVersionManager', 'No versions data in response, retrying...');
           retryCheck();
         }
       };
@@ -101,7 +99,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       // Set up timeout for retry
       const timeoutId = setTimeout(() => {
         if (!responseReceived) {
-          console.log('Request timed out, retrying...');
+          logger.warn('LatestVersionManager', 'Request timed out, retrying...');
           window.electronAPI.removeAllListeners('request-latest-version-information');
           retryCheck();
         }
@@ -113,7 +111,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
         if (retryCount < maxRetries) {
           setTimeout(performCheck, retryDelay);
         } else {
-          console.log('Max retries reached, assuming not installed');
+          logger.warn('LatestVersionManager', 'Max retries reached, assuming not installed');
           setIsCheckingInstallation(false);
           setIsInstalled(false);
           window.electronAPI.removeAllListeners('request-latest-version-information');
@@ -139,7 +137,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
   useEffect(() => {
     if (window.electronAPI) {
       const handleVersionsUpdated = () => {
-        console.log('Versions updated, rechecking installation status');
+        logger.info('LatestVersionManager', 'Versions updated, rechecking installation status');
         setIsCheckingInstallation(true);
         // Use the fresh checkInstallStatus function with reset retry state
         checkInstallStatus();
@@ -165,7 +163,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       window.electronAPI.send('download-latest-version', {
         version: 'latest', // Use 'latest' instead of hardcoded version
       });
-      
+
       // Listen for completion only (progress is handled globally)
       window.electronAPI.receive('download-latest-progress', (progressData: any) => {
         if (progressData.progress >= 100) {
@@ -194,7 +192,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
     if (window.electronAPI) {
       const identifier = 'latest'; // Use 'latest' as the identifier
-      console.log('Launching game with identifier:', identifier);
+      logger.userActionLog('Launch game', { identifier });
       window.electronAPI.send('launch-game', identifier);
     }
 
@@ -253,7 +251,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
         if (progressData.progress >= 100) {
           setIsUpdating(false);
           window.electronAPI.removeAllListeners('update-progress');
-          
+
           // Create success notification
           const successNotification: NotificationData = {
             id: `update-success-${Date.now()}`,
@@ -269,10 +267,10 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
       // Listen for update errors
       window.electronAPI.receive('update-error', (error: any) => {
-        console.error('Update error:', error);
+        logger.error('LatestVersionManager', 'Update error', { error });
         setIsUpdating(false);
         setUpdateStatus('Update failed');
-        
+
         // Create error notification
         const errorNotification: NotificationData = {
           id: `update-error-${Date.now()}`,
@@ -304,8 +302,8 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
     if (window.electronAPI) {
       try {
-        console.log('Deleting latest version...');
-        
+        logger.userActionLog('Delete latest version');
+
         // Listen for completion only (progress is handled globally)
         window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
           if (progressData.progress >= 100) {
@@ -325,7 +323,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
           version: 'latest', // Use 'latest' instead of hardcoded version
         });
       } catch (error) {
-        console.error('Error deleting version:', error);
+        logger.error('LatestVersionManager', 'Error deleting version', { error });
         setIsDeleting(false);
         setDeleteProgress(0);
         window.electronAPI.removeAllListeners('delete-latest-progress');
@@ -366,122 +364,130 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
           </div>
         }
       />
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              {latestVersion.displayName}
-              <Badge variant="default" className="ml-2">
-                Latest
-              </Badge>
-            </CardTitle>
-            <CardDescription>
-              Released {latestVersion.releaseDate} • {latestVersion.size}
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            {isCheckingInstallation ? (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Download className="w-3 h-3 animate-spin" />
-                Checking...
-              </Badge>
-            ) : (
-              isInstalled &&
-              !isDownloading && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <Check className="w-3 h-3" />
-                  Installed
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                {latestVersion.displayName}
+                <Badge variant="default" className="ml-2">
+                  Latest
                 </Badge>
-              )
+              </CardTitle>
+              <CardDescription>
+                Released {latestVersion.releaseDate} • {latestVersion.size}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              {isCheckingInstallation ? (
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Download className="w-3 h-3 animate-spin" />
+                  Checking...
+                </Badge>
+              ) : (
+                isInstalled &&
+                !isDownloading && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    Installed
+                  </Badge>
+                )
+              )}
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            {latestVersion.coverImage && (
+              <img src={latestVersion.coverImage} alt={latestVersion.title} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
+            )}
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
+            </div>
+          </div>
+
+          {(isDownloading || isVerifying || isUpdating) && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>{isVerifying ? 'Verifying...' : isUpdating ? 'Updating...' : 'Downloading...'}</span>
+                <span>{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
+              </div>
+              <Progress value={isUpdating ? updateProgress : downloadProgress} className="w-full" />
+              {isVerifying && verifyStatus && <div className="text-xs text-muted-foreground">{verifyStatus}</div>}
+              {isUpdating && updateStatus && <div className="text-xs text-muted-foreground">{updateStatus}</div>}
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            {isCheckingInstallation ? (
+              <Button disabled className="flex items-center gap-2">
+                <Download className="w-4 h-4 animate-spin" />
+                Checking Installation...
+              </Button>
+            ) : !isInstalled ? (
+              <Button onClick={handleInstall} disabled={isDownloading || isVerifying} className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                {isDownloading ? 'Installing...' : 'Install Latest'}
+              </Button>
+            ) : (
+              <>
+                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="flex items-center gap-2">
+                  <Play className="w-4 h-4" />
+                  {isLaunching ? 'Launching...' : 'Launch Game'}
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                      className="flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Game Options
+                      <ChevronDown className="w-4 h-4 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={handleUpdate}
+                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      {isUpdating ? 'Updating...' : 'Update Game'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleVerify}
+                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      {isVerifying ? 'Verifying...' : 'Verify & Repair'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteModal(true)}
+                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                      className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {isDeleting ? 'Uninstalling...' : 'Uninstall'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
           </div>
-        </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="flex gap-4">
-          {latestVersion.coverImage && (
-            <img 
-              src={latestVersion.coverImage} 
-              alt={latestVersion.title} 
-              className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-            />
+          {isCheckingInstallation && (
+            <div className="text-xs text-muted-foreground mt-2">🔍 Checking if latest version is installed...</div>
           )}
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
-          </div>
-        </div>
 
-        {(isDownloading || isVerifying || isUpdating) && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>{isVerifying ? 'Verifying...' : isUpdating ? 'Updating...' : 'Downloading...'}</span>
-              <span>{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
+          {!isCheckingInstallation && isInstalled && !isVerifying && !isUpdating && (
+            <div className="text-xs text-muted-foreground mt-2">
+              ✅ Latest version is installed. Use "Launch Game" to play or "Game Options" for update, repair, and uninstall options.
             </div>
-            <Progress value={isUpdating ? updateProgress : downloadProgress} className="w-full" />
-            {isVerifying && verifyStatus && <div className="text-xs text-muted-foreground">{verifyStatus}</div>}
-            {isUpdating && updateStatus && <div className="text-xs text-muted-foreground">{updateStatus}</div>}
-          </div>
-        )}
-
-        <div className="flex gap-2">
-          {isCheckingInstallation ? (
-            <Button disabled className="flex items-center gap-2">
-              <Download className="w-4 h-4 animate-spin" />
-              Checking Installation...
-            </Button>
-          ) : !isInstalled ? (
-            <Button onClick={handleInstall} disabled={isDownloading || isVerifying} className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              {isDownloading ? 'Installing...' : 'Install Latest'}
-            </Button>
-          ) : (
-            <>
-              <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="flex items-center gap-2">
-                <Play className="w-4 h-4" />
-                {isLaunching ? 'Launching...' : 'Launch Game'}
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating} className="flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    Game Options
-                    <ChevronDown className="w-4 h-4 ml-1" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={handleUpdate} disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    {isUpdating ? 'Updating...' : 'Update Game'}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleVerify} disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}>
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    {isVerifying ? 'Verifying...' : 'Verify & Repair'}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => setShowDeleteModal(true)} 
-                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
-                    className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    {isDeleting ? 'Uninstalling...' : 'Uninstall'}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
           )}
-        </div>
-
-        {isCheckingInstallation && <div className="text-xs text-muted-foreground mt-2">🔍 Checking if latest version is installed...</div>}
-
-        {!isCheckingInstallation && isInstalled && !isVerifying && !isUpdating && (
-          <div className="text-xs text-muted-foreground mt-2">
-            ✅ Latest version is installed. Use "Launch Game" to play or "Game Options" for update, repair, and uninstall options.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </>
   );
 }

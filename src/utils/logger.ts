@@ -35,10 +35,10 @@ class Logger {
       // In test environment, use a temp directory
       userDataPath = path.join(process.cwd(), 'temp', 'test-logs');
     }
-    
+
     const logsDir = path.join(userDataPath, 'logs');
     this.logPath = path.join(logsDir, 'manic-miners-launcher.log');
-    
+
     // Ensure logs directory exists
     this.ensureLogsDirectory();
   }
@@ -55,17 +55,17 @@ class Logger {
   private formatLogEntry(entry: LogEntry): string {
     const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
     const levelName = levelNames[entry.level] || 'UNKNOWN';
-    
+
     let logLine = `[${entry.timestamp}] [${levelName}] [${entry.category}] ${entry.message}`;
-    
+
     if (entry.data) {
       logLine += `\nData: ${JSON.stringify(entry.data, null, 2)}`;
     }
-    
+
     if (entry.stack) {
       logLine += `\nStack: ${entry.stack}`;
     }
-    
+
     return logLine + '\n';
   }
 
@@ -83,7 +83,7 @@ class Logger {
             // File doesn't exist, ignore
           }
         }
-        
+
         // Move current log to .1
         await fs.rename(this.logPath, `${this.logPath}.1`);
       }
@@ -94,25 +94,24 @@ class Logger {
 
   private async writeQueueToFile() {
     if (this.isWriting || this.logQueue.length === 0) return;
-    
+
     this.isWriting = true;
-    
+
     const entriesToWrite = [...this.logQueue];
     this.logQueue = [];
-    
+
     try {
       await this.rotateLogFile();
-      
+
       const logContent = entriesToWrite.map(entry => this.formatLogEntry(entry)).join('');
       await fs.appendFile(this.logPath, logContent);
-      
     } catch (error) {
       console.error('Failed to write to log file:', error);
       // Put entries back in queue
       this.logQueue.unshift(...entriesToWrite);
     } finally {
       this.isWriting = false;
-      
+
       // Process any new entries that came in while writing
       if (this.logQueue.length > 0) {
         setImmediate(() => this.writeQueueToFile());
@@ -129,12 +128,12 @@ class Logger {
       data,
       stack: error?.stack,
     };
-    
+
     // Also log to console for immediate visibility
     const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
     const levelName = levelNames[level];
     console.log(`[${levelName}] [${category}] ${message}`, data || '');
-    
+
     this.logQueue.push(entry);
     setImmediate(() => this.writeQueueToFile());
   }

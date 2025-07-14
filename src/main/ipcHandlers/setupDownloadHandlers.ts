@@ -62,7 +62,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
       withIpcHandler(IPC_CHANNELS.UPDATE_LATEST_VERSION, async (event, { version }) => {
         try {
           const currentDirectory = store.get('current-selected-directory') || '';
-          
+
           // Send update progress
           event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
             progress: 0,

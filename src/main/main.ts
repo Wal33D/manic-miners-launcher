@@ -15,7 +15,9 @@ import { setupExternalUrlHandler } from './ipcHandlers/setupExternalUrlHandler';
 import { setupItchDownloadHandler } from './ipcHandlers/setupItchDownloadHandler';
 import { setupVerifyRepairHandler } from './ipcHandlers/setupVerifyRepairHandler';
 import { setupShortcutHandler } from './ipcHandlers/setupShortcutHandler';
+import { setupLoggingHandler } from './ipcHandlers/setupLoggingHandler';
 import { checkItchUpdate } from '../functions/checkItchUpdate';
+import { logger } from '../utils/logger';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
@@ -34,27 +36,14 @@ app.commandLine.appendSwitch('no-sandbox');
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
 
-// Override console.error to filter out DevTools autofill errors
-const originalConsoleError = console.error;
-console.error = (...args: any[]) => {
-  const message = args.join(' ');
-  
-  // Filter out specific DevTools autofill protocol errors
-  if (message.includes('Request Autofill.enable failed') ||
-      message.includes('Request Autofill.setAddresses failed') ||
-      message.includes("'Autofill.enable' wasn't found") ||
-      message.includes("'Autofill.setAddresses' wasn't found") ||
-      message.includes('protocol_client.js')) {
-    return; // Suppress these specific console errors
-  }
-  
-  // Allow all other console.error calls through
-  originalConsoleError.apply(console, args);
-};
+// Log application startup
+logger.info('APP', 'Manic Miners Launcher starting...');
 
 const startApp = (): void => {
   app.on('ready', async () => {
+    logger.info('APP', 'Setting up IPC handlers...');
     setupDirectoryHandler();
+    setupLoggingHandler(); // Setup logging handler early
     await checkItchUpdate();
     createWindow();
     setupVersionHandlers();
@@ -70,6 +59,7 @@ const startApp = (): void => {
     setupItchDownloadHandler();
     setupVerifyRepairHandler();
     setupShortcutHandler();
+    logger.info('APP', 'All IPC handlers setup complete');
   });
 
   app.on('window-all-closed', () => {

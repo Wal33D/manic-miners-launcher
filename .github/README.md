@@ -5,7 +5,9 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 ## 🚀 Workflows Overview
 
 ### 1. **CI/CD Pipeline** (`ci.yml`)
+
 **Triggers:** Push to master/main/develop, Pull Requests
+
 - **Multi-platform testing** on Ubuntu, Windows, and macOS
 - **TypeScript compilation** validation
 - **ESLint** code quality checks
@@ -17,7 +19,9 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 - **Artifact generation** for distributables
 
 ### 2. **Release Builds** (`release.yml`)
-**Triggers:** Git tags (v*), GitHub releases
+
+**Triggers:** Git tags (v\*), GitHub releases
+
 - **Production builds** for all platforms
 - **Signed installers** (where applicable)
 - **Release artifact** generation and upload
@@ -28,7 +32,9 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
   - **macOS**: .dmg images and .zip archives
 
 ### 3. **Pull Request Validation** (`pr.yml`)
+
 **Triggers:** Pull request events
+
 - **Comprehensive validation** on all platforms
 - **Code quality analysis** with security scanning
 - **Compatibility testing** across Node.js versions
@@ -38,7 +44,9 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 - **Bundle size analysis** for performance impact
 
 ### 4. **Nightly Builds** (`nightly.yml`)
+
 **Triggers:** Daily at 2 AM UTC, Manual dispatch
+
 - **Extended testing** across multiple Node.js versions
 - **Deep security auditing** with vulnerability scanning
 - **Performance analysis** and optimization insights
@@ -49,11 +57,13 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 ## 🎯 Platform Support
 
 ### Operating Systems
+
 - **Ubuntu Latest** (Linux)
-- **Windows Latest** 
+- **Windows Latest**
 - **macOS Latest**
 
 ### Node.js Versions
+
 - **Node.js 18.x** (LTS)
 - **Node.js 20.x** (Current LTS) - Primary
 - **Node.js 22.x** (Latest)
@@ -61,6 +71,7 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 ## 🔧 Workflow Features
 
 ### **Quality Assurance**
+
 - ✅ TypeScript compilation validation
 - ✅ ESLint code quality checks
 - ✅ Prettier formatting verification
@@ -69,6 +80,7 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 - ✅ License compliance checking
 
 ### **Build Verification**
+
 - ✅ Asset generation testing
 - ✅ Electron packaging validation
 - ✅ Cross-platform build testing
@@ -76,6 +88,7 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 - ✅ Bundle size monitoring
 
 ### **Security & Compliance**
+
 - ✅ Dependency audit (moderate+ severity)
 - ✅ License compatibility checking
 - ✅ Vulnerability scanning
@@ -83,6 +96,7 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 - ✅ Code security analysis
 
 ### **Performance Monitoring**
+
 - ✅ Bundle size analysis
 - ✅ Build performance tracking
 - ✅ Asset optimization verification
@@ -91,24 +105,28 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 ## 📦 Artifacts & Outputs
 
 ### **CI/CD Pipeline**
+
 - Test coverage reports
 - Lint and compilation results
 - Platform-specific packages
 - Performance metrics
 
 ### **Release Builds**
+
 - Production-ready installers
 - Cross-platform distributables
 - Signed applications (where applicable)
 - Release notes and changelogs
 
 ### **Pull Request Validation**
+
 - Validation summary reports
 - Code quality metrics
 - Compatibility test results
 - Performance impact analysis
 
 ### **Nightly Builds**
+
 - Extended test reports
 - Security audit results
 - Performance benchmarks
@@ -117,6 +135,7 @@ This directory contains comprehensive GitHub Actions workflows for the Manic Min
 ## 🛠️ Local Development
 
 ### **Running Tests Locally**
+
 ```bash
 # Install dependencies
 pnpm install
@@ -141,6 +160,7 @@ pnpm run make
 ```
 
 ### **Simulating CI Environment**
+
 ```bash
 # Set CI environment variable
 export CI=true
@@ -155,19 +175,23 @@ pnpm run package
 ## 🔄 Workflow Dependencies
 
 ### **Required GitHub Secrets**
+
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 
 ### **Required System Dependencies**
 
 **Ubuntu:**
+
 ```bash
 sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libxss1 libgtk-3-dev libxrandr2 libasound2-dev rpm fakeroot
 ```
 
 **Windows:**
+
 - No additional system dependencies required
 
 **macOS:**
+
 - Xcode Command Line Tools (automatically available)
 
 ## 📊 Status Badges
@@ -214,6 +238,7 @@ Add these badges to your main README.md:
 ## 🚀 Continuous Improvement
 
 The workflows are designed to:
+
 - **Catch issues early** in the development process
 - **Ensure quality** across all supported platforms
 - **Maintain security** through regular audits

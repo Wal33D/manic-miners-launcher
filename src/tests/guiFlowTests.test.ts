@@ -14,9 +14,9 @@ class MockElectronAPI extends EventEmitter {
     isDownloading: false,
     isLaunching: false,
     downloadProgress: 0,
-    currentNotifications: [] as any[]
+    currentNotifications: [] as any[],
   };
-  
+
   send(channel: string, ...args: any[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
@@ -129,20 +129,20 @@ class GUIStateTracker {
       verifyEnabled: false,
       deleteEnabled: false,
       updateEnabled: false,
-      dropdownEnabled: false
+      dropdownEnabled: false,
     },
     progressBars: {
       downloadVisible: false,
       deleteVisible: false,
       updateVisible: false,
-      verifyVisible: false
+      verifyVisible: false,
     },
     statusMessages: {
       download: '',
       delete: '',
       update: '',
-      verify: ''
-    }
+      verify: '',
+    },
   };
 
   updateInstallationState(isInstalled: boolean) {
@@ -184,16 +184,16 @@ class GUIStateTracker {
   }
 
   private updateButtonStates() {
-    const anyOperationActive = this.state.isDownloading || this.state.isDeleting || 
-                              this.state.isUpdating || this.state.isVerifying || this.state.isLaunching;
-    
+    const anyOperationActive =
+      this.state.isDownloading || this.state.isDeleting || this.state.isUpdating || this.state.isVerifying || this.state.isLaunching;
+
     this.state.buttonStates = {
       installEnabled: !this.state.isInstalled && !anyOperationActive,
       launchEnabled: this.state.isInstalled && !anyOperationActive,
       verifyEnabled: this.state.isInstalled && !anyOperationActive,
       deleteEnabled: this.state.isInstalled && !anyOperationActive,
       updateEnabled: this.state.isInstalled && !anyOperationActive,
-      dropdownEnabled: this.state.isInstalled && !anyOperationActive
+      dropdownEnabled: this.state.isInstalled && !anyOperationActive,
     };
   }
 
@@ -216,40 +216,39 @@ class GUIStateTracker {
 
   validateButtonStatesConsistency() {
     const state = this.getState();
-    
+
     // Validate that button states are mutually exclusive and consistent
     if (!state.isInstalled && state.buttonStates.launchEnabled) {
       throw new Error('Launch button should not be enabled when not installed');
     }
-    
+
     if (state.isInstalled && state.buttonStates.installEnabled) {
       throw new Error('Install button should not be enabled when already installed');
     }
-    
-    const anyOperationActive = state.isDownloading || state.isDeleting || 
-                              state.isUpdating || state.isVerifying || state.isLaunching;
-    
+
+    const anyOperationActive = state.isDownloading || state.isDeleting || state.isUpdating || state.isVerifying || state.isLaunching;
+
     if (anyOperationActive) {
       const enabledButtons = Object.values(state.buttonStates).filter(enabled => enabled);
       if (enabledButtons.length > 0) {
         throw new Error('No buttons should be enabled during active operations');
       }
     }
-    
+
     return true;
   }
 
   validateProgressBarVisibility() {
     const state = this.getState();
-    
+
     if (state.isDownloading && !state.progressBars.downloadVisible) {
       throw new Error('Download progress bar should be visible during download');
     }
-    
+
     if (!state.isDownloading && state.progressBars.downloadVisible) {
       throw new Error('Download progress bar should not be visible when not downloading');
     }
-    
+
     // Similar checks for other operations
     return true;
   }
@@ -265,11 +264,11 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
     // Create a temporary test directory
     testDir = path.join(process.cwd(), 'test-gui-flow');
     await fs.mkdir(testDir, { recursive: true });
-    
+
     // Set environment variable to use test directory
     originalEnv = process.env.MANIC_MINERS_INSTALL_PATH;
     process.env.MANIC_MINERS_INSTALL_PATH = testDir;
-    
+
     await logger.clearLogs();
 
     // Initialize mock API and GUI state tracker
@@ -284,7 +283,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
     } catch (error) {
       // Ignore cleanup errors
     }
-    
+
     // Restore environment
     if (originalEnv) {
       process.env.MANIC_MINERS_INSTALL_PATH = originalEnv;
@@ -299,7 +298,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       mockAPI.setHandler('request-latest-version-information', async (event: any) => {
         const result = await fetchInstalledVersions();
         event.sender.send('latest-version-information-response', {
-          versions: result.installedVersions || []
+          versions: result.installedVersions || [],
         });
       });
 
@@ -328,7 +327,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       mockAPI.setHandler('request-latest-version-information', async (event: any) => {
         const result = await fetchInstalledVersions();
         event.sender.send('latest-version-information-response', {
-          versions: result.installedVersions || []
+          versions: result.installedVersions || [],
         });
       });
 
@@ -365,12 +364,12 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         { progress: 75, status: 'Downloaded 750 MB / 1.0 GB' },
         { progress: 90, status: 'Extracting game files...' },
         { progress: 95, status: 'Verifying installation...' },
-        { progress: 100, status: 'Installation complete!' }
+        { progress: 100, status: 'Installation complete!' },
       ];
 
       // Start download operation
       guiState.updateOperationState('download', true, 0, 'Starting download...');
-      
+
       // Verify all buttons are disabled during download
       let state = guiState.getState();
       expect(state.buttonStates.installEnabled).to.be.false;
@@ -380,12 +379,12 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       // Simulate smooth progress updates
       for (const step of downloadSteps) {
         guiState.updateOperationState('download', true, step.progress, step.status);
-        
+
         state = guiState.getState();
         expect(state.downloadProgress).to.equal(step.progress);
         expect(state.statusMessages.download).to.equal(step.status);
         expect(state.progressBars.downloadVisible).to.be.true;
-        
+
         // Ensure button states remain consistent during operation
         expect(guiState.validateButtonStatesConsistency()).to.be.true;
         expect(guiState.validateProgressBarVisibility()).to.be.true;
@@ -417,7 +416,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'error',
         title: 'Download Failed',
         message: 'Connection to server lost. Click to retry.',
-        persistent: true
+        persistent: true,
       };
 
       guiState.addNotification(errorNotification);
@@ -454,7 +453,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'info',
         title: 'Launching Game',
         message: 'Starting Manic Miners...',
-        duration: 3000
+        duration: 3000,
       };
 
       guiState.addNotification(launchNotification);
@@ -485,8 +484,8 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         persistent: true,
         actions: [
           { label: 'Verify & Repair', action: 'verify' },
-          { label: 'Dismiss', action: 'dismiss' }
-        ]
+          { label: 'Dismiss', action: 'dismiss' },
+        ],
       };
 
       guiState.updateOperationState('launch', false);
@@ -510,7 +509,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         { progress: 20, status: 'Downloading update...' },
         { progress: 60, status: 'Downloaded 400 MB / 650 MB' },
         { progress: 90, status: 'Applying update...' },
-        { progress: 100, status: 'Update complete!' }
+        { progress: 100, status: 'Update complete!' },
       ];
 
       guiState.updateOperationState('update', true, 0, 'Starting update...');
@@ -524,20 +523,20 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       // Simulate update progress
       for (const step of updateSteps) {
         guiState.updateOperationState('update', true, step.progress, step.status);
-        
+
         expect(guiState.validateButtonStatesConsistency()).to.be.true;
         expect(guiState.validateProgressBarVisibility()).to.be.true;
       }
 
       // Complete update
       guiState.updateOperationState('update', false);
-      
+
       const successNotification = {
         id: 'update-success-1',
         type: 'success',
         title: 'Update Complete',
         message: 'Manic Miners has been updated to the latest version!',
-        duration: 5000
+        duration: 5000,
       };
 
       guiState.addNotification(successNotification);
@@ -560,7 +559,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         { progress: 40, status: 'Verifying game assets...' },
         { progress: 60, status: 'Checking level files...' },
         { progress: 80, status: 'Validating configuration...' },
-        { progress: 100, status: 'Verification complete!' }
+        { progress: 100, status: 'Verification complete!' },
       ];
 
       guiState.updateOperationState('verify', true, 0, 'Preparing verification...');
@@ -579,13 +578,13 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
 
       // Complete verification with success
       guiState.updateOperationState('verify', false);
-      
+
       const successNotification = {
         id: 'verify-success-1',
         type: 'success',
         title: 'Verification Complete',
         message: 'All game files are intact and ready to play!',
-        duration: 4000
+        duration: 4000,
       };
 
       guiState.addNotification(successNotification);
@@ -605,7 +604,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'warning',
         title: 'Issues Found',
         message: '3 corrupted files detected. Starting automatic repair...',
-        persistent: true
+        persistent: true,
       };
 
       guiState.addNotification(repairNotification);
@@ -615,7 +614,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       const repairSteps = [
         { progress: 0, status: 'Downloading missing files...' },
         { progress: 50, status: 'Repairing corrupted assets...' },
-        { progress: 100, status: 'Repair complete!' }
+        { progress: 100, status: 'Repair complete!' },
       ];
 
       guiState.updateOperationState('verify', true, 0, 'Starting repair...');
@@ -633,7 +632,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'success',
         title: 'Repair Complete',
         message: 'All issues have been fixed. Game is ready to play!',
-        duration: 5000
+        duration: 5000,
       };
 
       guiState.addNotification(repairSuccessNotification);
@@ -655,7 +654,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         { progress: 60, status: 'Removing level files...' },
         { progress: 80, status: 'Cleaning configuration files...' },
         { progress: 90, status: 'Removing installation directory...' },
-        { progress: 100, status: 'Uninstall complete!' }
+        { progress: 100, status: 'Uninstall complete!' },
       ];
 
       guiState.updateOperationState('delete', true, 0, 'Starting uninstall...');
@@ -681,7 +680,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'info',
         title: 'Uninstall Complete',
         message: 'Manic Miners has been completely removed from your system.',
-        duration: 4000
+        duration: 4000,
       };
 
       guiState.addNotification(uninstallNotification);
@@ -707,7 +706,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         title: 'Download in Progress',
         message: 'Downloading Manic Miners... 30% complete',
         persistent: true,
-        progress: 30
+        progress: 30,
       };
 
       guiState.addNotification(downloadNotification);
@@ -725,7 +724,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       const updatedNotification = {
         ...downloadNotification,
         message: 'Downloading Manic Miners... 75% complete',
-        progress: 75
+        progress: 75,
       };
       guiState.addNotification(updatedNotification);
 
@@ -739,7 +738,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
 
       // Try to start multiple operations (should prevent this)
       guiState.updateOperationState('verify', true, 10, 'Verifying...');
-      
+
       let state = guiState.getState();
       expect(state.isVerifying).to.be.true;
       expect(state.buttonStates.updateEnabled).to.be.false;
@@ -751,7 +750,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
         type: 'warning',
         title: 'Operation in Progress',
         message: 'Please wait for verification to complete before starting another operation.',
-        duration: 3000
+        duration: 3000,
       };
 
       // In real implementation, this would be prevented by disabled buttons
@@ -790,9 +789,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
             persistent: true,
             actions: [
               { label: 'Check Disk Space', action: 'check_disk' },
-              { label: 'Choose Different Location', action: 'change_path' }
-            ]
-          }
+              { label: 'Choose Different Location', action: 'change_path' },
+            ],
+          },
         },
         {
           error: 'permission_denied',
@@ -804,9 +803,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
             persistent: true,
             actions: [
               { label: 'Run as Administrator', action: 'elevate' },
-              { label: 'Choose Different Location', action: 'change_path' }
-            ]
-          }
+              { label: 'Choose Different Location', action: 'change_path' },
+            ],
+          },
         },
         {
           error: 'network_timeout',
@@ -818,23 +817,23 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
             persistent: true,
             actions: [
               { label: 'Retry Download', action: 'retry' },
-              { label: 'Check Connection', action: 'check_network' }
-            ]
-          }
-        }
+              { label: 'Check Connection', action: 'check_network' },
+            ],
+          },
+        },
       ];
 
       for (const scenario of errorScenarios) {
         guiState.addNotification(scenario.notification);
-        
+
         const state = guiState.getState();
         const notification = state.currentNotifications.find(n => n.id === scenario.notification.id);
-        
+
         expect(notification).to.exist;
         expect(notification?.actions).to.exist;
         expect(notification?.actions).to.have.length.greaterThan(0);
         expect(notification?.persistent).to.be.true;
-        
+
         // Clear for next scenario
         guiState.removeNotification(scenario.notification.id);
       }
@@ -847,7 +846,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       const errors = [
         { id: 'error-1', title: 'Download Failed', type: 'error' },
         { id: 'error-2', title: 'Retry Failed', type: 'error' },
-        { id: 'error-3', title: 'Network Issue', type: 'warning' }
+        { id: 'error-3', title: 'Network Issue', type: 'warning' },
       ];
 
       for (const error of errors) {
@@ -856,16 +855,16 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
           type: error.type as any,
           title: error.title,
           message: 'Details about the error...',
-          persistent: true
+          persistent: true,
         });
       }
 
       const state = guiState.getState();
       expect(state.currentNotifications).to.have.length(3);
-      
+
       // Should still maintain consistent button states despite errors
       expect(guiState.validateButtonStatesConsistency()).to.be.true;
-      
+
       // Should allow recovery attempts
       expect(state.buttonStates.installEnabled).to.be.true;
     });
@@ -879,7 +878,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       // Simulate rapid progress updates (every 1%)
       for (let progress = 0; progress <= 100; progress++) {
         guiState.updateOperationState('download', true, progress, `Downloaded ${progress}%`);
-        
+
         const state = guiState.getState();
         expect(state.downloadProgress).to.equal(progress);
         expect(guiState.validateButtonStatesConsistency()).to.be.true;
@@ -898,7 +897,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       for (let i = 0; i < 100; i++) {
         const isInstalled = i % 2 === 0;
         guiState.updateInstallationState(isInstalled);
-        
+
         if (isInstalled) {
           const operations = ['verify', 'update', 'delete'];
           const operation = operations[i % operations.length];

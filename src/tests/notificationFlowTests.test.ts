@@ -12,10 +12,10 @@ describe('Notification System - User Experience Excellence', () => {
   beforeEach(async () => {
     testDir = path.join(process.cwd(), 'test-notifications');
     await fs.mkdir(testDir, { recursive: true });
-    
+
     originalEnv = process.env.MANIC_MINERS_INSTALL_PATH;
     process.env.MANIC_MINERS_INSTALL_PATH = testDir;
-    
+
     await logger.clearLogs();
   });
 
@@ -25,7 +25,7 @@ describe('Notification System - User Experience Excellence', () => {
     } catch (error) {
       // Ignore cleanup errors
     }
-    
+
     if (originalEnv) {
       process.env.MANIC_MINERS_INSTALL_PATH = originalEnv;
     } else {
@@ -80,9 +80,7 @@ describe('Notification System - User Experience Excellence', () => {
     }
 
     getActiveNotifications() {
-      return Array.from(this.notifications.values()).sort((a, b) => 
-        (b.priority || 0) - (a.priority || 0) || b.timestamp - a.timestamp
-      );
+      return Array.from(this.notifications.values()).sort((a, b) => (b.priority || 0) - (a.priority || 0) || b.timestamp - a.timestamp);
     }
 
     getPersistentNotifications() {
@@ -98,9 +96,7 @@ describe('Notification System - User Experience Excellence', () => {
       const toRemove: string[] = [];
 
       for (const [id, notification] of this.notifications) {
-        if (notification.duration && 
-            (now - notification.timestamp) > notification.duration &&
-            !notification.persistent) {
+        if (notification.duration && now - notification.timestamp > notification.duration && !notification.persistent) {
           toRemove.push(id);
         }
       }
@@ -113,10 +109,8 @@ describe('Notification System - User Experience Excellence', () => {
       const active = this.getActiveNotifications();
       if (active.length > this.maxNotifications) {
         // Remove oldest non-persistent notifications
-        const nonPersistent = active
-          .filter(n => !n.persistent)
-          .sort((a, b) => a.timestamp - b.timestamp);
-        
+        const nonPersistent = active.filter(n => !n.persistent).sort((a, b) => a.timestamp - b.timestamp);
+
         const toRemove = nonPersistent.slice(0, active.length - this.maxNotifications);
         toRemove.forEach(n => this.removeNotification(n.id));
       }
@@ -128,7 +122,7 @@ describe('Notification System - User Experience Excellence', () => {
       const hasProperCapitalization = /^[A-Z]/.test(notification.title);
       const hasReasonableLength = notification.message.length >= 10 && notification.message.length <= 200;
       const hasAppropriateType = ['success', 'error', 'warning', 'info'].includes(notification.type);
-      
+
       return hasProperCapitalization && hasReasonableLength && hasAppropriateType;
     }
 
@@ -137,14 +131,14 @@ describe('Notification System - User Experience Excellence', () => {
       const hasAriaLabel = notification.ariaLabel || notification.title;
       const hasRole = notification.role || 'alert';
       const hasProperContrast = notification.type !== 'custom' || notification.contrastChecked;
-      
+
       return !!hasAriaLabel && !!hasRole && hasProperContrast;
     }
 
     getMetrics() {
       const active = this.getActiveNotifications();
       const history = this.getNotificationHistory();
-      
+
       return {
         activeCount: active.length,
         persistentCount: this.getPersistentNotifications().length,
@@ -153,17 +147,16 @@ describe('Notification System - User Experience Excellence', () => {
         errorCount: history.filter(n => n.type === 'error').length,
         successCount: history.filter(n => n.type === 'success').length,
         userDismissedCount: history.filter(n => n.dismissed && n.dismissedBy === 'user').length,
-        autoDismissedCount: history.filter(n => n.dismissed && n.dismissedBy === 'auto').length
+        autoDismissedCount: history.filter(n => n.dismissed && n.dismissedBy === 'auto').length,
       };
     }
 
     private calculateAverageDisplayTime(): number {
       const dismissed = this.notificationHistory.filter(n => n.dismissed && n.dismissedAt);
       if (dismissed.length === 0) return 0;
-      
-      const totalTime = dismissed.reduce((sum, n) => 
-        sum + (n.dismissedAt - n.timestamp), 0);
-      
+
+      const totalTime = dismissed.reduce((sum, n) => sum + (n.dismissedAt - n.timestamp), 0);
+
       return Math.round(totalTime / dismissed.length);
     }
   }
@@ -177,11 +170,11 @@ describe('Notification System - User Experience Excellence', () => {
         type: 'info',
         title: 'Test Notification',
         message: 'This is a test notification message',
-        duration: 5000
+        duration: 5000,
       };
 
       const created = manager.addNotification(notification);
-      
+
       expect(created).to.exist;
       expect(created.id).to.equal('test-1');
       expect(created.timestamp).to.exist;
@@ -199,7 +192,7 @@ describe('Notification System - User Experience Excellence', () => {
           type: 'info',
           title: `Notification ${i}`,
           message: `Message for notification ${i}`,
-          duration: 10000
+          duration: 10000,
         });
       }
 
@@ -217,7 +210,7 @@ describe('Notification System - User Experience Excellence', () => {
           type: 'info',
           title: `Regular ${i}`,
           message: `Regular message ${i}`,
-          duration: 5000
+          duration: 5000,
         });
       }
 
@@ -228,16 +221,16 @@ describe('Notification System - User Experience Excellence', () => {
           type: 'error',
           title: `Persistent Error ${i}`,
           message: `Persistent error message ${i}`,
-          persistent: true
+          persistent: true,
         });
       }
 
       const active = manager.getActiveNotifications();
       const persistent = manager.getPersistentNotifications();
-      
+
       expect(persistent.length).to.equal(3);
       expect(active.length).to.be.at.most(5);
-      
+
       // All persistent notifications should still be active
       persistent.forEach(p => {
         expect(active.find(a => a.id === p.id)).to.exist;
@@ -257,7 +250,7 @@ describe('Notification System - User Experience Excellence', () => {
         message: 'Preparing download...',
         persistent: true,
         progress: 0,
-        showProgressBar: true
+        showProgressBar: true,
       });
 
       expect(downloadNotification.progress).to.equal(0);
@@ -269,14 +262,14 @@ describe('Notification System - User Experience Excellence', () => {
         { progress: 35, message: 'Downloaded 350 MB / 1.0 GB', eta: '3 minutes remaining' },
         { progress: 65, message: 'Downloaded 650 MB / 1.0 GB', eta: '1 minute remaining' },
         { progress: 90, message: 'Extracting files...', eta: '30 seconds remaining' },
-        { progress: 100, message: 'Download complete!', eta: null }
+        { progress: 100, message: 'Download complete!', eta: null },
       ];
 
       progressSteps.forEach(step => {
         manager.updateNotification('download-progress', {
           progress: step.progress,
           message: step.message,
-          eta: step.eta
+          eta: step.eta,
         });
 
         const updated = manager.getActiveNotifications().find(n => n.id === 'download-progress');
@@ -291,7 +284,7 @@ describe('Notification System - User Experience Excellence', () => {
         message: 'Manic Miners has been successfully installed!',
         showProgressBar: false,
         persistent: false,
-        duration: 5000
+        duration: 5000,
       });
 
       const final = manager.getActiveNotifications().find(n => n.id === 'download-progress');
@@ -310,7 +303,7 @@ describe('Notification System - User Experience Excellence', () => {
         message: 'Download in progress...',
         persistent: true,
         progress: 25,
-        operation: 'download'
+        operation: 'download',
       });
 
       // Start verification (should be allowed as separate operation)
@@ -321,12 +314,12 @@ describe('Notification System - User Experience Excellence', () => {
         message: 'Checking file integrity...',
         persistent: true,
         progress: 60,
-        operation: 'verify'
+        operation: 'verify',
       });
 
       const active = manager.getActiveNotifications();
       const operations = active.map(n => n.operation);
-      
+
       expect(operations).to.include('download');
       expect(operations).to.include('verify');
       expect(active.length).to.equal(2);
@@ -346,10 +339,10 @@ describe('Notification System - User Experience Excellence', () => {
           actions: [
             { label: 'Free Up Space', action: 'open_disk_cleanup' },
             { label: 'Choose Different Location', action: 'change_install_path' },
-            { label: 'Cancel', action: 'cancel_install' }
+            { label: 'Cancel', action: 'cancel_install' },
           ],
           persistent: true,
-          priority: 10
+          priority: 10,
         },
         {
           id: 'network-error',
@@ -359,10 +352,10 @@ describe('Notification System - User Experience Excellence', () => {
           actions: [
             { label: 'Retry Download', action: 'retry_download' },
             { label: 'Check Network', action: 'check_connection' },
-            { label: 'Download Later', action: 'pause_download' }
+            { label: 'Download Later', action: 'pause_download' },
           ],
           persistent: true,
-          priority: 8
+          priority: 8,
         },
         {
           id: 'permission-error',
@@ -371,21 +364,21 @@ describe('Notification System - User Experience Excellence', () => {
           message: 'Cannot write to installation directory. Administrator access required.',
           actions: [
             { label: 'Run as Administrator', action: 'elevate_privileges' },
-            { label: 'Choose Different Location', action: 'change_install_path' }
+            { label: 'Choose Different Location', action: 'change_install_path' },
           ],
           persistent: true,
-          priority: 9
-        }
+          priority: 9,
+        },
       ];
 
       errorScenarios.forEach(scenario => {
         const notification = manager.addNotification(scenario);
-        
+
         expect(notification.actions).to.exist;
         expect(notification.actions.length).to.be.greaterThan(0);
         expect(notification.persistent).to.be.true;
         expect(manager.validateNotificationContent(notification)).to.be.true;
-        
+
         // Verify action buttons are properly structured
         notification.actions.forEach((action: any) => {
           expect(action.label).to.exist;
@@ -397,8 +390,8 @@ describe('Notification System - User Experience Excellence', () => {
       // Verify priority ordering
       const active = manager.getActiveNotifications();
       expect(active[0].priority).to.equal(10); // Disk space should be highest priority
-      expect(active[1].priority).to.equal(9);  // Permission error second
-      expect(active[2].priority).to.equal(8);  // Network error third
+      expect(active[1].priority).to.equal(9); // Permission error second
+      expect(active[2].priority).to.equal(8); // Network error third
     });
 
     it('should gracefully handle cascading errors without overwhelming the user', () => {
@@ -409,7 +402,7 @@ describe('Notification System - User Experience Excellence', () => {
         { id: 'initial-error', title: 'Download Failed', severity: 'high' },
         { id: 'retry-error-1', title: 'Retry Failed', severity: 'medium' },
         { id: 'retry-error-2', title: 'Second Retry Failed', severity: 'medium' },
-        { id: 'retry-error-3', title: 'Final Retry Failed', severity: 'low' }
+        { id: 'retry-error-3', title: 'Final Retry Failed', severity: 'low' },
       ];
 
       cascadingErrors.forEach((error, index) => {
@@ -420,15 +413,15 @@ describe('Notification System - User Experience Excellence', () => {
           message: `Error details for ${error.title}`,
           persistent: true,
           severity: error.severity,
-          timestamp: Date.now() + index * 1000 // Staggered timing
+          timestamp: Date.now() + index * 1000, // Staggered timing
         });
       });
 
       const active = manager.getActiveNotifications();
-      
+
       // Should not overwhelm user with too many error notifications
       expect(active.length).to.be.at.most(5);
-      
+
       // Should still show the most important errors
       const highSeverityErrors = active.filter(n => n.severity === 'high');
       expect(highSeverityErrors.length).to.equal(1);
@@ -449,8 +442,8 @@ describe('Notification System - User Experience Excellence', () => {
           celebration: true,
           actions: [
             { label: 'Launch Game', action: 'launch_game', primary: true },
-            { label: 'View Installation', action: 'open_folder' }
-          ]
+            { label: 'View Installation', action: 'open_folder' },
+          ],
         },
         {
           id: 'update-success',
@@ -461,8 +454,8 @@ describe('Notification System - User Experience Excellence', () => {
           showChangelog: true,
           actions: [
             { label: 'View Changes', action: 'show_changelog' },
-            { label: 'Launch Game', action: 'launch_game' }
-          ]
+            { label: 'Launch Game', action: 'launch_game' },
+          ],
         },
         {
           id: 'verify-success',
@@ -470,17 +463,17 @@ describe('Notification System - User Experience Excellence', () => {
           title: 'Verification Complete!',
           message: 'All game files are intact and ready. No issues found!',
           duration: 4000,
-          confidence: 'high'
-        }
+          confidence: 'high',
+        },
       ];
 
       successScenarios.forEach(scenario => {
         const notification = manager.addNotification(scenario);
-        
+
         expect(notification.type).to.equal('success');
         expect(notification.duration).to.be.greaterThan(3000); // Success messages should be visible long enough
         expect(manager.validateNotificationContent(notification)).to.be.true;
-        
+
         if (scenario.actions) {
           expect(notification.actions).to.exist;
           // Primary action should be first
@@ -505,8 +498,8 @@ describe('Notification System - User Experience Excellence', () => {
         nextSteps: [
           { label: 'Launch Game', action: 'launch', primary: true, description: 'Start playing immediately' },
           { label: 'Create Desktop Shortcut', action: 'create_shortcut', description: 'For easy access' },
-          { label: 'View Installation Folder', action: 'open_folder', description: 'Browse game files' }
-        ]
+          { label: 'View Installation Folder', action: 'open_folder', description: 'Browse game files' },
+        ],
       });
 
       // Update complete - suggest viewing changes
@@ -514,20 +507,20 @@ describe('Notification System - User Experience Excellence', () => {
         id: 'update-complete',
         type: 'success',
         title: 'New Features Available!',
-        message: 'Update installed successfully. Check out what\'s new!',
+        message: "Update installed successfully. Check out what's new!",
         duration: 7000,
         nextSteps: [
           { label: 'View Changelog', action: 'changelog', primary: true, description: 'See new features and fixes' },
-          { label: 'Launch Game', action: 'launch', description: 'Try the latest version' }
-        ]
+          { label: 'Launch Game', action: 'launch', description: 'Try the latest version' },
+        ],
       });
 
       const active = manager.getActiveNotifications();
-      
+
       active.forEach(notification => {
         expect(notification.nextSteps).to.exist;
         expect(notification.nextSteps.length).to.be.greaterThan(0);
-        
+
         const primaryStep = notification.nextSteps.find((step: any) => step.primary);
         expect(primaryStep).to.exist;
         expect(primaryStep.description).to.exist;
@@ -547,7 +540,7 @@ describe('Notification System - User Experience Excellence', () => {
         message: 'Downloading Manic Miners... 45% complete',
         persistent: true,
         progress: 45,
-        startedAt: Date.now() - 120000 // Started 2 minutes ago
+        startedAt: Date.now() - 120000, // Started 2 minutes ago
       });
 
       // Add temporary notification
@@ -557,7 +550,7 @@ describe('Notification System - User Experience Excellence', () => {
         title: 'Temporary Message',
         message: 'This should be auto-dismissed',
         duration: 3000,
-        persistent: false
+        persistent: false,
       });
 
       let active = manager.getActiveNotifications();
@@ -566,10 +559,10 @@ describe('Notification System - User Experience Excellence', () => {
       // Simulate time passing and cleanup
       // Wait for duration to expire
       const removed = manager.clearExpiredNotifications();
-      
+
       active = manager.getActiveNotifications();
       expect(active.length).to.equal(2); // Both should still be active initially
-      
+
       // The persistent one should remain
       const persistentStillActive = active.find(n => n.id === 'persistent-download');
       expect(persistentStillActive).to.exist;
@@ -584,7 +577,7 @@ describe('Notification System - User Experience Excellence', () => {
         { id: 'success-1', type: 'success', autoDismissed: true },
         { id: 'info-1', type: 'info', userDismissed: true },
         { id: 'warning-1', type: 'warning', autoDismissed: true },
-        { id: 'success-2', type: 'success', userDismissed: false }
+        { id: 'success-2', type: 'success', userDismissed: false },
       ];
 
       interactions.forEach(interaction => {
@@ -594,18 +587,18 @@ describe('Notification System - User Experience Excellence', () => {
           title: `${interaction.type} notification`,
           message: 'Test message',
           duration: interaction.autoDismissed ? 3000 : undefined,
-          persistent: !interaction.autoDismissed
+          persistent: !interaction.autoDismissed,
         });
 
         // Simulate user or auto dismissal
         manager.removeNotification(interaction.id);
         manager.updateNotification(interaction.id, {
-          dismissedBy: interaction.userDismissed ? 'user' : 'auto'
+          dismissedBy: interaction.userDismissed ? 'user' : 'auto',
         });
       });
 
       const metrics = manager.getMetrics();
-      
+
       expect(metrics.totalShown).to.be.greaterThan(0);
       expect(metrics.errorCount).to.be.greaterThanOrEqual(1);
       expect(metrics.successCount).to.be.greaterThanOrEqual(1);
@@ -628,7 +621,7 @@ describe('Notification System - User Experience Excellence', () => {
           ariaLabel: 'Error: Error Notification',
           role: 'alert',
           contrastChecked: true,
-          keyboardNavigable: true
+          keyboardNavigable: true,
         },
         {
           id: 'accessible-success',
@@ -638,13 +631,13 @@ describe('Notification System - User Experience Excellence', () => {
           ariaLabel: 'Success: Operation completed successfully',
           role: 'status',
           contrastChecked: true,
-          focusManagement: true
-        }
+          focusManagement: true,
+        },
       ];
 
       accessibilityTestCases.forEach(testCase => {
         const notification = manager.addNotification(testCase);
-        
+
         expect(manager.validateAccessibility(notification)).to.be.true;
         expect(notification.ariaLabel).to.exist;
         expect(notification.role).to.exist;
@@ -661,28 +654,28 @@ describe('Notification System - User Experience Excellence', () => {
           type: 'info',
           title: 'System Update Available',
           message: 'A new version of Manic Miners is available for download.',
-          expectedProfessionalism: true
+          expectedProfessionalism: true,
         },
         {
           id: 'professional-2',
           type: 'error',
           title: 'Installation Failed',
           message: 'The installation could not be completed due to insufficient disk space.',
-          expectedProfessionalism: true
+          expectedProfessionalism: true,
         },
         {
           id: 'unprofessional-1',
           type: 'error',
           title: 'oops!!! something went wrong!!!',
           message: 'idk what happened but its broken lol',
-          expectedProfessionalism: false
-        }
+          expectedProfessionalism: false,
+        },
       ];
 
       professionalTests.forEach(test => {
         const notification = manager.addNotification(test);
         const isProfessional = manager.validateNotificationContent(notification);
-        
+
         expect(isProfessional).to.equal(test.expectedProfessionalism);
       });
     });
@@ -700,14 +693,14 @@ describe('Notification System - User Experience Excellence', () => {
         title: 'Download Progress',
         message: 'Starting download...',
         progress: 0,
-        persistent: true
+        persistent: true,
       });
 
       // Simulate rapid progress updates (common during downloads)
       for (let i = 1; i <= 100; i++) {
         manager.updateNotification('progress-test', {
           message: `Downloaded ${i}% of files`,
-          progress: i
+          progress: i,
         });
       }
 
@@ -731,7 +724,7 @@ describe('Notification System - User Experience Excellence', () => {
           type: 'info',
           title: `Stress Test ${i}`,
           message: `Message number ${i}`,
-          duration: 100 // Short duration for quick cleanup
+          duration: 100, // Short duration for quick cleanup
         });
 
         // Periodically clean up
@@ -745,7 +738,7 @@ describe('Notification System - User Experience Excellence', () => {
 
       // Should maintain reasonable active count despite high volume
       expect(active.length).to.be.lessThan(50);
-      
+
       // History should track interactions but not grow unbounded
       expect(history.length).to.be.greaterThan(900);
       expect(history.length).to.be.lessThan(2000);

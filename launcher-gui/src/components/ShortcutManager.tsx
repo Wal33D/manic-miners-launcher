@@ -36,7 +36,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
           setIsCreating(false);
           setLastResult({
             success: true,
-            filePaths: progressData.filePaths || []
+            filePaths: progressData.filePaths || [],
           });
           // Clean up listener
           window.electronAPI.removeAllListeners('create-shortcuts-progress');
@@ -48,7 +48,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
         options: {
           createExeShortcut,
           createDirShortcut,
-        }
+        },
       });
 
       // Update notification if callback provided
@@ -87,9 +87,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
         {!isWindows && (
           <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
             <AlertCircle className="w-4 h-4 text-yellow-600" />
-            <span className="text-sm text-yellow-700 dark:text-yellow-300">
-              Shortcut creation is currently only supported on Windows.
-            </span>
+            <span className="text-sm text-yellow-700 dark:text-yellow-300">Shortcut creation is currently only supported on Windows.</span>
           </div>
         )}
 
@@ -99,7 +97,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
             <Checkbox
               id="exe-shortcut"
               checked={createExeShortcut}
-              onCheckedChange={(checked) => setCreateExeShortcut(checked as boolean)}
+              onCheckedChange={checked => setCreateExeShortcut(checked as boolean)}
               disabled={isCreating || !isWindows}
             />
             <label
@@ -114,7 +112,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
             <Checkbox
               id="dir-shortcut"
               checked={createDirShortcut}
-              onCheckedChange={(checked) => setCreateDirShortcut(checked as boolean)}
+              onCheckedChange={checked => setCreateDirShortcut(checked as boolean)}
               disabled={isCreating || !isWindows}
             />
             <label
@@ -142,11 +140,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
         {lastResult && (
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              {lastResult.success ? (
-                <CheckCircle className="w-4 h-4 text-green-600" />
-              ) : (
-                <AlertCircle className="w-4 h-4 text-red-600" />
-              )}
+              {lastResult.success ? <CheckCircle className="w-4 h-4 text-green-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
               <span className="text-sm font-medium">
                 {lastResult.success ? 'Shortcuts created successfully!' : 'Failed to create shortcuts'}
               </span>
@@ -162,9 +156,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
                     </li>
                   ))}
                   {lastResult.filePaths.length > 5 && (
-                    <li className="text-muted-foreground">
-                      ...and {lastResult.filePaths.length - 5} more
-                    </li>
+                    <li className="text-muted-foreground">...and {lastResult.filePaths.length - 5} more</li>
                   )}
                 </ul>
               </div>

@@ -17,7 +17,7 @@ Maxi_St is a talented LEGO digital artist from Bayern, Germany, with an impressi
 We extend our heartfelt gratitude to Maxi_St for their outstanding contributions to the LEGO community. Their RoK Raiders creations showcase:
 
 - **Innovative Design**: Each creation demonstrates unique architectural and mechanical concepts
-- **Technical Excellence**: Masterful use of LEGO Studio's digital building capabilities  
+- **Technical Excellence**: Masterful use of LEGO Studio's digital building capabilities
 - **Creative Vision**: Bringing the RoK Raiders universe to life through detailed digital models
 - **Community Spirit**: Sharing these incredible works with the global LEGO community
 
@@ -27,4 +27,4 @@ All RoK Raiders images used in this project are credited to Maxi_St and are used
 
 ---
 
-*Thank you, Maxi_St, for inspiring builders worldwide with your exceptional RoK Raiders series!*
+_Thank you, Maxi_St, for inspiring builders worldwide with your exceptional RoK Raiders series!_
