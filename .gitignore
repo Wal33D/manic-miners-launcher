@@ -97,7 +97,3 @@ src/renderer/assets/index.css
 out/
 /launcher-gui/dist/assets
 launcher-gui/dist/index.html
-
-# Additional asset directories
-assets/rock-raiders/
-manic-miner-portal-launch/
