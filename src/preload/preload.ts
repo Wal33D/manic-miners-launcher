@@ -22,6 +22,7 @@ const validSendChannels: IpcChannel[] = [
   'OPEN_EXTERNAL_URL', // Add new channel for opening external URLs
   'download-latest-version', // Add new channel for itch.io downloads
   'verify-and-repair-installation', // Add new channel for verification and repair
+  'delete-latest-version', // Add new channel for deleting latest version
 ];
 
 const validReceiveChannels: IpcChannel[] = [
