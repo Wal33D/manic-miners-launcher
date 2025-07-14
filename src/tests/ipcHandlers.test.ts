@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
+import { fetchInstalledVersions } from '../functions/fetchInstalledVersions';
 
 // Mock dependencies for IPC handler testing
 class MockIpcMain extends EventEmitter {
@@ -439,53 +440,22 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'game executable');
 
       ipcMain.on('request-latest-version-information', async (event) => {
-        // Mock fetchInstalledVersions functionality
-        const installPath = testDir;
-        
         try {
-          const items = await fs.readdir(installPath);
-          const versions = [];
+          const result = await fetchInstalledVersions();
           
-          for (const item of items) {
-            const fullPath = path.join(installPath, item);
-            const stat = await fs.stat(fullPath);
-            
-            if (stat.isDirectory() && item === 'latest') {
-              const contents = await fs.readdir(fullPath);
-              const hasExe = contents.some(file => file.endsWith('.exe'));
-              
-              if (hasExe) {
-                const fileStats = await Promise.all(
-                  contents.map(file => fs.stat(path.join(fullPath, file)))
-                );
-                const totalSize = fileStats.reduce((acc, stat) => acc + stat.size, 0);
-                
-                versions.push({
-                  identifier: 'latest',
-                  version: 'latest',
-                  title: 'ManicMiners',
-                  displayName: 'Manic Miners (Latest)',
-                  directory: fullPath,
-                  executablePath: path.join(fullPath, 'ManicMiners.exe'),
-                  installationSize: totalSize,
-                  size: `${Math.round(totalSize / 1024 / 1024)} MB`
-                });
-              }
-            }
-          }
-          
-          event.sender.send('request-latest-version-information', {
-            versions
+          event.sender.send('latest-version-information-response', {
+            versions: result.installedVersions || []
           });
         } catch (error) {
           event.sender.send('request-latest-version-information', {
+            versions: [],
             error: error.message
           });
         }
       });
 
       const responseEvents: any[] = [];
-      ipcMain.on('request-latest-version-information', (data) => {
+      ipcMain.on('latest-version-information-response', (data) => {
         responseEvents.push(data);
       });
 
@@ -504,21 +474,21 @@ describe('IPC Handlers Integration Tests', () => {
       
       ipcMain.on('request-latest-version-information', async (event) => {
         try {
-          const items = await fs.readdir(testDir);
-          const versions = items.filter(item => item === 'latest').map((): null => null).filter(Boolean);
+          const result = await fetchInstalledVersions();
           
-          event.sender.send('request-latest-version-information', {
-            versions
+          event.sender.send('latest-version-information-response', {
+            versions: result.installedVersions || []
           });
         } catch (error) {
           event.sender.send('request-latest-version-information', {
-            versions: []
+            versions: [],
+            error: error.message
           });
         }
       });
 
       const responseEvents: any[] = [];
-      ipcMain.on('request-latest-version-information', (data) => {
+      ipcMain.on('latest-version-information-response', (data) => {
         responseEvents.push(data);
       });
 
