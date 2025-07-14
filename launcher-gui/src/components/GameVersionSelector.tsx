@@ -98,9 +98,10 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
         }
       });
 
-      window.electronAPI.send('request-version-information');
-      window.electronAPI.receiveOnce('request-version-information', (data: any) => {
+      window.electronAPI.send('request-archived-versions-information');
+      window.electronAPI.receiveOnce('request-archived-versions-information', (data: any) => {
         if (data?.versions) {
+          // All versions from this endpoint are archived versions only
           const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
             const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
             const aParts = parseVersion(a.version);
@@ -128,28 +129,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
       fetchVersions();
     }
 
-    // Only set up download progress listener in Electron environment
-    if (window.electronAPI) {
-      window.electronAPI.receive('download-progress', (status: any) => {
-        if (status.progress !== undefined) setDownloadProgress(status.progress);
-        if (status.status) setDownloadStatus(status.status);
-        if (status.fileName) setDownloadFileName(status.fileName);
-        if (status.totalSize) setDownloadTotalSize(status.totalSize);
-        if (status.speedBytesPerSec !== undefined) {
-          const mb = status.speedBytesPerSec / 1024 / 1024;
-          setDownloadSpeed(`${mb.toFixed(1)} MB/s`);
-        }
-        if (status.etaSeconds !== undefined) {
-          const minutes = Math.floor(status.etaSeconds / 60);
-          const seconds = Math.floor(status.etaSeconds % 60);
-          setDownloadEta(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-        }
-      });
-
-      return () => {
-        window.electronAPI?.removeAllListeners('download-progress');
-      };
-    }
+    // Progress listeners are now handled globally in App.tsx
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
@@ -182,67 +162,8 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     }
   };
 
-  // Update notifications whenever states change
-  useEffect(() => {
-    const notifications: NotificationData[] = [];
-
-    if (isDownloading) {
-      notifications.push({
-        id: 'download',
-        type: 'download',
-        title: 'Game Download',
-        fileName: downloadFileName || 'ManicMiners2020-05-09.zip',
-        fileSize: downloadTotalSize ? `${(downloadTotalSize / 1024 / 1024).toFixed(1)} MB` : '528.0 MB',
-        progress: downloadProgress,
-        speed: downloadSpeed,
-        eta: downloadEta,
-        status: downloadStatus || 'Downloading version file...',
-        isActive: true,
-      });
-    }
-
-    if (isRepairing) {
-      notifications.push({
-        id: 'repair',
-        type: 'repair',
-        title: 'Game Repair',
-        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
-        progress: repairProgress,
-        status: repairStatus,
-        isActive: true,
-      });
-    }
-
-    if (isDeleting) {
-      notifications.push({
-        id: 'delete',
-        type: 'delete',
-        title: 'Game Deletion',
-        fileName: selectedVersionData?.filename || 'ManicMiners2020-05-09.zip',
-        progress: deleteProgress,
-        status: deleteStatus,
-        isActive: true,
-      });
-    }
-
-    onNotificationUpdate(notifications);
-  }, [
-    isDownloading,
-    downloadProgress,
-    downloadFileName,
-    downloadTotalSize,
-    downloadSpeed,
-    downloadEta,
-    downloadStatus,
-    isRepairing,
-    repairProgress,
-    repairStatus,
-    isDeleting,
-    deleteProgress,
-    deleteStatus,
-    selectedVersionData?.filename,
-    onNotificationUpdate,
-  ]);
+  // Note: Progress notifications are now handled globally in App.tsx
+  // This component only needs to manage its own state
 
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;

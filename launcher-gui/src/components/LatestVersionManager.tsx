@@ -3,15 +3,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Play, Download, RotateCcw, Check, Trash2 } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
+  removeNotification: (id: string) => void;
 }
 
-export function LatestVersionManager({ onNotificationUpdate }: LatestVersionManagerProps) {
+export function LatestVersionManager({ onNotificationUpdate, removeNotification }: LatestVersionManagerProps) {
   const [isInstalled, setIsInstalled] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -23,6 +30,9 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteProgress, setDeleteProgress] = useState(0);
   const [deleteStatus, setDeleteStatus] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateStatus, setUpdateStatus] = useState('');
 
   // State for version information
   const [latestVersion, setLatestVersion] = useState({
@@ -35,27 +45,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
   });
-  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
 
-  // Fetch latest version information
-  useEffect(() => {
-    const fetchLatestVersion = async () => {
-      if (window.electronAPI) {
-        setIsLoadingVersion(true);
-        try {
-          // Add IPC call to get latest version info when implemented
-          console.log('Fetching latest version info...');
-          // For now, keep the default version
-        } catch (error) {
-          console.error('Failed to fetch latest version:', error);
-        } finally {
-          setIsLoadingVersion(false);
-        }
-      }
-    };
-
-    fetchLatestVersion();
-  }, []);
 
   // Function to check installation status with fresh retry state
   const checkInstallStatus = useCallback(() => {
@@ -88,7 +78,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
           console.log('Installation check result:', !!installedVersion, 'for identifier:', identifier);
 
           // Clean up listener
-          window.electronAPI.removeAllListeners('request-version-information');
+          window.electronAPI.removeAllListeners('request-latest-version-information');
         } else if (data?.error) {
           console.error('Version check error:', data.error);
           retryCheck();
@@ -99,16 +89,16 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       };
 
       // Set up the listener
-      window.electronAPI.receive('request-version-information', handleVersionInfo);
+      window.electronAPI.receive('request-latest-version-information', handleVersionInfo);
 
       // Send the request
-      window.electronAPI.send('request-version-information');
+      window.electronAPI.send('request-latest-version-information');
 
       // Set up timeout for retry
       const timeoutId = setTimeout(() => {
         if (!responseReceived) {
           console.log('Request timed out, retrying...');
-          window.electronAPI.removeAllListeners('request-version-information');
+          window.electronAPI.removeAllListeners('request-latest-version-information');
           retryCheck();
         }
       }, retryDelay);
@@ -122,7 +112,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
           console.log('Max retries reached, assuming not installed');
           setIsCheckingInstallation(false);
           setIsInstalled(false);
-          window.electronAPI.removeAllListeners('request-version-information');
+          window.electronAPI.removeAllListeners('request-latest-version-information');
         }
       };
     };
@@ -136,7 +126,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     // Cleanup function
     return () => {
       if (window.electronAPI) {
-        window.electronAPI.removeAllListeners('request-version-information');
+        window.electronAPI.removeAllListeners('request-latest-version-information');
       }
     };
   }, [checkInstallStatus]);
@@ -159,73 +149,25 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     }
   }, [checkInstallStatus]);
 
-  useEffect(() => {
-    const notifications: NotificationData[] = [];
-
-    if (isDownloading && downloadProgress > 0) {
-      notifications.push({
-        id: 'latest-download',
-        type: 'download',
-        title: `Game Download`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        fileSize: latestVersion.size,
-        progress: downloadProgress,
-        speed: '15.2 MB/s',
-        eta: '0:24',
-        status: 'Downloading version file...',
-        isActive: true,
-      });
-    }
-
-    if (isVerifying && downloadProgress >= 0) {
-      notifications.push({
-        id: 'latest-verify',
-        type: 'repair',
-        title: `Game Verification`,
-        fileName: `${latestVersion.title}V${latestVersion.version}`,
-        progress: downloadProgress,
-        status: verifyStatus || 'Verifying installation...',
-        isActive: true,
-      });
-    }
-
-    if (isDeleting) {
-      notifications.push({
-        id: 'latest-uninstall',
-        type: 'delete',
-        title: `Game Uninstall`,
-        fileName: `${latestVersion.title}V${latestVersion.version}`,
-        progress: deleteProgress,
-        status: deleteStatus || 'Starting uninstall...',
-        isActive: true,
-      });
-    }
-
-    onNotificationUpdate(notifications);
-  }, [isDownloading, isVerifying, isDeleting, downloadProgress, deleteProgress, deleteStatus, verifyStatus, onNotificationUpdate, latestVersion.title, latestVersion.version]);
+  // Note: Progress notifications are now handled globally in App.tsx
+  // This component only needs to manage its own state
 
   const handleInstall = async () => {
     setIsDownloading(true);
     setDownloadProgress(0);
 
     if (window.electronAPI) {
-      // Listen for download progress first
-      window.electronAPI.receive('download-latest-progress', (progressData: any) => {
-        console.log('Download progress:', progressData);
-        if (progressData.progress !== undefined) {
-          setDownloadProgress(progressData.progress);
-        }
-        if (progressData.progress >= 100) {
-          setIsDownloading(false);
-          // Don't set isInstalled here - wait for versions-updated event
-          // Clean up listener
-          window.electronAPI.removeAllListeners('download-latest-progress');
-        }
-      });
-
       // Trigger itch.io download for latest version
       window.electronAPI.send('download-latest-version', {
         version: latestVersion.version,
+      });
+      
+      // Listen for completion only (progress is handled globally)
+      window.electronAPI.receive('download-latest-progress', (progressData: any) => {
+        if (progressData.progress >= 100) {
+          setIsDownloading(false);
+          window.electronAPI.removeAllListeners('download-latest-progress');
+        }
       });
     } else {
       // Fallback simulation for web preview
@@ -264,18 +206,10 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     setVerifyStatus('Starting verification...');
 
     if (window.electronAPI) {
-      // Listen for verification progress
+      // Listen for completion only (progress is handled globally)
       window.electronAPI.receive('verify-repair-progress', (progressData: any) => {
-        console.log('Verification progress:', progressData);
-        if (progressData.progress !== undefined) {
-          setDownloadProgress(progressData.progress);
-        }
-        if (progressData.status) {
-          setVerifyStatus(progressData.status);
-        }
         if (progressData.progress >= 100) {
           setIsVerifying(false);
-          // Clean up listener
           window.electronAPI.removeAllListeners('verify-repair-progress');
         }
       });
@@ -283,11 +217,78 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       // Listen for version updates after repair
       window.electronAPI.receive('versions-updated', () => {
         // Refresh installation status
-        window.electronAPI.send('request-version-information');
+        window.electronAPI.send('request-latest-version-information');
       });
 
       // Start verification and repair
       window.electronAPI.send('verify-and-repair-installation', {
+        version: latestVersion.version,
+      });
+    }
+  };
+
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    setUpdateProgress(0);
+    setUpdateStatus('Starting update...');
+
+    // Create update notification
+    const updateNotification: NotificationData = {
+      id: `update-${Date.now()}`,
+      type: 'info',
+      title: 'Update Started',
+      message: 'Updating to the latest version...',
+      timestamp: new Date().toISOString(),
+      persistent: true,
+    };
+    onNotificationUpdate([updateNotification]);
+
+    if (window.electronAPI) {
+      // Listen for completion only (progress is handled globally)
+      window.electronAPI.receive('update-progress', (progressData: any) => {
+        if (progressData.progress >= 100) {
+          setIsUpdating(false);
+          window.electronAPI.removeAllListeners('update-progress');
+          
+          // Create success notification
+          const successNotification: NotificationData = {
+            id: `update-success-${Date.now()}`,
+            type: 'success',
+            title: 'Update Complete',
+            message: 'Game has been successfully updated to the latest version!',
+            timestamp: new Date().toISOString(),
+            persistent: false,
+          };
+          onNotificationUpdate([successNotification]);
+        }
+      });
+
+      // Listen for update errors
+      window.electronAPI.receive('update-error', (error: any) => {
+        console.error('Update error:', error);
+        setIsUpdating(false);
+        setUpdateStatus('Update failed');
+        
+        // Create error notification
+        const errorNotification: NotificationData = {
+          id: `update-error-${Date.now()}`,
+          type: 'error',
+          title: 'Update Failed',
+          message: `Failed to update: ${error.message || 'Unknown error'}`,
+          timestamp: new Date().toISOString(),
+          persistent: true,
+        };
+        onNotificationUpdate([errorNotification]);
+      });
+
+      // Listen for version updates after update
+      window.electronAPI.receive('versions-updated', () => {
+        // Refresh installation status
+        window.electronAPI.send('request-latest-version-information');
+      });
+
+      // Start update process (similar to install but for existing installations)
+      window.electronAPI.send('update-latest-version', {
         version: latestVersion.version,
       });
     }
@@ -301,15 +302,8 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       try {
         console.log('Deleting latest version...');
         
-        // Listen for delete progress updates
+        // Listen for completion only (progress is handled globally)
         window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
-          console.log('Delete progress:', progressData);
-          if (progressData.progress !== undefined) {
-            setDeleteProgress(progressData.progress);
-          }
-          if (progressData.status) {
-            setDeleteStatus(progressData.status);
-          }
           if (progressData.progress >= 100) {
             // Clean up listener and finish deletion
             setTimeout(() => {
@@ -404,14 +398,15 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
 
-        {(isDownloading || isVerifying) && (
+        {(isDownloading || isVerifying || isUpdating) && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>{isVerifying ? 'Verifying...' : 'Downloading...'}</span>
-              <span>{Math.round(downloadProgress)}%</span>
+              <span>{isVerifying ? 'Verifying...' : isUpdating ? 'Updating...' : 'Downloading...'}</span>
+              <span>{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
             </div>
-            <Progress value={downloadProgress} className="w-full" />
+            <Progress value={isUpdating ? updateProgress : downloadProgress} className="w-full" />
             {isVerifying && verifyStatus && <div className="text-xs text-muted-foreground">{verifyStatus}</div>}
+            {isUpdating && updateStatus && <div className="text-xs text-muted-foreground">{updateStatus}</div>}
           </div>
         )}
 
@@ -428,32 +423,46 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
             </Button>
           ) : (
             <>
-              <Button onClick={handleLaunch} disabled={isLaunching || isVerifying} className="flex items-center gap-2">
+              <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="flex items-center gap-2">
                 <Play className="w-4 h-4" />
                 {isLaunching ? 'Launching...' : 'Launch Game'}
               </Button>
-              <Button variant="outline" onClick={handleVerify} disabled={isDownloading || isVerifying || isDeleting} className="flex items-center gap-2">
-                <RotateCcw className="w-4 h-4" />
-                {isVerifying ? 'Verifying...' : 'Verify & Repair'}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowDeleteModal(true)} 
-                disabled={isDownloading || isVerifying || isDeleting || isLaunching} 
-                className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
-              >
-                <Trash2 className="w-4 h-4" />
-                {isDeleting ? 'Uninstalling...' : 'Uninstall'}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating} className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Game Options
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleUpdate} disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    {isUpdating ? 'Updating...' : 'Update Game'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleVerify} disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}>
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    {isVerifying ? 'Verifying...' : 'Verify & Repair'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setShowDeleteModal(true)} 
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {isDeleting ? 'Uninstalling...' : 'Uninstall'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
         </div>
 
         {isCheckingInstallation && <div className="text-xs text-muted-foreground mt-2">🔍 Checking if latest version is installed...</div>}
 
-        {!isCheckingInstallation && isInstalled && !isVerifying && (
+        {!isCheckingInstallation && isInstalled && !isVerifying && !isUpdating && (
           <div className="text-xs text-muted-foreground mt-2">
-            ✅ Latest version is installed. Use "Launch Game" to play or "Verify & Repair" to check files.
+            ✅ Latest version is installed. Use "Launch Game" to play or "Game Options" for update, repair, and uninstall options.
           </div>
         )}
       </CardContent>
