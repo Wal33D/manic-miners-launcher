@@ -3,6 +3,7 @@ import path from 'path';
 import StreamZip from 'node-stream-zip';
 import crypto from 'crypto';
 import { downloadLatestVersion } from './downloadLatestVersion';
+import { logger } from '../utils/logger';
 
 interface FileVerificationResult {
   path: string;
@@ -87,7 +88,7 @@ export async function verifyAndRepairInstallation({
     await fs.mkdir(referenceDir, { recursive: true });
 
     const zip = new StreamZip.async({ file: actualZipPath });
-    
+
     // Extract with detailed progress
     const entries = await zip.entries();
     const entryArray = Object.values(entries);
@@ -98,27 +99,27 @@ export async function verifyAndRepairInstallation({
 
     for (const entry of entryArray) {
       const progress = 45 + Math.floor((extractedFiles / totalExtractFiles) * 3); // 45-48% range
-      
+
       if (entry.isDirectory) {
         await zip.extract(entry.name, referenceDir);
-        onProgress({ 
-          status: `Created reference directory: ${path.basename(entry.name)}`, 
-          progress 
+        onProgress({
+          status: `Created reference directory: ${path.basename(entry.name)}`,
+          progress,
         });
       } else {
         await zip.extract(entry.name, referenceDir);
-        onProgress({ 
-          status: `Extracted reference: ${path.basename(entry.name)}`, 
-          progress 
+        onProgress({
+          status: `Extracted reference: ${path.basename(entry.name)}`,
+          progress,
         });
       }
-      
+
       extractedFiles++;
-      
+
       // Small delay to make progress visible
       await new Promise(resolve => setTimeout(resolve, 10));
     }
-    
+
     await zip.close();
 
     // Flatten single subdirectory if needed
@@ -199,13 +200,13 @@ export async function verifyAndRepairInstallation({
     // Step 5: Repair files if needed
     if (repairsNeeded > 0) {
       let filesRepaired = 0;
-      
+
       onProgress({
         status: `Starting repair of ${repairsNeeded} files...`,
         progress: 80,
         repairsNeeded,
       });
-      
+
       for (const result of verificationResults) {
         if (result.needsRepair) {
           const sourceFile = path.join(referenceDir, result.path);
@@ -224,12 +225,12 @@ export async function verifyAndRepairInstallation({
           // Copy the correct file
           await fs.copyFile(sourceFile, targetFile);
           filesRepaired++;
-          
+
           // Small delay to make progress visible
           await new Promise(resolve => setTimeout(resolve, 20));
         }
       }
-      
+
       onProgress({
         status: `Completed repair of ${repairsNeeded} files`,
         progress: 95,
@@ -260,7 +261,7 @@ export async function verifyAndRepairInstallation({
           : 'Installation verified successfully. All files are correct.',
     };
   } catch (error) {
-    console.error('Verification/repair error:', error);
+    logger.error('VERIFY', 'Verification/repair error', { error: error.message }, error);
     onProgress({
       status: `Verification failed: ${error.message}`,
       progress: 0,

@@ -11,6 +11,7 @@ import Index from './pages/Index';
 import GameVersions from './pages/GameVersions';
 import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
+import { logger } from './utils/frontendLogger';
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,7 @@ const App = () => {
     const setupProgressListeners = () => {
       // Latest version progress listeners
       window.electronAPI.receive('download-latest-progress', (progressData: any) => {
-        console.log('Global download progress:', progressData); // Debug logging
+        logger.debug('DOWNLOAD', 'Global download progress', progressData);
         if (progressData.progress !== undefined) {
           const notification: NotificationData = {
             id: 'latest-download',
@@ -40,9 +41,9 @@ const App = () => {
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
-            console.log('Download complete, removing notification'); // Debug logging
+            logger.info('DOWNLOAD', 'Download complete, removing notification');
             removeNotification('latest-download');
           }
         }
@@ -60,7 +61,7 @@ const App = () => {
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
             removeNotification('latest-verify');
           }
@@ -79,7 +80,7 @@ const App = () => {
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
             removeNotification('latest-uninstall');
           }
@@ -101,7 +102,7 @@ const App = () => {
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
             removeNotification('latest-update');
           }
@@ -119,12 +120,14 @@ const App = () => {
             fileSize: progressData.totalSize ? `${(progressData.totalSize / 1024 / 1024).toFixed(1)} MB` : '528.0 MB',
             progress: progressData.progress,
             speed: progressData.speedBytesPerSec ? `${(progressData.speedBytesPerSec / 1024 / 1024).toFixed(1)} MB/s` : '15.2 MB/s',
-            eta: progressData.etaSeconds ? `${Math.floor(progressData.etaSeconds / 60)}:${(progressData.etaSeconds % 60).toString().padStart(2, '0')}` : '0:24',
+            eta: progressData.etaSeconds
+              ? `${Math.floor(progressData.etaSeconds / 60)}:${(progressData.etaSeconds % 60).toString().padStart(2, '0')}`
+              : '0:24',
             status: progressData.status || 'Downloading version file...',
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
             removeNotification('download');
           }
@@ -144,7 +147,7 @@ const App = () => {
             isActive: true,
           };
           addNotification(notification);
-          
+
           if (progressData.progress >= 100) {
             removeNotification('shortcut-creation');
           }
@@ -190,8 +193,8 @@ const App = () => {
   const handleNotificationUpdate = (newNotifications: NotificationData[]) => {
     // Only update notifications that are provided, don't clear others
     setNotifications(prev => {
-      let updated = [...prev];
-      
+      const updated = [...prev];
+
       newNotifications.forEach(notification => {
         const existingIndex = updated.findIndex(n => n.id === notification.id);
         if (existingIndex >= 0) {
@@ -202,7 +205,7 @@ const App = () => {
           updated.push(notification);
         }
       });
-      
+
       return updated;
     });
   };
@@ -212,28 +215,34 @@ const App = () => {
   };
 
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <HashRouter>
-        <div className="h-screen bg-background flex flex-col overflow-hidden">
-          <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
-          <LauncherHeader />
-          <main className="flex-1 overflow-hidden">
-            <Routes>
-              <Route path="/" element={<Index onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />} />
-              <Route path="/game-versions" element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />} />
-              <Route path="/faq" element={<FAQ />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </HashRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <HashRouter>
+          <div className="h-screen bg-background flex flex-col overflow-hidden">
+            <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
+            <LauncherHeader />
+            <main className="flex-1 overflow-hidden">
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Index onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
+                />
+                <Route
+                  path="/game-versions"
+                  element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
+                />
+                <Route path="/faq" element={<FAQ />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </HashRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 

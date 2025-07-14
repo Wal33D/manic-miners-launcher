@@ -3,6 +3,7 @@ import { Version } from '../../api/versionTypes';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
+import { logger } from '../../utils/logger';
 import Store from 'electron-store';
 const store = new Store() as any;
 
@@ -13,7 +14,7 @@ export const setupVersionHandlers = () => {
       const versions = await getVersionDetails();
       event.reply(IPC_CHANNELS.ALL_VERSION_INFO, versions);
     } catch (error) {
-      console.error('Error fetching version data:', error.message);
+      logger.error('VERSION', 'Error fetching version data', { error: error.message }, error);
       event.reply(IPC_CHANNELS.ALL_VERSION_INFO, { error: error.message });
     }
   });
@@ -24,7 +25,7 @@ export const setupVersionHandlers = () => {
       const versions = await getArchivedVersionDetails();
       event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, versions);
     } catch (error) {
-      console.error('Error fetching archived version data:', error.message);
+      logger.error('VERSION', 'Error fetching archived version data', { error: error.message }, error);
       event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, { error: error.message });
     }
   });
@@ -34,7 +35,7 @@ export const setupVersionHandlers = () => {
       const versions = await getLatestVersionDetails();
       event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, versions);
     } catch (error) {
-      console.error('Error fetching latest version data:', error.message);
+      logger.error('VERSION', 'Error fetching latest version data', { error: error.message }, error);
       event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, { error: error.message });
     }
   });
@@ -124,9 +125,9 @@ const getLatestVersionDetails = async () => {
   const installedVersionsResult = await fetchInstalledVersions();
 
   // Only get itch.io installed versions (those with identifier 'latest' or ManicMiners-Baraklava-V)
-  const latestVersions = installedVersionsResult.installedVersions?.filter(v => 
-    v.identifier === 'latest' || v.identifier.includes('ManicMiners-Baraklava-V')
-  ) || [];
+  const latestVersions =
+    installedVersionsResult.installedVersions?.filter(v => v.identifier === 'latest' || v.identifier.includes('ManicMiners-Baraklava-V')) ||
+    [];
 
   return {
     versions: latestVersions,

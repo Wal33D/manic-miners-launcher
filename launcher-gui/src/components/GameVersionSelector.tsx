@@ -5,6 +5,7 @@ import { NotificationData } from './GameNotifications';
 import { VersionSelector } from './VersionSelector';
 import { VersionDetails } from './VersionDetails';
 import { VersionActions } from './VersionActions';
+import { logger } from '../utils/frontendLogger';
 
 interface GameVersion {
   gameId: number;
@@ -83,7 +84,7 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
           setInstalledVersions(new Set<string>());
         }
       } catch (error) {
-        console.error('Failed to fetch versions:', error);
+        logger.error('VERSION', 'Failed to fetch versions', { error: error.message });
       } finally {
         setLoading(false);
       }

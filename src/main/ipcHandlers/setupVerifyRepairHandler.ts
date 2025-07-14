@@ -4,6 +4,7 @@ import { verifyAndRepairInstallation } from '../../functions/verifyAndRepairInst
 import { withIpcHandler } from './withIpcHandler';
 import path from 'path';
 import fs from 'fs/promises';
+import { logger } from '../../utils/logger';
 
 export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; message: string }> => {
   let status = false;
@@ -16,11 +17,11 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
         const { directories } = await getDirectories();
         const installDir = directories.launcherInstallPath;
         const cacheDir = directories.launcherCachePath;
-        
+
         // Try new 'latest' directory first, then fall back to old naming scheme
         const latestPath = path.join(installDir, 'latest');
         const oldPath = path.join(installDir, `ManicMiners-Baraklava-V${version}`);
-        
+
         let installPath = '';
         let exists = false;
 
@@ -29,14 +30,14 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
           await fs.access(latestPath);
           installPath = latestPath;
           exists = true;
-          console.log('Found installation in latest directory:', latestPath);
+          logger.info('VERIFY', 'Found installation in latest directory', { latestPath });
         } catch {
           // Fall back to old naming scheme
           try {
             await fs.access(oldPath);
             installPath = oldPath;
             exists = true;
-            console.log('Found installation in legacy directory:', oldPath);
+            logger.info('VERIFY', 'Found installation in legacy directory', { oldPath });
           } catch {
             exists = false;
           }
@@ -75,7 +76,7 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
     status = true;
     message = 'Verify and repair handler setup successfully';
   } catch (error) {
-    console.error('Error setting up verify and repair handler:', error);
+    logger.error('IPC', 'Error setting up verify and repair handler', { error: error.message }, error);
     message = `Error setting up verify and repair handler: ${error}`;
   }
 

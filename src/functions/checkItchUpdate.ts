@@ -7,6 +7,7 @@ import { fetchVersions } from '../api/fetchVersions';
 import { getDirectories } from './fetchDirectories';
 import { extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
 import Store from 'electron-store';
+import { logger } from '../utils/logger';
 
 const ITCH_URL = 'https://baraklava.itch.io/manic-miners';
 const VERSION_REGEX = /Last updated:\s*\d{4}-\d{2}-\d{2} \(([^)]+)\)/i;
@@ -20,8 +21,8 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
     const version = match[1].replace(/[^0-9.]/g, '');
     const identifier = `ManicMiners-Baraklava-V${version}`;
 
-    const store = new Store();
-    const lastVersion = store.get('last-known-version');
+    const store = new Store() as any;
+    const lastVersion = store.get('last-known-version') as string;
     if (lastVersion === version) return;
 
     const { directories } = await getDirectories();
@@ -34,7 +35,7 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
       .then(() => true)
       .catch(() => false);
     if (exists) {
-      store.set('last-known-version', version);
+      (store as any).set('last-known-version', version);
       return;
     }
 
@@ -50,7 +51,7 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
       filePath,
       expectedSize: info.sizeInBytes,
       expectedMd5: info.md5Hash,
-      updateStatus: updateStatus ? s => updateStatus(s) : undefined,
+      updateStatus: updateStatus ? s => updateStatus({ status: s.status || '', progress: s.progress }) : undefined,
       initialProgress: 5,
     });
 
@@ -68,9 +69,9 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
     await zip.close();
     await flattenSingleSubdirectory(installPath);
 
-    store.set('last-known-version', version);
+    (store as any).set('last-known-version', version);
     if (updateStatus) updateStatus({ status: 'Update installed', progress: 100 });
   } catch (err) {
-    console.error('Failed to check Itch.io update:', err);
+    logger.error('UPDATE', 'Failed to check Itch.io update', { error: err.message }, err);
   }
 }

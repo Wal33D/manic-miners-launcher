@@ -17,16 +17,16 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
       'download-latest-version',
       withIpcHandler('download-latest-version', async (event, { version, forceDownload = false }) => {
         logger.downloadLog('Starting latest version download', { version, forceDownload });
-        
+
         const { directories } = await getDirectories();
         const installDir = directories.launcherInstallPath;
         const identifier = 'latest'; // Use 'latest' as the directory name
         const installPath = path.join(installDir, identifier);
-        
-        logger.downloadLog('Download paths determined', { 
-          installDir, 
-          identifier, 
-          installPath 
+
+        logger.downloadLog('Download paths determined', {
+          installDir,
+          identifier,
+          installPath,
         });
 
         // Check for existing installations with old naming scheme and migrate them
@@ -39,7 +39,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             .then(() => true)
             .catch(() => false);
           if (oldExists) {
-            console.log(`Migrating existing installation from ${oldIdentifier} to latest`);
+            logger.info('INSTALL', `Migrating existing installation from ${oldIdentifier} to latest`);
             // Remove new directory if it exists
             try {
               await fs.rm(installPath, { recursive: true });
@@ -48,10 +48,10 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             }
             // Move old directory to new location
             await fs.rename(oldInstallPath, installPath);
-            console.log('Migration completed successfully');
+            logger.info('INSTALL', 'Migration completed successfully');
           }
         } catch (error) {
-          console.log('Migration failed or not needed:', error.message);
+          logger.warn('INSTALL', 'Migration failed or not needed', { error: error.message });
         }
 
         // Check if already installed by looking for executable files
@@ -67,11 +67,11 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
         };
 
         const exists = await checkInstallation();
-        
-        logger.downloadLog('Installation check complete', { 
-          exists, 
+
+        logger.downloadLog('Installation check complete', {
+          exists,
           forceDownload,
-          installPath 
+          installPath,
         });
 
         if (exists && !forceDownload) {
@@ -94,7 +94,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           try {
             await fs.rm(installPath, { recursive: true });
           } catch (error) {
-            console.log('Could not remove existing directory:', error.message);
+            logger.warn('INSTALL', 'Could not remove existing directory', { error: error.message });
           }
         }
 
@@ -126,10 +126,10 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           }
 
           const zipFilePath = downloadResult.filePath;
-          logger.downloadLog('Download completed', { 
+          logger.downloadLog('Download completed', {
             zipFilePath,
             success: downloadResult.success,
-            message: downloadResult.message
+            message: downloadResult.message,
           });
 
           event.sender.send('download-latest-progress', {
@@ -139,12 +139,12 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           // Extract the ZIP file (simplified approach)
           const zip = new StreamZip.async({ file: zipFilePath });
-          
-          logger.downloadLog('Starting extraction', { 
+
+          logger.downloadLog('Starting extraction', {
             zipFilePath,
-            installPath 
+            installPath,
           });
-          
+
           event.sender.send('download-latest-progress', {
             status: 'Extracting game files...',
             progress: 96,
@@ -153,7 +153,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           // Extract all files at once (much faster)
           await zip.extract(null, installPath);
           await zip.close();
-          
+
           logger.downloadLog('Extraction completed successfully', { installPath });
 
           event.sender.send('download-latest-progress', {
@@ -165,16 +165,16 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           try {
             await fs.unlink(zipFilePath);
           } catch (error) {
-            console.log('Could not remove ZIP file:', error.message);
+            logger.warn('INSTALL', 'Could not remove ZIP file', { error: error.message });
           }
 
           // Check if extraction created a subdirectory and flatten if needed
           const contents = await fs.readdir(installPath);
-          logger.downloadLog('Post-extraction directory contents', { 
+          logger.downloadLog('Post-extraction directory contents', {
             installPath,
-            contents 
+            contents,
           });
-          
+
           if (contents.length === 1) {
             const subDir = path.join(installPath, contents[0]);
             const stat = await fs.stat(subDir);
@@ -197,27 +197,37 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           // Notify that versions have been updated
           event.sender.send('versions-updated');
 
-          logger.downloadLog('Download and installation completed successfully', { 
+          logger.downloadLog('Download and installation completed successfully', {
             installPath,
-            identifier: 'latest'
+            identifier: 'latest',
           });
 
           return { downloaded: true, message: 'Latest version downloaded and installed successfully from itch.io' };
         } catch (downloadError) {
-          logger.error('DOWNLOAD', 'Itch.io download error', { 
-            installPath,
-            error: downloadError.message
-          }, downloadError);
+          logger.error(
+            'DOWNLOAD',
+            'Itch.io download error',
+            {
+              installPath,
+              error: downloadError.message,
+            },
+            downloadError
+          );
 
           // Clean up failed download directory
           try {
             await fs.rm(installPath, { recursive: true });
             logger.downloadLog('Cleaned up failed download directory', { installPath });
           } catch (cleanupError) {
-            logger.error('DOWNLOAD', 'Failed to clean up download directory', { 
-              installPath,
-              error: cleanupError.message
-            }, cleanupError);
+            logger.error(
+              'DOWNLOAD',
+              'Failed to clean up download directory',
+              {
+                installPath,
+                error: cleanupError.message,
+              },
+              cleanupError
+            );
           }
 
           event.sender.send('download-latest-progress', {
@@ -246,8 +256,8 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
         const deleteDirectoryWithProgress = async (dirPath: string, dirName: string) => {
           try {
             await fs.access(dirPath);
-            console.log(`Starting deletion of ${dirName} directory:`, dirPath);
-            
+            logger.info('UNINSTALL', `Starting deletion of ${dirName} directory`, { dirPath });
+
             event.sender.send('delete-latest-progress', {
               status: `Scanning ${dirName} installation...`,
               progress: 5,
@@ -257,7 +267,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             const getAllFiles = async (dir: string): Promise<string[]> => {
               const files: string[] = [];
               const items = await fs.readdir(dir, { withFileTypes: true });
-              
+
               for (const item of items) {
                 const fullPath = path.join(dir, item.name);
                 if (item.isDirectory()) {
@@ -273,9 +283,9 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
             const allFiles = await getAllFiles(dirPath);
             const totalFiles = allFiles.length;
-            
-            console.log(`Found ${totalFiles} items to delete in ${dirName}`);
-            
+
+            logger.info('UNINSTALL', `Found ${totalFiles} items to delete in ${dirName}`);
+
             event.sender.send('delete-latest-progress', {
               status: `Removing ${totalFiles} files from ${dirName}...`,
               progress: 10,
@@ -285,7 +295,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             for (let i = 0; i < allFiles.length; i++) {
               const filePath = allFiles[i];
               const progress = Math.floor((i / totalFiles) * 80) + 10; // 10-90% range
-              
+
               try {
                 const stat = await fs.stat(filePath);
                 if (stat.isDirectory()) {
@@ -301,11 +311,11 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
                     progress,
                   });
                 }
-                
+
                 // Small delay to make progress visible
                 await new Promise(resolve => setTimeout(resolve, 50));
               } catch (error) {
-                console.log(`Could not delete ${filePath}:`, error.message);
+                logger.warn('UNINSTALL', `Could not delete ${filePath}`, { error: error.message });
               }
             }
 
@@ -316,14 +326,14 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
                 status: `Removed ${dirName} directory`,
                 progress: 95,
               });
-              console.log(`Removed ${dirName} directory:`, dirPath);
+              logger.info('UNINSTALL', `Removed ${dirName} directory`, { dirPath });
               return true;
             } catch (error) {
-              console.log(`Could not remove ${dirName} directory:`, error.message);
+              logger.warn('UNINSTALL', `Could not remove ${dirName} directory`, { error: error.message });
               return false;
             }
           } catch (error) {
-            console.log(`${dirName} directory not found or already removed`);
+            logger.info('UNINSTALL', `${dirName} directory not found or already removed`);
             return false;
           }
         };
@@ -357,7 +367,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             return { success: false, message: 'No installation found to remove' };
           }
         } catch (error) {
-          console.error('Error deleting latest version:', error);
+          logger.error('UNINSTALL', 'Error deleting latest version', { error: error.message }, error);
           event.sender.send('delete-latest-progress', {
             status: `Error during uninstall: ${error.message}`,
             progress: 0,
@@ -425,7 +435,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           return { success: true, message: 'Latest version updated successfully' };
         } catch (error) {
-          console.error('Error updating latest version:', error);
+          logger.error('INSTALL', 'Error updating latest version', { error: error.message }, error);
           event.sender.send(IPC_CHANNELS.UPDATE_ERROR, {
             message: `Update download failed: ${error.message}`,
           });
@@ -437,7 +447,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
     status = true;
     message = 'Itch.io download handler setup successfully';
   } catch (error) {
-    console.error('Error setting up itch.io download handler:', error);
+    logger.error('IPC', 'Error setting up itch.io download handler', { error: error.message }, error);
     message = `Error setting up itch.io download handler: ${error}`;
   }
 

@@ -5,6 +5,7 @@ import { withIpcHandler } from './withIpcHandler';
 import { IPC_CHANNELS } from './ipcChannels';
 import path from 'path';
 import fs from 'fs/promises';
+import { logger } from '../../utils/logger';
 
 export const setupShortcutHandler = async (): Promise<{ status: boolean; message: string }> => {
   let status = false;
@@ -17,7 +18,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
         try {
           const { directories } = await getDirectories();
           const launcherInstallPath = directories.launcherInstallPath;
-          
+
           event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, {
             status: 'Starting shortcut creation...',
             progress: 0,
@@ -29,7 +30,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
             // Try to find the latest version in the install directory
             const latestDir = path.join(launcherInstallPath, 'latest');
             const legacyPattern = path.join(launcherInstallPath, 'ManicMiners-Baraklava-V*');
-            
+
             try {
               await fs.access(latestDir);
               // Look for exe files in the latest directory
@@ -52,7 +53,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
                   }
                 }
               } catch (err) {
-                console.log('Could not find legacy installation:', err);
+                logger.warn('SHORTCUT', 'Could not find legacy installation', { error: err.message });
               }
             }
           }
@@ -94,7 +95,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
             throw new Error('Failed to create shortcuts');
           }
         } catch (error) {
-          console.error('Error creating shortcuts:', error);
+          logger.error('SHORTCUT', 'Error creating shortcuts', { error: error.message }, error);
           event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, {
             status: `Error: ${error.message}`,
             progress: 0,
@@ -107,7 +108,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
     status = true;
     message = 'Shortcut handler setup successfully';
   } catch (error) {
-    console.error('Error setting up shortcut handler:', error);
+    logger.error('IPC', 'Error setting up shortcut handler', { error: error.message }, error);
     message = `Error setting up shortcut handler: ${error}`;
   }
 
