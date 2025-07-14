@@ -1,31 +1,85 @@
-import { useState } from 'react';
 import { LatestVersionManager } from '@/components/LatestVersionManager';
 import { GameTrailer } from '@/components/GameTrailer';
 import { NewsPanel } from '@/components/NewsPanel';
-import { GameNotifications, NotificationData } from '@/components/GameNotifications';
+import { NotificationData } from '@/components/GameNotifications';
+import { ShortcutManager } from '@/components/ShortcutManager';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Info, Star, Gamepad2, Download, Users, AlertTriangle, Monitor, FolderOpen, ExternalLink } from 'lucide-react';
 
-const Home = () => {
-  const [notifications, setNotifications] = useState<NotificationData[]>([]);
+// Define image paths
+const backgroundImage = '/assets/manic-miners-background.jpg';
+const logoImage = '/assets/manic-miners.png';
+const lmsImage = '/assets/manic-miners-lms.png';
+const supportStationImage = '/assets/manic-miners-supportstation.png';
+const teleportStationImage = '/assets/manic-miners-teleportstation.png';
+const toolStoreImage = '/assets/manic-miners-toolstore.png';
+const coverImage = '/assets/manic-miners-cover-image.png';
+const altImage = '/assets/manic-miners-alt.png';
 
-  const handleNotificationUpdate = (newNotifications: NotificationData[]) => {
-    setNotifications(newNotifications);
-  };
+interface HomeProps {
+  onNotificationUpdate: (notifications: NotificationData[]) => void;
+  removeNotification: (id: string) => void;
+}
 
-  const handleDismissNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
+const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
 
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
+      
+      {/* Hero Section */}
+      <div 
+        className="relative h-80 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${backgroundImage}')` 
+        }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white space-y-4 px-6">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <img 
+                src={logoImage} 
+                alt="Manic Miners Logo" 
+                className="h-16 w-auto"
+              />
+              <div>
+                <h1 className="text-4xl font-bold">Manic Miners</h1>
+                <Badge variant="secondary" className="mt-1">
+                  <Star className="w-3 h-3 mr-1" />
+                  Free Rock Raiders Remake
+                </Badge>
+              </div>
+            </div>
+            <p className="text-xl text-gray-200 max-w-2xl">
+              A free Rock Raiders remake after 20 years! Experience the classic LEGO mining adventure 
+              rebuilt with modern graphics, enhanced AI, and extensive customization.
+            </p>
+            <div className="flex items-center justify-center gap-6 text-sm text-gray-300">
+              <div className="flex items-center gap-1">
+                <Gamepad2 className="w-4 h-4" />
+                <span>Unreal Engine 4</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <span>Single Player</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Download className="w-4 h-4" />
+                <span>100% Free</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto p-6 flex-1 min-h-0">
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - Game Content */}
             <div className="lg:col-span-7 space-y-6">
-              <LatestVersionManager onNotificationUpdate={handleNotificationUpdate} />
+              <LatestVersionManager onNotificationUpdate={onNotificationUpdate} removeNotification={removeNotification} />
+
+              <ShortcutManager onNotificationUpdate={onNotificationUpdate} />
 
               <Card>
                 <CardHeader>
@@ -36,10 +90,16 @@ const Home = () => {
                   <CardDescription>What makes Manic Miners special</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <p className="text-sm text-muted-foreground">
-                    Manic Miners aims to be what could've been if the franchise continued and released a "Rock Raiders 2" or "Rock Raiders
-                    remastered", but 20 years later. All in the spirit of 90's LEGO themes and games.
-                  </p>
+                  <div className="text-center mb-6">
+                    <Badge variant="outline" className="mb-2">
+                      <Star className="w-3 h-3 mr-1" />
+                      20 Years in the Making
+                    </Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Manic Miners aims to be what could've been if the franchise continued and released a "Rock Raiders 2" or "Rock Raiders
+                      remastered", but 20 years later. All in the spirit of 90's LEGO themes and games.
+                    </p>
+                  </div>
 
                   <div className="space-y-4">
                     <div>
@@ -87,6 +147,23 @@ const Home = () => {
             <div className="lg:col-span-5 space-y-6">
               <GameTrailer />
               <NewsPanel />
+              
+              {/* Legal Disclaimer */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-primary flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Legal Disclaimer
+                  </CardTitle>
+                  <CardDescription>Important information about this project</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed">
+                    <strong>DISCLAIMER:</strong> This project and site are in no way officially supported, endorsed, or recognized by The LEGO Group. 
+                    Manic Miners is a fan-made tribute to the original LEGO Rock Raiders game and is developed independently by the community.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

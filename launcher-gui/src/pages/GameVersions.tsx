@@ -1,22 +1,15 @@
-import { useState } from 'react';
 import { GameVersionSelector } from '@/components/GameVersionSelector';
-import { GameNotifications, NotificationData } from '@/components/GameNotifications';
+import { NotificationData } from '@/components/GameNotifications';
 
-const GameVersions = () => {
-  const [notifications, setNotifications] = useState<NotificationData[]>([]);
+interface GameVersionsProps {
+  onNotificationUpdate: (notifications: NotificationData[]) => void;
+  removeNotification: (id: string) => void;
+}
 
-  const handleNotificationUpdate = (newNotifications: NotificationData[]) => {
-    setNotifications(newNotifications);
-  };
-
-  const handleDismissNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
+const GameVersions = ({ onNotificationUpdate, removeNotification }: GameVersionsProps) => {
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
-      <GameVersionSelector onNotificationUpdate={handleNotificationUpdate} />
+      <GameVersionSelector onNotificationUpdate={onNotificationUpdate} removeNotification={removeNotification} />
     </div>
   );
 };
