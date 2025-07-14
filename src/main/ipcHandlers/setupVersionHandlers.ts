@@ -32,21 +32,27 @@ const getVersionDetails = async () => {
   const installedVersionsResult = await fetchInstalledVersions();
 
   const enhancedVersions = versionData.versions.map(version => {
-    const installedVersion = installedVersionsResult.installedVersions.find(v => v.identifier === version.identifier);
+    const installedVersion = installedVersionsResult.installedVersions?.find(v => v.identifier === version.identifier);
     return {
       ...version,
       directory: installedVersion ? installedVersion.directory : undefined,
     };
   });
 
+  // Add locally-only installed versions (like itch.io downloads) that aren't in server database
+  const serverIdentifiers = new Set(versionData.versions.map(v => v.identifier));
+  const localOnlyVersions = installedVersionsResult.installedVersions?.filter(v => !serverIdentifiers.has(v.identifier)) || [];
+  // Combine enhanced server versions with local-only versions
+  const allVersions = [...enhancedVersions, ...localOnlyVersions];
+
   let defaultVersion = store.get('current-selected-version');
-  if (!defaultVersion || !enhancedVersions.find(v => v.identifier === defaultVersion.identifier)) {
-    defaultVersion = enhancedVersions[0];
+  if (!defaultVersion || !allVersions.find(v => v.identifier === defaultVersion.identifier)) {
+    defaultVersion = allVersions[0];
     store.set('current-selected-version', defaultVersion);
   }
 
   return {
-    versions: enhancedVersions,
+    versions: allVersions,
     defaultVersion,
   };
 };

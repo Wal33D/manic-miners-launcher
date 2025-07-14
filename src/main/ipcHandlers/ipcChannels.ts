@@ -21,4 +21,5 @@ export const IPC_CHANNELS = {
   VERIFY_VERSION: 'verify-version',
   DELETE_VERSION: 'delete-version',
   REPAIR_VERSION: 'repair-version',
+  DELETE_LATEST_VERSION: 'delete-latest-version',
 } as const;

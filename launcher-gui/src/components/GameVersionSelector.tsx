@@ -327,17 +327,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     <div className="container mx-auto p-6 flex-1 min-h-0">
       <div className="space-y-8">
         {/* Header Section */}
-        <div className="flex justify-center">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center energy-glow">
-              <Zap className="w-6 h-6 text-primary-foreground animate-pulse-energy" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Archived Versions</h1>
-              <p className="text-muted-foreground">Manage and install past versions of ManicMiners</p>
-            </div>
-          </div>
-        </div>
 
         {/* Version Selection Section */}
         <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">

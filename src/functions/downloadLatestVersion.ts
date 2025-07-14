@@ -88,20 +88,22 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
     const fileName = 'ManicMiners-latest.zip';
     const filePath = path.join(targetDirectory, fileName);
     let downloadCompleted = false;
+    let downloadStarted = false;
     let downloadError: string | null = null;
 
     return new Promise((resolve, reject) => {
-      // Set up download handler
-      browserWindow.webContents.session.on('will-download', (event, item, webContents) => {
+      // Create a unique download handler for this instance
+      const downloadHandler = (event: any, item: any, webContents: any) => {
+        downloadStarted = true;
         onProgress?.({ status: 'Download started...', progress: 50 });
 
         // Set the save path
         item.setSavePath(filePath);
 
         // Track download progress
-        item.on('updated', (event, state) => {
+        item.on('updated', (event: any, state: string) => {
           if (state === 'progressing') {
-            const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 40) + 50; // 50-90%
+            const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 45) + 50; // 50-95%
             onProgress?.({
               status: `Downloading... ${Math.round(item.getReceivedBytes() / 1024 / 1024)}MB / ${Math.round(item.getTotalBytes() / 1024 / 1024)}MB`,
               progress,
@@ -109,11 +111,16 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
           }
         });
 
-        item.once('done', (event, state) => {
+        item.once('done', (event: any, state: string) => {
+          // Clean up the download handler
+          browserWindow.webContents.session.removeListener('will-download', downloadHandler);
+
           if (state === 'completed') {
             onProgress?.({ status: 'Download completed', progress: 95 });
             downloadCompleted = true;
-            browserWindow.close();
+            if (!browserWindow.isDestroyed()) {
+              browserWindow.close();
+            }
             resolve({
               success: true,
               message: 'Download completed successfully',
@@ -121,22 +128,44 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
             });
           } else {
             downloadError = `Download failed with state: ${state}`;
-            browserWindow.close();
+            if (!browserWindow.isDestroyed()) {
+              browserWindow.close();
+            }
             reject(new Error(downloadError));
           }
         });
-      });
+      };
 
-      // Set a timeout in case download doesn't start
-      setTimeout(() => {
-        if (!downloadCompleted && !downloadError) {
-          browserWindow.close();
+      // Set up download handler
+      browserWindow.webContents.session.on('will-download', downloadHandler);
+
+      // Set a timeout only for download start - once download starts, let it complete
+      const timeoutId = setTimeout(() => {
+        if (!downloadStarted && !downloadError) {
+          browserWindow.webContents.session.removeListener('will-download', downloadHandler);
+          if (!browserWindow.isDestroyed()) {
+            browserWindow.close();
+          }
           reject(new Error('Download did not start within expected time'));
         }
-      }, 30000); // 30 second timeout
+      }, 30000); // 30 second timeout only for download start
+
+      // Clean up timeout if download completes
+      const originalResolve = resolve;
+      const originalReject = reject;
+
+      resolve = (...args) => {
+        clearTimeout(timeoutId);
+        originalResolve(...args);
+      };
+
+      reject = (...args) => {
+        clearTimeout(timeoutId);
+        originalReject(...args);
+      };
     });
   } catch (error) {
-    if (browserWindow) {
+    if (browserWindow && !browserWindow.isDestroyed()) {
       browserWindow.close();
     }
 
