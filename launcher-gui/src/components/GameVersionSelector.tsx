@@ -323,12 +323,6 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center energy-glow">
               <Zap className="w-6 h-6 text-primary-foreground animate-pulse-energy" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Archived Versions</h1>
-              <p className="text-muted-foreground">
-                Manage and install past versions of ManicMiners
-              </p>
-            </div>
           </div>
         </div>
 
