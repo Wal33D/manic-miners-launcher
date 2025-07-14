@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Play, Download, RotateCcw, Check } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2 } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
+import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -15,86 +16,216 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyStatus, setVerifyStatus] = useState('');
+  const [isCheckingInstallation, setIsCheckingInstallation] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Mock data for latest version
-  const latestVersion = {
+  // State for version information
+  const [latestVersion, setLatestVersion] = useState({
     version: '1.0.4',
     title: 'ManicMiners',
     displayName: 'ManicMiners v1.0.4',
     releaseDate: '2024-07-13',
-    size: '582.3 MB',
-    sizeInBytes: 610871296,
+    size: '1.0 GB',
+    sizeInBytes: 1073741824,
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
-  };
+  });
+  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
 
+  // Fetch latest version information
   useEffect(() => {
-    // Check if latest version is installed (mock check)
-    const checkInstallStatus = () => {
+    const fetchLatestVersion = async () => {
       if (window.electronAPI) {
-        // In Electron environment
-        window.electronAPI.send('get-directory-info');
-        window.electronAPI.receive('directory-info', (directoryInfo: any) => {
-          if (directoryInfo.versions) {
-            setIsInstalled(directoryInfo.versions.includes(latestVersion.version));
-          }
-        });
-      } else {
-        // In web preview, randomly set as installed or not
-        setIsInstalled(Math.random() > 0.5);
+        setIsLoadingVersion(true);
+        try {
+          // Add IPC call to get latest version info when implemented
+          console.log('Fetching latest version info...');
+          // For now, keep the default version
+        } catch (error) {
+          console.error('Failed to fetch latest version:', error);
+        } finally {
+          setIsLoadingVersion(false);
+        }
       }
     };
 
-    checkInstallStatus();
+    fetchLatestVersion();
   }, []);
 
-  useEffect(() => {
-    if (isDownloading && downloadProgress > 0) {
-      const notifications: NotificationData[] = [
-        {
-          id: 'latest-download',
-          type: 'download',
-          title: `Game Download`,
-          fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-          fileSize: latestVersion.size,
-          progress: downloadProgress,
-          speed: '15.2 MB/s',
-          eta: '0:24',
-          status: 'Downloading version file...',
-          isActive: true,
-        },
-      ];
-      onNotificationUpdate(notifications);
-    } else if (!isDownloading) {
-      onNotificationUpdate([]);
+  // Function to check installation status with fresh retry state
+  const checkInstallStatus = useCallback(() => {
+    if (!window.electronAPI) {
+      // In web preview, randomly set as installed or not
+      setIsCheckingInstallation(false);
+      setIsInstalled(Math.random() > 0.5);
+      return;
     }
-  }, [isDownloading, downloadProgress, onNotificationUpdate]);
+
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = 5000; // 5 seconds - give more time for file system operations
+
+    const performCheck = () => {
+      console.log(`Checking installation status (attempt ${retryCount + 1}/${maxRetries})`);
+
+      let responseReceived = false;
+
+      // Set up listener first
+      const handleVersionInfo = (data: any) => {
+        responseReceived = true;
+        setIsCheckingInstallation(false);
+
+        if (data?.versions) {
+          // Look for installed version matching our latest version
+          const identifier = `ManicMiners-Baraklava-V${latestVersion.version}`;
+          const installedVersion = data.versions.find((v: any) => v.identifier === identifier && v.directory);
+          setIsInstalled(!!installedVersion);
+          console.log('Installation check result:', !!installedVersion, 'for identifier:', identifier);
+
+          // Clean up listener
+          window.electronAPI.removeAllListeners('request-version-information');
+        } else if (data?.error) {
+          console.error('Version check error:', data.error);
+          retryCheck();
+        } else {
+          console.log('No versions data in response, retrying...');
+          retryCheck();
+        }
+      };
+
+      // Set up the listener
+      window.electronAPI.receive('request-version-information', handleVersionInfo);
+
+      // Send the request
+      window.electronAPI.send('request-version-information');
+
+      // Set up timeout for retry
+      const timeoutId = setTimeout(() => {
+        if (!responseReceived) {
+          console.log('Request timed out, retrying...');
+          window.electronAPI.removeAllListeners('request-version-information');
+          retryCheck();
+        }
+      }, retryDelay);
+
+      const retryCheck = () => {
+        clearTimeout(timeoutId);
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(performCheck, retryDelay);
+        } else {
+          console.log('Max retries reached, assuming not installed');
+          setIsCheckingInstallation(false);
+          setIsInstalled(false);
+          window.electronAPI.removeAllListeners('request-version-information');
+        }
+      };
+    };
+
+    performCheck();
+  }, [latestVersion.version]);
+
+  useEffect(() => {
+    checkInstallStatus();
+
+    // Cleanup function
+    return () => {
+      if (window.electronAPI) {
+        window.electronAPI.removeAllListeners('request-version-information');
+      }
+    };
+  }, [checkInstallStatus]);
+
+  // Listen for version updates (after installations, repairs, etc.)
+  useEffect(() => {
+    if (window.electronAPI) {
+      const handleVersionsUpdated = () => {
+        console.log('Versions updated, rechecking installation status');
+        setIsCheckingInstallation(true);
+        // Use the fresh checkInstallStatus function with reset retry state
+        checkInstallStatus();
+      };
+
+      window.electronAPI.receive('versions-updated', handleVersionsUpdated);
+
+      return () => {
+        window.electronAPI.removeAllListeners('versions-updated');
+      };
+    }
+  }, [checkInstallStatus]);
+
+  useEffect(() => {
+    const notifications: NotificationData[] = [];
+
+    if (isDownloading && downloadProgress > 0) {
+      notifications.push({
+        id: 'latest-download',
+        type: 'download',
+        title: `Game Download`,
+        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
+        fileSize: latestVersion.size,
+        progress: downloadProgress,
+        speed: '15.2 MB/s',
+        eta: '0:24',
+        status: 'Downloading version file...',
+        isActive: true,
+      });
+    }
+
+    if (isVerifying && downloadProgress >= 0) {
+      notifications.push({
+        id: 'latest-verify',
+        type: 'repair',
+        title: `Game Verification`,
+        fileName: `${latestVersion.title}V${latestVersion.version}`,
+        progress: downloadProgress,
+        status: verifyStatus || 'Verifying installation...',
+        isActive: true,
+      });
+    }
+
+    onNotificationUpdate(notifications);
+  }, [isDownloading, isVerifying, downloadProgress, verifyStatus, onNotificationUpdate]);
 
   const handleInstall = async () => {
     setIsDownloading(true);
     setDownloadProgress(0);
 
-    // Simulate download progress
-    const interval = setInterval(() => {
-      setDownloadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          setIsInstalled(true);
-          return 100;
-        }
-        return prev + Math.random() * 5;
-      });
-    }, 200);
-
     if (window.electronAPI) {
-      // In Electron environment, trigger actual download
-      window.electronAPI.send('download-version', {
-        version: latestVersion.version,
-        downloadUrl: `https://example.com/download/${latestVersion.version}`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        size: latestVersion.sizeInBytes,
+      // Listen for download progress first
+      window.electronAPI.receive('download-latest-progress', (progressData: any) => {
+        console.log('Download progress:', progressData);
+        if (progressData.progress !== undefined) {
+          setDownloadProgress(progressData.progress);
+        }
+        if (progressData.progress >= 100) {
+          setIsDownloading(false);
+          // Don't set isInstalled here - wait for versions-updated event
+          // Clean up listener
+          window.electronAPI.removeAllListeners('download-latest-progress');
+        }
       });
+
+      // Trigger itch.io download for latest version
+      window.electronAPI.send('download-latest-version', {
+        version: latestVersion.version,
+      });
+    } else {
+      // Fallback simulation for web preview
+      const interval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsDownloading(false);
+            setIsInstalled(true);
+            return 100;
+          }
+          return prev + Math.random() * 5;
+        });
+      }, 200);
     }
   };
 
@@ -102,7 +233,9 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     setIsLaunching(true);
 
     if (window.electronAPI) {
-      window.electronAPI.send('launch-version', latestVersion.version);
+      const identifier = `ManicMiners-Baraklava-V${latestVersion.version}`;
+      console.log('Launching game with identifier:', identifier);
+      window.electronAPI.send('launch-game', identifier);
     }
 
     // Simulate launch delay
@@ -111,12 +244,86 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     }, 2000);
   };
 
-  const handleUpdate = async () => {
-    // For now, just re-install
-    await handleInstall();
+  const handleVerify = async () => {
+    setIsVerifying(true);
+    setDownloadProgress(0);
+    setVerifyStatus('Starting verification...');
+
+    if (window.electronAPI) {
+      // Listen for verification progress
+      window.electronAPI.receive('verify-repair-progress', (progressData: any) => {
+        console.log('Verification progress:', progressData);
+        if (progressData.progress !== undefined) {
+          setDownloadProgress(progressData.progress);
+        }
+        if (progressData.status) {
+          setVerifyStatus(progressData.status);
+        }
+        if (progressData.progress >= 100) {
+          setIsVerifying(false);
+          // Clean up listener
+          window.electronAPI.removeAllListeners('verify-repair-progress');
+        }
+      });
+
+      // Listen for version updates after repair
+      window.electronAPI.receive('versions-updated', () => {
+        // Refresh installation status
+        window.electronAPI.send('request-version-information');
+      });
+
+      // Start verification and repair
+      window.electronAPI.send('verify-and-repair-installation', {
+        version: latestVersion.version,
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    if (window.electronAPI) {
+      try {
+        console.log('Deleting latest version...');
+        window.electronAPI.send('delete-latest-version', {
+          version: latestVersion.version,
+        });
+
+        // The versions-updated event will trigger a recheck automatically
+        setTimeout(() => {
+          setIsDeleting(false);
+          setIsInstalled(false);
+        }, 1000);
+      } catch (error) {
+        console.error('Error deleting version:', error);
+        setIsDeleting(false);
+      }
+    } else {
+      // Fallback simulation for web preview
+      setTimeout(() => {
+        setIsDeleting(false);
+        setIsInstalled(false);
+      }, 1000);
+    }
   };
 
   return (
+    <>
+      <ConfirmationModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        title="Uninstall Latest Version"
+        description={`Are you sure you want to uninstall ${latestVersion.displayName}? This will permanently remove all game files and you'll need to download them again to play.`}
+        confirmText="Uninstall"
+        cancelText="Cancel"
+        variant="destructive"
+        onConfirm={handleDelete}
+        icon={
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+            <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+          </div>
+        }
+      />
     <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -132,11 +339,19 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            {isInstalled && !isDownloading && (
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Check className="w-3 h-3" />
-                Installed
+            {isCheckingInstallation ? (
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Download className="w-3 h-3 animate-spin" />
+                Checking...
               </Badge>
+            ) : (
+              isInstalled &&
+              !isDownloading && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  Installed
+                </Badge>
+              )
             )}
           </div>
         </div>
@@ -145,36 +360,60 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
 
-        {isDownloading && (
+        {(isDownloading || isVerifying) && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Downloading...</span>
+              <span>{isVerifying ? 'Verifying...' : 'Downloading...'}</span>
               <span>{Math.round(downloadProgress)}%</span>
             </div>
             <Progress value={downloadProgress} className="w-full" />
+            {isVerifying && verifyStatus && <div className="text-xs text-muted-foreground">{verifyStatus}</div>}
           </div>
         )}
 
         <div className="flex gap-2">
-          {!isInstalled ? (
-            <Button onClick={handleInstall} disabled={isDownloading} className="flex items-center gap-2">
+          {isCheckingInstallation ? (
+            <Button disabled className="flex items-center gap-2">
+              <Download className="w-4 h-4 animate-spin" />
+              Checking Installation...
+            </Button>
+          ) : !isInstalled ? (
+            <Button onClick={handleInstall} disabled={isDownloading || isVerifying} className="flex items-center gap-2">
               <Download className="w-4 h-4" />
               {isDownloading ? 'Installing...' : 'Install Latest'}
             </Button>
           ) : (
             <>
-              <Button onClick={handleLaunch} disabled={isLaunching} className="flex items-center gap-2">
+              <Button onClick={handleLaunch} disabled={isLaunching || isVerifying} className="flex items-center gap-2">
                 <Play className="w-4 h-4" />
                 {isLaunching ? 'Launching...' : 'Launch Game'}
               </Button>
-              <Button variant="outline" onClick={handleUpdate} disabled={isDownloading} className="flex items-center gap-2">
+              <Button variant="outline" onClick={handleVerify} disabled={isDownloading || isVerifying || isDeleting} className="flex items-center gap-2">
                 <RotateCcw className="w-4 h-4" />
-                Update
+                {isVerifying ? 'Verifying...' : 'Verify & Repair'}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteModal(true)} 
+                disabled={isDownloading || isVerifying || isDeleting || isLaunching} 
+                className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+              >
+                <Trash2 className="w-4 h-4" />
+                {isDeleting ? 'Uninstalling...' : 'Uninstall'}
               </Button>
             </>
           )}
         </div>
+
+        {isCheckingInstallation && <div className="text-xs text-muted-foreground mt-2">🔍 Checking if latest version is installed...</div>}
+
+        {!isCheckingInstallation && isInstalled && !isVerifying && (
+          <div className="text-xs text-muted-foreground mt-2">
+            ✅ Latest version is installed. Use "Launch Game" to play or "Verify & Repair" to check files.
+          </div>
+        )}
       </CardContent>
     </Card>
+    </>
   );
 }

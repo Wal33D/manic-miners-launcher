@@ -52,7 +52,7 @@ export function Footer() {
                     e.preventDefault();
                     console.log('Footer link clicked:', name, url);
                     console.log('electronAPI available:', !!window.electronAPI);
-                    
+
                     if (window.electronAPI?.openExternal) {
                       console.log('Using electronAPI.openExternal');
                       try {

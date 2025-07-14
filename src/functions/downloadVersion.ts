@@ -3,7 +3,7 @@ import path from 'path';
 import { verifyFile } from '../fileUtils/fileOps';
 import { fetchVersions } from '../api/fetchVersions';
 import { validateUnpackPath } from './unpackHelpers';
-// import { downloadGame } from 'itchio-downloader';
+import { downloadGame } from 'itchio-downloader';
 import { downloadFile } from './downloadFile';
 
 export const downloadVersion = async ({

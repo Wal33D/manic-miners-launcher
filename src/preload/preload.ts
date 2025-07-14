@@ -20,6 +20,9 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
   'OPEN_EXTERNAL_URL', // Add new channel for opening external URLs
+  'download-latest-version', // Add new channel for itch.io downloads
+  'verify-and-repair-installation', // Add new channel for verification and repair
+  'delete-latest-version', // Add new channel for deleting latest version
 ];
 
 const validReceiveChannels: IpcChannel[] = [
@@ -36,6 +39,9 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
+  'download-latest-progress', // Add new channel for itch.io download progress
+  'verify-repair-progress', // Add new channel for verification progress
+  'versions-updated', // Add channel for version updates
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {

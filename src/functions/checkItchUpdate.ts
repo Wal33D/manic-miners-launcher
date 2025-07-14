@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
-// import { downloadGame } from 'itchio-downloader';
+import { downloadGame } from 'itchio-downloader';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
 import { getDirectories } from './fetchDirectories';
