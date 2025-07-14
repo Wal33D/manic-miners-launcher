@@ -124,7 +124,7 @@ export function NewsPanel() {
             <TabsTrigger value="news">News</TabsTrigger>
             <TabsTrigger value="comments">Comments ({commentsData?.count || 0})</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="news" className="mt-4">
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {newsLoading ? (
@@ -156,7 +156,7 @@ export function NewsPanel() {
               )}
             </div>
           </TabsContent>
-          
+
           <TabsContent value="comments" className="mt-4">
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {commentsLoading ? (

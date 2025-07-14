@@ -26,7 +26,6 @@ interface VersionDetailsProps {
 }
 
 export function VersionDetails({ version }: VersionDetailsProps) {
-
   const getVersionVariant = (experimental: boolean) => {
     return experimental ? 'secondary' : 'default';
   };
@@ -50,9 +49,7 @@ export function VersionDetails({ version }: VersionDetailsProps) {
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-secondary-foreground">{version.title}</h4>
-            <Badge variant={getVersionVariant(version.experimental)}>
-              {version.experimental ? 'experimental' : 'stable'}
-            </Badge>
+            <Badge variant={getVersionVariant(version.experimental)}>{version.experimental ? 'experimental' : 'stable'}</Badge>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">

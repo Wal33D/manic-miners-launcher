@@ -60,65 +60,40 @@ export function GameNotifications({ notifications, onDismiss }: GameNotification
 
   return (
     <div className="fixed top-44 right-4 z-50 space-y-3 w-[600px]">
-      {activeNotifications.map((notification) => (
-        <Card 
-          key={notification.id}
-          className="mining-surface energy-glow p-4 shadow-lg border border-primary/20 animate-slide-in-right"
-        >
+      {activeNotifications.map(notification => (
+        <Card key={notification.id} className="mining-surface energy-glow p-4 shadow-lg border border-primary/20 animate-slide-in-right">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
               {getIcon(notification.type, notification.progress)}
               <h4 className="font-medium text-secondary-foreground">{notification.title}</h4>
             </div>
             {notification.progress >= 100 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDismiss(notification.id)}
-                className="h-6 w-6 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={() => onDismiss(notification.id)} className="h-6 w-6 p-0">
                 <X className="w-4 h-4" />
               </Button>
             )}
           </div>
 
           <div className="space-y-2">
-            {notification.fileName && (
-              <div className="text-xs text-muted-foreground font-mono">
-                {notification.fileName}
-              </div>
-            )}
+            {notification.fileName && <div className="text-xs text-muted-foreground font-mono">{notification.fileName}</div>}
 
-            {notification.fileSize && (
-              <div className="text-xs text-muted-foreground">
-                {notification.fileSize}
-              </div>
-            )}
+            {notification.fileSize && <div className="text-xs text-muted-foreground">{notification.fileSize}</div>}
 
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className={`font-medium ${notification.type === 'delete' ? 'text-destructive' : 'text-primary'}`}>
                   {notification.progress.toFixed(1)}% complete
                 </span>
-                {notification.speed && (
-                  <span className="text-muted-foreground">{notification.speed}</span>
-                )}
+                {notification.speed && <span className="text-muted-foreground">{notification.speed}</span>}
               </div>
 
-              <Progress 
-                value={notification.progress} 
-                className="h-2"
-              />
+              <Progress value={notification.progress} className="h-2" />
 
               {notification.eta && notification.type === 'download' && (
-                <div className="text-xs text-muted-foreground">
-                  ETA: {notification.eta}
-                </div>
+                <div className="text-xs text-muted-foreground">ETA: {notification.eta}</div>
               )}
 
-              <div className="text-xs text-muted-foreground italic">
-                {notification.status}
-              </div>
+              <div className="text-xs text-muted-foreground italic">{notification.status}</div>
             </div>
           </div>
         </Card>

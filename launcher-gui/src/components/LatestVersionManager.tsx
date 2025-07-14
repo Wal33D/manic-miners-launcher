@@ -25,7 +25,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
     size: '582.3 MB',
     sizeInBytes: 610871296,
     description: 'Latest stable release with bug fixes and performance improvements.',
-    experimental: false
+    experimental: false,
   };
 
   useEffect(() => {
@@ -50,18 +50,20 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
 
   useEffect(() => {
     if (isDownloading && downloadProgress > 0) {
-      const notifications: NotificationData[] = [{
-        id: 'latest-download',
-        type: 'download',
-        title: `Game Download`,
-        fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        fileSize: latestVersion.size,
-        progress: downloadProgress,
-        speed: '15.2 MB/s',
-        eta: '0:24',
-        status: 'Downloading version file...',
-        isActive: true
-      }];
+      const notifications: NotificationData[] = [
+        {
+          id: 'latest-download',
+          type: 'download',
+          title: `Game Download`,
+          fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
+          fileSize: latestVersion.size,
+          progress: downloadProgress,
+          speed: '15.2 MB/s',
+          eta: '0:24',
+          status: 'Downloading version file...',
+          isActive: true,
+        },
+      ];
       onNotificationUpdate(notifications);
     } else if (!isDownloading) {
       onNotificationUpdate([]);
@@ -91,18 +93,18 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
         version: latestVersion.version,
         downloadUrl: `https://example.com/download/${latestVersion.version}`,
         fileName: `${latestVersion.title}V${latestVersion.version}.zip`,
-        size: latestVersion.sizeInBytes
+        size: latestVersion.sizeInBytes,
       });
     }
   };
 
   const handleLaunch = async () => {
     setIsLaunching(true);
-    
+
     if (window.electronAPI) {
       window.electronAPI.send('launch-version', latestVersion.version);
     }
-    
+
     // Simulate launch delay
     setTimeout(() => {
       setIsLaunching(false);
@@ -139,11 +141,9 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          {latestVersion.description}
-        </p>
+        <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
 
         {isDownloading && (
           <div className="space-y-2">
@@ -157,30 +157,17 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
 
         <div className="flex gap-2">
           {!isInstalled ? (
-            <Button 
-              onClick={handleInstall} 
-              disabled={isDownloading}
-              className="flex items-center gap-2"
-            >
+            <Button onClick={handleInstall} disabled={isDownloading} className="flex items-center gap-2">
               <Download className="w-4 h-4" />
               {isDownloading ? 'Installing...' : 'Install Latest'}
             </Button>
           ) : (
             <>
-              <Button 
-                onClick={handleLaunch} 
-                disabled={isLaunching}
-                className="flex items-center gap-2"
-              >
+              <Button onClick={handleLaunch} disabled={isLaunching} className="flex items-center gap-2">
                 <Play className="w-4 h-4" />
                 {isLaunching ? 'Launching...' : 'Launch Game'}
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleUpdate} 
-                disabled={isDownloading}
-                className="flex items-center gap-2"
-              >
+              <Button variant="outline" onClick={handleUpdate} disabled={isDownloading} className="flex items-center gap-2">
                 <RotateCcw className="w-4 h-4" />
                 Update
               </Button>

@@ -15,10 +15,7 @@ const GameVersions = () => {
 
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      <GameNotifications
-        notifications={notifications}
-        onDismiss={handleDismissNotification}
-      />
+      <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
       <GameVersionSelector onNotificationUpdate={handleNotificationUpdate} />
     </div>
   );
