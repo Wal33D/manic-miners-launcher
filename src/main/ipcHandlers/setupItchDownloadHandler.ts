@@ -6,6 +6,7 @@ import { IPC_CHANNELS } from './ipcChannels';
 import path from 'path';
 import fs from 'fs/promises';
 import StreamZip from 'node-stream-zip';
+import { logger } from '../../utils/logger';
 
 export const setupItchDownloadHandler = async (): Promise<{ status: boolean; message: string }> => {
   let status = false;
@@ -15,10 +16,18 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
     ipcMain.on(
       'download-latest-version',
       withIpcHandler('download-latest-version', async (event, { version, forceDownload = false }) => {
+        logger.downloadLog('Starting latest version download', { version, forceDownload });
+        
         const { directories } = await getDirectories();
         const installDir = directories.launcherInstallPath;
         const identifier = 'latest'; // Use 'latest' as the directory name
         const installPath = path.join(installDir, identifier);
+        
+        logger.downloadLog('Download paths determined', { 
+          installDir, 
+          identifier, 
+          installPath 
+        });
 
         // Check for existing installations with old naming scheme and migrate them
         const oldIdentifier = `ManicMiners-Baraklava-V${version}`;
@@ -58,8 +67,15 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
         };
 
         const exists = await checkInstallation();
+        
+        logger.downloadLog('Installation check complete', { 
+          exists, 
+          forceDownload,
+          installPath 
+        });
 
         if (exists && !forceDownload) {
+          logger.downloadLog('Version already installed, skipping download');
           event.sender.send('download-latest-progress', {
             status: 'Version already installed',
             progress: 100,
@@ -90,11 +106,13 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
         try {
           // Create install directory
           await fs.mkdir(installPath, { recursive: true });
+          logger.downloadLog('Created install directory', { installPath });
 
           // Download from itch.io using new simple implementation
           const downloadResult = await downloadLatestVersion({
             targetDirectory: installPath,
             onProgress: progressData => {
+              logger.downloadLog('Download progress', progressData);
               event.sender.send('download-latest-progress', progressData);
             },
           });
@@ -108,52 +126,35 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           }
 
           const zipFilePath = downloadResult.filePath;
-          console.log('Downloaded file at:', zipFilePath);
+          logger.downloadLog('Download completed', { 
+            zipFilePath,
+            success: downloadResult.success,
+            message: downloadResult.message
+          });
 
           event.sender.send('download-latest-progress', {
             status: 'Preparing to extract game files...',
             progress: 96,
           });
 
-          // Extract the ZIP file with detailed progress
+          // Extract the ZIP file (simplified approach)
           const zip = new StreamZip.async({ file: zipFilePath });
           
-          // Get entries and count them
-          const entries = await zip.entries();
-          const entryArray = Object.values(entries);
-          const totalFiles = entryArray.length;
-          let extractedFiles = 0;
-
+          logger.downloadLog('Starting extraction', { 
+            zipFilePath,
+            installPath 
+          });
+          
           event.sender.send('download-latest-progress', {
-            status: `Extracting ${totalFiles} game files...`,
+            status: 'Extracting game files...',
             progress: 96,
           });
 
-          // Extract files one by one with progress updates
-          for (const entry of entryArray) {
-            const progress = 96 + Math.floor((extractedFiles / totalFiles) * 2); // 96-98% range
-            
-            if (entry.isDirectory) {
-              await zip.extract(entry.name, installPath);
-              event.sender.send('download-latest-progress', {
-                status: `Created directory: ${path.basename(entry.name)}`,
-                progress,
-              });
-            } else {
-              await zip.extract(entry.name, installPath);
-              event.sender.send('download-latest-progress', {
-                status: `Extracted: ${path.basename(entry.name)}`,
-                progress,
-              });
-            }
-            
-            extractedFiles++;
-            
-            // Small delay to make progress visible
-            await new Promise(resolve => setTimeout(resolve, 10));
-          }
-          
+          // Extract all files at once (much faster)
+          await zip.extract(null, installPath);
           await zip.close();
+          
+          logger.downloadLog('Extraction completed successfully', { installPath });
 
           event.sender.send('download-latest-progress', {
             status: 'Cleaning up and finalizing...',
@@ -169,16 +170,22 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           // Check if extraction created a subdirectory and flatten if needed
           const contents = await fs.readdir(installPath);
+          logger.downloadLog('Post-extraction directory contents', { 
+            installPath,
+            contents 
+          });
+          
           if (contents.length === 1) {
             const subDir = path.join(installPath, contents[0]);
             const stat = await fs.stat(subDir);
             if (stat.isDirectory()) {
-              console.log('Flattening single subdirectory:', subDir);
+              logger.downloadLog('Flattening single subdirectory', { subDir });
               const subContents = await fs.readdir(subDir);
               for (const item of subContents) {
                 await fs.rename(path.join(subDir, item), path.join(installPath, item));
               }
               await fs.rm(subDir, { recursive: true });
+              logger.downloadLog('Directory flattening completed');
             }
           }
 
@@ -190,15 +197,27 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           // Notify that versions have been updated
           event.sender.send('versions-updated');
 
+          logger.downloadLog('Download and installation completed successfully', { 
+            installPath,
+            identifier: 'latest'
+          });
+
           return { downloaded: true, message: 'Latest version downloaded and installed successfully from itch.io' };
         } catch (downloadError) {
-          console.error('Itch.io download error:', downloadError);
+          logger.error('DOWNLOAD', 'Itch.io download error', { 
+            installPath,
+            error: downloadError.message
+          }, downloadError);
 
           // Clean up failed download directory
           try {
             await fs.rm(installPath, { recursive: true });
-          } catch {
-            // Ignore cleanup errors
+            logger.downloadLog('Cleaned up failed download directory', { installPath });
+          } catch (cleanupError) {
+            logger.error('DOWNLOAD', 'Failed to clean up download directory', { 
+              installPath,
+              error: cleanupError.message
+            }, cleanupError);
           }
 
           event.sender.send('download-latest-progress', {

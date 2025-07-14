@@ -44,7 +44,11 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     sizeInBytes: 1073741824,
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
+    coverImage: null as string | null,
   });
+  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
+
+  // Note: Removed itch.io data.json fetch due to CSP restrictions and limited usefulness
 
 
   // Function to check installation status with fresh retry state
@@ -396,7 +400,18 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
+        <div className="flex gap-4">
+          {latestVersion.coverImage && (
+            <img 
+              src={latestVersion.coverImage} 
+              alt={latestVersion.title} 
+              className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+            />
+          )}
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
+          </div>
+        </div>
 
         {(isDownloading || isVerifying || isUpdating) && (
           <div className="space-y-2">

@@ -25,6 +25,7 @@ const App = () => {
     const setupProgressListeners = () => {
       // Latest version progress listeners
       window.electronAPI.receive('download-latest-progress', (progressData: any) => {
+        console.log('Global download progress:', progressData); // Debug logging
         if (progressData.progress !== undefined) {
           const notification: NotificationData = {
             id: 'latest-download',
@@ -35,12 +36,13 @@ const App = () => {
             progress: progressData.progress,
             speed: '15.2 MB/s',
             eta: '0:24',
-            status: 'Downloading version file...',
+            status: progressData.status || 'Downloading version file...', // Use actual status from backend
             isActive: true,
           };
           addNotification(notification);
           
           if (progressData.progress >= 100) {
+            console.log('Download complete, removing notification'); // Debug logging
             removeNotification('latest-download');
           }
         }

@@ -123,9 +123,9 @@ const getArchivedVersionDetails = async () => {
 const getLatestVersionDetails = async () => {
   const installedVersionsResult = await fetchInstalledVersions();
 
-  // Only get itch.io installed versions (those with ManicMiners-Baraklava-V identifier)
+  // Only get itch.io installed versions (those with identifier 'latest' or ManicMiners-Baraklava-V)
   const latestVersions = installedVersionsResult.installedVersions?.filter(v => 
-    v.identifier.includes('ManicMiners-Baraklava-V')
+    v.identifier === 'latest' || v.identifier.includes('ManicMiners-Baraklava-V')
   ) || [];
 
   return {

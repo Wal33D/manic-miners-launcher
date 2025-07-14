@@ -10,7 +10,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"launcher-gui/src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
-    "generate:assets": "ts-node scripts/generateAssets.ts"
+    "generate:assets": "ts-node scripts/generateAssets.ts",
+    "test": "ts-mocha src/tests/**/*.test.ts --timeout 10000"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
@@ -23,10 +24,13 @@
     "@electron-forge/plugin-webpack": "^7.8.1",
     "@electron/fuses": "^1.8.0",
     "@types/bootstrap": "^5.2.10",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^24.0.10",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
+    "chai": "^5.2.1",
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "electron": "^37.2.0",
@@ -34,10 +38,12 @@
     "eslint-plugin-import": "^2.25.0",
     "eslint-plugin-prettier": "^5.5.1",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "mocha": "^11.7.1",
     "node-loader": "^2.1.0",
     "prettier": "^3.2.5",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.2.2",
+    "ts-mocha": "^11.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.0"
   },
