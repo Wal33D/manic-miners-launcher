@@ -19,11 +19,38 @@ import { checkItchUpdate } from '../functions/checkItchUpdate';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
 app.disableHardwareAcceleration();
-// Prevent Chrome DevTools from attempting to use unsupported Autofill features
-app.commandLine.appendSwitch('disable-features', 'Autofill');
+
+// Prevent Chrome DevTools from attempting to use unsupported features
+app.commandLine.appendSwitch('disable-features', 'Autofill,AutofillServerCommunication,AutofillAssistant,VizDisplayCompositor');
+app.commandLine.appendSwitch('disable-dev-tools-autofill-engine');
+app.commandLine.appendSwitch('disable-background-networking');
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
+// Additional DevTools-specific suppressions
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('no-sandbox');
 
 const userDataPath = path.join(app.getPath('home'), '.manic-miners-launcher');
 app.setPath('userData', userDataPath);
+
+// Override console.error to filter out DevTools autofill errors
+const originalConsoleError = console.error;
+console.error = (...args: any[]) => {
+  const message = args.join(' ');
+  
+  // Filter out specific DevTools autofill protocol errors
+  if (message.includes('Request Autofill.enable failed') ||
+      message.includes('Request Autofill.setAddresses failed') ||
+      message.includes("'Autofill.enable' wasn't found") ||
+      message.includes("'Autofill.setAddresses' wasn't found") ||
+      message.includes('protocol_client.js')) {
+    return; // Suppress these specific console errors
+  }
+  
+  // Allow all other console.error calls through
+  originalConsoleError.apply(console, args);
+};
 
 const startApp = (): void => {
   app.on('ready', async () => {

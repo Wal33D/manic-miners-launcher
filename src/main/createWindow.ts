@@ -14,6 +14,9 @@ export const createWindow = (): void => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: false,
       contextIsolation: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
     autoHideMenuBar: true, // This will hide the menu bar
     frame: false, // This will remove the frame
@@ -30,6 +33,16 @@ export const createWindow = (): void => {
     const indexPath = path.join(__dirname, '../renderer/index.html');
     mainWindow.loadFile(indexPath, { hash: '/' });
   }
+
+  // Suppress DevTools autofill-related console errors
+  mainWindow.webContents.on('console-message', (event, level, message) => {
+    // Filter out autofill-related DevTools protocol errors
+    if (message.includes('Autofill.enable') || 
+        message.includes('Autofill.setAddresses') ||
+        message.includes("wasn't found")) {
+      event.preventDefault();
+    }
+  });
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.once('did-finish-load', () => {
