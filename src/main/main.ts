@@ -12,6 +12,8 @@ import { setupPlaySoundHandler } from './ipcHandlers/setupPlaySoundHandler';
 import { setupSettingsHandlers } from './ipcHandlers/setupSettingsHandlers';
 import { setupWindowControlHandlers } from './ipcHandlers/setupWindowControlHandlers';
 import { setupExternalUrlHandler } from './ipcHandlers/setupExternalUrlHandler';
+import { setupItchDownloadHandler } from './ipcHandlers/setupItchDownloadHandler';
+import { setupVerifyRepairHandler } from './ipcHandlers/setupVerifyRepairHandler';
 import { checkItchUpdate } from '../functions/checkItchUpdate';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
@@ -37,6 +39,8 @@ const startApp = (): void => {
     setupSettingsHandlers();
     setupWindowControlHandlers();
     setupExternalUrlHandler();
+    setupItchDownloadHandler();
+    setupVerifyRepairHandler();
   });
 
   app.on('window-all-closed', () => {
