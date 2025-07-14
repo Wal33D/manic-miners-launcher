@@ -5,6 +5,7 @@ declare global {
       receive: (channel: string, func: (data: any) => void) => void;
       receiveOnce: (channel: string, func: (data: any) => void) => void;
       removeAllListeners: (channel: string) => void;
+      openExternal: (url: string) => void;
     };
   }
 }

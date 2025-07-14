@@ -41,21 +41,40 @@ export function Footer() {
           {Object.entries(urls)
             .filter(([name]) => name !== 'FAQ' && name !== 'Email')
             .map(([name, url]) => {
-            const Icon = iconMap[name as keyof typeof iconMap];
-            return (
-              <a
-                key={name}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-                title={name}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{name}</span>
-              </a>
-            );
-          })}
+              const Icon = iconMap[name as keyof typeof iconMap];
+              return (
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => {
+                    e.preventDefault();
+                    console.log('Footer link clicked:', name, url);
+                    console.log('electronAPI available:', !!window.electronAPI);
+                    
+                    if (window.electronAPI?.openExternal) {
+                      console.log('Using electronAPI.openExternal');
+                      try {
+                        window.electronAPI.openExternal(url);
+                      } catch (error) {
+                        console.error('Error calling openExternal:', error);
+                        // Fallback to window.open
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                      }
+                    } else {
+                      console.log('electronAPI not available, using window.open fallback');
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
+                  title={name}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{name}</span>
+                </a>
+              );
+            })}
           <Link
             to="/faq"
             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
