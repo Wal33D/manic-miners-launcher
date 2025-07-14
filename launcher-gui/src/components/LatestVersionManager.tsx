@@ -21,6 +21,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [isCheckingInstallation, setIsCheckingInstallation] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteProgress, setDeleteProgress] = useState(0);
 
   // State for version information
   const [latestVersion, setLatestVersion] = useState({
@@ -187,8 +188,20 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       });
     }
 
+    if (isDeleting) {
+      notifications.push({
+        id: 'latest-uninstall',
+        type: 'delete',
+        title: `Game Uninstall`,
+        fileName: `${latestVersion.title}V${latestVersion.version}`,
+        progress: deleteProgress,
+        status: deleteProgress < 100 ? 'Removing game files...' : 'Uninstall completed successfully',
+        isActive: true,
+      });
+    }
+
     onNotificationUpdate(notifications);
-  }, [isDownloading, isVerifying, downloadProgress, verifyStatus, onNotificationUpdate]);
+  }, [isDownloading, isVerifying, isDeleting, downloadProgress, deleteProgress, verifyStatus, onNotificationUpdate, latestVersion.title, latestVersion.version]);
 
   const handleInstall = async () => {
     setIsDownloading(true);
@@ -281,29 +294,58 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
 
   const handleDelete = async () => {
     setIsDeleting(true);
+    setDeleteProgress(0);
 
     if (window.electronAPI) {
       try {
         console.log('Deleting latest version...');
+        
+        // Simulate progress for user feedback
+        const progressInterval = setInterval(() => {
+          setDeleteProgress(prev => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90; // Hold at 90% until actual completion
+            }
+            return prev + Math.random() * 20;
+          });
+        }, 100);
+
         window.electronAPI.send('delete-latest-version', {
           version: latestVersion.version,
         });
 
         // The versions-updated event will trigger a recheck automatically
         setTimeout(() => {
-          setIsDeleting(false);
-          setIsInstalled(false);
-        }, 1000);
+          clearInterval(progressInterval);
+          setDeleteProgress(100);
+          setTimeout(() => {
+            setIsDeleting(false);
+            setIsInstalled(false);
+            setDeleteProgress(0);
+          }, 1000);
+        }, 2000);
       } catch (error) {
         console.error('Error deleting version:', error);
         setIsDeleting(false);
+        setDeleteProgress(0);
       }
     } else {
       // Fallback simulation for web preview
-      setTimeout(() => {
-        setIsDeleting(false);
-        setIsInstalled(false);
-      }, 1000);
+      const progressInterval = setInterval(() => {
+        setDeleteProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(progressInterval);
+            setTimeout(() => {
+              setIsDeleting(false);
+              setIsInstalled(false);
+              setDeleteProgress(0);
+            }, 500);
+            return 100;
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 150);
     }
   };
 

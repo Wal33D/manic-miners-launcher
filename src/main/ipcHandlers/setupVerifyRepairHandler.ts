@@ -16,14 +16,31 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
         const { directories } = await getDirectories();
         const installDir = directories.launcherInstallPath;
         const cacheDir = directories.launcherCachePath;
-        const identifier = `ManicMiners-Baraklava-V${version}`;
-        const installPath = path.join(installDir, identifier);
+        
+        // Try new 'latest' directory first, then fall back to old naming scheme
+        const latestPath = path.join(installDir, 'latest');
+        const oldPath = path.join(installDir, `ManicMiners-Baraklava-V${version}`);
+        
+        let installPath = '';
+        let exists = false;
 
-        // Check if installation exists
-        const exists = await fs
-          .access(installPath)
-          .then(() => true)
-          .catch(() => false);
+        // Check for 'latest' directory first (new naming scheme)
+        try {
+          await fs.access(latestPath);
+          installPath = latestPath;
+          exists = true;
+          console.log('Found installation in latest directory:', latestPath);
+        } catch {
+          // Fall back to old naming scheme
+          try {
+            await fs.access(oldPath);
+            installPath = oldPath;
+            exists = true;
+            console.log('Found installation in legacy directory:', oldPath);
+          } catch {
+            exists = false;
+          }
+        }
 
         if (!exists) {
           event.sender.send('verify-repair-progress', {
