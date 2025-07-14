@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'lucide-react';
+import { openUrl } from '@/lib/openUrl';
 
 interface UrlData {
   Website: string;
@@ -49,8 +50,10 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={e => {
-                    e.preventDefault();
-                    window.open(url, '_blank');
+                    if (window.electronAPI?.openExternal) {
+                      e.preventDefault();
+                      openUrl(url);
+                    }
                   }}
                   className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
                   title={name}

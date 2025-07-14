@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Info, ExternalLink } from 'lucide-react';
+import { openUrl } from '@/lib/openUrl';
 import { Button } from '@/components/ui/button';
 
 const FAQ = () => {
@@ -75,10 +76,10 @@ const FAQ = () => {
                 <Button 
                   variant="link" 
                   className="p-0 h-auto text-muted-foreground underline"
-                  onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
+                  onClick={() => openUrl('https://github.com/Wal33D/manic-miners-launcher')}
                 >
                   GitHub
-                </Button>!
+                </Button>
               </p>
             </CardContent>
           </Card>
@@ -87,7 +88,7 @@ const FAQ = () => {
           <div className="flex justify-center">
             <Button 
               variant="outline" 
-              onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+              onClick={() => openUrl('https://discord.gg/C3hH7mFsMv')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Join Discord
@@ -118,8 +119,8 @@ const FAQ = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <Button 
-                  onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+                <Button
+                  onClick={() => openUrl('https://discord.gg/C3hH7mFsMv')}
                   className="w-full"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
