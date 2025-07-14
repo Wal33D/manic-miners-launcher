@@ -44,36 +44,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     sizeInBytes: 1073741824,
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
-    coverImage: null as string | null,
   });
-  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
-
-  // Fetch latest version information from itch.io (for title and cover image only)
-  useEffect(() => {
-    const fetchLatestVersion = async () => {
-      setIsLoadingVersion(true);
-      try {
-        const response = await fetch('https://baraklava.itch.io/manic-miners/data.json');
-        const data = await response.json();
-        
-        if (data.title && data.cover_image) {
-          setLatestVersion(prev => ({
-            ...prev,
-            title: data.title,
-            displayName: data.title + ' (Latest)',
-            description: data.short_text || prev.description,
-            coverImage: data.cover_image,
-          }));
-        }
-      } catch (error) {
-        console.error('Failed to fetch latest version from itch.io:', error);
-      } finally {
-        setIsLoadingVersion(false);
-      }
-    };
-
-    fetchLatestVersion();
-  }, []);
 
 
   // Function to check installation status with fresh retry state
@@ -101,7 +72,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
         if (data?.versions) {
           // Look for installed version matching our latest version
-          const identifier = `ManicMiners-Baraklava-V${latestVersion.version}`;
+          const identifier = 'latest'; // Use 'latest' as the identifier
           const installedVersion = data.versions.find((v: any) => v.identifier === identifier && v.directory);
           setIsInstalled(!!installedVersion);
           console.log('Installation check result:', !!installedVersion, 'for identifier:', identifier);
@@ -218,7 +189,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     setIsLaunching(true);
 
     if (window.electronAPI) {
-      const identifier = `ManicMiners-Baraklava-V${latestVersion.version}`;
+      const identifier = 'latest'; // Use 'latest' as the identifier
       console.log('Launching game with identifier:', identifier);
       window.electronAPI.send('launch-game', identifier);
     }
@@ -347,7 +318,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
         // Start the deletion process
         window.electronAPI.send('delete-latest-version', {
-          version: latestVersion.version,
+          version: 'latest', // Use 'latest' instead of hardcoded version
         });
       } catch (error) {
         console.error('Error deleting version:', error);
