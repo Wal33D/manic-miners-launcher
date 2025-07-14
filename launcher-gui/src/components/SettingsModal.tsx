@@ -24,7 +24,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   useEffect(() => {
     if (!window.electronAPI) return;
-    
+
     window.electronAPI.send('get-directories');
     window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
       if (dirResult?.status) {
@@ -35,7 +35,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   const handleBrowseFolder = () => {
     if (!window.electronAPI) return;
-    
+
     window.electronAPI.send('open-directory-dialog');
     window.electronAPI.receiveOnce('directory-selected', (selectedPath: string) => {
       if (selectedPath) {

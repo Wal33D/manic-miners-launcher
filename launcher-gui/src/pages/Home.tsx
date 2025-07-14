@@ -19,31 +19,26 @@ const Home = () => {
 
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      <GameNotifications 
-        notifications={notifications}
-        onDismiss={handleDismissNotification}
-      />
+      <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
       <div className="container mx-auto p-6 flex-1 min-h-0">
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - Game Content */}
             <div className="lg:col-span-7 space-y-6">
               <LatestVersionManager onNotificationUpdate={handleNotificationUpdate} />
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle className="text-primary flex items-center gap-2">
                     <Info className="w-5 h-5" />
                     About the Game
                   </CardTitle>
-                  <CardDescription>
-                    What makes Manic Miners special
-                  </CardDescription>
+                  <CardDescription>What makes Manic Miners special</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <p className="text-sm text-muted-foreground">
-                    Manic Miners aims to be what could've been if the franchise continued and released a "Rock Raiders 2" 
-                    or "Rock Raiders remastered", but 20 years later. All in the spirit of 90's LEGO themes and games.
+                    Manic Miners aims to be what could've been if the franchise continued and released a "Rock Raiders 2" or "Rock Raiders
+                    remastered", but 20 years later. All in the spirit of 90's LEGO themes and games.
                   </p>
 
                   <div className="space-y-4">

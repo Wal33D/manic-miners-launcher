@@ -30,13 +30,7 @@ interface VersionActionsProps {
   onRepair: () => void;
 }
 
-export function VersionActions({
-  version,
-  isInstalled,
-  onInstallOrLaunch,
-  onDelete,
-  onRepair
-}: VersionActionsProps) {
+export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair }: VersionActionsProps) {
   if (!version) return null;
 
   return (
