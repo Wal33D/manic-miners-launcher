@@ -189,31 +189,125 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
         const oldIdentifier = `ManicMiners-Baraklava-V${version}`;
         const oldInstallPath = path.join(installDir, oldIdentifier);
 
-        try {
-          // Try to remove the latest directory first
+        const deleteDirectoryWithProgress = async (dirPath: string, dirName: string) => {
           try {
-            await fs.access(installPath);
-            await fs.rm(installPath, { recursive: true, force: true });
-            console.log('Removed latest version directory:', installPath);
+            await fs.access(dirPath);
+            console.log(`Starting deletion of ${dirName} directory:`, dirPath);
+            
+            event.sender.send('delete-latest-progress', {
+              status: `Scanning ${dirName} installation...`,
+              progress: 5,
+            });
+
+            // Get all files recursively
+            const getAllFiles = async (dir: string): Promise<string[]> => {
+              const files: string[] = [];
+              const items = await fs.readdir(dir, { withFileTypes: true });
+              
+              for (const item of items) {
+                const fullPath = path.join(dir, item.name);
+                if (item.isDirectory()) {
+                  const subFiles = await getAllFiles(fullPath);
+                  files.push(...subFiles);
+                  files.push(fullPath); // Add directory after its contents
+                } else {
+                  files.push(fullPath);
+                }
+              }
+              return files;
+            };
+
+            const allFiles = await getAllFiles(dirPath);
+            const totalFiles = allFiles.length;
+            
+            console.log(`Found ${totalFiles} items to delete in ${dirName}`);
+            
+            event.sender.send('delete-latest-progress', {
+              status: `Removing ${totalFiles} files from ${dirName}...`,
+              progress: 10,
+            });
+
+            // Delete files one by one with progress updates
+            for (let i = 0; i < allFiles.length; i++) {
+              const filePath = allFiles[i];
+              const progress = Math.floor((i / totalFiles) * 80) + 10; // 10-90% range
+              
+              try {
+                const stat = await fs.stat(filePath);
+                if (stat.isDirectory()) {
+                  await fs.rmdir(filePath);
+                  event.sender.send('delete-latest-progress', {
+                    status: `Removed directory: ${path.basename(filePath)}`,
+                    progress,
+                  });
+                } else {
+                  await fs.unlink(filePath);
+                  event.sender.send('delete-latest-progress', {
+                    status: `Deleted: ${path.basename(filePath)}`,
+                    progress,
+                  });
+                }
+                
+                // Small delay to make progress visible
+                await new Promise(resolve => setTimeout(resolve, 50));
+              } catch (error) {
+                console.log(`Could not delete ${filePath}:`, error.message);
+              }
+            }
+
+            // Remove the main directory
+            try {
+              await fs.rmdir(dirPath);
+              event.sender.send('delete-latest-progress', {
+                status: `Removed ${dirName} directory`,
+                progress: 95,
+              });
+              console.log(`Removed ${dirName} directory:`, dirPath);
+              return true;
+            } catch (error) {
+              console.log(`Could not remove ${dirName} directory:`, error.message);
+              return false;
+            }
           } catch (error) {
-            console.log('Latest directory not found or already removed');
+            console.log(`${dirName} directory not found or already removed`);
+            return false;
           }
+        };
+
+        try {
+          let deletedAny = false;
+
+          // Try to remove the latest directory first
+          const latestDeleted = await deleteDirectoryWithProgress(installPath, 'latest');
+          if (latestDeleted) deletedAny = true;
 
           // Also try to remove the old naming scheme directory
-          try {
-            await fs.access(oldInstallPath);
-            await fs.rm(oldInstallPath, { recursive: true, force: true });
-            console.log('Removed old version directory:', oldInstallPath);
-          } catch (error) {
-            console.log('Old directory not found or already removed');
+          const oldDeleted = await deleteDirectoryWithProgress(oldInstallPath, 'legacy');
+          if (oldDeleted) deletedAny = true;
+
+          if (deletedAny) {
+            event.sender.send('delete-latest-progress', {
+              status: 'Uninstall completed successfully',
+              progress: 100,
+            });
+
+            // Notify that versions have been updated
+            event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED);
+
+            return { success: true, message: 'Latest version uninstalled successfully' };
+          } else {
+            event.sender.send('delete-latest-progress', {
+              status: 'No installation found to remove',
+              progress: 100,
+            });
+            return { success: false, message: 'No installation found to remove' };
           }
-
-          // Notify that versions have been updated
-          event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED);
-
-          return { success: true, message: 'Latest version uninstalled successfully' };
         } catch (error) {
           console.error('Error deleting latest version:', error);
+          event.sender.send('delete-latest-progress', {
+            status: `Error during uninstall: ${error.message}`,
+            progress: 0,
+          });
           throw new Error(`Failed to uninstall: ${error.message}`);
         }
       })

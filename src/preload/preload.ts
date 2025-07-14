@@ -41,6 +41,7 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.REPAIR_VERSION,
   'download-latest-progress', // Add new channel for itch.io download progress
   'verify-repair-progress', // Add new channel for verification progress
+  'delete-latest-progress', // Add new channel for uninstall progress
   'versions-updated', // Add channel for version updates
 ];
 

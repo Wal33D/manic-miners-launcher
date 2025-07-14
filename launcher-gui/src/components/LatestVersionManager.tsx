@@ -22,6 +22,7 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteProgress, setDeleteProgress] = useState(0);
+  const [deleteStatus, setDeleteStatus] = useState('');
 
   // State for version information
   const [latestVersion, setLatestVersion] = useState({
@@ -195,13 +196,13 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
         title: `Game Uninstall`,
         fileName: `${latestVersion.title}V${latestVersion.version}`,
         progress: deleteProgress,
-        status: deleteProgress < 100 ? 'Removing game files...' : 'Uninstall completed successfully',
+        status: deleteStatus || 'Starting uninstall...',
         isActive: true,
       });
     }
 
     onNotificationUpdate(notifications);
-  }, [isDownloading, isVerifying, isDeleting, downloadProgress, deleteProgress, verifyStatus, onNotificationUpdate, latestVersion.title, latestVersion.version]);
+  }, [isDownloading, isVerifying, isDeleting, downloadProgress, deleteProgress, deleteStatus, verifyStatus, onNotificationUpdate, latestVersion.title, latestVersion.version]);
 
   const handleInstall = async () => {
     setIsDownloading(true);
@@ -300,35 +301,36 @@ export function LatestVersionManager({ onNotificationUpdate }: LatestVersionMana
       try {
         console.log('Deleting latest version...');
         
-        // Simulate progress for user feedback
-        const progressInterval = setInterval(() => {
-          setDeleteProgress(prev => {
-            if (prev >= 90) {
-              clearInterval(progressInterval);
-              return 90; // Hold at 90% until actual completion
-            }
-            return prev + Math.random() * 20;
-          });
-        }, 100);
+        // Listen for delete progress updates
+        window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
+          console.log('Delete progress:', progressData);
+          if (progressData.progress !== undefined) {
+            setDeleteProgress(progressData.progress);
+          }
+          if (progressData.status) {
+            setDeleteStatus(progressData.status);
+          }
+          if (progressData.progress >= 100) {
+            // Clean up listener and finish deletion
+            setTimeout(() => {
+              setIsDeleting(false);
+              setIsInstalled(false);
+              setDeleteProgress(0);
+              setDeleteStatus('');
+              window.electronAPI.removeAllListeners('delete-latest-progress');
+            }, 1000);
+          }
+        });
 
+        // Start the deletion process
         window.electronAPI.send('delete-latest-version', {
           version: latestVersion.version,
         });
-
-        // The versions-updated event will trigger a recheck automatically
-        setTimeout(() => {
-          clearInterval(progressInterval);
-          setDeleteProgress(100);
-          setTimeout(() => {
-            setIsDeleting(false);
-            setIsInstalled(false);
-            setDeleteProgress(0);
-          }, 1000);
-        }, 2000);
       } catch (error) {
         console.error('Error deleting version:', error);
         setIsDeleting(false);
         setDeleteProgress(0);
+        window.electronAPI.removeAllListeners('delete-latest-progress');
       }
     } else {
       // Fallback simulation for web preview
