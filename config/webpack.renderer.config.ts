@@ -24,6 +24,14 @@ export const rendererConfig: Configuration = {
           from: path.resolve(__dirname, '../src/renderer/assets/index.js'),
           to: 'assets/index.js',
         },
+        {
+          from: path.resolve(__dirname, '../src/renderer/assets/*.png'),
+          to: 'assets/[name][ext]',
+        },
+        {
+          from: path.resolve(__dirname, '../src/renderer/assets/*.jpg'),
+          to: 'assets/[name][ext]',
+        },
       ],
     }),
   ],
