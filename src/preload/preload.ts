@@ -1,4 +1,4 @@
-import { shell, contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 
 type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
@@ -19,6 +19,7 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
   IPC_CHANNELS.REPAIR_VERSION,
+  'OPEN_EXTERNAL_URL', // Add new channel for opening external URLs
 ];
 
 const validReceiveChannels: IpcChannel[] = [
@@ -59,9 +60,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
   openExternal: (url: string) => {
-    if (typeof shell?.openExternal === 'function') {
-      shell.openExternal(url);
-    }
+    console.log('preload openExternal called with:', url);
+    console.log('Using IPC to main process for external URL');
+    // Always use IPC since shell is not available in preload context
+    ipcRenderer.send('OPEN_EXTERNAL_URL', url);
   },
   platform: process.platform,
 });
