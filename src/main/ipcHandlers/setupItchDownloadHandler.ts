@@ -348,6 +348,73 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
       })
     );
 
+    // Add update latest version handler
+    ipcMain.on(
+      IPC_CHANNELS.UPDATE_LATEST_VERSION,
+      withIpcHandler('update-latest-version', async (event, { version }) => {
+        try {
+          event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
+            status: 'Starting update...',
+            progress: 0,
+          });
+
+          // For latest version updates, we remove existing installation and re-download
+          const { directories } = await getDirectories();
+          const installDir = directories.launcherInstallPath;
+          const identifier = 'latest';
+          const installPath = path.join(installDir, identifier);
+
+          // Remove existing installation if it exists
+          try {
+            await fs.rm(installPath, { recursive: true });
+            event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
+              status: 'Removing existing installation...',
+              progress: 5,
+            });
+          } catch (error) {
+            // Directory doesn't exist, that's fine
+          }
+
+          // Create install directory
+          await fs.mkdir(installPath, { recursive: true });
+
+          // Map download progress to update progress
+          const progressHandler = (progressData: any) => {
+            event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
+              status: progressData.status,
+              progress: progressData.progress,
+            });
+          };
+
+          // Download from itch.io using the same implementation
+          const downloadResult = await downloadLatestVersion({
+            targetDirectory: installPath,
+            onProgress: progressHandler,
+          });
+
+          if (!downloadResult.success) {
+            throw new Error(`Download failed: ${downloadResult.message}`);
+          }
+
+          event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
+            status: 'Update completed successfully',
+            progress: 100,
+          });
+
+          // Notify that versions have been updated
+          event.sender.send('versions-updated');
+
+          return { success: true, message: 'Latest version updated successfully' };
+        } catch (error) {
+          console.error('Error updating latest version:', error);
+          event.sender.send(IPC_CHANNELS.UPDATE_ERROR, {
+            message: `Update download failed: ${error.message}`,
+          });
+          throw new Error(`Update failed: ${error.message}`);
+        }
+      })
+    );
+
     status = true;
     message = 'Itch.io download handler setup successfully';
   } catch (error) {

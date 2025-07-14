@@ -34,17 +34,46 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateStatus, setUpdateStatus] = useState('');
 
-  // State for version information
+  // State for version information - latest version is always "latest"
   const [latestVersion, setLatestVersion] = useState({
-    version: '1.0.4',
+    version: 'latest', // Use 'latest' instead of hardcoded version
     title: 'ManicMiners',
-    displayName: 'ManicMiners v1.0.4',
-    releaseDate: '2024-07-13',
-    size: '1.0 GB',
+    displayName: 'Manic Miners (Latest)',
+    releaseDate: 'Current',
+    size: '~1.0 GB',
     sizeInBytes: 1073741824,
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
+    coverImage: null as string | null,
   });
+  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
+
+  // Fetch latest version information from itch.io (for title and cover image only)
+  useEffect(() => {
+    const fetchLatestVersion = async () => {
+      setIsLoadingVersion(true);
+      try {
+        const response = await fetch('https://baraklava.itch.io/manic-miners/data.json');
+        const data = await response.json();
+        
+        if (data.title && data.cover_image) {
+          setLatestVersion(prev => ({
+            ...prev,
+            title: data.title,
+            displayName: data.title + ' (Latest)',
+            description: data.short_text || prev.description,
+            coverImage: data.cover_image,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch latest version from itch.io:', error);
+      } finally {
+        setIsLoadingVersion(false);
+      }
+    };
+
+    fetchLatestVersion();
+  }, []);
 
 
   // Function to check installation status with fresh retry state
@@ -159,7 +188,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     if (window.electronAPI) {
       // Trigger itch.io download for latest version
       window.electronAPI.send('download-latest-version', {
-        version: latestVersion.version,
+        version: 'latest', // Use 'latest' instead of hardcoded version
       });
       
       // Listen for completion only (progress is handled globally)
@@ -222,7 +251,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
       // Start verification and repair
       window.electronAPI.send('verify-and-repair-installation', {
-        version: latestVersion.version,
+        version: 'latest', // Use 'latest' instead of hardcoded version
       });
     }
   };
@@ -289,7 +318,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
       // Start update process (similar to install but for existing installations)
       window.electronAPI.send('update-latest-version', {
-        version: latestVersion.version,
+        version: 'latest', // Use 'latest' instead of hardcoded version
       });
     }
   };
