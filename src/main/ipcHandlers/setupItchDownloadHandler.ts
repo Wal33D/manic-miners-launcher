@@ -111,13 +111,48 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           console.log('Downloaded file at:', zipFilePath);
 
           event.sender.send('download-latest-progress', {
-            status: 'Extracting game files...',
+            status: 'Preparing to extract game files...',
             progress: 96,
           });
 
-          // Extract the ZIP file
+          // Extract the ZIP file with detailed progress
           const zip = new StreamZip.async({ file: zipFilePath });
-          await zip.extract(null, installPath);
+          
+          // Get entries and count them
+          const entries = await zip.entries();
+          const entryArray = Object.values(entries);
+          const totalFiles = entryArray.length;
+          let extractedFiles = 0;
+
+          event.sender.send('download-latest-progress', {
+            status: `Extracting ${totalFiles} game files...`,
+            progress: 96,
+          });
+
+          // Extract files one by one with progress updates
+          for (const entry of entryArray) {
+            const progress = 96 + Math.floor((extractedFiles / totalFiles) * 2); // 96-98% range
+            
+            if (entry.isDirectory) {
+              await zip.extract(entry.name, installPath);
+              event.sender.send('download-latest-progress', {
+                status: `Created directory: ${path.basename(entry.name)}`,
+                progress,
+              });
+            } else {
+              await zip.extract(entry.name, installPath);
+              event.sender.send('download-latest-progress', {
+                status: `Extracted: ${path.basename(entry.name)}`,
+                progress,
+              });
+            }
+            
+            extractedFiles++;
+            
+            // Small delay to make progress visible
+            await new Promise(resolve => setTimeout(resolve, 10));
+          }
+          
           await zip.close();
 
           event.sender.send('download-latest-progress', {

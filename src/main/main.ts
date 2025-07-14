@@ -14,6 +14,7 @@ import { setupWindowControlHandlers } from './ipcHandlers/setupWindowControlHand
 import { setupExternalUrlHandler } from './ipcHandlers/setupExternalUrlHandler';
 import { setupItchDownloadHandler } from './ipcHandlers/setupItchDownloadHandler';
 import { setupVerifyRepairHandler } from './ipcHandlers/setupVerifyRepairHandler';
+import { setupShortcutHandler } from './ipcHandlers/setupShortcutHandler';
 import { checkItchUpdate } from '../functions/checkItchUpdate';
 
 // Disable hardware acceleration to avoid GPU-related errors in some environments
@@ -41,6 +42,7 @@ const startApp = (): void => {
     setupExternalUrlHandler();
     setupItchDownloadHandler();
     setupVerifyRepairHandler();
+    setupShortcutHandler();
   });
 
   app.on('window-all-closed', () => {

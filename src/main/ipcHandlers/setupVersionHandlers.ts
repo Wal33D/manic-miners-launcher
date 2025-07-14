@@ -7,6 +7,7 @@ import Store from 'electron-store';
 const store = new Store() as any;
 
 export const setupVersionHandlers = () => {
+  // Legacy handler for backward compatibility
   ipcMain.on(IPC_CHANNELS.ALL_VERSION_INFO, async event => {
     try {
       const versions = await getVersionDetails();
@@ -17,6 +18,37 @@ export const setupVersionHandlers = () => {
     }
   });
 
+  // New separated handlers
+  ipcMain.on(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, async event => {
+    try {
+      const versions = await getArchivedVersionDetails();
+      event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, versions);
+    } catch (error) {
+      console.error('Error fetching archived version data:', error.message);
+      event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, { error: error.message });
+    }
+  });
+
+  ipcMain.on(IPC_CHANNELS.LATEST_VERSION_INFO, async event => {
+    try {
+      const versions = await getLatestVersionDetails();
+      event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, versions);
+    } catch (error) {
+      console.error('Error fetching latest version data:', error.message);
+      event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, { error: error.message });
+    }
+  });
+
+  ipcMain.on(IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION, async (event, selectedVersion) => {
+    setSelectedVersion(selectedVersion);
+  });
+
+  ipcMain.on(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, async event => {
+    const selectedVersion = getSelectedVersion();
+    event.reply(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, selectedVersion);
+  });
+
+  // Legacy handlers for backward compatibility
   ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, async (event, selectedVersion) => {
     setSelectedVersion(selectedVersion);
   });
@@ -27,6 +59,7 @@ export const setupVersionHandlers = () => {
   });
 };
 
+// Legacy function for backward compatibility
 const getVersionDetails = async () => {
   const versionData = await fetchVersions({ versionType: 'archived' });
   const installedVersionsResult = await fetchInstalledVersions();
@@ -57,11 +90,65 @@ const getVersionDetails = async () => {
   };
 };
 
+// New function for archived versions only (Internet Archive)
+const getArchivedVersionDetails = async () => {
+  const versionData = await fetchVersions({ versionType: 'archived' });
+  const installedVersionsResult = await fetchInstalledVersions();
+
+  // Only enhance with archived versions, exclude itch.io downloads
+  const enhancedVersions = versionData.versions.map(version => {
+    const installedVersion = installedVersionsResult.installedVersions?.find(v => v.identifier === version.identifier);
+    return {
+      ...version,
+      directory: installedVersion ? installedVersion.directory : undefined,
+    };
+  });
+
+  // DO NOT add locally-only versions (like itch.io downloads) to archived versions
+  const archivedVersions = enhancedVersions;
+
+  let defaultVersion = store.get('current-selected-archived-version');
+  if (!defaultVersion || !archivedVersions.find(v => v.identifier === defaultVersion.identifier)) {
+    defaultVersion = archivedVersions[0];
+    store.set('current-selected-archived-version', defaultVersion);
+  }
+
+  return {
+    versions: archivedVersions,
+    defaultVersion,
+  };
+};
+
+// New function for latest version only (itch.io)
+const getLatestVersionDetails = async () => {
+  const installedVersionsResult = await fetchInstalledVersions();
+
+  // Only get itch.io installed versions (those with ManicMiners-Baraklava-V identifier)
+  const latestVersions = installedVersionsResult.installedVersions?.filter(v => 
+    v.identifier.includes('ManicMiners-Baraklava-V')
+  ) || [];
+
+  return {
+    versions: latestVersions,
+  };
+};
+
+// Legacy functions for backward compatibility
 const setSelectedVersion = (selectedVersion: Version) => {
   store.set('current-selected-version', selectedVersion);
 };
 
 const getSelectedVersion = () => {
   const selectedVersion = store.get('current-selected-version');
+  return selectedVersion;
+};
+
+// New functions for archived versions
+const setSelectedArchivedVersion = (selectedVersion: Version) => {
+  store.set('current-selected-archived-version', selectedVersion);
+};
+
+const getSelectedArchivedVersion = () => {
+  const selectedVersion = store.get('current-selected-archived-version');
   return selectedVersion;
 };
