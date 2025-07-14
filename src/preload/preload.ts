@@ -9,7 +9,11 @@ const validSendChannels: IpcChannel[] = [
   IPC_CHANNELS.DOWNLOAD_VERSION,
   IPC_CHANNELS.PLAY_SOUND,
   IPC_CHANNELS.ALL_VERSION_INFO,
+  IPC_CHANNELS.ARCHIVED_VERSIONS_INFO,
+  IPC_CHANNELS.LATEST_VERSION_INFO,
   IPC_CHANNELS.SET_SELECTED_VERSION,
+  IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION,
+  IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION,
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.GET_SETTINGS,
   IPC_CHANNELS.SET_SETTINGS,
@@ -23,6 +27,8 @@ const validSendChannels: IpcChannel[] = [
   'download-latest-version', // Add new channel for itch.io downloads
   'verify-and-repair-installation', // Add new channel for verification and repair
   'delete-latest-version', // Add new channel for deleting latest version
+  'update-latest-version', // Add new channel for updating latest version
+  IPC_CHANNELS.CREATE_SHORTCUTS, // Add new channel for creating shortcuts
 ];
 
 const validReceiveChannels: IpcChannel[] = [
@@ -32,6 +38,9 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.DOWNLOAD_VERSION,
   IPC_CHANNELS.VERSIONS_UPDATED,
   IPC_CHANNELS.ALL_VERSION_INFO,
+  IPC_CHANNELS.ARCHIVED_VERSIONS_INFO,
+  IPC_CHANNELS.LATEST_VERSION_INFO,
+  IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION,
   IPC_CHANNELS.GET_URLS,
   IPC_CHANNELS.DIRECTORY_SELECTED,
   IPC_CHANNELS.GET_SETTINGS,
@@ -42,7 +51,10 @@ const validReceiveChannels: IpcChannel[] = [
   'download-latest-progress', // Add new channel for itch.io download progress
   'verify-repair-progress', // Add new channel for verification progress
   'delete-latest-progress', // Add new channel for uninstall progress
+  'update-progress', // Add new channel for update progress
+  'update-error', // Add new channel for update errors
   'versions-updated', // Add channel for version updates
+  IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, // Add new channel for shortcut creation progress
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
