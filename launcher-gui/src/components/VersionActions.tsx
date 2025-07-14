@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Play, Download, Menu, Trash2, RotateCcw } from 'lucide-react';
+import { Play, Download, Menu, Trash2, RotateCcw, Settings, ChevronDown } from 'lucide-react';
 
 interface GameVersion {
   gameId: number;
@@ -52,8 +52,10 @@ export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDele
       {isInstalled && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Menu className="w-4 h-4" />
+            <Button variant="outline" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Game Options
+              <ChevronDown className="w-4 h-4 ml-1" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mining-surface border-primary/20">
