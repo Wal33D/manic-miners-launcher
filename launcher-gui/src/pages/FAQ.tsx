@@ -75,7 +75,11 @@ const FAQ = () => {
                 <Button 
                   variant="link" 
                   className="p-0 h-auto text-muted-foreground underline"
-                  onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
+                  onClick={() =>
+                    window.electronAPI?.openExternal
+                      ? window.electronAPI.openExternal('https://github.com/Wal33D/manic-miners-launcher')
+                      : window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')
+                  }
                 >
                   GitHub
                 </Button>!
@@ -87,7 +91,11 @@ const FAQ = () => {
           <div className="flex justify-center">
             <Button 
               variant="outline" 
-              onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+              onClick={() =>
+                window.electronAPI?.openExternal
+                  ? window.electronAPI.openExternal('https://discord.gg/C3hH7mFsMv')
+                  : window.open('https://discord.gg/C3hH7mFsMv', '_blank')
+              }
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Join Discord
@@ -119,7 +127,11 @@ const FAQ = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <Button 
-                  onClick={() => window.open('https://discord.gg/C3hH7mFsMv', '_blank')}
+                  onClick={() =>
+                    window.electronAPI?.openExternal
+                      ? window.electronAPI.openExternal('https://discord.gg/C3hH7mFsMv')
+                      : window.open('https://discord.gg/C3hH7mFsMv', '_blank')
+                  }
                   className="w-full"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
