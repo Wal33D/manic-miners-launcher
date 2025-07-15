@@ -13,7 +13,8 @@
     "generate:assets": "ts-node scripts/generateAssets.ts",
     "test": "mocha",
     "test:watch": "mocha --watch",
-    "test:verbose": "mocha --reporter spec"
+    "test:verbose": "mocha --reporter spec",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",
@@ -40,6 +41,8 @@
     "eslint-plugin-import": "^2.25.0",
     "eslint-plugin-prettier": "^5.5.1",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "mocha": "^11.7.1",
     "node-loader": "^2.1.0",
     "prettier": "^3.2.5",
@@ -85,6 +88,21 @@
     "onlyBuiltDependencies": [
       "electron",
       "electron-winstaller"
+    ]
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{js,jsx,json,md,yml,yaml,css,html}": [
+      "prettier --write"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "bash -c 'tsc --noEmit -p tsconfig.json'"
+    ],
+    "launcher-gui/src/**/*.{ts,tsx}": [
+      "bash -c 'cd launcher-gui && tsc --noEmit -p tsconfig.json'"
     ]
   }
 }
