@@ -2,18 +2,19 @@ const SERVER_BASE_URL = 'https://manic-launcher.vercel.app';
 
 export async function updateFavicon() {
   try {
-    const response = await fetch(`${SERVER_BASE_URL}/api/assets`);
+    const response = await fetch(`${SERVER_BASE_URL}/api/images`);
     if (!response.ok) return;
 
     const data = await response.json();
-    if (!data.assets) return;
+    if (!data.images) return;
 
-    // Look for favicon assets
-    const faviconAssets = ['manic-miners-favicon.ico', 'manic-miners.ico', 'manic-miners-alt.ico'];
+    // Look for favicon assets by name
+    const faviconNames = ['manic-miners-basic.ico', 'manic-miners-alt-icon.ico'];
 
-    for (const assetName of faviconAssets) {
-      if (data.assets[assetName]) {
-        const faviconUrl = `${SERVER_BASE_URL}${data.assets[assetName]}`;
+    for (const faviconName of faviconNames) {
+      const faviconImage = data.images[faviconName];
+      if (faviconImage) {
+        const faviconUrl = faviconImage.cloudinaryUrl || faviconImage.internalUrl;
 
         // Remove existing favicon links
         const existingLinks = document.querySelectorAll("link[rel*='icon']");

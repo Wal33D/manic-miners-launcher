@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { ImagesResponse } from '@/types/api';
 
 interface Assets {
   [key: string]: string;
@@ -21,21 +22,38 @@ export function useAssets() {
       }
 
       try {
-        const response = await fetch(`${SERVER_BASE_URL}/api/assets`);
+        const response = await fetch(`${SERVER_BASE_URL}/api/images`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
 
-        if (!data.assets) {
-          throw new Error('Invalid assets response format');
+        // Create asset mapping from images API
+        const processedAssets: Assets = {};
+
+        // Map each image to its cloudinary URL or internal URL
+        for (const [filename, imageData] of Object.entries(data.images)) {
+          processedAssets[filename] = imageData.cloudinaryUrl || imageData.internalUrl;
         }
 
-        // Convert relative paths to absolute URLs
-        const processedAssets: Assets = {};
-        for (const [key, value] of Object.entries(data.assets)) {
-          processedAssets[key] = `${SERVER_BASE_URL}${value}`;
+        // Add mappings for common asset names that might not match exactly
+        const assetMappings = {
+          'manic-miners.png': 'manic-miners-basic.png',
+          'manic-miners-alt.png': 'manic-miners-alt-icon.png',
+          'manic-miners.ico': 'manic-miners-basic.ico',
+          'manic-miners-alt.ico': 'manic-miners-alt-icon.ico',
+          'manic-miners-lms.png': 'manic-miners-level-editor.png',
+          'manic-miners-supportstation.png': 'manic-miners-combat.png',
+          'manic-miners-teleportstation.png': 'manic-miners-combat.png',
+          'manic-miners-toolstore.png': 'manic-miners-combat.png',
+        };
+
+        // Apply mappings
+        for (const [alias, actualName] of Object.entries(assetMappings)) {
+          if (data.images[actualName]) {
+            processedAssets[alias] = data.images[actualName].cloudinaryUrl || data.images[actualName].internalUrl;
+          }
         }
 
         cachedAssets = processedAssets;
@@ -47,16 +65,16 @@ export function useAssets() {
         // Create fallback with direct endpoint URLs
         const fallbackAssets: Assets = {
           'manic-miners-background.jpg': `${SERVER_BASE_URL}/manic-miners-background.jpg`,
-          'manic-miners.png': `${SERVER_BASE_URL}/manic-miners.png`,
-          'manic-miners-lms.png': `${SERVER_BASE_URL}/manic-miners-lms.png`,
-          'manic-miners-supportstation.png': `${SERVER_BASE_URL}/manic-miners-supportstation.png`,
-          'manic-miners-teleportstation.png': `${SERVER_BASE_URL}/manic-miners-teleportstation.png`,
-          'manic-miners-toolstore.png': `${SERVER_BASE_URL}/manic-miners-toolstore.png`,
+          'manic-miners.png': `${SERVER_BASE_URL}/manic-miners-basic.png`,
+          'manic-miners-lms.png': `${SERVER_BASE_URL}/manic-miners-level-editor.png`,
+          'manic-miners-supportstation.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
+          'manic-miners-teleportstation.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
+          'manic-miners-toolstore.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
           'manic-miners-cover-image.png': `${SERVER_BASE_URL}/manic-miners-cover-image.png`,
-          'manic-miners-alt.png': `${SERVER_BASE_URL}/manic-miners-alt.png`,
-          'manic-miners-favicon.ico': `${SERVER_BASE_URL}/manic-miners-favicon.ico`,
-          'manic-miners.ico': `${SERVER_BASE_URL}/manic-miners.ico`,
-          'manic-miners-alt.ico': `${SERVER_BASE_URL}/manic-miners-alt.ico`,
+          'manic-miners-alt.png': `${SERVER_BASE_URL}/manic-miners-alt-icon.png`,
+          'manic-miners-favicon.ico': `${SERVER_BASE_URL}/manic-miners-basic.ico`,
+          'manic-miners.ico': `${SERVER_BASE_URL}/manic-miners-basic.ico`,
+          'manic-miners-alt.ico': `${SERVER_BASE_URL}/manic-miners-alt-icon.ico`,
           'intro-video.mp4': `${SERVER_BASE_URL}/intro-video.mp4`,
           'success.mp3': `${SERVER_BASE_URL}/success.mp3`,
         };

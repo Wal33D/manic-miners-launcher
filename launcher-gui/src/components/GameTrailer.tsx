@@ -25,7 +25,7 @@ export function GameTrailer() {
 
         if (introVideo) {
           setTrailer({
-            youtubeUrl: introVideo.url,
+            youtubeUrl: introVideo.cloudinaryUrl || introVideo.url,
             localUrl: introVideo.internalUrl || introVideo.cloudinaryUrl || '/intro-video.mp4',
           });
         }

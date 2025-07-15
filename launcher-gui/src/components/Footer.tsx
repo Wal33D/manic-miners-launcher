@@ -8,8 +8,9 @@ interface UrlData {
   Reddit: string;
   YouTube: string;
   Facebook: string;
-  FAQ: string;
-  Email: string;
+  GameAuthorEmail: string;
+  EndpointDeveloperEmail: string;
+  GameHomePage: string;
 }
 
 const iconMap = {
@@ -39,7 +40,7 @@ export function Footer() {
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-center gap-6">
           {Object.entries(urls)
-            .filter(([name]) => name !== 'FAQ' && name !== 'Email')
+            .filter(([name]) => !name.includes('Email') && name !== 'GameHomePage')
             .map(([name, url]) => {
               const Icon = iconMap[name as keyof typeof iconMap];
               return (

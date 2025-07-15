@@ -87,12 +87,14 @@ export interface LevelsResponse {
 
 // URL Types
 export interface Urls {
-  discord?: string;
-  github?: string;
-  reddit?: string;
-  youtube?: string;
-  website?: string;
-  [key: string]: string | undefined;
+  Website: string;
+  Discord: string;
+  Reddit: string;
+  YouTube: string;
+  Facebook: string;
+  GameAuthorEmail: string;
+  EndpointDeveloperEmail: string;
+  GameHomePage: string;
 }
 
 export type UrlsResponse = Urls;
