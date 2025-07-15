@@ -64,17 +64,17 @@ export function useAssets() {
 
         // Create fallback with direct endpoint URLs
         const fallbackAssets: Assets = {
-          'manic-miners-background.jpg': `${SERVER_BASE_URL}/manic-miners-background.jpg`,
-          'manic-miners.png': `${SERVER_BASE_URL}/manic-miners-basic.png`,
-          'manic-miners-lms.png': `${SERVER_BASE_URL}/manic-miners-level-editor.png`,
-          'manic-miners-supportstation.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
-          'manic-miners-teleportstation.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
-          'manic-miners-toolstore.png': `${SERVER_BASE_URL}/manic-miners-combat.png`,
-          'manic-miners-cover-image.png': `${SERVER_BASE_URL}/manic-miners-cover-image.png`,
-          'manic-miners-alt.png': `${SERVER_BASE_URL}/manic-miners-alt-icon.png`,
-          'manic-miners-favicon.ico': `${SERVER_BASE_URL}/manic-miners-basic.ico`,
-          'manic-miners.ico': `${SERVER_BASE_URL}/manic-miners-basic.ico`,
-          'manic-miners-alt.ico': `${SERVER_BASE_URL}/manic-miners-alt-icon.ico`,
+          'manic-miners-background.jpg': `${SERVER_BASE_URL}/images/manic-miners-background.jpg`,
+          'manic-miners.png': `${SERVER_BASE_URL}/images/manic-miners-basic.png`,
+          'manic-miners-lms.png': `${SERVER_BASE_URL}/images/manic-miners-level-editor.png`,
+          'manic-miners-supportstation.png': `${SERVER_BASE_URL}/images/manic-miners-combat.png`,
+          'manic-miners-teleportstation.png': `${SERVER_BASE_URL}/images/manic-miners-combat.png`,
+          'manic-miners-toolstore.png': `${SERVER_BASE_URL}/images/manic-miners-combat.png`,
+          'manic-miners-cover-image.png': `${SERVER_BASE_URL}/images/manic-miners-cover-image.png`,
+          'manic-miners-alt.png': `${SERVER_BASE_URL}/images/manic-miners-alt-icon.png`,
+          'manic-miners-favicon.ico': `${SERVER_BASE_URL}/images/manic-miners-basic.ico`,
+          'manic-miners.ico': `${SERVER_BASE_URL}/images/manic-miners-basic.ico`,
+          'manic-miners-alt.ico': `${SERVER_BASE_URL}/images/manic-miners-alt-icon.ico`,
           'intro-video.mp4': `${SERVER_BASE_URL}/intro-video.mp4`,
           'success.mp3': `${SERVER_BASE_URL}/success.mp3`,
         };
