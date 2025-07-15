@@ -27,7 +27,13 @@
       "Bash(HUSKY=0 git commit -m \"feat: remove Community page and associated code\n\n- Removed Community.tsx page component\n- Removed Community route from App.tsx routing configuration\n- Removed Community navigation link and Users icon import from Navigation component\n- Kept Comment and NewsItem types in api.ts as they are still used by NewsPanel\n- All references to Community page have been cleaned up\")",
       "Bash(git pull:*)",
       "Bash(git checkout:*)",
-      "Bash(HUSKY=0 git commit -m \"feat: technical debt improvements\n\n- Added JSDoc comments to key functions and components\n- Created unit test setup with Vitest and testing utilities\n- Added test for favicon utility function\n- Implemented global error boundary for better error handling\n- Added lazy loading for page components with Suspense\n- Created PageLoader component for loading states\n- Implemented API response validation using Zod schemas\n- Added validation utilities for type-safe API calls\n- Updated NewsPanel to use validated API responses\n\nThis improves code quality, performance, and error handling throughout the application.\")"
+      "Bash(HUSKY=0 git commit -m \"feat: technical debt improvements\n\n- Added JSDoc comments to key functions and components\n- Created unit test setup with Vitest and testing utilities\n- Added test for favicon utility function\n- Implemented global error boundary for better error handling\n- Added lazy loading for page components with Suspense\n- Created PageLoader component for loading states\n- Implemented API response validation using Zod schemas\n- Added validation utilities for type-safe API calls\n- Updated NewsPanel to use validated API responses\n\nThis improves code quality, performance, and error handling throughout the application.\")",
+      "Bash(HUSKY=0 git push -u origin feat/technical-debt-improvements)",
+      "Bash(pnpm start:*)",
+      "Bash(HUSKY=0 git commit -m \"fix: copy all chunk files in generateAssets script\n\n- Updated generateAssets to copy all files from launcher-gui dist/assets\n- This includes lazy-loaded chunks needed for code splitting\n- Fixes ''Module not found'' errors when starting the app\")",
+      "Bash(HUSKY=0 git push)",
+      "Bash(HUSKY=0 git commit -m \"fix: preserve original filenames when copying chunks\n\n- Copy all files with their original names (including hashed index files)\n- Additionally create renamed index.js/css for backward compatibility\n- This fixes module resolution for lazy-loaded chunks\")",
+      "Bash(HUSKY=0 git commit -m \"fix: revert lazy loading to fix Electron webpack issues\n\n- Removed lazy loading and Suspense from App component\n- Reverted to direct imports for page components\n- Simplified generateAssets script back to original version\n- Lazy loading was causing module resolution issues with Electron''s webpack setup\")"
     ],
     "deny": []
   }
