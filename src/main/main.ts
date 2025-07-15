@@ -16,6 +16,7 @@ import { setupItchDownloadHandler } from './ipcHandlers/setupItchDownloadHandler
 import { setupVerifyRepairHandler } from './ipcHandlers/setupVerifyRepairHandler';
 import { setupShortcutHandler } from './ipcHandlers/setupShortcutHandler';
 import { setupLoggingHandler } from './ipcHandlers/setupLoggingHandler';
+import { setupWhiskyHandler } from './ipcHandlers/setupWhiskyHandler';
 import { checkItchUpdate } from '../functions/checkItchUpdate';
 import { logger } from '../utils/logger';
 
@@ -65,6 +66,7 @@ const startApp = (): void => {
     setupItchDownloadHandler();
     setupVerifyRepairHandler();
     setupShortcutHandler();
+    await setupWhiskyHandler();
     logger.info('APP', 'All IPC handlers setup complete');
   });
 

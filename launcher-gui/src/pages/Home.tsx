@@ -1,6 +1,7 @@
 import { LatestVersionManager } from '@/components/LatestVersionManager';
 import { GameTrailer } from '@/components/GameTrailer';
 import { NewsPanel } from '@/components/NewsPanel';
+import { WhiskyStatus } from '@/components/WhiskyStatus';
 import { NotificationData } from '@/components/GameNotifications';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -73,6 +74,9 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
             {/* Left Column - Game Content */}
             <div className="lg:col-span-7 space-y-6">
               <LatestVersionManager onNotificationUpdate={onNotificationUpdate} removeNotification={removeNotification} />
+
+              {/* Show Whisky status on macOS */}
+              {navigator.platform.toLowerCase().includes('mac') && <WhiskyStatus />}
 
               <Card>
                 <CardHeader>
