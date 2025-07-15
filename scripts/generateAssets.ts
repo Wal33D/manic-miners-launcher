@@ -18,14 +18,14 @@ for (const file of readdirSync(distDir)) {
   const sourcePath = join(distDir, file);
   const targetPath = join(targetDir, file);
   
-  // Special handling for index files - rename them
+  // Copy all files as-is (including chunks)
+  copyFileSync(sourcePath, targetPath);
+  
+  // Additionally rename index files for backward compatibility
   if (file.startsWith('index-') && file.endsWith('.css')) {
     copyFileSync(sourcePath, join(targetDir, 'index.css'));
   } else if (file.startsWith('index-') && file.endsWith('.js')) {
     copyFileSync(sourcePath, join(targetDir, 'index.js'));
-  } else {
-    // Copy all other files (chunks) as-is
-    copyFileSync(sourcePath, targetPath);
   }
 }
 
