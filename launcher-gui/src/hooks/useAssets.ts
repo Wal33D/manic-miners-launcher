@@ -44,8 +44,23 @@ export function useAssets() {
         console.error('Failed to fetch assets:', err);
         setError(err instanceof Error ? err.message : 'Failed to load assets');
 
-        // Fallback to local assets
-        setAssets({});
+        // Create fallback with direct endpoint URLs
+        const fallbackAssets: Assets = {
+          'manic-miners-background.jpg': `${SERVER_BASE_URL}/manic-miners-background.jpg`,
+          'manic-miners.png': `${SERVER_BASE_URL}/manic-miners.png`,
+          'manic-miners-lms.png': `${SERVER_BASE_URL}/manic-miners-lms.png`,
+          'manic-miners-supportstation.png': `${SERVER_BASE_URL}/manic-miners-supportstation.png`,
+          'manic-miners-teleportstation.png': `${SERVER_BASE_URL}/manic-miners-teleportstation.png`,
+          'manic-miners-toolstore.png': `${SERVER_BASE_URL}/manic-miners-toolstore.png`,
+          'manic-miners-cover-image.png': `${SERVER_BASE_URL}/manic-miners-cover-image.png`,
+          'manic-miners-alt.png': `${SERVER_BASE_URL}/manic-miners-alt.png`,
+          'manic-miners-favicon.ico': `${SERVER_BASE_URL}/manic-miners-favicon.ico`,
+          'manic-miners.ico': `${SERVER_BASE_URL}/manic-miners.ico`,
+          'manic-miners-alt.ico': `${SERVER_BASE_URL}/manic-miners-alt.ico`,
+          'intro-video.mp4': `${SERVER_BASE_URL}/intro-video.mp4`,
+          'success.mp3': `${SERVER_BASE_URL}/success.mp3`,
+        };
+        setAssets(fallbackAssets);
       } finally {
         setLoading(false);
       }
@@ -55,13 +70,13 @@ export function useAssets() {
   }, []);
 
   const getAssetUrl = (assetName: string): string => {
-    // Try to get from fetched assets first
+    // Always use the fetched or fallback assets
     if (assets[assetName]) {
       return assets[assetName];
     }
 
-    // Fallback to local assets
-    return `/assets/${assetName.replace('/assets/', '')}`;
+    // Direct fallback to endpoint URL
+    return `${SERVER_BASE_URL}/${assetName}`;
   };
 
   return { assets, getAssetUrl, loading, error };
