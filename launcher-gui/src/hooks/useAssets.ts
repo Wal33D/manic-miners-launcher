@@ -34,7 +34,7 @@ export function useAssets() {
 
         // Map each image to its cloudinary URL or internal URL
         for (const [filename, imageData] of Object.entries(data.images)) {
-          processedAssets[filename] = imageData.cloudinaryUrl || imageData.internalUrl;
+          processedAssets[filename] = (imageData as any).cloudinaryUrl || (imageData as any).internalUrl;
         }
 
         // Add mappings for common asset names that might not match exactly
@@ -52,7 +52,7 @@ export function useAssets() {
         // Apply mappings
         for (const [alias, actualName] of Object.entries(assetMappings)) {
           if (data.images[actualName]) {
-            processedAssets[alias] = data.images[actualName].cloudinaryUrl || data.images[actualName].internalUrl;
+            processedAssets[alias] = (data.images[actualName] as any).cloudinaryUrl || (data.images[actualName] as any).internalUrl;
           }
         }
 
@@ -94,7 +94,7 @@ export function useAssets() {
     }
 
     // Direct fallback to endpoint URL
-    return `${SERVER_BASE_URL}/${assetName}`;
+    return `${SERVER_BASE_URL}/images/${assetName}`;
   };
 
   return { assets, getAssetUrl, loading, error };
