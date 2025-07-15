@@ -26,47 +26,6 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
   const altImage = getAssetUrl('manic-miners-alt.png');
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
-      {/* Hero Section */}
-      <div
-        className="relative h-80 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('${backgroundImage}')`,
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white space-y-4 px-6">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <img src={logoImage} alt="Manic Miners Logo" className="h-16 w-auto" />
-              <div>
-                <h1 className="text-4xl font-bold">Manic Miners</h1>
-                <Badge variant="secondary" className="mt-1">
-                  <Star className="w-3 h-3 mr-1" />
-                  Free Rock Raiders Remake
-                </Badge>
-              </div>
-            </div>
-            <p className="text-xl text-gray-200 max-w-2xl">
-              A free Rock Raiders remake after 20 years! Experience the classic LEGO mining adventure rebuilt with modern graphics, enhanced
-              AI, and extensive customization.
-            </p>
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-300">
-              <div className="flex items-center gap-1">
-                <Gamepad2 className="w-4 h-4" />
-                <span>Unreal Engine 4</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span>Single Player</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Download className="w-4 h-4" />
-                <span>100% Free</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto p-6 flex-1 min-h-0">
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

@@ -111,7 +111,7 @@ export function NewsPanel() {
         <Tabs defaultValue="news" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="news">News</TabsTrigger>
-            <TabsTrigger value="comments">Comments ({commentsData?.count || 0})</TabsTrigger>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
           </TabsList>
 
           <TabsContent value="news" className="mt-4">
