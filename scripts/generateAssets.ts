@@ -13,12 +13,19 @@ run(`pnpm --prefix ${guiDir} run build`);
 const distDir = join(guiDir, 'dist', 'assets');
 const targetDir = join(__dirname, '..', 'src', 'renderer', 'assets');
 
+// Copy all files from dist/assets to src/renderer/assets
 for (const file of readdirSync(distDir)) {
+  const sourcePath = join(distDir, file);
+  const targetPath = join(targetDir, file);
+  
+  // Special handling for index files - rename them
   if (file.startsWith('index-') && file.endsWith('.css')) {
-    copyFileSync(join(distDir, file), join(targetDir, 'index.css'));
-  }
-  if (file.startsWith('index-') && file.endsWith('.js')) {
-    copyFileSync(join(distDir, file), join(targetDir, 'index.js'));
+    copyFileSync(sourcePath, join(targetDir, 'index.css'));
+  } else if (file.startsWith('index-') && file.endsWith('.js')) {
+    copyFileSync(sourcePath, join(targetDir, 'index.js'));
+  } else {
+    // Copy all other files (chunks) as-is
+    copyFileSync(sourcePath, targetPath);
   }
 }
 
