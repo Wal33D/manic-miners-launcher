@@ -6,16 +6,7 @@ import { ShortcutManager } from '@/components/ShortcutManager';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Info, Star, Gamepad2, Download, Users, AlertTriangle, Monitor, FolderOpen, ExternalLink } from 'lucide-react';
-
-// Define image paths
-const backgroundImage = '/assets/manic-miners-background.jpg';
-const logoImage = '/assets/manic-miners.png';
-const lmsImage = '/assets/manic-miners-lms.png';
-const supportStationImage = '/assets/manic-miners-supportstation.png';
-const teleportStationImage = '/assets/manic-miners-teleportstation.png';
-const toolStoreImage = '/assets/manic-miners-toolstore.png';
-const coverImage = '/assets/manic-miners-cover-image.png';
-const altImage = '/assets/manic-miners-alt.png';
+import { useAssets } from '@/hooks/useAssets';
 
 interface HomeProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -23,6 +14,17 @@ interface HomeProps {
 }
 
 const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
+  const { getAssetUrl } = useAssets();
+
+  // Get asset URLs from endpoint
+  const backgroundImage = getAssetUrl('manic-miners-background.jpg');
+  const logoImage = getAssetUrl('manic-miners.png');
+  const lmsImage = getAssetUrl('manic-miners-lms.png');
+  const supportStationImage = getAssetUrl('manic-miners-supportstation.png');
+  const teleportStationImage = getAssetUrl('manic-miners-teleportstation.png');
+  const toolStoreImage = getAssetUrl('manic-miners-toolstore.png');
+  const coverImage = getAssetUrl('manic-miners-cover-image.png');
+  const altImage = getAssetUrl('manic-miners-alt.png');
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
       {/* Hero Section */}

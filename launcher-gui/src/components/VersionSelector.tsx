@@ -1,26 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Star } from 'lucide-react';
-
-interface GameVersion {
-  gameId: number;
-  title: string;
-  displayName: string;
-  identifier: string;
-  experimental: boolean;
-  version: string;
-  releaseDate: string;
-  filename: string;
-  type: string;
-  md5Hash: string;
-  size: string;
-  sizeInBytes: number;
-  downloadUrl: string;
-  coverImage: string;
-  thumbnailUrl: string;
-  detailsUrl: string;
-  description: string;
-}
+import { GameVersion } from '@/types/game';
 
 interface VersionSelectorProps {
   versions: GameVersion[];

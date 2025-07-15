@@ -1,26 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Play, Download, Menu, Trash2, RotateCcw, Settings, ChevronDown } from 'lucide-react';
-
-interface GameVersion {
-  gameId: number;
-  title: string;
-  displayName: string;
-  identifier: string;
-  experimental: boolean;
-  version: string;
-  releaseDate: string;
-  filename: string;
-  type: string;
-  md5Hash: string;
-  size: string;
-  sizeInBytes: number;
-  downloadUrl: string;
-  coverImage: string;
-  thumbnailUrl: string;
-  detailsUrl: string;
-  description: string;
-}
+import { Play, Download, Trash2, RotateCcw, Settings, ChevronDown } from 'lucide-react';
+import { GameVersion } from '@/types/game';
 
 interface VersionActionsProps {
   version: GameVersion | null;

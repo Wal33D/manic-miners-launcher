@@ -26,44 +26,6 @@ export async function ensureDirectory({ directory }: { directory: string }): Pro
   }
 }
 
-export const makeWritable = async ({ dirPath }: { dirPath: string }): Promise<{ exists: boolean; writable: boolean; message: string }> => {
-  let exists = true;
-  let writable = true;
-
-  try {
-    await fs.access(dirPath);
-    const stat = await fs.stat(dirPath);
-
-    if (stat.isDirectory()) {
-      await fs.chmod(dirPath, 0o777);
-      const files = await fs.readdir(dirPath);
-
-      for (const file of files) {
-        const filePath = path.join(dirPath, file);
-        const fileStat = await fs.stat(filePath);
-        if (fileStat.isDirectory()) {
-          const result = await makeWritable({ dirPath: filePath });
-          if (!result.writable) {
-            writable = false;
-            throw new Error(`Failed to make subdirectory writable: ${filePath}, Reason: ${result.message}`);
-          }
-        } else {
-          await fs.chmod(filePath, 0o666);
-        }
-      }
-    } else {
-      await fs.chmod(dirPath, 0o666);
-    }
-  } catch (error: unknown) {
-    const err = error as Error & { code?: string };
-    exists = err.code !== 'ENOENT';
-    writable = false;
-    return { exists, writable, message: `Failed to make writable: ${dirPath}, Reason: ${err.message}` };
-  }
-
-  return { exists, writable, message: `All files and directories at ${dirPath} made writable.` };
-};
-
 export const verifyFile = async (params: IVerifyFileParams): Promise<IFileDetails> => {
   const { filePath, expectedSize } = params;
 

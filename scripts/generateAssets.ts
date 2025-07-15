@@ -22,10 +22,5 @@ for (const file of readdirSync(distDir)) {
   }
 }
 
-// Copy images from GUI public folder to renderer assets
-const guiPublicDir = join(guiDir, 'public');
-const imageFiles = readdirSync(guiPublicDir).filter(file => file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg'));
-
-for (const imageFile of imageFiles) {
-  copyFileSync(join(guiPublicDir, imageFile), join(targetDir, imageFile));
-}
+// Note: Images are now served from the assets endpoint
+// No need to copy image files locally

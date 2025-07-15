@@ -8,6 +8,7 @@ import { NotificationData } from '@/components/GameNotifications';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { logger } from '@/utils/frontendLogger';
+import { useAssets } from '@/hooks/useAssets';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -15,6 +16,7 @@ interface LatestVersionManagerProps {
 }
 
 export function LatestVersionManager({ onNotificationUpdate, removeNotification }: LatestVersionManagerProps) {
+  const { getAssetUrl } = useAssets();
   const [isInstalled, setIsInstalled] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -40,7 +42,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     sizeInBytes: 1073741824,
     description: 'Latest stable release with bug fixes and performance improvements.',
     experimental: false,
-    coverImage: null as string | null,
+    coverImage: getAssetUrl('manic-miners-cover-image.png'),
   });
   const [isLoadingVersion, setIsLoadingVersion] = useState(false);
 
