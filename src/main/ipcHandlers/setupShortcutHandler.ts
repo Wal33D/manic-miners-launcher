@@ -33,11 +33,42 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
 
             try {
               await fs.access(latestDir);
-              // Look for exe files in the latest directory
+              // Look for executable files in the latest directory
               const files = await fs.readdir(latestDir);
-              const exeFile = files.find(file => file.endsWith('.exe'));
-              if (exeFile) {
-                targetPath = path.join(latestDir, exeFile);
+              logger.info('SHORTCUT', 'Files found in latest directory', { files, platform: process.platform });
+              const executableExtensions =
+                process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
+
+              const executableFile = files.find(file => {
+                // Skip files that start with # or .
+                if (file.startsWith('#') || file.startsWith('.')) {
+                  return false;
+                }
+
+                // For Windows, only look for .exe files
+                if (process.platform === 'win32') {
+                  return file.endsWith('.exe');
+                }
+
+                // For macOS, look for .app bundles, .exe files (Windows games), or executables containing "manic"
+                if (process.platform === 'darwin') {
+                  return file.endsWith('.app') || file.endsWith('.exe') || (file.toLowerCase().includes('manic') && !path.extname(file));
+                }
+
+                // For Linux, look for files without extension that are likely executables
+                // and specifically contain "manic" in the name (case insensitive)
+                if (process.platform === 'linux') {
+                  return !path.extname(file) && file.toLowerCase().includes('manic') && !file.includes('#') && !file.includes('.');
+                }
+
+                return false;
+              });
+
+              if (executableFile) {
+                targetPath = path.join(latestDir, executableFile);
+                logger.info('SHORTCUT', 'Found executable file', { executableFile, targetPath });
+              } else {
+                logger.warn('SHORTCUT', 'No suitable executable found in latest directory', { files, platform: process.platform });
               }
             } catch {
               // Fallback to legacy naming scheme - check for directories that match the pattern
@@ -47,9 +78,38 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
                 if (legacyDir) {
                   const legacyPath = path.join(launcherInstallPath, legacyDir);
                   const files = await fs.readdir(legacyPath);
-                  const exeFile = files.find(file => file.endsWith('.exe'));
-                  if (exeFile) {
-                    targetPath = path.join(legacyPath, exeFile);
+                  const executableExtensions =
+                    process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
+
+                  const executableFile = files.find(file => {
+                    // Skip files that start with # or .
+                    if (file.startsWith('#') || file.startsWith('.')) {
+                      return false;
+                    }
+
+                    // For Windows, only look for .exe files
+                    if (process.platform === 'win32') {
+                      return file.endsWith('.exe');
+                    }
+
+                    // For macOS, look for .app bundles, .exe files (Windows games), or executables containing "manic"
+                    if (process.platform === 'darwin') {
+                      return (
+                        file.endsWith('.app') || file.endsWith('.exe') || (file.toLowerCase().includes('manic') && !path.extname(file))
+                      );
+                    }
+
+                    // For Linux, look for files without extension that are likely executables
+                    // and specifically contain "manic" in the name (case insensitive)
+                    if (process.platform === 'linux') {
+                      return !path.extname(file) && file.toLowerCase().includes('manic') && !file.includes('#') && !file.includes('.');
+                    }
+
+                    return false;
+                  });
+
+                  if (executableFile) {
+                    targetPath = path.join(legacyPath, executableFile);
                   }
                 }
               } catch (err) {
@@ -96,9 +156,8 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
           }
         } catch (error) {
           logger.error('SHORTCUT', 'Error creating shortcuts', { error: error.message }, error);
-          event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, {
-            status: `Error: ${error.message}`,
-            progress: 0,
+          event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_ERROR, {
+            message: error.message,
           });
           throw error;
         }

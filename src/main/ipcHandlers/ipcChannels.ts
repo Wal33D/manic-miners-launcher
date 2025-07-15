@@ -38,6 +38,7 @@ export const IPC_CHANNELS = {
   DELETE_LATEST_PROGRESS: 'delete-latest-progress',
   CREATE_SHORTCUTS: 'create-shortcuts',
   CREATE_SHORTCUTS_PROGRESS: 'create-shortcuts-progress',
+  CREATE_SHORTCUTS_ERROR: 'create-shortcuts-error',
   OPEN_EXTERNAL_URL: 'OPEN_EXTERNAL_URL',
   DOWNLOAD_LATEST_VERSION: 'download-latest-version',
   VERIFY_AND_REPAIR_INSTALLATION: 'verify-and-repair-installation',

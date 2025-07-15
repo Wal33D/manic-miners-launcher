@@ -2,7 +2,6 @@ import { LatestVersionManager } from '@/components/LatestVersionManager';
 import { GameTrailer } from '@/components/GameTrailer';
 import { NewsPanel } from '@/components/NewsPanel';
 import { NotificationData } from '@/components/GameNotifications';
-import { ShortcutManager } from '@/components/ShortcutManager';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Info, Star, Gamepad2, Download, Users, AlertTriangle, Monitor, FolderOpen, ExternalLink } from 'lucide-react';
@@ -74,8 +73,6 @@ const Home = ({ onNotificationUpdate, removeNotification }: HomeProps) => {
             {/* Left Column - Game Content */}
             <div className="lg:col-span-7 space-y-6">
               <LatestVersionManager onNotificationUpdate={onNotificationUpdate} removeNotification={removeNotification} />
-
-              <ShortcutManager onNotificationUpdate={onNotificationUpdate} />
 
               <Card>
                 <CardHeader>

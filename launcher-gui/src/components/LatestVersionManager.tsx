@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown, ExternalLink } from 'lucide-react';
 import { NotificationData } from '@/components/GameNotifications';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -18,19 +17,14 @@ interface LatestVersionManagerProps {
 export function LatestVersionManager({ onNotificationUpdate, removeNotification }: LatestVersionManagerProps) {
   const { getAssetUrl } = useAssets();
   const [isInstalled, setIsInstalled] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verifyStatus, setVerifyStatus] = useState('');
   const [isCheckingInstallation, setIsCheckingInstallation] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteProgress, setDeleteProgress] = useState(0);
-  const [deleteStatus, setDeleteStatus] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
-  const [updateProgress, setUpdateProgress] = useState(0);
-  const [updateStatus, setUpdateStatus] = useState('');
+  const [isCreatingShortcuts, setIsCreatingShortcuts] = useState(false);
 
   // State for version information - latest version is always "latest"
   const [latestVersion, setLatestVersion] = useState({
@@ -158,7 +152,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   const handleInstall = async () => {
     setIsDownloading(true);
-    setDownloadProgress(0);
 
     if (window.electronAPI) {
       // Trigger itch.io download for latest version
@@ -175,17 +168,10 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       });
     } else {
       // Fallback simulation for web preview
-      const interval = setInterval(() => {
-        setDownloadProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setIsDownloading(false);
-            setIsInstalled(true);
-            return 100;
-          }
-          return prev + Math.random() * 5;
-        });
-      }, 200);
+      setTimeout(() => {
+        setIsDownloading(false);
+        setIsInstalled(true);
+      }, 2000);
     }
   };
 
@@ -206,8 +192,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   const handleVerify = async () => {
     setIsVerifying(true);
-    setDownloadProgress(0);
-    setVerifyStatus('Starting verification...');
 
     if (window.electronAPI) {
       // Listen for completion only (progress is handled globally)
@@ -233,8 +217,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   const handleUpdate = async () => {
     setIsUpdating(true);
-    setUpdateProgress(0);
-    setUpdateStatus('Starting update...');
 
     // Create update notification
     const updateNotification: NotificationData = {
@@ -271,7 +253,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       window.electronAPI.receive('update-error', (error: any) => {
         logger.error('LatestVersionManager', 'Update error', { error });
         setIsUpdating(false);
-        setUpdateStatus('Update failed');
 
         // Create error notification
         const errorNotification: NotificationData = {
@@ -300,7 +281,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    setDeleteProgress(0);
 
     if (window.electronAPI) {
       try {
@@ -313,8 +293,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
             setTimeout(() => {
               setIsDeleting(false);
               setIsInstalled(false);
-              setDeleteProgress(0);
-              setDeleteStatus('');
               window.electronAPI.removeAllListeners('delete-latest-progress');
             }, 1000);
           }
@@ -327,25 +305,111 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       } catch (error) {
         logger.error('LatestVersionManager', 'Error deleting version', { error });
         setIsDeleting(false);
-        setDeleteProgress(0);
         window.electronAPI.removeAllListeners('delete-latest-progress');
       }
     } else {
       // Fallback simulation for web preview
-      const progressInterval = setInterval(() => {
-        setDeleteProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(progressInterval);
-            setTimeout(() => {
-              setIsDeleting(false);
-              setIsInstalled(false);
-              setDeleteProgress(0);
-            }, 500);
-            return 100;
+      setTimeout(() => {
+        setIsDeleting(false);
+        setIsInstalled(false);
+      }, 2000);
+    }
+  };
+
+  const handleCreateShortcuts = async () => {
+    setIsCreatingShortcuts(true);
+
+    // Create shortcut creation notification
+    const notificationId = `shortcuts-${Date.now()}`;
+    const shortcutNotification: NotificationData = {
+      id: notificationId,
+      type: 'info',
+      title: 'Creating Shortcuts',
+      message: 'Creating desktop and start menu shortcuts...',
+      timestamp: new Date().toISOString(),
+      persistent: true,
+    };
+    onNotificationUpdate([shortcutNotification]);
+
+    if (window.electronAPI) {
+      try {
+        logger.userActionLog('Create shortcuts');
+
+        // Listen for completion only (progress is handled globally)
+        window.electronAPI.receive('create-shortcuts-progress', (progressData: any) => {
+          if (progressData.progress >= 100) {
+            setIsCreatingShortcuts(false);
+            window.electronAPI.removeAllListeners('create-shortcuts-progress');
+            window.electronAPI.removeAllListeners('create-shortcuts-error');
+
+            // Remove the initial notification
+            removeNotification(notificationId);
+
+            // Create success notification
+            const successNotification: NotificationData = {
+              id: `shortcuts-success-${Date.now()}`,
+              type: 'success',
+              title: 'Shortcuts Created',
+              message: 'Desktop and start menu shortcuts have been created successfully!',
+              timestamp: new Date().toISOString(),
+              persistent: false,
+            };
+            onNotificationUpdate([successNotification]);
           }
-          return prev + Math.random() * 15;
         });
-      }, 150);
+
+        // Listen for shortcut creation errors
+        window.electronAPI.receive('create-shortcuts-error', (error: any) => {
+          setIsCreatingShortcuts(false);
+          window.electronAPI.removeAllListeners('create-shortcuts-progress');
+          window.electronAPI.removeAllListeners('create-shortcuts-error');
+
+          // Remove the initial notification
+          removeNotification(notificationId);
+
+          // Create error notification
+          const errorNotification: NotificationData = {
+            id: `shortcuts-error-${Date.now()}`,
+            type: 'error',
+            title: 'Shortcut Creation Failed',
+            message: `Failed to create shortcuts: ${error.message || 'Unknown error'}`,
+            timestamp: new Date().toISOString(),
+            persistent: true,
+          };
+          onNotificationUpdate([errorNotification]);
+        });
+
+        // Start shortcut creation - only create executable shortcut
+        window.electronAPI.send('create-shortcuts', {
+          options: {
+            createExeShortcut: true,
+            createDirShortcut: false,
+          },
+        });
+      } catch (error) {
+        logger.error('LatestVersionManager', 'Error creating shortcuts', { error });
+        setIsCreatingShortcuts(false);
+        window.electronAPI.removeAllListeners('create-shortcuts-progress');
+
+        // Remove the initial "Creating Shortcuts" notification
+        removeNotification(notificationId);
+
+        // Create error notification
+        const errorNotification: NotificationData = {
+          id: `shortcuts-error-${Date.now()}`,
+          type: 'error',
+          title: 'Shortcut Creation Failed',
+          message: `Failed to create shortcuts: ${error.message || 'Unknown error'}`,
+          timestamp: new Date().toISOString(),
+          persistent: true,
+        };
+        onNotificationUpdate([errorNotification]);
+      }
+    } else {
+      // Fallback simulation for web preview
+      setTimeout(() => {
+        setIsCreatingShortcuts(false);
+      }, 2000);
     }
   };
 
@@ -411,21 +475,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {(isDownloading || isVerifying || isUpdating) && (
-            <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  <span className="font-medium">{isVerifying ? 'Verifying Files' : isUpdating ? 'Updating Game' : 'Downloading'}</span>
-                </div>
-                <span className="text-sm font-mono">{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
-              </div>
-              <Progress value={isUpdating ? updateProgress : downloadProgress} className="h-2" />
-              {isVerifying && verifyStatus && <p className="text-xs text-muted-foreground">{verifyStatus}</p>}
-              {isUpdating && updateStatus && <p className="text-xs text-muted-foreground">{updateStatus}</p>}
-            </div>
-          )}
-
           {/* Action Buttons */}
           <div className="space-y-3">
             {isCheckingInstallation ? (
@@ -445,12 +494,12 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
                   {isLaunching ? 'Launching...' : 'Launch Game'}
                 </Button>
 
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleUpdate}
-                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating || isCreatingShortcuts}
                   >
                     <RefreshCw className="w-4 h-4 mr-1" />
                     Update
@@ -459,7 +508,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
                     variant="outline"
                     size="sm"
                     onClick={handleVerify}
-                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating || isCreatingShortcuts}
                   >
                     <RotateCcw className="w-4 h-4 mr-1" />
                     Verify
@@ -467,8 +516,18 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={handleCreateShortcuts}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating || isCreatingShortcuts}
+                    title="Create desktop and application shortcuts"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    {isCreatingShortcuts ? 'Creating...' : 'Shortcuts'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setShowDeleteModal(true)}
-                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating || isCreatingShortcuts}
                     className="text-destructive hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4 mr-1" />
@@ -486,20 +545,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
                 <Check className="w-4 h-4" />
                 Ready to play! The latest version is installed and up to date.
               </p>
-            </div>
-          )}
-
-          {isDeleting && (
-            <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
-                  <span className="font-medium">Uninstalling Game</span>
-                </div>
-                <span className="text-sm font-mono">{deleteProgress}%</span>
-              </div>
-              <Progress value={deleteProgress} className="h-2" />
-              {deleteStatus && <p className="text-xs text-muted-foreground">{deleteStatus}</p>}
             </div>
           )}
         </CardContent>
