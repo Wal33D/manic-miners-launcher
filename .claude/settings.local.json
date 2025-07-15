@@ -36,7 +36,9 @@
       "Bash(HUSKY=0 git commit -m \"fix: revert lazy loading to fix Electron webpack issues\n\n- Removed lazy loading and Suspense from App component\n- Reverted to direct imports for page components\n- Simplified generateAssets script back to original version\n- Lazy loading was causing module resolution issues with Electron''s webpack setup\")",
       "WebFetch(domain:github.com)",
       "Bash(HUSKY=0 git commit -m \"fix: critical improvements for stability and accessibility\n\n- Created environment config to centralize API URLs and constants\n- Added aria-labels to all icon-only buttons for screen reader support\n- Fixed event listener memory leaks in LatestVersionManager\n- Created consistent LoadingState and ErrorState components\n- Enabled TypeScript strict mode for better type safety\n- Added React.memo to static components (Navigation, Footer, NewsPanel)\n- Fixed touch target sizes to meet 44x44px accessibility minimum\n- Extracted duplicate version sorting logic into reusable utility\n\nThese changes improve code maintainability, accessibility compliance, and runtime stability.\")",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(HUSKY=0 git commit -m \"fix: production-ready improvements and cleanup\n\n- Replaced all console.log statements with proper logger utility\n- Fixed simulated progress in GameVersionSelector to use real IPC events\n- Added proper error handling with ErrorState component to all components\n- Created centralized API service layer for better maintainability\n- Components now show user-friendly error messages instead of silent failures\n\nThese changes improve production readiness and user experience.\")",
+      "Bash(npm test:*)"
     ],
     "deny": []
   }

@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Settings, Folder, Download, Volume2, Monitor, Gamepad2 } from 'lucide-react';
+import { logger } from '@/utils/frontendLogger';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface SettingsModalProps {
   open: boolean;
