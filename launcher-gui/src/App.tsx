@@ -10,7 +10,6 @@ import { GameNotifications, NotificationData } from '@/components/GameNotificati
 import Index from './pages/Index';
 import GameVersions from './pages/GameVersions';
 import Community from './pages/Community';
-import Media from './pages/Media';
 import NotFound from './pages/NotFound';
 
 import { logger } from './utils/frontendLogger';
@@ -236,7 +235,6 @@ const App = () => {
                   element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
                 />
                 <Route path="/community" element={<Community />} />
-                <Route path="/media" element={<Media />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

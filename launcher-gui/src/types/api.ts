@@ -16,18 +16,6 @@ export interface CommentsResponse {
   comments: Comment[];
 }
 
-// Video Types
-export interface Video {
-  id: string;
-  url: string;
-  name: string;
-  description: string;
-  internalUrl: string;
-  cloudinaryUrl: string;
-}
-
-export type VideosResponse = Video[];
-
 // News Types
 export interface NewsItem {
   id: number;
@@ -115,18 +103,6 @@ export interface Routes {
 }
 
 export type RoutesResponse = Routes;
-
-// Image Types
-export interface Image {
-  id: string;
-  url: string;
-  name: string;
-  category: string;
-}
-
-export interface ImagesResponse {
-  images: Image[];
-}
 
 // Sound Types
 export interface Sound {
