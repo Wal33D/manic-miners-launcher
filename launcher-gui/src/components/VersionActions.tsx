@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Play, Download, Trash2, RotateCcw, Settings, ChevronDown } from 'lucide-react';
+import { Play, Download, Trash2, RotateCcw, ExternalLink } from 'lucide-react';
 import { GameVersion } from '@/types/game';
 
 interface VersionActionsProps {
@@ -9,47 +8,47 @@ interface VersionActionsProps {
   onInstallOrLaunch: () => void;
   onDelete: () => void;
   onRepair: () => void;
+  onCreateShortcuts?: () => void;
 }
 
-export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair }: VersionActionsProps) {
+export function VersionActions({ version, isInstalled, onInstallOrLaunch, onDelete, onRepair, onCreateShortcuts }: VersionActionsProps) {
   if (!version) return null;
 
   return (
-    <div className="flex gap-2">
-      <Button variant="energy" className="flex-1" onClick={onInstallOrLaunch}>
+    <div className="space-y-3">
+      {/* Main Action Button */}
+      <Button variant="energy" className="w-full" size="lg" onClick={onInstallOrLaunch}>
         {isInstalled ? (
           <>
-            <Play className="w-4 h-4 mr-2" />
-            Launch
+            <Play className="w-5 h-5 mr-2" />
+            Launch Game
           </>
         ) : (
           <>
             <Download className="w-4 h-4 mr-2" />
-            Install
+            Install Game
           </>
         )}
       </Button>
 
+      {/* Additional Actions Grid - Only show when installed */}
       {isInstalled && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Game Options
-              <ChevronDown className="w-4 h-4 ml-1" />
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" size="sm" onClick={onRepair}>
+            <RotateCcw className="w-4 h-4 mr-1" />
+            Verify
+          </Button>
+          {onCreateShortcuts && (
+            <Button variant="outline" size="sm" onClick={onCreateShortcuts} title="Create desktop and application shortcuts">
+              <ExternalLink className="w-4 h-4 mr-1" />
+              Shortcuts
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="mining-surface border-primary/20">
-            <DropdownMenuItem onClick={onRepair} className="flex items-center gap-2">
-              <RotateCcw className="w-4 h-4" />
-              Repair
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onDelete} className="flex items-center gap-2 text-destructive">
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          )}
+          <Button variant="outline" size="sm" onClick={onDelete} className="text-destructive hover:text-destructive col-span-2">
+            <Trash2 className="w-4 h-4 mr-1" />
+            Uninstall
+          </Button>
+        </div>
       )}
     </div>
   );

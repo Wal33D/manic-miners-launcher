@@ -209,6 +209,19 @@ export function GameVersionSelector({
     }, 400);
   };
 
+  const handleCreateShortcuts = async () => {
+    if (!selectedVersionData || !window.electronAPI) return;
+
+    // Create shortcuts for this specific version
+    window.electronAPI.send('create-shortcuts', {
+      version: selectedVersionData.identifier,
+      options: {
+        createExeShortcut: true,
+        createDirShortcut: false,
+      },
+    });
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto p-6 flex-1 min-h-0">
@@ -278,6 +291,7 @@ export function GameVersionSelector({
                 onInstallOrLaunch={handleInstallOrLaunch}
                 onDelete={handleDelete}
                 onRepair={handleRepair}
+                onCreateShortcuts={handleCreateShortcuts}
               />
             </CardContent>
           </Card>
@@ -325,6 +339,7 @@ export function GameVersionSelector({
                 onInstallOrLaunch={handleInstallOrLaunch}
                 onDelete={handleDelete}
                 onRepair={handleRepair}
+                onCreateShortcuts={handleCreateShortcuts}
               />
             </CardContent>
           </Card>
