@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play } from 'lucide-react';
 
+interface VideoData {
+  id: string;
+  url: string;
+  name: string;
+  description: string;
+}
+
 interface TrailerData {
   youtubeUrl: string;
   localUrl: string;
@@ -14,9 +21,20 @@ export function GameTrailer() {
   useEffect(() => {
     const fetchTrailer = async () => {
       try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/intro-video');
-        const data = await response.json();
-        setTrailer(data);
+        const response = await fetch('https://manic-launcher.vercel.app/api/videos');
+        const videos: VideoData[] = await response.json();
+
+        // Find the official intro video or use the first video as fallback
+        const introVideo =
+          videos.find(video => video.name.toLowerCase().includes('intro') || video.description.toLowerCase().includes('intro')) ||
+          videos[0];
+
+        if (introVideo) {
+          setTrailer({
+            youtubeUrl: introVideo.url,
+            localUrl: '/intro-video.mp4',
+          });
+        }
       } catch (error) {
         console.error('Failed to fetch trailer:', error);
         // Fallback trailer data
