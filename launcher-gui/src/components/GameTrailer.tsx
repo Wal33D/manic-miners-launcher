@@ -21,10 +21,8 @@ export function GameTrailer() {
         const response = await fetch('https://manic-launcher.vercel.app/api/videos');
         const videos: Video[] = await response.json();
 
-        // Find the official intro video or use the first video as fallback
-        const introVideo =
-          videos.find(video => video.name.toLowerCase().includes('intro') || video.description.toLowerCase().includes('intro')) ||
-          videos[0];
+        // Find the intro video with specific ID
+        const introVideo = videos.find(video => video.id === '1mQacGNeNVA');
 
         if (introVideo) {
           setIntroVideoUrl(introVideo.url);
