@@ -1,5 +1,12 @@
 const SERVER_BASE_URL = 'https://manic-launcher.vercel.app';
 
+/**
+ * Updates the favicon dynamically by fetching it from the API
+ * Tries multiple favicon names in order of preference and applies the first one found
+ * 
+ * @returns {Promise<void>} Resolves when favicon update is complete
+ * @throws {Error} Logs error to console if favicon update fails
+ */
 export async function updateFavicon() {
   try {
     const response = await fetch(`${SERVER_BASE_URL}/api/images`);

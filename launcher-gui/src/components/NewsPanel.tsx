@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, Calendar, ThumbsUp, ThumbsDown, ExternalLink } from 'lucide-react';
 import type { NewsItem, NewsResponse, Comment, CommentsResponse } from '@/types/api';
+import { fetchWithValidation, NewsResponseSchema, CommentsResponseSchema } from '@/utils/validation';
+import { z } from 'zod';
 
 export function NewsPanel() {
   const [messages, setMessages] = useState<NewsItem[]>([]);
@@ -14,22 +16,21 @@ export function NewsPanel() {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/news');
-        const data = await response.json();
-        
+      const data = await fetchWithValidation(
+        'https://manic-launcher.vercel.app/api/news',
+        NewsResponseSchema,
+        'News'
+      );
+      
+      if (data) {
         // Handle different API response formats
         if (Array.isArray(data)) {
-          // Old format - direct array
           setMessages(data);
-        } else if (data.news && Array.isArray(data.news)) {
-          // New format - object with news array
-          setMessages(data.news);
         } else {
-          setMessages([]);
+          setMessages(data.news);
         }
-      } catch (error) {
-        console.error('Failed to fetch news:', error);
+      } else {
+        // Fallback data if validation fails
         setMessages([
           {
             id: 1,
@@ -44,25 +45,19 @@ export function NewsPanel() {
             date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
           },
         ]);
-      } finally {
-        setNewsLoading(false);
       }
+      setNewsLoading(false);
     };
 
     const fetchComments = async () => {
-      try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/comments');
-        const data: CommentsResponse = await response.json();
-        setCommentsData(data);
-      } catch (error) {
-        console.error('Failed to fetch comments:', error);
-        setCommentsData({
-          count: 0,
-          comments: [],
-        });
-      } finally {
-        setCommentsLoading(false);
-      }
+      const data = await fetchWithValidation(
+        'https://manic-launcher.vercel.app/api/comments',
+        CommentsResponseSchema,
+        'Comments'
+      );
+      
+      setCommentsData(data || { count: 0, comments: [] });
+      setCommentsLoading(false);
     };
 
     fetchMessages();

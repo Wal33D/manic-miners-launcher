@@ -14,6 +14,15 @@ interface LatestVersionManagerProps {
   removeNotification: (id: string) => void;
 }
 
+/**
+ * Manages the latest version of Manic Miners including download, installation, and launching
+ * 
+ * @component
+ * @param {LatestVersionManagerProps} props - Component props
+ * @param {Function} props.onNotificationUpdate - Callback to update notifications
+ * @param {Function} props.removeNotification - Callback to remove a specific notification
+ * @returns {JSX.Element} Latest version management UI
+ */
 export function LatestVersionManager({ onNotificationUpdate, removeNotification }: LatestVersionManagerProps) {
   const { getAssetUrl } = useAssets();
   const [isInstalled, setIsInstalled] = useState(false);

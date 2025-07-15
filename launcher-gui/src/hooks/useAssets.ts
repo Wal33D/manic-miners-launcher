@@ -8,6 +8,16 @@ interface Assets {
 const SERVER_BASE_URL = 'https://manic-launcher.vercel.app';
 let cachedAssets: Assets | null = null;
 
+/**
+ * Custom hook for managing and caching asset URLs from the API
+ * Provides a centralized way to access all image and media assets
+ * 
+ * @returns {Object} Hook return object
+ * @returns {Object} returns.assets - Map of asset names to URLs
+ * @returns {Function} returns.getAssetUrl - Function to get URL for a specific asset
+ * @returns {boolean} returns.loading - Loading state
+ * @returns {string|null} returns.error - Error message if asset loading fails
+ */
 export function useAssets() {
   const [assets, setAssets] = useState<Assets>({});
   const [loading, setLoading] = useState(true);
@@ -87,6 +97,13 @@ export function useAssets() {
     loadAssets();
   }, []);
 
+  /**
+   * Gets the URL for a specific asset by name
+   * Falls back to direct endpoint URL if asset not found in cache
+   * 
+   * @param {string} assetName - Name of the asset file
+   * @returns {string} URL for the asset
+   */
   const getAssetUrl = (assetName: string): string => {
     // Always use the fetched or fallback assets
     if (assets[assetName]) {

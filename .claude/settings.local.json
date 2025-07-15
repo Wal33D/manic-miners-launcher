@@ -16,7 +16,18 @@
       "Bash(echo $USERPROFILE)",
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(HUSKY=0 git commit -m \"refactor: simplify GameTrailer to use YouTube URL directly from videos endpoint\n\n- Removed TrailerData interface as it''s no longer needed\n- Updated component to use intro video''s url field directly\n- Removed unnecessary cloudinaryUrl and localUrl handling\n- Kept the YouTube embed URL helper function for iframe embedding\")"
+      "Bash(HUSKY=0 git commit -m \"refactor: simplify GameTrailer to use YouTube URL directly from videos endpoint\n\n- Removed TrailerData interface as it''s no longer needed\n- Updated component to use intro video''s url field directly\n- Removed unnecessary cloudinaryUrl and localUrl handling\n- Kept the YouTube embed URL helper function for iframe embedding\")",
+      "Bash(HUSKY=0 git commit -m \"fix: update GameTrailer to use specific intro video ID\n\n- Changed to look for video with ID ''1mQacGNeNVA'' specifically\n- Uses the .url field from that video for the YouTube embed\n- Maintains fallback to the same URL if fetch fails\")",
+      "Bash(gh repo view:*)",
+      "Bash(mkdir:*)",
+      "Bash(git clone:*)",
+      "Bash(cp:*)",
+      "Bash(git config:*)",
+      "Bash(HUSKY=0 git commit -m \"feat: add custom styled scrollbars with energy crystal theme\n\n- Added webkit scrollbar styling with green energy crystal gradient\n- Scrollbar thumb has gradient effect and glows on hover\n- Added Firefox-compatible scrollbar styling\n- Created utility classes for different scrollbar styles:\n  - Default: 12px wide with energy crystal theme\n  - .scrollbar-energy: Enhanced glow effect\n  - .scrollbar-minimal: 6px thin variant for smaller components\n- Scrollbars now match the Manic Miners theme instead of default OS styling\")",
+      "Bash(HUSKY=0 git commit -m \"feat: remove Community page and associated code\n\n- Removed Community.tsx page component\n- Removed Community route from App.tsx routing configuration\n- Removed Community navigation link and Users icon import from Navigation component\n- Kept Comment and NewsItem types in api.ts as they are still used by NewsPanel\n- All references to Community page have been cleaned up\")",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)",
+      "Bash(HUSKY=0 git commit -m \"feat: technical debt improvements\n\n- Added JSDoc comments to key functions and components\n- Created unit test setup with Vitest and testing utilities\n- Added test for favicon utility function\n- Implemented global error boundary for better error handling\n- Added lazy loading for page components with Suspense\n- Created PageLoader component for loading states\n- Implemented API response validation using Zod schemas\n- Added validation utilities for type-safe API calls\n- Updated NewsPanel to use validated API responses\n\nThis improves code quality, performance, and error handling throughout the application.\")"
     ],
     "deny": []
   }
