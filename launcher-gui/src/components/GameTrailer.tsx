@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play } from 'lucide-react';
+import { getApiUrl, ENV } from '@/config/environment';
 
 interface Video {
   id: string;
@@ -18,7 +19,7 @@ export function GameTrailer() {
   useEffect(() => {
     const fetchTrailer = async () => {
       try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/videos');
+        const response = await fetch(getApiUrl(ENV.API_ENDPOINTS.VIDEOS));
         const videos: Video[] = await response.json();
 
         // Find the intro video with specific ID

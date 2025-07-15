@@ -6,6 +6,8 @@ import { VersionSelector } from './VersionSelector';
 import { VersionDetails } from './VersionDetails';
 import { VersionActions } from './VersionActions';
 import { logger } from '../utils/frontendLogger';
+import { getApiUrl, ENV } from '@/config/environment';
+import { sortByVersion } from '@/utils/version';
 
 import { GameVersion } from '@/types/game';
 import type { Version, VersionsResponse } from '@/types/api';
@@ -50,21 +52,11 @@ export function GameVersionSelector({
   useEffect(() => {
     const fetchVersions = async () => {
       try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
+        const response = await fetch(getApiUrl(ENV.API_ENDPOINTS.VERSIONS_ARCHIVED));
         const data: VersionsResponse = await response.json();
 
         if (data?.versions) {
-          const sorted = data.versions.sort((a: Version, b: Version) => {
-            const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
-            const aParts = parseVersion(a.version);
-            const bParts = parseVersion(b.version);
-            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-              const numA = aParts[i] || 0;
-              const numB = bParts[i] || 0;
-              if (numA !== numB) return numB - numA;
-            }
-            return 0;
-          });
+          const sorted = sortByVersion(data.versions);
           setVersions(sorted);
           if (sorted.length > 0) {
             setSelectedVersion(sorted[0].version);
@@ -92,17 +84,7 @@ export function GameVersionSelector({
       window.electronAPI.receiveOnce('request-archived-versions-information', (data: any) => {
         if (data?.versions) {
           // All versions from this endpoint are archived versions only
-          const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
-            const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
-            const aParts = parseVersion(a.version);
-            const bParts = parseVersion(b.version);
-            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-              const numA = aParts[i] || 0;
-              const numB = bParts[i] || 0;
-              if (numA !== numB) return numB - numA;
-            }
-            return 0;
-          });
+          const sorted = sortByVersion(data.versions);
           setVersions(sorted);
           if (data.defaultVersion) {
             setSelectedVersion(data.defaultVersion.version);

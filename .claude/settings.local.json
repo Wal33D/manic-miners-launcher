@@ -33,7 +33,8 @@
       "Bash(HUSKY=0 git commit -m \"fix: copy all chunk files in generateAssets script\n\n- Updated generateAssets to copy all files from launcher-gui dist/assets\n- This includes lazy-loaded chunks needed for code splitting\n- Fixes ''Module not found'' errors when starting the app\")",
       "Bash(HUSKY=0 git push)",
       "Bash(HUSKY=0 git commit -m \"fix: preserve original filenames when copying chunks\n\n- Copy all files with their original names (including hashed index files)\n- Additionally create renamed index.js/css for backward compatibility\n- This fixes module resolution for lazy-loaded chunks\")",
-      "Bash(HUSKY=0 git commit -m \"fix: revert lazy loading to fix Electron webpack issues\n\n- Removed lazy loading and Suspense from App component\n- Reverted to direct imports for page components\n- Simplified generateAssets script back to original version\n- Lazy loading was causing module resolution issues with Electron''s webpack setup\")"
+      "Bash(HUSKY=0 git commit -m \"fix: revert lazy loading to fix Electron webpack issues\n\n- Removed lazy loading and Suspense from App component\n- Reverted to direct imports for page components\n- Simplified generateAssets script back to original version\n- Lazy loading was causing module resolution issues with Electron''s webpack setup\")",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

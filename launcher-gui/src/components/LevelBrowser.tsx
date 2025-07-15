@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Map, Mountain, Zap, Star } from 'lucide-react';
+import { getApiUrl, ENV } from '@/config/environment';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
 
 interface Level {
   id: string;
@@ -16,42 +19,17 @@ interface Level {
 export function LevelBrowser() {
   const [levels, setLevels] = useState<Level[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLevels = async () => {
       try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/levels');
+        const response = await fetch(getApiUrl(ENV.API_ENDPOINTS.LEVELS));
         const data = await response.json();
         setLevels(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch levels:', error);
-        // Fallback levels for demo
-        setLevels([
-          {
-            id: '1',
-            name: 'Crystal Caverns',
-            difficulty: 'easy',
-            description: 'Your first mining expedition into the energy-rich caverns.',
-            crystals: 15,
-            completed: true,
-          },
-          {
-            id: '2',
-            name: 'Deep Core Descent',
-            difficulty: 'medium',
-            description: 'Navigate treacherous underground passages to reach the core.',
-            crystals: 32,
-            completed: false,
-          },
-          {
-            id: '3',
-            name: 'Thermal Vents',
-            difficulty: 'hard',
-            description: 'Extreme heat and volatile energy sources test your skills.',
-            crystals: 48,
-            completed: false,
-          },
-        ]);
+        setError('Failed to load levels. Please check your connection.');
       } finally {
         setLoading(false);
       }
@@ -91,18 +69,16 @@ export function LevelBrowser() {
   };
 
   if (loading) {
+    return <LoadingState variant="card" message="Loading levels..." />;
+  }
+
+  if (error) {
     return (
-      <Card className="mining-surface">
-        <CardHeader>
-          <CardTitle className="text-primary">Loading Levels...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-3">
-            <div className="h-16 bg-muted rounded"></div>
-            <div className="h-16 bg-muted rounded"></div>
-          </div>
-        </CardContent>
-      </Card>
+      <ErrorState 
+        title="Failed to Load Levels" 
+        message={error}
+        onRetry={fetchLevels}
+      />
     );
   }
 

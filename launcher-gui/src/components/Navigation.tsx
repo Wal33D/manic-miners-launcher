@@ -1,3 +1,4 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -8,7 +9,7 @@ interface NavigationProps {
   onSettingsClick?: () => void;
 }
 
-export function Navigation({ onSettingsClick }: NavigationProps) {
+export const Navigation = React.memo(function Navigation({ onSettingsClick }: NavigationProps) {
   const navItems = [
     { to: '/', icon: Home, label: 'Home' },
     { to: '/game-versions', icon: Archive, label: 'Archived Versions' },
@@ -36,13 +37,13 @@ export function Navigation({ onSettingsClick }: NavigationProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="mining" size="icon" onClick={onSettingsClick}>
-          <Settings className="w-4 h-4" />
+        <Button variant="mining" size="icon" onClick={onSettingsClick} aria-label="Open settings" className="h-11 w-11">
+          <Settings className="w-5 h-5" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="destructive" size="icon">
-              <Power className="w-4 h-4" />
+            <Button variant="destructive" size="icon" aria-label="Power options" className="h-11 w-11">
+              <Power className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -59,4 +60,4 @@ export function Navigation({ onSettingsClick }: NavigationProps) {
       </div>
     </nav>
   );
-}
+});

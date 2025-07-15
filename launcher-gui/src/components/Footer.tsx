@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'lucide-react';
+import { getApiUrl, ENV } from '@/config/environment';
+import { InlineError } from '@/components/ui/error-state';
 
 interface UrlData {
   Website: string;
@@ -23,16 +25,32 @@ const iconMap = {
   Email: Mail,
 };
 
-export function Footer() {
+export const Footer = React.memo(function Footer() {
   const [urls, setUrls] = useState<UrlData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('https://manic-launcher.vercel.app/api/urls')
+    fetch(getApiUrl(ENV.API_ENDPOINTS.URLS))
       .then(response => response.json())
       .then((data: UrlData) => setUrls(data))
-      .catch(error => console.error('Failed to fetch URLs:', error));
+      .catch(error => {
+        console.error('Failed to fetch URLs:', error);
+        setError('Failed to load social links');
+      });
   }, []);
 
+  if (!urls && !error) return null;
+  
+  if (error) {
+    return (
+      <footer className="border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-6 py-3">
+          <InlineError message={error} className="justify-center" />
+        </div>
+      </footer>
+    );
+  }
+  
   if (!urls) return null;
 
   return (
@@ -88,4 +106,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { ImagesResponse } from '@/types/api';
+import { ENV, getApiUrl } from '@/config/environment';
 
 interface Assets {
   [key: string]: string;
 }
 
-const SERVER_BASE_URL = 'https://manic-launcher.vercel.app';
+const SERVER_BASE_URL = ENV.API_BASE_URL;
 let cachedAssets: Assets | null = null;
 
 /**
@@ -32,7 +33,7 @@ export function useAssets() {
       }
 
       try {
-        const response = await fetch(`${SERVER_BASE_URL}/api/images`);
+        const response = await fetch(getApiUrl('/api/images'));
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

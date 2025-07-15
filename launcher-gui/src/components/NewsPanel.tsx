@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,8 +7,9 @@ import { MessageSquare, Calendar, ThumbsUp, ThumbsDown, ExternalLink } from 'luc
 import type { NewsItem, NewsResponse, Comment, CommentsResponse } from '@/types/api';
 import { fetchWithValidation, NewsResponseSchema, CommentsResponseSchema } from '@/utils/validation';
 import { z } from 'zod';
+import { getApiUrl, ENV } from '@/config/environment';
 
-export function NewsPanel() {
+export const NewsPanel = React.memo(function NewsPanel() {
   const [messages, setMessages] = useState<NewsItem[]>([]);
   const [commentsData, setCommentsData] = useState<CommentsResponse | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
@@ -17,7 +18,7 @@ export function NewsPanel() {
   useEffect(() => {
     const fetchMessages = async () => {
       const data = await fetchWithValidation(
-        'https://manic-launcher.vercel.app/api/news',
+        getApiUrl(ENV.API_ENDPOINTS.NEWS),
         NewsResponseSchema,
         'News'
       );
@@ -51,7 +52,7 @@ export function NewsPanel() {
 
     const fetchComments = async () => {
       const data = await fetchWithValidation(
-        'https://manic-launcher.vercel.app/api/comments',
+        getApiUrl(ENV.API_ENDPOINTS.COMMENTS),
         CommentsResponseSchema,
         'Comments'
       );
@@ -218,4 +219,4 @@ export function NewsPanel() {
       </CardContent>
     </Card>
   );
-}
+});

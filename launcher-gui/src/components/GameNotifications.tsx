@@ -87,14 +87,15 @@ export function GameNotifications({ notifications, onDismiss }: GameNotification
               variant="ghost"
               size="sm"
               onClick={() => onDismiss(notification.id)}
-              className={`h-6 w-6 p-0 transition-opacity ${
+              className={`min-h-[44px] min-w-[44px] h-11 w-11 p-0 transition-opacity ${
                 (notification.progress !== undefined && notification.progress >= 100) ||
                 ['success', 'error', 'warning', 'info'].includes(notification.type)
                   ? 'opacity-100'
                   : 'opacity-0 group-hover:opacity-100'
               }`}
+              aria-label="Dismiss notification"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
 

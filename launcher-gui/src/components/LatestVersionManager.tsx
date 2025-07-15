@@ -8,6 +8,7 @@ import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { logger } from '@/utils/frontendLogger';
 import { useAssets } from '@/hooks/useAssets';
+import { useIpcListener } from '@/hooks/useIpcListener';
 
 interface LatestVersionManagerProps {
   onNotificationUpdate: (notifications: NotificationData[]) => void;
@@ -168,12 +169,27 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
         version: 'latest', // Use 'latest' instead of hardcoded version
       });
 
-      // Listen for completion only (progress is handled globally)
+      // Create a cleanup function for the progress listener
+      const cleanupDownload = () => {
+        if (window.electronAPI) {
+          window.electronAPI.removeAllListeners('download-latest-progress');
+          window.electronAPI.removeAllListeners('download-latest-error');
+        }
+      };
+
+      // Listen for completion
       window.electronAPI.receive('download-latest-progress', (progressData: any) => {
         if (progressData.progress >= 100) {
           setIsDownloading(false);
-          window.electronAPI.removeAllListeners('download-latest-progress');
+          cleanupDownload();
         }
+      });
+
+      // Listen for errors
+      window.electronAPI.receive('download-latest-error', (error: any) => {
+        logger.error('LatestVersionManager', 'Download error', { error });
+        setIsDownloading(false);
+        cleanupDownload();
       });
     } else {
       // Fallback simulation for web preview
@@ -203,12 +219,28 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     setIsVerifying(true);
 
     if (window.electronAPI) {
-      // Listen for completion only (progress is handled globally)
+      // Create a cleanup function for the verify listeners
+      const cleanupVerify = () => {
+        if (window.electronAPI) {
+          window.electronAPI.removeAllListeners('verify-repair-progress');
+          window.electronAPI.removeAllListeners('verify-repair-error');
+          window.electronAPI.removeAllListeners('versions-updated');
+        }
+      };
+
+      // Listen for completion
       window.electronAPI.receive('verify-repair-progress', (progressData: any) => {
         if (progressData.progress >= 100) {
           setIsVerifying(false);
-          window.electronAPI.removeAllListeners('verify-repair-progress');
+          cleanupVerify();
         }
+      });
+
+      // Listen for errors
+      window.electronAPI.receive('verify-repair-error', (error: any) => {
+        logger.error('LatestVersionManager', 'Verify error', { error });
+        setIsVerifying(false);
+        cleanupVerify();
       });
 
       // Listen for version updates after repair
@@ -292,30 +324,39 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     setIsDeleting(true);
 
     if (window.electronAPI) {
-      try {
-        logger.userActionLog('Delete latest version');
+      logger.userActionLog('Delete latest version');
 
-        // Listen for completion only (progress is handled globally)
-        window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
-          if (progressData.progress >= 100) {
-            // Clean up listener and finish deletion
-            setTimeout(() => {
-              setIsDeleting(false);
-              setIsInstalled(false);
-              window.electronAPI.removeAllListeners('delete-latest-progress');
-            }, 1000);
-          }
-        });
+      // Create a cleanup function for the delete listeners
+      const cleanupDelete = () => {
+        if (window.electronAPI) {
+          window.electronAPI.removeAllListeners('delete-latest-progress');
+          window.electronAPI.removeAllListeners('delete-latest-error');
+        }
+      };
 
-        // Start the deletion process
-        window.electronAPI.send('delete-latest-version', {
-          version: 'latest', // Use 'latest' instead of hardcoded version
-        });
-      } catch (error) {
-        logger.error('LatestVersionManager', 'Error deleting version', { error });
+      // Listen for completion
+      window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
+        if (progressData.progress >= 100) {
+          // Clean up listener and finish deletion
+          setTimeout(() => {
+            setIsDeleting(false);
+            setIsInstalled(false);
+            cleanupDelete();
+          }, 1000);
+        }
+      });
+
+      // Listen for errors
+      window.electronAPI.receive('delete-latest-error', (error: any) => {
+        logger.error('LatestVersionManager', 'Delete error', { error });
         setIsDeleting(false);
-        window.electronAPI.removeAllListeners('delete-latest-progress');
-      }
+        cleanupDelete();
+      });
+
+      // Start the deletion process
+      window.electronAPI.send('delete-latest-version', {
+        version: 'latest', // Use 'latest' instead of hardcoded version
+      });
     } else {
       // Fallback simulation for web preview
       setTimeout(() => {
@@ -344,12 +385,19 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
       try {
         logger.userActionLog('Create shortcuts');
 
-        // Listen for completion only (progress is handled globally)
+        // Create a cleanup function for the shortcuts listeners
+        const cleanupShortcuts = () => {
+          if (window.electronAPI) {
+            window.electronAPI.removeAllListeners('create-shortcuts-progress');
+            window.electronAPI.removeAllListeners('create-shortcuts-error');
+          }
+        };
+
+        // Listen for completion
         window.electronAPI.receive('create-shortcuts-progress', (progressData: any) => {
           if (progressData.progress >= 100) {
             setIsCreatingShortcuts(false);
-            window.electronAPI.removeAllListeners('create-shortcuts-progress');
-            window.electronAPI.removeAllListeners('create-shortcuts-error');
+            cleanupShortcuts();
 
             // Remove the initial notification
             removeNotification(notificationId);
@@ -370,8 +418,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
         // Listen for shortcut creation errors
         window.electronAPI.receive('create-shortcuts-error', (error: any) => {
           setIsCreatingShortcuts(false);
-          window.electronAPI.removeAllListeners('create-shortcuts-progress');
-          window.electronAPI.removeAllListeners('create-shortcuts-error');
+          cleanupShortcuts();
 
           // Remove the initial notification
           removeNotification(notificationId);

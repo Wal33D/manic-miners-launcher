@@ -44,8 +44,8 @@ export function ConfirmationModal({
             <div className="flex-1">
               <DialogTitle className="text-left">{title}</DialogTitle>
             </div>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onOpenChange(false)}>
-              <X className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px] h-11 w-11" onClick={() => onOpenChange(false)} aria-label="Close dialog">
+              <X className="h-5 w-5" />
             </Button>
           </div>
         </DialogHeader>
