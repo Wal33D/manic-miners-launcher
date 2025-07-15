@@ -10,7 +10,17 @@ import { GameNotifications, NotificationData } from '@/components/GameNotificati
 import Index from './pages/Index';
 import GameVersions from './pages/GameVersions';
 import FAQ from './pages/FAQ';
+import Media from './pages/Media';
 import NotFound from './pages/NotFound';
+
+// Debug logging to identify undefined components
+console.log('App.tsx imports:', {
+  Index: typeof Index,
+  GameVersions: typeof GameVersions,
+  FAQ: typeof FAQ,
+  Media: typeof Media,
+  NotFound: typeof NotFound,
+});
 import { logger } from './utils/frontendLogger';
 
 const queryClient = new QueryClient();
@@ -234,6 +244,7 @@ const App = () => {
                   element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
                 />
                 <Route path="/faq" element={<FAQ />} />
+                <Route path="/media" element={<Media />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

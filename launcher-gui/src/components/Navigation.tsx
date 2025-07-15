@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Home, Settings, Power, Minus, X, Archive, HelpCircle } from 'lucide-react';
+import { Home, Settings, Power, Minus, X, Archive, HelpCircle, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavigationProps {
@@ -12,6 +12,8 @@ export function Navigation({ onSettingsClick }: NavigationProps) {
   const navItems = [
     { to: '/', icon: Home, label: 'Home' },
     { to: '/game-versions', icon: Archive, label: 'Archived Versions' },
+    { to: '/media', icon: Image, label: 'Media' },
+    { to: '/faq', icon: HelpCircle, label: 'FAQ' },
   ];
 
   return (

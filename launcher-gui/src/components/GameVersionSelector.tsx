@@ -14,9 +14,15 @@ interface GameVersionSelectorProps {
   onDownloadStart?: () => void;
   onDownloadEnd?: () => void;
   onNotificationUpdate: (notifications: NotificationData[]) => void;
+  removeNotification: (id: string) => void;
 }
 
-export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotificationUpdate }: GameVersionSelectorProps) {
+export function GameVersionSelector({
+  onDownloadStart,
+  onDownloadEnd,
+  onNotificationUpdate,
+  removeNotification,
+}: GameVersionSelectorProps) {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
