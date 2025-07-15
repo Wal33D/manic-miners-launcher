@@ -1,0 +1,8 @@
+{
+  "loader": "ts-node/esm",
+  "extensions": ["ts"],
+  "spec": "src/tests/realDownloadIntegration.test.ts",
+  "timeout": 300000,
+  "reporter": "spec",
+  "require": ["ts-node/register"]
+}

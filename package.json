@@ -14,6 +14,8 @@
     "test": "mocha",
     "test:watch": "mocha --watch",
     "test:verbose": "mocha --reporter spec",
+    "test:real": "RUN_REAL_DOWNLOAD_TESTS=true mocha --config .mocharc.real.json",
+    "test:all": "npm test && npm run test:real",
     "prepare": "husky"
   },
   "devDependencies": {
