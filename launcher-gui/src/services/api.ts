@@ -35,6 +35,10 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        // Add CORS headers for development
+        ...(process.env.NODE_ENV === 'development' && {
+          'Access-Control-Allow-Origin': '*',
+        }),
         ...options?.headers,
       },
     });

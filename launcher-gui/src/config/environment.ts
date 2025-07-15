@@ -6,8 +6,8 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 export const ENV = {
-  // API Base URL
-  API_BASE_URL: process.env.VITE_API_BASE_URL || 'https://manic-launcher.vercel.app',
+  // API Base URL - use proxy in development to avoid CORS issues
+  API_BASE_URL: process.env.VITE_API_BASE_URL || (isDevelopment ? '' : 'https://manic-launcher.vercel.app'),
   
   // API Endpoints
   API_ENDPOINTS: {

@@ -7,6 +7,15 @@ export default defineConfig(() => ({
   server: {
     host: '::',
     port: 8080,
+    proxy: {
+      // Proxy API requests to avoid CORS issues in development
+      '/api': {
+        target: 'https://manic-launcher.vercel.app',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
   },
   plugins: [react()],
   resolve: {

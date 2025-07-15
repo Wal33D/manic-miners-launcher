@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
+import { validateIpcData, isValidExternalUrl } from '../utils/ipcValidation';
 
 type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
 
@@ -62,9 +63,19 @@ const validReceiveChannels: IpcChannel[] = [
 
 contextBridge.exposeInMainWorld('electronAPI', {
   send: (channel: IpcChannel, data?: any) => {
-    if (validSendChannels.includes(channel)) {
-      ipcRenderer.send(channel, data);
+    if (!validSendChannels.includes(channel)) {
+      console.error('Invalid IPC channel:', channel);
+      return;
     }
+
+    // Validate data if validation exists for this channel
+    const validation = validateIpcData(channel, data);
+    if (!validation.isValid) {
+      console.error('Invalid IPC data for channel', channel, ':', validation.error);
+      return;
+    }
+
+    ipcRenderer.send(channel, validation.data || data);
   },
   receive: (channel: IpcChannel, func: (...args: any[]) => void) => {
     if (validReceiveChannels.includes(channel)) {
@@ -82,6 +93,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
   openExternal: (url: string) => {
+    // Validate URL before sending to main process
+    if (!isValidExternalUrl(url)) {
+      console.error('Invalid or unsafe URL:', url);
+      return;
+    }
+    
     // Opening external URL via IPC to main process
     // Always use IPC since shell is not available in preload context
     ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL_URL, url);
