@@ -67,11 +67,6 @@ const Media = () => {
     fetchMediaData();
   }, []);
 
-  const getYouTubeEmbedUrl = (url: string) => {
-    const videoId = url.split('v=')[1]?.split('&')[0];
-    return `https://www.youtube.com/embed/${videoId}`;
-  };
-
   const getImageName = (filename: string) => {
     return (
       filename
@@ -182,10 +177,19 @@ const Media = () => {
                     <Card key={video.id} className="mining-surface overflow-hidden group hover:shadow-lg transition-shadow">
                       <div className="relative aspect-video">
                         {video.cloudinaryUrl ? (
-                          <video src={video.cloudinaryUrl} className="w-full h-full object-cover" controls preload="metadata" />
+                          <video
+                            src={video.cloudinaryUrl}
+                            className="w-full h-full object-cover cursor-pointer"
+                            controls
+                            preload="metadata"
+                            controlsList="nodownload"
+                            crossOrigin="anonymous"
+                            poster={video.cloudinaryUrl ? video.cloudinaryUrl.replace(/\.[^/.]+$/, '.jpg') : undefined}
+                            playsInline
+                          />
                         ) : (
                           <iframe
-                            src={getYouTubeEmbedUrl(video.cloudinaryUrl || video.url)}
+                            src={getYouTubeEmbedUrl(video.url)}
                             title={video.name}
                             className="w-full h-full"
                             frameBorder="0"
@@ -203,17 +207,26 @@ const Media = () => {
                       </CardHeader>
                       <CardContent className="pt-0">
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" asChild className="flex-1">
-                            <a href={video.cloudinaryUrl || video.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4 mr-2" />
-                              {video.cloudinaryUrl ? 'View Video' : 'YouTube'}
-                            </a>
-                          </Button>
-                          {video.cloudinaryUrl && (
-                            <Button variant="mining" size="sm" asChild className="flex-1">
-                              <a href={video.cloudinaryUrl} target="_blank" rel="noopener noreferrer">
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
+                          {video.cloudinaryUrl ? (
+                            <>
+                              <Button variant="outline" size="sm" asChild className="flex-1">
+                                <a href={video.cloudinaryUrl} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="w-4 h-4 mr-2" />
+                                  Open Video
+                                </a>
+                              </Button>
+                              <Button variant="mining" size="sm" asChild className="flex-1">
+                                <a href={video.url} target="_blank" rel="noopener noreferrer">
+                                  <Play className="w-4 h-4 mr-2" />
+                                  YouTube
+                                </a>
+                              </Button>
+                            </>
+                          ) : (
+                            <Button variant="outline" size="sm" asChild className="flex-1">
+                              <a href={video.url} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="w-4 h-4 mr-2" />
+                                YouTube
                               </a>
                             </Button>
                           )}
@@ -322,10 +335,19 @@ const Media = () => {
                   <Card key={video.id} className="mining-surface overflow-hidden group hover:shadow-lg transition-shadow">
                     <div className="relative aspect-video">
                       {video.cloudinaryUrl ? (
-                        <video src={video.cloudinaryUrl} className="w-full h-full object-cover" controls preload="metadata" />
+                        <video
+                          src={video.cloudinaryUrl}
+                          className="w-full h-full object-cover cursor-pointer"
+                          controls
+                          preload="metadata"
+                          controlsList="nodownload"
+                          crossOrigin="anonymous"
+                          poster={video.cloudinaryUrl ? video.cloudinaryUrl.replace(/\.[^/.]+$/, '.jpg') : undefined}
+                          playsInline
+                        />
                       ) : (
                         <iframe
-                          src={getYouTubeEmbedUrl(video.cloudinaryUrl || video.url)}
+                          src={getYouTubeEmbedUrl(video.url)}
                           title={video.name}
                           className="w-full h-full"
                           frameBorder="0"
@@ -343,17 +365,26 @@ const Media = () => {
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" asChild className="flex-1">
-                          <a href={video.cloudinaryUrl || video.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            {video.cloudinaryUrl ? 'View Video' : 'YouTube'}
-                          </a>
-                        </Button>
-                        {video.cloudinaryUrl && (
-                          <Button variant="mining" size="sm" asChild className="flex-1">
-                            <a href={video.cloudinaryUrl} target="_blank" rel="noopener noreferrer">
-                              <Download className="w-4 h-4 mr-2" />
-                              Download
+                        {video.cloudinaryUrl ? (
+                          <>
+                            <Button variant="outline" size="sm" asChild className="flex-1">
+                              <a href={video.cloudinaryUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="w-4 h-4 mr-2" />
+                                Open Video
+                              </a>
+                            </Button>
+                            <Button variant="mining" size="sm" asChild className="flex-1">
+                              <a href={video.url} target="_blank" rel="noopener noreferrer">
+                                <Play className="w-4 h-4 mr-2" />
+                                YouTube
+                              </a>
+                            </Button>
+                          </>
+                        ) : (
+                          <Button variant="outline" size="sm" asChild className="flex-1">
+                            <a href={video.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              YouTube
                             </a>
                           </Button>
                         )}
