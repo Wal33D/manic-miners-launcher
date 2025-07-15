@@ -3,31 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, ThumbsUp, ThumbsDown, Calendar } from 'lucide-react';
-
-interface Comment {
-  id: string;
-  author: string;
-  date: string;
-  text: string;
-  avatarUrl: string;
-  upvotes: number;
-  downvotes: number;
-}
-
-interface CommentsData {
-  count: number;
-  comments: Comment[];
-}
+import type { Comment, CommentsResponse } from '@/types/api';
 
 export function Comments() {
-  const [commentsData, setCommentsData] = useState<CommentsData | null>(null);
+  const [commentsData, setCommentsData] = useState<CommentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/comments');
-        const data = await response.json();
+        const data: CommentsResponse = await response.json();
         setCommentsData(data);
       } catch (error) {
         console.error('Failed to fetch comments:', error);

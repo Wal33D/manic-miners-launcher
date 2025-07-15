@@ -1,6 +1,7 @@
 import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
+import type { Routes, RoutesResponse } from '../types/api';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
@@ -45,7 +46,7 @@ export async function fetchServerEndpoints({
       if (!routesResponse.ok) {
         throw new Error(`Failed to fetch endpoints. Status: ${routesResponse.status}`);
       }
-      const routesData = await routesResponse.json();
+      const routesData: RoutesResponse = await routesResponse.json();
       data = Object.keys(routesData).map(key => ({
         name: key,
         endpoint: routesData[key],

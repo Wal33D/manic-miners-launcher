@@ -8,6 +8,7 @@ import { VersionActions } from './VersionActions';
 import { logger } from '../utils/frontendLogger';
 
 import { GameVersion } from '@/types/game';
+import type { Version, VersionsResponse } from '@/types/api';
 
 interface GameVersionSelectorProps {
   onDownloadStart?: () => void;
@@ -44,10 +45,10 @@ export function GameVersionSelector({ onDownloadStart, onDownloadEnd, onNotifica
     const fetchVersions = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/versions/archived');
-        const data = await response.json();
+        const data: VersionsResponse = await response.json();
 
         if (data?.versions) {
-          const sorted = data.versions.sort((a: GameVersion, b: GameVersion) => {
+          const sorted = data.versions.sort((a: Version, b: Version) => {
             const parseVersion = (v: string) => v.split('.').map(num => parseInt(num, 10));
             const aParts = parseVersion(a.version);
             const bParts = parseVersion(b.version);
