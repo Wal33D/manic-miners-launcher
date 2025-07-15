@@ -46,7 +46,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   const handleSave = () => {
     // In a real app, this would save settings to localStorage or backend
-    console.log('Settings saved:', {
+    logger.userActionLog('Settings saved', {
       installPath,
       autoUpdate,
       downloadLimit,

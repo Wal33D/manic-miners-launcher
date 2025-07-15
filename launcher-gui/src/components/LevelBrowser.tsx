@@ -6,6 +6,7 @@ import { Map, Mountain, Zap, Star } from 'lucide-react';
 import { getApiUrl, ENV } from '@/config/environment';
 import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
+import { logger } from '@/utils/frontendLogger';
 
 interface Level {
   id: string;
@@ -28,7 +29,7 @@ export function LevelBrowser() {
         const data = await response.json();
         setLevels(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Failed to fetch levels:', error);
+        logger.error('LevelBrowser', 'Failed to fetch levels', { error });
         setError('Failed to load levels. Please check your connection.');
       } finally {
         setLoading(false);

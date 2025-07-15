@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play } from 'lucide-react';
 import { getApiUrl, ENV } from '@/config/environment';
+import { logger } from '@/utils/frontendLogger';
+import { LoadingState } from '@/components/ui/loading-state';
 
 interface Video {
   id: string;
@@ -29,7 +31,7 @@ export function GameTrailer() {
           setIntroVideoUrl(introVideo.url);
         }
       } catch (error) {
-        console.error('Failed to fetch trailer:', error);
+        logger.error('GameTrailer', 'Failed to fetch trailer', { error });
         // Fallback to hardcoded YouTube URL
         setIntroVideoUrl('https://www.youtube.com/watch?v=1mQacGNeNVA');
       } finally {

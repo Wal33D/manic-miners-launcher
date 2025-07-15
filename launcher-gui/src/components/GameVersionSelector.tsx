@@ -143,21 +143,23 @@ export function GameVersionSelector({
     setDeleteProgress(0);
     setDeleteStatus('Removing game files...');
 
-    // Simulate delete progress
-    const deleteInterval = setInterval(() => {
-      setDeleteProgress(prev => {
-        const newProgress = prev + Math.random() * 20;
-        if (newProgress >= 100) {
-          clearInterval(deleteInterval);
-          setDeleteStatus('Deletion completed successfully!');
-          setTimeout(() => setIsDeleting(false), 2000);
-          return 100;
+    // Listen for actual delete progress
+    window.electronAPI.receive('delete-progress', (progressData: any) => {
+      if (progressData.progress !== undefined) {
+        setDeleteProgress(progressData.progress);
+        if (progressData.status) {
+          setDeleteStatus(progressData.status);
         }
-        return newProgress;
-      });
-    }, 300);
+        if (progressData.progress >= 100) {
+          setTimeout(() => {
+            setIsDeleting(false);
+            window.electronAPI.removeAllListeners('delete-progress');
+          }, 1000);
+        }
+      }
+    });
 
-    window.electronAPI.send('delete-version', selectedVersionData.identifier);
+    // Listen for deletion result
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
       if (result?.deleted) {
         setInstalledVersions(prev => {
@@ -165,8 +167,14 @@ export function GameVersionSelector({
           newSet.delete(selectedVersionData.version);
           return newSet;
         });
+      } else if (result?.error) {
+        setDeleteStatus('Failed to delete version');
+        setIsDeleting(false);
+        window.electronAPI.removeAllListeners('delete-progress');
       }
     });
+
+    window.electronAPI.send('delete-version', selectedVersionData.identifier);
   };
 
   const handleRepair = async () => {
@@ -175,20 +183,32 @@ export function GameVersionSelector({
     setRepairProgress(0);
     setRepairStatus('Checking files...');
 
-    window.electronAPI.send('repair-version', selectedVersionData.identifier);
-
-    const repairInterval = setInterval(() => {
-      setRepairProgress(prev => {
-        const newProgress = prev + Math.random() * 10;
-        if (newProgress >= 100) {
-          clearInterval(repairInterval);
-          setRepairStatus('Repair completed successfully!');
-          setTimeout(() => setIsRepairing(false), 2000);
-          return 100;
+    // Listen for actual repair progress
+    window.electronAPI.receive('repair-progress', (progressData: any) => {
+      if (progressData.progress !== undefined) {
+        setRepairProgress(progressData.progress);
+        if (progressData.status) {
+          setRepairStatus(progressData.status);
         }
-        return newProgress;
-      });
-    }, 400);
+        if (progressData.progress >= 100) {
+          setTimeout(() => {
+            setIsRepairing(false);
+            window.electronAPI.removeAllListeners('repair-progress');
+          }, 1000);
+        }
+      }
+    });
+
+    // Listen for repair result
+    window.electronAPI.receiveOnce('repair-version', (result: any) => {
+      if (result?.error) {
+        setRepairStatus('Failed to repair version');
+        setIsRepairing(false);
+        window.electronAPI.removeAllListeners('repair-progress');
+      }
+    });
+
+    window.electronAPI.send('repair-version', selectedVersionData.identifier);
   };
 
   const handleCreateShortcuts = async () => {

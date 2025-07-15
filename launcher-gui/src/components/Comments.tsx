@@ -4,24 +4,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, ThumbsUp, ThumbsDown, Calendar } from 'lucide-react';
 import type { Comment, CommentsResponse } from '@/types/api';
+import { logger } from '@/utils/frontendLogger';
+import { getApiUrl, ENV } from '@/config/environment';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
 
 export function Comments() {
   const [commentsData, setCommentsData] = useState<CommentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch('https://manic-launcher.vercel.app/api/comments');
+        const response = await fetch(getApiUrl(ENV.API_ENDPOINTS.COMMENTS));
         const data: CommentsResponse = await response.json();
         setCommentsData(data);
       } catch (error) {
-        console.error('Failed to fetch comments:', error);
-        // Fallback comments data
-        setCommentsData({
-          count: 0,
-          comments: [],
-        });
+        logger.error('Comments', 'Failed to fetch comments', { error });
+        setError('Failed to load comments. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -44,25 +45,17 @@ export function Comments() {
   };
 
   if (loading) {
+    return <LoadingState variant="card" message="Loading comments..." />;
+  }
+
+  if (error) {
     return (
-      <Card className="mining-surface">
-        <CardHeader>
-          <CardTitle className="text-primary">Loading Comments...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="flex gap-3">
-                <div className="w-8 h-8 bg-muted rounded-full"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded w-1/4"></div>
-                  <div className="h-3 bg-muted rounded w-3/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ErrorState 
+        title="Failed to Load Comments"
+        message={error}
+        onRetry={fetchComments}
+        showRetry={true}
+      />
     );
   }
 

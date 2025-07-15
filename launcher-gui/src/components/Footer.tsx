@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'lucide-react';
-import { getApiUrl, ENV } from '@/config/environment';
 import { InlineError } from '@/components/ui/error-state';
+import { api } from '@/services/api';
 
 interface UrlData {
   Website: string;
@@ -30,11 +30,9 @@ export const Footer = React.memo(function Footer() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(getApiUrl(ENV.API_ENDPOINTS.URLS))
-      .then(response => response.json())
-      .then((data: UrlData) => setUrls(data))
+    api.getUrls()
+      .then(data => setUrls(data))
       .catch(error => {
-        console.error('Failed to fetch URLs:', error);
         setError('Failed to load social links');
       });
   }, []);
@@ -69,20 +67,16 @@ export const Footer = React.memo(function Footer() {
                   rel="noopener noreferrer"
                   onClick={e => {
                     e.preventDefault();
-                    console.log('Footer link clicked:', name, url);
-                    console.log('electronAPI available:', !!window.electronAPI);
-
+                    
                     if (window.electronAPI?.openExternal) {
-                      console.log('Using electronAPI.openExternal');
                       try {
                         window.electronAPI.openExternal(url);
                       } catch (error) {
-                        console.error('Error calling openExternal:', error);
+                        logger.error('Footer', 'Error calling openExternal', { error });
                         // Fallback to window.open
                         window.open(url, '_blank', 'noopener,noreferrer');
                       }
                     } else {
-                      console.log('electronAPI not available, using window.open fallback');
                       window.open(url, '_blank', 'noopener,noreferrer');
                     }
                   }}

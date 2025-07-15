@@ -19,7 +19,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
 
   const handleCreateShortcuts = async () => {
     if (!window.electronAPI) {
-      console.log('Desktop API not available in preview mode');
+      logger.stateLog('ShortcutManager', 'Desktop API not available in preview mode');
       return;
     }
 
