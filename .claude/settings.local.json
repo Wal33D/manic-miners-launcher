@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(gh api:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(HUSKY=0 git commit -m \"fix: update NewsPanel to handle new API response structure\n\nUpdated NewsPanel component to properly handle the new API endpoints structure where news data is returned as an object with a ''news'' array property instead of a direct array. The component now supports both formats for backward compatibility.\")",
+      "Bash(git push:*)",
+      "Bash(HUSKY=0 git push origin master)",
+      "Bash(rm:*)",
+      "Bash(npm run:*)",
+      "Bash(HUSKY=0 git commit -m \"feat: remove Media page and associated code\n\n- Removed Media.tsx page component\n- Removed Media route from App.tsx routing configuration\n- Removed Media navigation link and Image icon import from Navigation component\n- Removed unused Video, Image types and their response interfaces from api.ts\n- All references to Media page have been cleaned up\")",
+      "Bash(echo $APPDATA)",
+      "Bash(echo $LOCALAPPDATA)",
+      "Bash(echo $USERPROFILE)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(HUSKY=0 git commit -m \"refactor: simplify GameTrailer to use YouTube URL directly from videos endpoint\n\n- Removed TrailerData interface as it''s no longer needed\n- Updated component to use intro video''s url field directly\n- Removed unnecessary cloudinaryUrl and localUrl handling\n- Kept the YouTube embed URL helper function for iframe embedding\")"
+    ],
+    "deny": []
+  }
+}

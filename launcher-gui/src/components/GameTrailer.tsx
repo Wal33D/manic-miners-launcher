@@ -1,22 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play } from 'lucide-react';
-import type { Video, VideosResponse } from '@/types/api';
 
-interface TrailerData {
-  youtubeUrl: string;
-  localUrl: string;
+interface Video {
+  id: string;
+  url: string;
+  name: string;
+  description: string;
+  internalUrl: string;
+  cloudinaryUrl: string;
 }
 
 export function GameTrailer() {
-  const [trailer, setTrailer] = useState<TrailerData | null>(null);
+  const [introVideoUrl, setIntroVideoUrl] = useState<string | null>(null);
   const [trailerLoading, setTrailerLoading] = useState(true);
 
   useEffect(() => {
     const fetchTrailer = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/videos');
-        const videos: VideosResponse = await response.json();
+        const videos: Video[] = await response.json();
 
         // Find the official intro video or use the first video as fallback
         const introVideo =
@@ -24,18 +27,12 @@ export function GameTrailer() {
           videos[0];
 
         if (introVideo) {
-          setTrailer({
-            youtubeUrl: introVideo.cloudinaryUrl || introVideo.url,
-            localUrl: introVideo.internalUrl || introVideo.cloudinaryUrl || '/intro-video.mp4',
-          });
+          setIntroVideoUrl(introVideo.url);
         }
       } catch (error) {
         console.error('Failed to fetch trailer:', error);
-        // Fallback trailer data
-        setTrailer({
-          youtubeUrl: 'https://www.youtube.com/watch?v=1mQacGNeNVA',
-          localUrl: '/intro-video.mp4',
-        });
+        // Fallback to hardcoded YouTube URL
+        setIntroVideoUrl('https://www.youtube.com/watch?v=1mQacGNeNVA');
       } finally {
         setTrailerLoading(false);
       }
@@ -68,7 +65,7 @@ export function GameTrailer() {
     );
   }
 
-  if (!trailer) {
+  if (!introVideoUrl) {
     return null;
   }
 
@@ -84,7 +81,7 @@ export function GameTrailer() {
       <CardContent>
         <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
           <iframe
-            src={getYouTubeEmbedUrl(trailer.youtubeUrl)}
+            src={getYouTubeEmbedUrl(introVideoUrl)}
             title="Manic Miners Trailer"
             className="w-full h-full"
             frameBorder="0"
