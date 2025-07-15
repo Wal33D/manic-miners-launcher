@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { GameNotifications, NotificationData } from '@/components/GameNotifications';
 import Index from './pages/Index';
 import GameVersions from './pages/GameVersions';
+import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
 
 import { logger } from './utils/frontendLogger';
@@ -233,6 +234,7 @@ const App = () => {
                   path="/game-versions"
                   element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
                 />
+                <Route path="/faq" element={<FAQ />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
