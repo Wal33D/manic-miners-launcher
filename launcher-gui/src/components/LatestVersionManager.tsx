@@ -366,30 +366,24 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
           </div>
         }
       />
-      <Card className="w-full">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                {latestVersion.displayName}
-                <Badge variant="default" className="ml-2">
-                  Latest
-                </Badge>
-              </CardTitle>
-              <CardDescription>
-                Released {latestVersion.releaseDate} • {latestVersion.size}
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
+      <Card className="w-full overflow-hidden">
+        {/* Hero Image Section */}
+        {latestVersion.coverImage && (
+          <div className="relative h-40 w-full">
+            <img src={latestVersion.coverImage} alt={latestVersion.title} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+
+            {/* Status Badge Overlay */}
+            <div className="absolute top-4 right-4">
               {isCheckingInstallation ? (
-                <Badge variant="outline" className="flex items-center gap-1">
+                <Badge variant="outline" className="flex items-center gap-1 bg-background/80 backdrop-blur-sm">
                   <Download className="w-3 h-3 animate-spin" />
                   Checking...
                 </Badge>
               ) : (
                 isInstalled &&
                 !isDownloading && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 bg-background/80 backdrop-blur-sm">
                     <Check className="w-3 h-3" />
                     Installed
                   </Badge>
@@ -397,95 +391,115 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
               )}
             </div>
           </div>
+        )}
+
+        <CardHeader className="space-y-1">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-2xl font-bold">{latestVersion.title}</CardTitle>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <Badge variant="default" className="text-xs">
+                  LATEST
+                </Badge>
+                <span>Released {latestVersion.releaseDate}</span>
+                <span>•</span>
+                <span>{latestVersion.size}</span>
+              </div>
+            </div>
+          </div>
+          <CardDescription className="text-base mt-2">{latestVersion.description}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="flex gap-4">
-            {latestVersion.coverImage && (
-              <img src={latestVersion.coverImage} alt={latestVersion.title} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
-            )}
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">{latestVersion.description}</p>
-            </div>
-          </div>
-
           {(isDownloading || isVerifying || isUpdating) && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>{isVerifying ? 'Verifying...' : isUpdating ? 'Updating...' : 'Downloading...'}</span>
-                <span>{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
+            <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <span className="font-medium">{isVerifying ? 'Verifying Files' : isUpdating ? 'Updating Game' : 'Downloading'}</span>
+                </div>
+                <span className="text-sm font-mono">{Math.round(isUpdating ? updateProgress : downloadProgress)}%</span>
               </div>
-              <Progress value={isUpdating ? updateProgress : downloadProgress} className="w-full" />
-              {isVerifying && verifyStatus && <div className="text-xs text-muted-foreground">{verifyStatus}</div>}
-              {isUpdating && updateStatus && <div className="text-xs text-muted-foreground">{updateStatus}</div>}
+              <Progress value={isUpdating ? updateProgress : downloadProgress} className="h-2" />
+              {isVerifying && verifyStatus && <p className="text-xs text-muted-foreground">{verifyStatus}</p>}
+              {isUpdating && updateStatus && <p className="text-xs text-muted-foreground">{updateStatus}</p>}
             </div>
           )}
 
-          <div className="flex gap-2">
+          {/* Action Buttons */}
+          <div className="space-y-3">
             {isCheckingInstallation ? (
-              <Button disabled className="flex items-center gap-2">
-                <Download className="w-4 h-4 animate-spin" />
+              <Button disabled className="w-full" size="lg">
+                <Download className="w-4 h-4 mr-2 animate-spin" />
                 Checking Installation...
               </Button>
             ) : !isInstalled ? (
-              <Button onClick={handleInstall} disabled={isDownloading || isVerifying} className="flex items-center gap-2">
-                <Download className="w-4 h-4" />
-                {isDownloading ? 'Installing...' : 'Install Latest'}
+              <Button onClick={handleInstall} disabled={isDownloading || isVerifying} className="w-full" size="lg">
+                <Download className="w-4 h-4 mr-2" />
+                {isDownloading ? 'Installing...' : 'Install Game'}
               </Button>
             ) : (
-              <>
-                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="flex items-center gap-2">
-                  <Play className="w-4 h-4" />
+              <div className="space-y-2">
+                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="w-full" size="lg">
+                  <Play className="w-5 h-5 mr-2" />
                   {isLaunching ? 'Launching...' : 'Launch Game'}
                 </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
-                      className="flex items-center gap-2"
-                    >
-                      <Settings className="w-4 h-4" />
-                      Game Options
-                      <ChevronDown className="w-4 h-4 ml-1" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      onClick={handleUpdate}
-                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
-                    >
-                      <RefreshCw className="w-4 h-4 mr-2" />
-                      {isUpdating ? 'Updating...' : 'Update Game'}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={handleVerify}
-                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      {isVerifying ? 'Verifying...' : 'Verify & Repair'}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setShowDeleteModal(true)}
-                      disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
-                      className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      {isDeleting ? 'Uninstalling...' : 'Uninstall'}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleUpdate}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-1" />
+                    Update
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleVerify}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                  >
+                    <RotateCcw className="w-4 h-4 mr-1" />
+                    Verify
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDeleteModal(true)}
+                    disabled={isDownloading || isVerifying || isDeleting || isLaunching || isUpdating}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Uninstall
+                  </Button>
+                </div>
+              </div>
             )}
           </div>
 
-          {isCheckingInstallation && (
-            <div className="text-xs text-muted-foreground mt-2">🔍 Checking if latest version is installed...</div>
+          {/* Status Messages */}
+          {isInstalled && !isCheckingInstallation && !isDownloading && !isVerifying && !isUpdating && (
+            <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3">
+              <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+                <Check className="w-4 h-4" />
+                Ready to play! The latest version is installed and up to date.
+              </p>
+            </div>
           )}
 
-          {!isCheckingInstallation && isInstalled && !isVerifying && !isUpdating && (
-            <div className="text-xs text-muted-foreground mt-2">
-              ✅ Latest version is installed. Use "Launch Game" to play or "Game Options" for update, repair, and uninstall options.
+          {isDeleting && (
+            <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+                  <span className="font-medium">Uninstalling Game</span>
+                </div>
+                <span className="text-sm font-mono">{deleteProgress}%</span>
+              </div>
+              <Progress value={deleteProgress} className="h-2" />
+              {deleteStatus && <p className="text-xs text-muted-foreground">{deleteStatus}</p>}
             </div>
           )}
         </CardContent>
