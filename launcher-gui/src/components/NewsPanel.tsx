@@ -16,8 +16,18 @@ export function NewsPanel() {
     const fetchMessages = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/news');
-        const data: NewsResponse = await response.json();
-        setMessages(Array.isArray(data) ? data : []);
+        const data = await response.json();
+        
+        // Handle different API response formats
+        if (Array.isArray(data)) {
+          // Old format - direct array
+          setMessages(data);
+        } else if (data.news && Array.isArray(data.news)) {
+          // New format - object with news array
+          setMessages(data.news);
+        } else {
+          setMessages([]);
+        }
       } catch (error) {
         console.error('Failed to fetch news:', error);
         setMessages([
