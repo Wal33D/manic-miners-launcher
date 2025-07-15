@@ -60,14 +60,14 @@
     "@fortawesome/fontawesome-free": "^6.5.2",
     "bootstrap": "^5.3.3",
     "bootswatch": "^5.3.7",
+    "create-desktop-shortcuts": "^1.11.1",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",
     "itchio-downloader": "^0.8.1",
     "node-stream-zip": "^1.15.0",
     "os-browserify": "^0.3.0",
     "play-sound": "^1.1.6",
-    "tar": "^7.4.3",
-    "windows-shortcuts": "^0.1.6"
+    "tar": "^7.4.3"
   },
   "repository": {
     "type": "git",

@@ -69,9 +69,6 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
     }
   };
 
-  // Check if Windows platform (shortcuts only work on Windows)
-  const isWindows = navigator.platform.startsWith('Win');
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -79,17 +76,10 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
           <Link className="w-5 h-5" />
           Desktop Shortcuts
         </CardTitle>
-        <CardDescription>Create shortcuts for easy access to the game</CardDescription>
+        <CardDescription>Create cross-platform shortcuts for easy access to the game</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {!isWindows && (
-          <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-            <AlertCircle className="w-4 h-4 text-yellow-600" />
-            <span className="text-sm text-yellow-700 dark:text-yellow-300">Shortcut creation is currently only supported on Windows.</span>
-          </div>
-        )}
-
         {/* Shortcut Options */}
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
@@ -97,7 +87,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
               id="exe-shortcut"
               checked={createExeShortcut}
               onCheckedChange={checked => setCreateExeShortcut(checked as boolean)}
-              disabled={isCreating || !isWindows}
+              disabled={isCreating}
             />
             <label
               htmlFor="exe-shortcut"
@@ -112,7 +102,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
               id="dir-shortcut"
               checked={createDirShortcut}
               onCheckedChange={checked => setCreateDirShortcut(checked as boolean)}
-              disabled={isCreating || !isWindows}
+              disabled={isCreating}
             />
             <label
               htmlFor="dir-shortcut"
@@ -166,7 +156,7 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
         {/* Action Button */}
         <Button
           onClick={handleCreateShortcuts}
-          disabled={isCreating || !isWindows || (!createExeShortcut && !createDirShortcut)}
+          disabled={isCreating || (!createExeShortcut && !createDirShortcut)}
           className="w-full flex items-center gap-2"
         >
           <ExternalLink className="w-4 h-4" />
@@ -176,8 +166,8 @@ export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) 
         {/* Info */}
         <div className="text-xs text-muted-foreground space-y-1">
           <p>• Desktop shortcuts will be created on your desktop</p>
-          <p>• Start menu shortcuts will be created in the Windows Start Menu</p>
-          <p>• Web shortcuts for Discord, Reddit, and other resources will be included</p>
+          <p>• System shortcuts will be created (Start Menu on Windows, Applications on macOS/Linux)</p>
+          <p>• Works across Windows, macOS, and Linux platforms</p>
         </div>
       </CardContent>
     </Card>
