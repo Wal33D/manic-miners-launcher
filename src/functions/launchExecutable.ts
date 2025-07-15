@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { logger } from '../utils/logger';
 
 /**
  * Launches an executable file and monitors if it opened successfully or if it crashed.
@@ -16,9 +17,15 @@ export const launchExecutable = ({
 
     if (process.platform !== 'win32') {
       const message = 'Game launch is supported only on Windows.';
-      console.error(message);
+      logger.error('LAUNCH', message, { platform: process.platform, executablePath });
       return resolve({ status: false, message });
     }
+
+    logger.info('LAUNCH', 'Starting game executable', { 
+      executablePath, 
+      platform: process.platform,
+      startTime: new Date(startTime).toISOString()
+    });
 
     const spawnCmd = executablePath;
     const spawnArgs: string[] = [];
@@ -30,7 +37,7 @@ export const launchExecutable = ({
 
     child.on('error', err => {
       const errorMessage = `Failed to start process: ${err.message}`;
-      console.error(errorMessage);
+      logger.error('LAUNCH', errorMessage, { executablePath, error: err.message }, err);
       reject({ status: false, message: `Error launching executable: ${err.message}` });
     });
 
@@ -40,12 +47,21 @@ export const launchExecutable = ({
       const veryShortRun = runTime < 5;
       const exitMessage =
         code === 0 ? 'Executable launched and exited normally.' : `Executable launched but exited with error code: ${code}`;
-      const exitLogMessage = `Process exited at: ${new Date(endTime).toISOString()} (runtime: ${runTime.toFixed(2)} minutes)`;
-      console.log(exitLogMessage);
+      
+      logger.info('LAUNCH', 'Process exit detected', {
+        executablePath,
+        exitCode: code,
+        endTime: new Date(endTime).toISOString(),
+        runtimeMinutes: runTime.toFixed(2),
+        veryShortRun
+      });
 
       if (veryShortRun) {
-        const warningMessage = `Warning: The process had a very short run time (${runTime.toFixed(2)} minutes), which might indicate an issue.`;
-        console.warn(warningMessage);
+        logger.warn('LAUNCH', 'Process had very short runtime', {
+          executablePath,
+          runtimeMinutes: runTime.toFixed(2),
+          message: 'This might indicate an issue with the game'
+        });
       }
 
       resolve({ status: code === 0, message: exitMessage, exitCode: code, veryShortRun });

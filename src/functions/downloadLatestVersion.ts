@@ -1,6 +1,7 @@
 import { BrowserWindow, net } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
+import { logger } from '../utils/logger';
 
 interface DownloadOptions {
   targetDirectory: string;
@@ -58,7 +59,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
         for (const selector of selectors) {
           const btn = document.querySelector(selector);
           if (btn) {
-            console.log('Found download button with selector:', selector);
+            logger.downloadLog('Found download button with selector', { selector });
             btn.click();
             return true;
           }
@@ -68,7 +69,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
         const allButtons = document.querySelectorAll('button, a, .button');
         for (const btn of allButtons) {
           if (btn.textContent && btn.textContent.toLowerCase().includes('download')) {
-            console.log('Found download button by text:', btn.textContent);
+            logger.downloadLog('Found download button by text', { buttonText: btn.textContent });
             btn.click();
             return true;
           }

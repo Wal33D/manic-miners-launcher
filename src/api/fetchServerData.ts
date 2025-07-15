@@ -2,6 +2,7 @@ import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
 import { fetchServerEndpoints } from './fetchServerEndpoints';
+import { logger } from '../utils/logger';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
@@ -13,7 +14,11 @@ if (process.env.FETCH_TIMEOUT_MS) {
   const parsedTimeout = parseInt(process.env.FETCH_TIMEOUT_MS, 10);
   if (Number.isNaN(parsedTimeout)) {
     const warningMessage = `Invalid FETCH_TIMEOUT_MS value "${process.env.FETCH_TIMEOUT_MS}". Falling back to default of ${DEFAULT_FETCH_TIMEOUT_MS}ms.`;
-    console.warn(warningMessage);
+    logger.warn('CONFIG', 'Invalid FETCH_TIMEOUT_MS value', { 
+      invalidValue: process.env.FETCH_TIMEOUT_MS, 
+      defaultValue: DEFAULT_FETCH_TIMEOUT_MS,
+      message: warningMessage 
+    });
   } else {
     FETCH_TIMEOUT_MS = parsedTimeout;
   }

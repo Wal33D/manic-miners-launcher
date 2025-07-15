@@ -1,4 +1,5 @@
 import { IpcMainEvent } from 'electron';
+import { logger } from '../../utils/logger';
 
 /**
  * Wraps an asynchronous IPC handler with standardized try/catch logic and
@@ -17,7 +18,10 @@ export const withIpcHandler = <Args extends any[], Result>(
       event.reply(replyChannel, result as any);
     } catch (error: unknown) {
       const err = error as Error;
-      console.error(`IPC handler error on ${replyChannel}: ${err.message}`);
+      logger.error('IPC', `IPC handler error on ${replyChannel}`, { 
+        channel: replyChannel, 
+        error: err.message 
+      }, err);
       event.reply(replyChannel, { status: false, message: err.message });
     }
   };

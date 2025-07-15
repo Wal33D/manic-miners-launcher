@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchUrls } from '../../api/fetchUrls';
+import { logger } from '../../utils/logger';
 
 export const setupUrlHandler = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
@@ -19,7 +20,7 @@ export const setupUrlHandler = async (): Promise<{ status: boolean; message: str
         status = true; // Indicates successful setup of the IPC handler.
       } catch (error: unknown) {
         const err = error as Error;
-        console.error(`Error fetching URLs: ${err.message}`);
+        logger.error('IPC', 'Error fetching URLs', { error: err.message }, err);
         event.reply(IPC_CHANNELS.GET_URLS, {
           status: false,
           message: `Error fetching URLs: ${err.message}`,

@@ -3,6 +3,7 @@ import * as path from 'path';
 import { createShortcut } from '../fileUtils/createShortcut';
 import { ensureDirectory } from '../fileUtils/fileOps';
 import { findLatestVersionPath } from '../fileUtils/findLatestVersionPath';
+import { logger } from '../utils/logger';
 
 export const createDesktopShortcuts = async ({
   installPath,
@@ -17,7 +18,7 @@ export const createDesktopShortcuts = async ({
   const filePaths: string[] = [];
 
   if (process.platform !== 'win32') {
-    console.warn('Shortcut creation is only supported on Windows.');
+    logger.warn('SHORTCUTS', 'Shortcut creation is only supported on Windows', { platform: process.platform });
     return { status: false, filePaths };
   }
 

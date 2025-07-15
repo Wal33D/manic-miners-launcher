@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { getDirectories } from './fetchDirectories';
+import { logger } from '../utils/logger';
 
 /**
  * Checks if a specific version is installed by looking for its directory and executable.
@@ -29,7 +30,7 @@ export const isVersionInstalled = async (versionIdentifier: string): Promise<boo
       return false; // Installation is considered absent without executables
     }
   } catch (error) {
-    console.error(`Error checking installation status for ${versionIdentifier}:`, error);
+    logger.error('INSTALL', 'Error checking installation status', { versionIdentifier, error: error.message }, error);
     return false; // Return false on error, indicating the version is not installed
   }
 };
