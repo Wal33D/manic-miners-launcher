@@ -14,10 +14,10 @@ if (process.env.FETCH_TIMEOUT_MS) {
   const parsedTimeout = parseInt(process.env.FETCH_TIMEOUT_MS, 10);
   if (Number.isNaN(parsedTimeout)) {
     const warningMessage = `Invalid FETCH_TIMEOUT_MS value "${process.env.FETCH_TIMEOUT_MS}". Falling back to default of ${DEFAULT_FETCH_TIMEOUT_MS}ms.`;
-    logger.warn('CONFIG', 'Invalid FETCH_TIMEOUT_MS value', { 
-      invalidValue: process.env.FETCH_TIMEOUT_MS, 
+    logger.warn('CONFIG', 'Invalid FETCH_TIMEOUT_MS value', {
+      invalidValue: process.env.FETCH_TIMEOUT_MS,
       defaultValue: DEFAULT_FETCH_TIMEOUT_MS,
-      message: warningMessage 
+      message: warningMessage,
     });
   } else {
     FETCH_TIMEOUT_MS = parsedTimeout;

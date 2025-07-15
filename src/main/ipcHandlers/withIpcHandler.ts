@@ -18,10 +18,15 @@ export const withIpcHandler = <Args extends any[], Result>(
       event.reply(replyChannel, result as any);
     } catch (error: unknown) {
       const err = error as Error;
-      logger.error('IPC', `IPC handler error on ${replyChannel}`, { 
-        channel: replyChannel, 
-        error: err.message 
-      }, err);
+      logger.error(
+        'IPC',
+        `IPC handler error on ${replyChannel}`,
+        {
+          channel: replyChannel,
+          error: err.message,
+        },
+        err
+      );
       event.reply(replyChannel, { status: false, message: err.message });
     }
   };

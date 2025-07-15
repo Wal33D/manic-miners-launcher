@@ -21,10 +21,10 @@ export const launchExecutable = ({
       return resolve({ status: false, message });
     }
 
-    logger.info('LAUNCH', 'Starting game executable', { 
-      executablePath, 
+    logger.info('LAUNCH', 'Starting game executable', {
+      executablePath,
       platform: process.platform,
-      startTime: new Date(startTime).toISOString()
+      startTime: new Date(startTime).toISOString(),
     });
 
     const spawnCmd = executablePath;
@@ -47,20 +47,20 @@ export const launchExecutable = ({
       const veryShortRun = runTime < 5;
       const exitMessage =
         code === 0 ? 'Executable launched and exited normally.' : `Executable launched but exited with error code: ${code}`;
-      
+
       logger.info('LAUNCH', 'Process exit detected', {
         executablePath,
         exitCode: code,
         endTime: new Date(endTime).toISOString(),
         runtimeMinutes: runTime.toFixed(2),
-        veryShortRun
+        veryShortRun,
       });
 
       if (veryShortRun) {
         logger.warn('LAUNCH', 'Process had very short runtime', {
           executablePath,
           runtimeMinutes: runTime.toFixed(2),
-          message: 'This might indicate an issue with the game'
+          message: 'This might indicate an issue with the game',
         });
       }
 
