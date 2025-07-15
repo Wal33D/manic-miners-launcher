@@ -3,33 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageSquare, Calendar, ThumbsUp, ThumbsDown } from 'lucide-react';
-
-interface NewsItem {
-  id: number;
-  date: string;
-  title: string;
-  content: string;
-}
-
-interface Comment {
-  id: string;
-  author: string;
-  date: string;
-  text: string;
-  avatarUrl: string;
-  upvotes: number;
-  downvotes: number;
-}
-
-interface CommentsData {
-  count: number;
-  comments: Comment[];
-}
+import { MessageSquare, Calendar, ThumbsUp, ThumbsDown, ExternalLink } from 'lucide-react';
+import type { NewsItem, NewsResponse, Comment, CommentsResponse } from '@/types/api';
 
 export function NewsPanel() {
   const [messages, setMessages] = useState<NewsItem[]>([]);
-  const [commentsData, setCommentsData] = useState<CommentsData | null>(null);
+  const [commentsData, setCommentsData] = useState<CommentsResponse | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
   const [commentsLoading, setCommentsLoading] = useState(true);
 
@@ -37,7 +16,7 @@ export function NewsPanel() {
     const fetchMessages = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/news');
-        const data = await response.json();
+        const data: NewsResponse = await response.json();
         setMessages(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -63,7 +42,7 @@ export function NewsPanel() {
     const fetchComments = async () => {
       try {
         const response = await fetch('https://manic-launcher.vercel.app/api/comments');
-        const data = await response.json();
+        const data: CommentsResponse = await response.json();
         setCommentsData(data);
       } catch (error) {
         console.error('Failed to fetch comments:', error);
@@ -147,6 +126,17 @@ export function NewsPanel() {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">{message.content}</p>
+                    {message.media && (
+                      <a
+                        href={message.media}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-2"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        View media
+                      </a>
+                    )}
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
                       {new Date(message.date).toLocaleDateString()}
