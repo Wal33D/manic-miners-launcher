@@ -7,18 +7,25 @@ function run(cmd: string) {
 }
 
 const guiDir = join(__dirname, '..', 'launcher-gui');
-run(`pnpm --prefix ${guiDir} install`);
-run(`pnpm --prefix ${guiDir} run build`);
+run(`pnpm --prefix "${guiDir}" install`);
+run(`pnpm --prefix "${guiDir}" run build`);
 
 const distDir = join(guiDir, 'dist', 'assets');
 const targetDir = join(__dirname, '..', 'src', 'renderer', 'assets');
 
 for (const file of readdirSync(distDir)) {
+  const sourcePath = join(distDir, file);
+  const targetPath = join(targetDir, file);
+  
+  // Copy all files from dist/assets to maintain lazy loading chunks
+  copyFileSync(sourcePath, targetPath);
+  
+  // Additionally create renamed main files for backward compatibility
   if (file.startsWith('index-') && file.endsWith('.css')) {
-    copyFileSync(join(distDir, file), join(targetDir, 'index.css'));
+    copyFileSync(sourcePath, join(targetDir, 'index.css'));
   }
   if (file.startsWith('index-') && file.endsWith('.js')) {
-    copyFileSync(join(distDir, file), join(targetDir, 'index.js'));
+    copyFileSync(sourcePath, join(targetDir, 'index.js'));
   }
 }
 

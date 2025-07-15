@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -7,16 +7,15 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import { LauncherHeader } from '@/components/LauncherHeader';
 import { Footer } from '@/components/Footer';
 import { GameNotifications, NotificationData } from '@/components/GameNotifications';
-import { LoadingState } from '@/components/ui/loading-state';
 import type { ProgressData } from '@/types/progress';
 
 import { logger } from './utils/frontendLogger';
 
-// Lazy load pages for better bundle splitting
-const Index = lazy(() => import('./pages/Index'));
-const GameVersions = lazy(() => import('./pages/GameVersions'));
-const FAQ = lazy(() => import('./pages/FAQ'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+// Direct imports for Electron compatibility
+import Index from './pages/Index';
+import GameVersions from './pages/GameVersions';
+import FAQ from './pages/FAQ';
+import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -229,21 +228,19 @@ const App = () => {
             <GameNotifications notifications={notifications} onDismiss={handleDismissNotification} />
             <LauncherHeader />
             <main className="flex-1 overflow-hidden">
-              <Suspense fallback={<LoadingState variant="card" message="Loading page..." />}>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={<Index onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
-                  />
-                  <Route
-                    path="/game-versions"
-                    element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
-                  />
-                  <Route path="/faq" element={<FAQ />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Index onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
+                />
+                <Route
+                  path="/game-versions"
+                  element={<GameVersions onNotificationUpdate={handleNotificationUpdate} removeNotification={removeNotification} />}
+                />
+                <Route path="/faq" element={<FAQ />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </main>
             <Footer />
           </div>

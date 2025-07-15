@@ -10,9 +10,9 @@ export default defineConfig(() => ({
     proxy: {
       // Proxy API requests to avoid CORS issues in development
       '/api': {
-        target: 'https://manic-launcher.vercel.app',
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
     },
