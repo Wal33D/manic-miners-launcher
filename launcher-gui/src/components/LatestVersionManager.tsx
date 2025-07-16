@@ -1,39 +1,47 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLatestVersion } from '@/contexts/LatestVersionContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown, ExternalLink } from 'lucide-react';
-import { NotificationData } from '@/components/GameNotifications';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Progress } from '@/components/ui/progress';
 import { logger } from '@/utils/frontendLogger';
 import { useAssets } from '@/hooks/useAssets';
 import { useIpcListener } from '@/hooks/useIpcListener';
-
-interface LatestVersionManagerProps {
-  onNotificationUpdate: (notifications: NotificationData[]) => void;
-  removeNotification: (id: string) => void;
-}
 
 /**
  * Manages the latest version of Manic Miners including download, installation, and launching
  * 
  * @component
- * @param {LatestVersionManagerProps} props - Component props
- * @param {Function} props.onNotificationUpdate - Callback to update notifications
- * @param {Function} props.removeNotification - Callback to remove a specific notification
  * @returns {JSX.Element} Latest version management UI
  */
-export function LatestVersionManager({ onNotificationUpdate, removeNotification }: LatestVersionManagerProps) {
+export function LatestVersionManager() {
   const { getAssetUrl } = useAssets();
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  
+  // Use context for persistent state
+  const {
+    isInstalled,
+    setIsInstalled,
+    isDownloading,
+    setIsDownloading,
+    isUpdating,
+    setIsUpdating,
+    isVerifying,
+    setIsVerifying,
+    isDeleting,
+    setIsDeleting,
+    isCheckingInstallation,
+    setIsCheckingInstallation,
+    operationProgress,
+    operationStatus,
+    operationType,
+  } = useLatestVersion();
+  
+  // Local state for UI-only concerns
   const [isLaunching, setIsLaunching] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isCheckingInstallation, setIsCheckingInstallation] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [isCreatingShortcuts, setIsCreatingShortcuts] = useState(false);
 
   // State for version information - latest version is always "latest"
@@ -157,9 +165,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     }
   }, [checkInstallStatus]);
 
-  // Note: Progress notifications are now handled globally in App.tsx
-  // This component only needs to manage its own state
-
   const handleInstall = async () => {
     setIsDownloading(true);
 
@@ -219,36 +224,6 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
     setIsVerifying(true);
 
     if (window.electronAPI) {
-      // Create a cleanup function for the verify listeners
-      const cleanupVerify = () => {
-        if (window.electronAPI) {
-          window.electronAPI.removeAllListeners('verify-repair-progress');
-          window.electronAPI.removeAllListeners('verify-repair-error');
-          window.electronAPI.removeAllListeners('versions-updated');
-        }
-      };
-
-      // Listen for completion
-      window.electronAPI.receive('verify-repair-progress', (progressData: any) => {
-        if (progressData.progress >= 100) {
-          setIsVerifying(false);
-          cleanupVerify();
-        }
-      });
-
-      // Listen for errors
-      window.electronAPI.receive('verify-repair-error', (error: any) => {
-        logger.error('LatestVersionManager', 'Verify error', { error });
-        setIsVerifying(false);
-        cleanupVerify();
-      });
-
-      // Listen for version updates after repair
-      window.electronAPI.receive('versions-updated', () => {
-        // Refresh installation status
-        window.electronAPI.send('request-latest-version-information');
-      });
-
       // Start verification and repair
       window.electronAPI.send('verify-and-repair-installation', {
         version: 'latest', // Use 'latest' instead of hardcoded version
@@ -259,60 +234,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
   const handleUpdate = async () => {
     setIsUpdating(true);
 
-    // Create update notification
-    const updateNotification: NotificationData = {
-      id: `update-${Date.now()}`,
-      type: 'info',
-      title: 'Update Started',
-      message: 'Updating to the latest version...',
-      timestamp: new Date().toISOString(),
-      persistent: true,
-    };
-    onNotificationUpdate([updateNotification]);
-
     if (window.electronAPI) {
-      // Listen for completion only (progress is handled globally)
-      window.electronAPI.receive('update-progress', (progressData: any) => {
-        if (progressData.progress >= 100) {
-          setIsUpdating(false);
-          window.electronAPI.removeAllListeners('update-progress');
-
-          // Create success notification
-          const successNotification: NotificationData = {
-            id: `update-success-${Date.now()}`,
-            type: 'success',
-            title: 'Update Complete',
-            message: 'Game has been successfully updated to the latest version!',
-            timestamp: new Date().toISOString(),
-            persistent: false,
-          };
-          onNotificationUpdate([successNotification]);
-        }
-      });
-
-      // Listen for update errors
-      window.electronAPI.receive('update-error', (error: any) => {
-        logger.error('LatestVersionManager', 'Update error', { error });
-        setIsUpdating(false);
-
-        // Create error notification
-        const errorNotification: NotificationData = {
-          id: `update-error-${Date.now()}`,
-          type: 'error',
-          title: 'Update Failed',
-          message: `Failed to update: ${error.message || 'Unknown error'}`,
-          timestamp: new Date().toISOString(),
-          persistent: true,
-        };
-        onNotificationUpdate([errorNotification]);
-      });
-
-      // Listen for version updates after update
-      window.electronAPI.receive('versions-updated', () => {
-        // Refresh installation status
-        window.electronAPI.send('request-latest-version-information');
-      });
-
       // Start update process (similar to install but for existing installations)
       window.electronAPI.send('update-latest-version', {
         version: 'latest', // Use 'latest' instead of hardcoded version
@@ -322,36 +244,10 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
 
   const handleDelete = async () => {
     setIsDeleting(true);
+    setShowDeleteModal(false);
 
     if (window.electronAPI) {
       logger.userActionLog('Delete latest version');
-
-      // Create a cleanup function for the delete listeners
-      const cleanupDelete = () => {
-        if (window.electronAPI) {
-          window.electronAPI.removeAllListeners('delete-latest-progress');
-          window.electronAPI.removeAllListeners('delete-latest-error');
-        }
-      };
-
-      // Listen for completion
-      window.electronAPI.receive('delete-latest-progress', (progressData: any) => {
-        if (progressData.progress >= 100) {
-          // Clean up listener and finish deletion
-          setTimeout(() => {
-            setIsDeleting(false);
-            setIsInstalled(false);
-            cleanupDelete();
-          }, 1000);
-        }
-      });
-
-      // Listen for errors
-      window.electronAPI.receive('delete-latest-error', (error: any) => {
-        logger.error('LatestVersionManager', 'Delete error', { error });
-        setIsDeleting(false);
-        cleanupDelete();
-      });
 
       // Start the deletion process
       window.electronAPI.send('delete-latest-version', {
@@ -545,7 +441,7 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
               </Button>
             ) : (
               <div className="space-y-2">
-                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating} className="w-full" size="lg">
+                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating || isDeleting} className="w-full" size="lg">
                   <Play className="w-5 h-5 mr-2" />
                   {isLaunching ? 'Launching...' : 'Launch Game'}
                 </Button>
@@ -594,8 +490,27 @@ export function LatestVersionManager({ onNotificationUpdate, removeNotification 
             )}
           </div>
 
+          {/* Progress Display */}
+          {operationType && operationProgress < 100 && (
+            <div className="space-y-2 rounded-lg bg-muted/50 border border-border p-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium">
+                  {operationType === 'download' && 'Installing Game'}
+                  {operationType === 'update' && 'Updating Game'}
+                  {operationType === 'verify' && 'Verifying Installation'}
+                  {operationType === 'delete' && 'Uninstalling Game'}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {operationProgress.toFixed(0)}%
+                </span>
+              </div>
+              <Progress value={operationProgress} className="h-2" />
+              <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>
+            </div>
+          )}
+
           {/* Status Messages */}
-          {isInstalled && !isCheckingInstallation && !isDownloading && !isVerifying && !isUpdating && (
+          {isInstalled && !isCheckingInstallation && !isDownloading && !isVerifying && !isUpdating && !operationType && (
             <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3">
               <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
                 <Check className="w-4 h-4" />

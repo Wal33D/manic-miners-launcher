@@ -134,7 +134,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           event.sender.send('download-latest-progress', {
             status: 'Preparing to extract game files...',
-            progress: 96,
+            progress: 72,
           });
 
           // Extract the ZIP file (simplified approach)
@@ -147,23 +147,45 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           event.sender.send('download-latest-progress', {
             status: 'Extracting game files...',
-            progress: 96,
+            progress: 75,
+          });
+
+          // Get total number of entries for progress estimation
+          const entries = await zip.entries();
+          const totalEntries = Object.keys(entries).length;
+          logger.downloadLog(`Starting extraction of ${totalEntries} files`);
+
+          // Update progress periodically during extraction
+          event.sender.send('download-latest-progress', {
+            status: `Extracting ${totalEntries} files...`,
+            progress: 80,
           });
 
           // Extract all files at once (much faster)
           await zip.extract(null, installPath);
+          
+          event.sender.send('download-latest-progress', {
+            status: 'Extraction complete, closing archive...',
+            progress: 95,
+          });
+          
           await zip.close();
 
           logger.downloadLog('Extraction completed successfully', { installPath });
 
           event.sender.send('download-latest-progress', {
-            status: 'Cleaning up and finalizing...',
-            progress: 98,
+            status: 'Cleaning up download files...',
+            progress: 96,
           });
 
-          // Clean up ZIP file after extraction
+          // Clean up ZIP file after extraction to save disk space
           try {
             await fs.unlink(zipFilePath);
+            logger.downloadLog('Removed ZIP file to save disk space', { zipFilePath });
+            event.sender.send('download-latest-progress', {
+              status: 'Finalizing installation...',
+              progress: 98,
+            });
           } catch (error) {
             logger.warn('INSTALL', 'Could not remove ZIP file', { error: error.message });
           }

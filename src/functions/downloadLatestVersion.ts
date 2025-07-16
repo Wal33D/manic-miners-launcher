@@ -20,7 +20,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
   let browserWindow: BrowserWindow | null = null;
 
   try {
-    onProgress?.({ status: 'Opening itch.io page...', progress: 10 });
+    onProgress?.({ status: 'Opening itch.io page...', progress: 8 });
 
     // Create a hidden browser window
     browserWindow = new BrowserWindow({
@@ -36,7 +36,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
     // Navigate to the itch.io page
     await browserWindow.loadURL('https://baraklava.itch.io/manic-miners');
 
-    onProgress?.({ status: 'Looking for download button...', progress: 30 });
+    onProgress?.({ status: 'Looking for download button...', progress: 20 });
 
     // Wait a moment for page to fully load
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -84,7 +84,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
     }
 
     logger.downloadLog('Download button clicked successfully');
-    onProgress?.({ status: 'Download button clicked, waiting for download to start...', progress: 40 });
+    onProgress?.({ status: 'Download button clicked, waiting for download to start...', progress: 30 });
 
     // Set up download handling
     const fileName = 'ManicMiners-latest.zip';
@@ -97,7 +97,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
       // Create a unique download handler for this instance
       const downloadHandler = (event: any, item: any, webContents: any) => {
         downloadStarted = true;
-        onProgress?.({ status: 'Download started...', progress: 50 });
+        onProgress?.({ status: 'Download started...', progress: 35 });
 
         // Set the save path
         item.setSavePath(filePath);
@@ -105,7 +105,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
         // Track download progress
         item.on('updated', (event: any, state: string) => {
           if (state === 'progressing') {
-            const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 45) + 50; // 50-95%
+            const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 35) + 35; // 35-70%
             onProgress?.({
               status: `Downloading... ${Math.round(item.getReceivedBytes() / 1024 / 1024)}MB / ${Math.round(item.getTotalBytes() / 1024 / 1024)}MB`,
               progress,
@@ -118,7 +118,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
           browserWindow.webContents.session.removeListener('will-download', downloadHandler);
 
           if (state === 'completed') {
-            onProgress?.({ status: 'Download completed', progress: 95 });
+            onProgress?.({ status: 'Download completed', progress: 70 });
             downloadCompleted = true;
             if (!browserWindow.isDestroyed()) {
               browserWindow.close();

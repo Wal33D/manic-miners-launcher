@@ -44,7 +44,10 @@
       "Bash(kill:*)",
       "Bash(pnpm add:*)",
       "Bash(pkill:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(NODE_ENV=development pnpm run generate:assets)",
+      "Bash(NODE_ENV=development npm run generate:assets)",
+      "Bash(npm start)"
     ],
     "deny": []
   }

@@ -5,11 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Link, ExternalLink, FolderOpen, CheckCircle, AlertCircle } from 'lucide-react';
 
-interface ShortcutManagerProps {
-  onNotificationUpdate?: (notification: any) => void;
-}
-
-export function ShortcutManager({ onNotificationUpdate }: ShortcutManagerProps) {
+export function ShortcutManager() {
   const [isCreating, setIsCreating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');

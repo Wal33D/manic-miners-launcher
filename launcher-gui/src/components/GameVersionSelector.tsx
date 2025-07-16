@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap } from 'lucide-react';
-import { NotificationData } from './GameNotifications';
 import { VersionSelector } from './VersionSelector';
 import { VersionDetails } from './VersionDetails';
 import { VersionActions } from './VersionActions';
@@ -12,19 +11,7 @@ import { sortByVersion } from '@/utils/version';
 import { GameVersion } from '@/types/game';
 import type { Version, VersionsResponse } from '@/types/api';
 
-interface GameVersionSelectorProps {
-  onDownloadStart?: () => void;
-  onDownloadEnd?: () => void;
-  onNotificationUpdate: (notifications: NotificationData[]) => void;
-  removeNotification: (id: string) => void;
-}
-
-export function GameVersionSelector({
-  onDownloadStart,
-  onDownloadEnd,
-  onNotificationUpdate,
-  removeNotification,
-}: GameVersionSelectorProps) {
+export function GameVersionSelector() {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -143,21 +130,8 @@ export function GameVersionSelector({
     setDeleteProgress(0);
     setDeleteStatus('Removing game files...');
 
-    // Listen for actual delete progress
-    window.electronAPI.receive('delete-progress', (progressData: any) => {
-      if (progressData.progress !== undefined) {
-        setDeleteProgress(progressData.progress);
-        if (progressData.status) {
-          setDeleteStatus(progressData.status);
-        }
-        if (progressData.progress >= 100) {
-          setTimeout(() => {
-            setIsDeleting(false);
-            window.electronAPI.removeAllListeners('delete-progress');
-          }, 1000);
-        }
-      }
-    });
+    // Note: Delete progress notifications are handled globally in App.tsx
+    // We'll just monitor completion through the delete-version result
 
     // Listen for deletion result
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
@@ -167,10 +141,15 @@ export function GameVersionSelector({
           newSet.delete(selectedVersionData.version);
           return newSet;
         });
+        // Wait a bit for the progress notification to complete
+        setTimeout(() => {
+          setIsDeleting(false);
+          setDeleteProgress(0);
+          setDeleteStatus('');
+        }, 1500);
       } else if (result?.error) {
         setDeleteStatus('Failed to delete version');
         setIsDeleting(false);
-        window.electronAPI.removeAllListeners('delete-progress');
       }
     });
 

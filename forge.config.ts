@@ -51,6 +51,8 @@ const config: ForgeConfig = {
           },
         ],
       },
+      // Note: 'unsafe-eval' is required for webpack hot module replacement in development
+      // The Electron CSP warning only appears in development and is expected
       devContentSecurityPolicy:
         "default-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:* https://manic-launcher.vercel.app; img-src 'self' https: data:;",
     }),
