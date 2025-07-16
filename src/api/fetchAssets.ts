@@ -1,13 +1,6 @@
 import { fetchServerData } from './fetchServerData';
 import { logger } from '../utils/logger';
-
-export interface Assets {
-  [key: string]: string;
-}
-
-export interface AssetsResponse {
-  assets: Assets;
-}
+import { Assets, AssetsResponse } from '../../shared-types';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';

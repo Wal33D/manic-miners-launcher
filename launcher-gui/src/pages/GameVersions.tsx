@@ -38,7 +38,7 @@ const GameVersions = () => {
                         specific version.
                       </p>
                       <div className="flex-1 min-h-0">
-                        <div className="h-full max-h-[36rem] overflow-y-auto space-y-3 pr-2 py-1">
+                        <div className="h-full max-h-[32rem] overflow-y-auto space-y-3 pr-2 py-1">
                           {versions.map(version => (
                             <div
                               key={version.version}

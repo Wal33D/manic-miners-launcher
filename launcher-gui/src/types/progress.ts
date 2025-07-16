@@ -1,13 +1,10 @@
+import { ProgressStatus } from '../../../shared-types';
+
 /**
  * Progress data structure for download operations
+ * Extends the shared ProgressStatus with version field
  */
-export interface ProgressData {
-  progress?: number;
-  status?: string;
-  fileName?: string;
-  totalSize?: number;
-  speedBytesPerSec?: number;
-  etaSeconds?: number;
+export interface ProgressData extends ProgressStatus {
   version?: string;
 }
 

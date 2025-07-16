@@ -3,17 +3,7 @@ import { Link } from 'react-router-dom';
 import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'lucide-react';
 import { InlineError } from '@/components/ui/error-state';
 import { api } from '@/services/api';
-
-interface UrlData {
-  Website: string;
-  Discord: string;
-  Reddit: string;
-  YouTube: string;
-  Facebook: string;
-  GameAuthorEmail: string;
-  EndpointDeveloperEmail: string;
-  GameHomePage: string;
-}
+import type { UrlData } from '@/types/api';
 
 const iconMap = {
   Website: Globe,

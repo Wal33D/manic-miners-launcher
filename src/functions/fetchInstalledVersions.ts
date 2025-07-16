@@ -78,18 +78,29 @@ export const fetchInstalledVersions = async (): Promise<{
           });
 
           const latestVersionInfo: Version = {
+            // Required fields
+            gameId: 0, // Local version, no gameId
             identifier: 'latest', // Use 'latest' as identifier for proper detection
             version: 'latest',
             title: 'ManicMiners',
             displayName: 'Manic Miners (Latest)',
             releaseDate: 'Current',
+            filename: 'ManicMiners.exe',
+            type: 'local',
+            md5Hash: '', // Not available for local files
             size: `${Math.round(totalSize / 1024 / 1024)} MB`,
             sizeInBytes: totalSize,
+            downloadUrl: '', // No download URL for local files
+            coverImage: '', // No cover image for local files
+            thumbnailUrl: '', // No thumbnail for local files
+            detailsUrl: '', // No details URL for local files
             description: 'Latest version (downloaded from itch.io)',
             experimental: false,
+            // Optional fields
             directory: fullDirPath,
             executablePath: exeFiles[0] || '',
             installationSize: totalSize,
+            latest: true,
           };
 
           versionMap.set('latest', latestVersionInfo);
@@ -108,15 +119,25 @@ export const fetchInstalledVersions = async (): Promise<{
         // Only include if it has executable files
         if (exeFiles.length > 0) {
           const localVersionInfo: Version = {
+            // Required fields
+            gameId: 0, // Local version, no gameId
             identifier: dir,
             version: version,
             title: 'ManicMiners',
             displayName: `ManicMiners v${version}`,
             releaseDate: 'Unknown',
+            filename: 'ManicMiners.exe',
+            type: 'local',
+            md5Hash: '', // Not available for local files
             size: `${Math.round(totalSize / 1024 / 1024)} MB`,
             sizeInBytes: totalSize,
+            downloadUrl: '', // No download URL for local files
+            coverImage: '', // No cover image for local files
+            thumbnailUrl: '', // No thumbnail for local files
+            detailsUrl: '', // No details URL for local files
             description: 'Locally installed version (downloaded from itch.io)',
             experimental: false,
+            // Optional fields
             directory: fullDirPath,
             executablePath: exeFiles[0] || '',
             installationSize: totalSize,

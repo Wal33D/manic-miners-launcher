@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { ImagesResponse } from '@/types/api';
+import type { ImagesResponse, Assets } from '@/types/api';
 import { ENV, getApiUrl } from '@/config/environment';
-
-interface Assets {
-  [key: string]: string;
-}
 
 const SERVER_BASE_URL = ENV.API_BASE_URL;
 let cachedAssets: Assets | null = null;

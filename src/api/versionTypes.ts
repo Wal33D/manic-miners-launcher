@@ -1,28 +1,5 @@
-export interface Version {
-  directory: string | null;
-  gameId?: number;
-  title: string;
-  displayName: string;
-  experimental: boolean;
-  latest?: boolean;
-  identifier: string;
-  version: string;
-  releaseDate: string;
-  filename?: string;
-  type?: string;
-  md5Hash?: string;
-  size: string;
-  sizeInBytes: number;
-  downloadUrl?: string;
-  coverImage?: string;
-  thumbnailUrl?: string;
-  detailsUrl?: string;
-  description: string;
-  executablePath?: string;
-  installationSize?: number;
-}
-export type VersionSelectionType = 'all' | 'latest' | 'past' | 'experimental' | 'archived';
+// Re-export Version from shared types
+export { Version, VersionsResponse as Versions } from '../../shared-types';
 
-export interface Versions {
-  versions: Version[];
-}
+// Keep version selection type here as it's specific to the API
+export type VersionSelectionType = 'all' | 'latest' | 'past' | 'experimental' | 'archived';

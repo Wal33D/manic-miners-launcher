@@ -1,12 +1,9 @@
+// Use the ElectronAPI type from global.d.ts
+import type { ElectronAPI } from '../../../../global';
+
 declare global {
   interface Window {
-    electronAPI?: {
-      send: (channel: string, data?: any) => void;
-      receive: (channel: string, func: (data: any) => void) => void;
-      receiveOnce: (channel: string, func: (data: any) => void) => void;
-      removeAllListeners: (channel: string) => void;
-      openExternal: (url: string) => void;
-    };
+    electronAPI?: ElectronAPI;
   }
 }
 

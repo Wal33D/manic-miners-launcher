@@ -4,8 +4,7 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import { logger } from '../../utils/logger';
-import Store from 'electron-store';
-const store = new Store() as any;
+import { typedStore } from '../../utils/typedStore';
 
 export const setupVersionHandlers = () => {
   // Legacy handler for backward compatibility
@@ -79,10 +78,10 @@ const getVersionDetails = async () => {
   // Combine enhanced server versions with local-only versions
   const allVersions = [...enhancedVersions, ...localOnlyVersions];
 
-  let defaultVersion = store.get('current-selected-version');
+  let defaultVersion = typedStore.get('current-selected-version');
   if (!defaultVersion || !allVersions.find(v => v.identifier === defaultVersion.identifier)) {
     defaultVersion = allVersions[0];
-    store.set('current-selected-version', defaultVersion);
+    typedStore.set('current-selected-version', defaultVersion);
   }
 
   return {
@@ -108,10 +107,10 @@ const getArchivedVersionDetails = async () => {
   // DO NOT add locally-only versions (like itch.io downloads) to archived versions
   const archivedVersions = enhancedVersions;
 
-  let defaultVersion = store.get('current-selected-archived-version');
+  let defaultVersion = typedStore.get('last-selected-archived-version');
   if (!defaultVersion || !archivedVersions.find(v => v.identifier === defaultVersion.identifier)) {
     defaultVersion = archivedVersions[0];
-    store.set('current-selected-archived-version', defaultVersion);
+    typedStore.set('last-selected-archived-version', defaultVersion);
   }
 
   return {
@@ -136,20 +135,20 @@ const getLatestVersionDetails = async () => {
 
 // Legacy functions for backward compatibility
 const setSelectedVersion = (selectedVersion: Version) => {
-  store.set('current-selected-version', selectedVersion);
+  typedStore.set('current-selected-version', selectedVersion);
 };
 
 const getSelectedVersion = () => {
-  const selectedVersion = store.get('current-selected-version');
+  const selectedVersion = typedStore.get('current-selected-version');
   return selectedVersion;
 };
 
 // New functions for archived versions
 const setSelectedArchivedVersion = (selectedVersion: Version) => {
-  store.set('current-selected-archived-version', selectedVersion);
+  typedStore.set('last-selected-archived-version', selectedVersion);
 };
 
 const getSelectedArchivedVersion = () => {
-  const selectedVersion = store.get('current-selected-archived-version');
+  const selectedVersion = typedStore.get('last-selected-archived-version');
   return selectedVersion;
 };

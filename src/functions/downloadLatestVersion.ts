@@ -8,13 +8,14 @@ interface DownloadOptions {
   onProgress?: (data: { status: string; progress: number }) => void;
 }
 
-interface DownloadResult {
+// Local type for this specific function's result
+interface ItchDownloadResult {
   success: boolean;
   message: string;
   filePath?: string;
 }
 
-export async function downloadLatestVersion(options: DownloadOptions): Promise<DownloadResult> {
+export async function downloadLatestVersion(options: DownloadOptions): Promise<ItchDownloadResult> {
   const { targetDirectory, onProgress } = options;
 
   let browserWindow: BrowserWindow | null = null;
@@ -59,7 +60,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
         for (const selector of selectors) {
           const btn = document.querySelector(selector);
           if (btn) {
-            console.log('Found download button with selector:', selector);
+            logger.debug('DOWNLOAD', 'Found download button with selector', { selector });
             btn.click();
             return true;
           }
@@ -69,7 +70,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<D
         const allButtons = document.querySelectorAll('button, a, .button');
         for (const btn of allButtons) {
           if (btn.textContent && btn.textContent.toLowerCase().includes('download')) {
-            console.log('Found download button by text:', btn.textContent);
+            logger.debug('DOWNLOAD', 'Found download button by text', { text: btn.textContent });
             btn.click();
             return true;
           }

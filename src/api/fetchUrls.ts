@@ -1,4 +1,5 @@
 import { fetchServerData } from './fetchServerData';
+import { Urls } from '../../shared-types';
 
 export async function fetchUrls(): Promise<Urls> {
   const { data, status, message } = await fetchServerData({
@@ -18,13 +19,4 @@ export async function fetchUrls(): Promise<Urls> {
     Facebook: data.Facebook,
     FAQ: data.FAQ,
   };
-}
-
-export interface Urls {
-  Website: string;
-  Discord: string;
-  Reddit: string;
-  YouTube: string;
-  Facebook: string;
-  FAQ: string;
 }

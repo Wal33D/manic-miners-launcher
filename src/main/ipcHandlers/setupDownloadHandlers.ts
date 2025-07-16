@@ -3,10 +3,8 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { unpackVersion } from '../../functions/unpackVersion';
 import { downloadVersion } from '../../functions/downloadVersion';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
-import Store from 'electron-store';
 import { withIpcHandler } from './withIpcHandler';
-
-const store = new Store() as any;
+import { typedStore } from '../../utils/typedStore';
 
 export const setupDownloadHandlers = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
@@ -44,7 +42,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         const newSelectedVersion = installedVersions.installedVersions.find((v: { identifier: any }) => v.identifier === version);
 
         if (newSelectedVersion) {
-          store.set('current-selected-version', newSelectedVersion);
+          typedStore.set('current-selected-version', newSelectedVersion as any);
           event.sender.send(IPC_CHANNELS.VERSIONS_UPDATED);
         }
 

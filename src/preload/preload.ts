@@ -65,6 +65,7 @@ const validReceiveChannels: IpcChannel[] = [
 contextBridge.exposeInMainWorld('electronAPI', {
   send: (channel: IpcChannel, data?: any) => {
     if (!validSendChannels.includes(channel)) {
+      // Log validation errors to console - this is acceptable in preload script
       console.error('Invalid IPC channel:', channel);
       return;
     }
