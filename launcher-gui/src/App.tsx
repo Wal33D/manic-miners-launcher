@@ -7,6 +7,7 @@ import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { LauncherHeader } from '@/components/LauncherHeader';
 import { Footer } from '@/components/Footer';
 import { LatestVersionProvider } from '@/contexts/LatestVersionContext';
+import { ArchivedVersionProvider } from '@/contexts/ArchivedVersionContext';
 
 import { logger } from './utils/frontendLogger';
 
@@ -87,11 +88,13 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <LatestVersionProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <RouterProvider router={router} />
-        </TooltipProvider>
+        <ArchivedVersionProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <RouterProvider router={router} />
+          </TooltipProvider>
+        </ArchivedVersionProvider>
       </LatestVersionProvider>
     </QueryClientProvider>
   );

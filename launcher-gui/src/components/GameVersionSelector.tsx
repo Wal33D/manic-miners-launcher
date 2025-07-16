@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Zap } from 'lucide-react';
 import { VersionSelector } from './VersionSelector';
 import { VersionDetails } from './VersionDetails';
@@ -7,6 +8,7 @@ import { VersionActions } from './VersionActions';
 import { logger } from '../utils/frontendLogger';
 import { getApiUrl, ENV } from '@/config/environment';
 import { sortByVersion } from '@/utils/version';
+import { useArchivedVersion } from '@/contexts/ArchivedVersionContext';
 
 import { GameVersion } from '@/types/game';
 import type { Version, VersionsResponse } from '@/types/api';
@@ -15,26 +17,23 @@ export function GameVersionSelector() {
   const [versions, setVersions] = useState<GameVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [installedVersions, setInstalledVersions] = useState<Set<string>>(new Set());
-
   const [installPath, setInstallPath] = useState<string>('');
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadStatus, setDownloadStatus] = useState('');
-  const [downloadFileName, setDownloadFileName] = useState('');
-  const [downloadTotalSize, setDownloadTotalSize] = useState(0);
-  const [downloadSpeed, setDownloadSpeed] = useState('0 MB/s');
-  const [downloadEta, setDownloadEta] = useState('--:--');
 
-  // Repair states
-  const [isRepairing, setIsRepairing] = useState(false);
-  const [repairProgress, setRepairProgress] = useState(0);
-  const [repairStatus, setRepairStatus] = useState('');
-
-  // Delete states
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteProgress, setDeleteProgress] = useState(0);
-  const [deleteStatus, setDeleteStatus] = useState('');
+  // Use ArchivedVersionContext for state management
+  const {
+    isDownloading,
+    setIsDownloading,
+    isRepairing,
+    setIsRepairing,
+    isDeleting,
+    setIsDeleting,
+    operationProgress,
+    operationStatus,
+    operationType,
+    currentVersionId,
+    installedVersions,
+    setInstalledVersions,
+  } = useArchivedVersion();
 
   useEffect(() => {
     const fetchVersions = async () => {
@@ -88,7 +87,6 @@ export function GameVersionSelector() {
       fetchVersions();
     }
 
-    // Progress listeners are now handled globally in App.tsx
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
@@ -104,53 +102,31 @@ export function GameVersionSelector() {
       window.electronAPI.send('launch-game', selectedVersionData.identifier);
     } else {
       if (!installPath) return;
-      onDownloadStart?.();
       setIsDownloading(true);
-      setDownloadProgress(0);
       window.electronAPI.send('download-version', {
         version: selectedVersionData.identifier,
         downloadPath: installPath,
       });
       window.electronAPI.receiveOnce('download-version', (result: any) => {
-        setIsDownloading(false);
-        onDownloadEnd?.();
-        if (result?.downloaded) {
-          setInstalledVersions(prev => new Set([...prev, selectedVersionData.version]));
+        if (result?.error) {
+          setIsDownloading(false);
         }
+        // Success is handled by the context progress listeners
       });
     }
   };
 
-  // Note: Progress notifications are now handled globally in App.tsx
-  // This component only needs to manage its own state
 
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;
     setIsDeleting(true);
-    setDeleteProgress(0);
-    setDeleteStatus('Removing game files...');
-
-    // Note: Delete progress notifications are handled globally in App.tsx
-    // We'll just monitor completion through the delete-version result
 
     // Listen for deletion result
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
-      if (result?.deleted) {
-        setInstalledVersions(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(selectedVersionData.version);
-          return newSet;
-        });
-        // Wait a bit for the progress notification to complete
-        setTimeout(() => {
-          setIsDeleting(false);
-          setDeleteProgress(0);
-          setDeleteStatus('');
-        }, 1500);
-      } else if (result?.error) {
-        setDeleteStatus('Failed to delete version');
+      if (result?.error) {
         setIsDeleting(false);
       }
+      // Success is handled by the context progress listeners
     });
 
     window.electronAPI.send('delete-version', selectedVersionData.identifier);
@@ -159,32 +135,13 @@ export function GameVersionSelector() {
   const handleRepair = async () => {
     if (!selectedVersionData || !window.electronAPI) return;
     setIsRepairing(true);
-    setRepairProgress(0);
-    setRepairStatus('Checking files...');
-
-    // Listen for actual repair progress
-    window.electronAPI.receive('repair-progress', (progressData: any) => {
-      if (progressData.progress !== undefined) {
-        setRepairProgress(progressData.progress);
-        if (progressData.status) {
-          setRepairStatus(progressData.status);
-        }
-        if (progressData.progress >= 100) {
-          setTimeout(() => {
-            setIsRepairing(false);
-            window.electronAPI.removeAllListeners('repair-progress');
-          }, 1000);
-        }
-      }
-    });
 
     // Listen for repair result
     window.electronAPI.receiveOnce('repair-version', (result: any) => {
       if (result?.error) {
-        setRepairStatus('Failed to repair version');
         setIsRepairing(false);
-        window.electronAPI.removeAllListeners('repair-progress');
       }
+      // Success is handled by the context progress listeners
     });
 
     window.electronAPI.send('repair-version', selectedVersionData.identifier);
@@ -266,6 +223,21 @@ export function GameVersionSelector() {
               </div>
             </CardHeader>
             <CardContent className="p-6">
+              {/* Progress Display */}
+              {operationType && operationProgress < 100 && selectedVersionData?.identifier === currentVersionId && (
+                <div className="space-y-2 rounded-lg bg-muted/50 border border-border p-4 mb-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">
+                      {operationType === 'download' && 'Installing Game'}
+                      {operationType === 'repair' && 'Verifying Installation'}
+                      {operationType === 'delete' && 'Uninstalling Game'}
+                    </span>
+                    <span className="text-sm text-muted-foreground">{operationProgress.toFixed(0)}%</span>
+                  </div>
+                  <Progress value={operationProgress} className="h-2" />
+                  <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>
+                </div>
+              )}
               <VersionActions
                 version={selectedVersionData}
                 isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
@@ -273,6 +245,10 @@ export function GameVersionSelector() {
                 onDelete={handleDelete}
                 onRepair={handleRepair}
                 onCreateShortcuts={handleCreateShortcuts}
+                isDownloading={isDownloading}
+                isRepairing={isRepairing}
+                isDeleting={isDeleting}
+                isCurrentVersion={selectedVersionData?.identifier === currentVersionId}
               />
             </CardContent>
           </Card>
@@ -314,6 +290,21 @@ export function GameVersionSelector() {
               </div>
             </CardHeader>
             <CardContent className="p-6">
+              {/* Progress Display */}
+              {operationType && operationProgress < 100 && selectedVersionData?.identifier === currentVersionId && (
+                <div className="space-y-2 rounded-lg bg-muted/50 border border-border p-4 mb-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">
+                      {operationType === 'download' && 'Installing Game'}
+                      {operationType === 'repair' && 'Verifying Installation'}
+                      {operationType === 'delete' && 'Uninstalling Game'}
+                    </span>
+                    <span className="text-sm text-muted-foreground">{operationProgress.toFixed(0)}%</span>
+                  </div>
+                  <Progress value={operationProgress} className="h-2" />
+                  <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>
+                </div>
+              )}
               <VersionActions
                 version={selectedVersionData}
                 isInstalled={selectedVersionData ? isVersionInstalled(selectedVersionData.version) : false}
@@ -321,6 +312,10 @@ export function GameVersionSelector() {
                 onDelete={handleDelete}
                 onRepair={handleRepair}
                 onCreateShortcuts={handleCreateShortcuts}
+                isDownloading={isDownloading}
+                isRepairing={isRepairing}
+                isDeleting={isDeleting}
+                isCurrentVersion={selectedVersionData?.identifier === currentVersionId}
               />
             </CardContent>
           </Card>
