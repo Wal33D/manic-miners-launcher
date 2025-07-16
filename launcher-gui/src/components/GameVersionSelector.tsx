@@ -86,7 +86,6 @@ export function GameVersionSelector() {
       // For web preview, fetch from the API
       fetchVersions();
     }
-
   }, []);
 
   const selectedVersionData = versions.find(v => v.version === selectedVersion);
@@ -99,15 +98,18 @@ export function GameVersionSelector() {
     if (!selectedVersionData || !window.electronAPI) return;
 
     if (isVersionInstalled(selectedVersionData.version)) {
+      console.log('[GameVersionSelector] Launching game:', selectedVersionData.identifier);
       window.electronAPI.send('launch-game', selectedVersionData.identifier);
     } else {
       if (!installPath) return;
+      console.log('[GameVersionSelector] Starting download:', selectedVersionData.identifier);
       setIsDownloading(true);
       window.electronAPI.send('download-version', {
         version: selectedVersionData.identifier,
         downloadPath: installPath,
       });
       window.electronAPI.receiveOnce('download-version', (result: any) => {
+        console.log('[GameVersionSelector] Download result:', result);
         if (result?.error) {
           setIsDownloading(false);
         }
@@ -116,13 +118,20 @@ export function GameVersionSelector() {
     }
   };
 
-
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;
+    console.log('[GameVersionSelector] Starting delete:', selectedVersionData.identifier);
+    console.log('[GameVersionSelector] Current ArchivedVersion state:', {
+      isDeleting,
+      operationType,
+      operationProgress,
+      currentVersionId,
+    });
     setIsDeleting(true);
 
     // Listen for deletion result
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
+      console.log('[GameVersionSelector] Delete result:', result);
       if (result?.error) {
         setIsDeleting(false);
       }
@@ -134,10 +143,12 @@ export function GameVersionSelector() {
 
   const handleRepair = async () => {
     if (!selectedVersionData || !window.electronAPI) return;
+    console.log('[GameVersionSelector] Starting repair:', selectedVersionData.identifier);
     setIsRepairing(true);
 
     // Listen for repair result
     window.electronAPI.receiveOnce('repair-version', (result: any) => {
+      console.log('[GameVersionSelector] Repair result:', result);
       if (result?.error) {
         setIsRepairing(false);
       }
@@ -224,18 +235,25 @@ export function GameVersionSelector() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Progress Display */}
-              {operationType && operationProgress < 100 && selectedVersionData?.identifier === currentVersionId && (
+              {(operationType || isDownloading || isRepairing || isDeleting) && selectedVersionData && (
                 <div className="space-y-2 rounded-lg bg-muted/50 border border-border p-4 mb-4">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">
                       {operationType === 'download' && 'Installing Game'}
                       {operationType === 'repair' && 'Verifying Installation'}
                       {operationType === 'delete' && 'Uninstalling Game'}
+                      {!operationType && isDownloading && 'Installing Game'}
+                      {!operationType && isRepairing && 'Verifying Installation'}
+                      {!operationType && isDeleting && 'Uninstalling Game'}
                     </span>
                     <span className="text-sm text-muted-foreground">{operationProgress.toFixed(0)}%</span>
                   </div>
                   <Progress value={operationProgress} className="h-2" />
-                  <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{operationStatus || 'Processing...'}</p>
+                  <p className="text-xs text-yellow-600 mt-1">
+                    Debug: Type={operationType}, Progress={operationProgress}, isDownloading={isDownloading ? 'yes' : 'no'}, isDeleting=
+                    {isDeleting ? 'yes' : 'no'}, isRepairing={isRepairing ? 'yes' : 'no'}
+                  </p>
                 </div>
               )}
               <VersionActions
@@ -248,7 +266,13 @@ export function GameVersionSelector() {
                 isDownloading={isDownloading}
                 isRepairing={isRepairing}
                 isDeleting={isDeleting}
-                isCurrentVersion={selectedVersionData?.identifier === currentVersionId}
+                isCurrentVersion={
+                  selectedVersionData &&
+                  currentVersionId &&
+                  (selectedVersionData.identifier === currentVersionId ||
+                    currentVersionId.includes(selectedVersionData.identifier) ||
+                    selectedVersionData.identifier.includes(currentVersionId))
+                }
               />
             </CardContent>
           </Card>
@@ -291,18 +315,25 @@ export function GameVersionSelector() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Progress Display */}
-              {operationType && operationProgress < 100 && selectedVersionData?.identifier === currentVersionId && (
+              {(operationType || isDownloading || isRepairing || isDeleting) && selectedVersionData && (
                 <div className="space-y-2 rounded-lg bg-muted/50 border border-border p-4 mb-4">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">
                       {operationType === 'download' && 'Installing Game'}
                       {operationType === 'repair' && 'Verifying Installation'}
                       {operationType === 'delete' && 'Uninstalling Game'}
+                      {!operationType && isDownloading && 'Installing Game'}
+                      {!operationType && isRepairing && 'Verifying Installation'}
+                      {!operationType && isDeleting && 'Uninstalling Game'}
                     </span>
                     <span className="text-sm text-muted-foreground">{operationProgress.toFixed(0)}%</span>
                   </div>
                   <Progress value={operationProgress} className="h-2" />
-                  <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{operationStatus || 'Processing...'}</p>
+                  <p className="text-xs text-yellow-600 mt-1">
+                    Debug: Type={operationType}, Progress={operationProgress}, isDownloading={isDownloading ? 'yes' : 'no'}, isDeleting=
+                    {isDeleting ? 'yes' : 'no'}, isRepairing={isRepairing ? 'yes' : 'no'}
+                  </p>
                 </div>
               )}
               <VersionActions
@@ -315,7 +346,13 @@ export function GameVersionSelector() {
                 isDownloading={isDownloading}
                 isRepairing={isRepairing}
                 isDeleting={isDeleting}
-                isCurrentVersion={selectedVersionData?.identifier === currentVersionId}
+                isCurrentVersion={
+                  selectedVersionData &&
+                  currentVersionId &&
+                  (selectedVersionData.identifier === currentVersionId ||
+                    currentVersionId.includes(selectedVersionData.identifier) ||
+                    selectedVersionData.identifier.includes(currentVersionId))
+                }
               />
             </CardContent>
           </Card>

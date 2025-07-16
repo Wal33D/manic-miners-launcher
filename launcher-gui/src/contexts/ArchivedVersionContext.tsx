@@ -54,53 +54,54 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
   useEffect(() => {
     if (!window.electronAPI) return;
 
-    // Download progress listener for archived versions
-    const handleDownloadProgress = (data: any) => {
+    // Enhanced download progress listener to handle both download and repair
+    const handleDownloadProgressEnhanced = (data: any) => {
       if (data.progress !== undefined) {
-        setOperationProgress(data.progress);
-        setOperationStatus(data.status || 'Downloading...');
-        setOperationType('download');
-        if (data.fileName) {
-          setCurrentVersionId(data.fileName);
-        }
+        // Check if this is a repair operation based on current state
+        if (isRepairing) {
+          setOperationProgress(data.progress);
+          setOperationStatus(data.status || 'Repairing...');
+          setOperationType('repair');
+          if (data.fileName) {
+            setCurrentVersionId(data.fileName);
+          }
 
-        if (data.progress >= 100) {
-          setTimeout(() => {
-            setIsDownloading(false);
-            setOperationType(null);
-            setOperationProgress(0);
-            setOperationStatus('');
-            setCurrentVersionId(null);
-            // Refresh installation status - add the version that was just installed
-            if (data.fileName) {
-              setInstalledVersions(prev => new Set([...prev, data.fileName]));
-            }
-          }, 1000);
-        }
-      }
-    };
+          if (data.progress >= 100) {
+            setTimeout(() => {
+              setIsRepairing(false);
+              setOperationType(null);
+              setOperationProgress(0);
+              setOperationStatus('');
+              setCurrentVersionId(null);
+            }, 1000);
+          }
+        } else {
+          // This is a download operation
+          setOperationProgress(data.progress);
+          setOperationStatus(data.status || 'Downloading...');
+          setOperationType('download');
+          if (data.fileName) {
+            setCurrentVersionId(data.fileName);
+          }
 
-    // Repair progress listener for archived versions
-    const handleRepairProgress = (data: any) => {
-      if (data.progress !== undefined) {
-        setOperationProgress(data.progress);
-        setOperationStatus(data.status || 'Repairing...');
-        setOperationType('repair');
-
-        if (data.progress >= 100) {
-          setTimeout(() => {
-            setIsRepairing(false);
-            setOperationType(null);
-            setOperationProgress(0);
-            setOperationStatus('');
-            setCurrentVersionId(null);
-          }, 1000);
+          if (data.progress >= 100) {
+            setTimeout(() => {
+              setIsDownloading(false);
+              setOperationType(null);
+              setOperationProgress(0);
+              setOperationStatus('');
+              setCurrentVersionId(null);
+            }, 1000);
+          }
         }
       }
     };
 
     // Delete progress listener for archived versions
     const handleDeleteProgress = (data: any) => {
+      console.log('[ArchivedVersionContext] Delete progress received:', data);
+      console.log('[ArchivedVersionContext] Current state - isDeleting:', isDeleting, 'operationType:', operationType);
+
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Uninstalling...');
@@ -110,6 +111,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
         }
 
         if (data.progress >= 100) {
+          console.log('[ArchivedVersionContext] Delete completed, cleaning up state');
           setTimeout(() => {
             setIsDeleting(false);
             setOperationType(null);
@@ -158,9 +160,15 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
     };
 
     // Set up all listeners for archived version operations
-    window.electronAPI.receive('download-progress', handleDownloadProgress);
-    window.electronAPI.receive('repair-progress', handleRepairProgress);
-    window.electronAPI.receive('delete-progress', handleDeleteProgress);
+    console.log('[ArchivedVersionContext] Setting up IPC listeners for download-progress and delete-progress');
+    window.electronAPI.receive('download-progress', handleDownloadProgressEnhanced);
+
+    // Combined delete progress handler with debugging
+    const handleDeleteProgressWithDebug = (data: any) => {
+      console.log('[ArchivedVersionContext] RAW delete-progress event received:', data);
+      handleDeleteProgress(data);
+    };
+    window.electronAPI.receive('delete-progress', handleDeleteProgressWithDebug);
 
     window.electronAPI.receive('download-error', handleDownloadError);
     window.electronAPI.receive('repair-error', handleRepairError);
@@ -175,7 +183,6 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
 
     return () => {
       window.electronAPI.removeAllListeners('download-progress');
-      window.electronAPI.removeAllListeners('repair-progress');
       window.electronAPI.removeAllListeners('delete-progress');
 
       window.electronAPI.removeAllListeners('download-error');

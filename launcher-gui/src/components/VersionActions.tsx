@@ -58,12 +58,7 @@ export function VersionActions({
       {/* Additional Actions Grid - Only show when installed */}
       {isInstalled && (
         <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRepair}
-            disabled={anyOperationActive}
-          >
+          <Button variant="outline" size="sm" onClick={onRepair} disabled={anyOperationActive}>
             <RotateCcw className="w-4 h-4 mr-1" />
             {isRepairing && thisVersionActive ? 'Repairing...' : 'Verify'}
           </Button>
