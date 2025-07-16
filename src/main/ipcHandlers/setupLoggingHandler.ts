@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { logger } from '../../utils/logger';
 import { IPC_CHANNELS } from './ipcChannels';
+import { withIpcHandler } from './withIpcHandler';
 
 interface FrontendLogData {
   category: string;
@@ -37,18 +38,27 @@ export const setupLoggingHandler = (): void => {
   });
 
   // Provide log file path to frontend
-  ipcMain.handle('get-log-file-path', async () => {
-    return await logger.getLogFilePath();
-  });
+  ipcMain.handle(
+    'get-log-file-path',
+    withIpcHandler('get-log-file-path-reply', async () => {
+      return await logger.getLogFilePath();
+    })
+  );
 
   // Provide recent logs to frontend
-  ipcMain.handle('get-recent-logs', async (event, lines: number = 100) => {
-    return await logger.getRecentLogs(lines);
-  });
+  ipcMain.handle(
+    'get-recent-logs',
+    withIpcHandler('get-recent-logs-reply', async (event, lines: number = 100) => {
+      return await logger.getRecentLogs(lines);
+    })
+  );
 
   // Allow frontend to clear logs
-  ipcMain.handle('clear-logs', async () => {
-    await logger.clearLogs();
-    return { success: true };
-  });
+  ipcMain.handle(
+    'clear-logs',
+    withIpcHandler('clear-logs-reply', async () => {
+      await logger.clearLogs();
+      return { success: true };
+    })
+  );
 };

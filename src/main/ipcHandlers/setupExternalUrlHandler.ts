@@ -1,5 +1,6 @@
 import { ipcMain, shell } from 'electron';
 import { logger } from '../../utils/logger';
+import { withIpcHandler } from './withIpcHandler';
 
 export const setupExternalUrlHandler = async (): Promise<{ status: boolean; message: string }> => {
   let status = false;
@@ -11,20 +12,21 @@ export const setupExternalUrlHandler = async (): Promise<{ status: boolean; mess
       openExternalType: typeof shell.openExternal,
     });
 
-    ipcMain.on('OPEN_EXTERNAL_URL', async (event, url: string) => {
-      logger.ipcLog('OPEN_EXTERNAL_URL IPC received', { url });
-      try {
+    ipcMain.on(
+      'OPEN_EXTERNAL_URL',
+      withIpcHandler('open-external-url-reply', async (event, url: string) => {
+        logger.ipcLog('OPEN_EXTERNAL_URL IPC received', { url });
         if (shell && typeof shell.openExternal === 'function') {
           logger.ipcLog('Opening external URL via main process', { url });
           await shell.openExternal(url);
           logger.ipcLog('External URL opened successfully', { url });
+          return { success: true };
         } else {
           logger.error('EXTERNAL_URL', 'shell.openExternal not available in main process');
+          throw new Error('shell.openExternal not available in main process');
         }
-      } catch (error) {
-        logger.error('EXTERNAL_URL', 'Error opening external URL', { url, error: error.message }, error);
-      }
-    });
+      })
+    );
 
     status = true;
     message = 'External URL handler setup successfully';
