@@ -39,7 +39,12 @@
       "Bash(npx tsc:*)",
       "Bash(HUSKY=0 git commit -m \"fix: production-ready improvements and cleanup\n\n- Replaced all console.log statements with proper logger utility\n- Fixed simulated progress in GameVersionSelector to use real IPC events\n- Added proper error handling with ErrorState component to all components\n- Created centralized API service layer for better maintainability\n- Components now show user-friendly error messages instead of silent failures\n\nThese changes improve production readiness and user experience.\")",
       "Bash(npm test:*)",
-      "Bash(HUSKY=0 git commit -m \"test: add comprehensive unit tests and improve modal accessibility\n\n- Added unit tests for LoadingState and ErrorState components\n- Added tests for version utility functions (parse, compare, sort)\n- Added tests for API service with proper mocking\n- Created useFocusTrap hook for modal focus management\n- Improved dialog close button with proper ARIA label and 44px touch target\n- All tests passing with 100% coverage for tested components\n\nThese changes improve code reliability and accessibility compliance.\")"
+      "Bash(HUSKY=0 git commit -m \"test: add comprehensive unit tests and improve modal accessibility\n\n- Added unit tests for LoadingState and ErrorState components\n- Added tests for version utility functions (parse, compare, sort)\n- Added tests for API service with proper mocking\n- Created useFocusTrap hook for modal focus management\n- Improved dialog close button with proper ARIA label and 44px touch target\n- All tests passing with 100% coverage for tested components\n\nThese changes improve code reliability and accessibility compliance.\")",
+      "Bash(node:*)",
+      "Bash(kill:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pkill:*)",
+      "Bash(true)"
     ],
     "deny": []
   }

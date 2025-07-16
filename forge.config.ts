@@ -20,6 +20,7 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
+      port: 3001,
       mainConfig,
       renderer: {
         config: rendererConfig,
@@ -34,8 +35,24 @@ const config: ForgeConfig = {
           },
         ],
       },
+      devServer: {
+        proxy: [
+          {
+            context: ['/api'],
+            target: 'http://localhost:3000',
+            changeOrigin: true,
+            secure: false,
+          },
+          {
+            context: ['/images'],
+            target: 'http://localhost:3000',
+            changeOrigin: true,
+            secure: false,
+          },
+        ],
+      },
       devContentSecurityPolicy:
-        "default-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://manic-launcher.vercel.app; img-src 'self' https: data:;",
+        "default-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:* https://manic-launcher.vercel.app; img-src 'self' https: data:;",
     }),
     new FusesPlugin({
       version: FuseVersion.V1,

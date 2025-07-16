@@ -37,6 +37,9 @@ importers:
       tar:
         specifier: ^7.4.3
         version: 7.4.3
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
     devDependencies:
       '@electron-forge/cli':
         specifier: ^7.8.1
@@ -95,6 +98,9 @@ importers:
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.99.9)
+      dotenv:
+        specifier: ^17.2.0
+        version: 17.2.0
       electron:
         specifier: ^37.2.0
         version: 37.2.0
@@ -1317,6 +1323,10 @@ packages:
   dot-prop@9.0.0:
     resolution: { integrity: sha512-1gxPBJpI/pcjQhKgIU91II6Wkay+dLcN3M6rf2uwP8hRur3HtQXjVrdAK3sjC0piaEuxzMwjXChcETiJl47lAQ== }
     engines: { node: '>=18' }
+
+  dotenv@17.2.0:
+    resolution: { integrity: sha512-Q4sgBT60gzd0BB0lSyYD3xM4YxrXA9y4uBDof1JNYGzOXrQdQ6yX+7XIAqoFOGQFOTK1D3Hts5OllpxMDZFONQ== }
+    engines: { node: '>=12' }
 
   dunder-proto@1.0.1:
     resolution: { integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A== }
@@ -3829,6 +3839,9 @@ packages:
     resolution: { integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q== }
     engines: { node: '>=10' }
 
+  zod@4.0.5:
+    resolution: { integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA== }
+
 snapshots:
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -5386,6 +5399,8 @@ snapshots:
   dot-prop@9.0.0:
     dependencies:
       type-fest: 4.41.0
+
+  dotenv@17.2.0: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -8218,3 +8233,5 @@ snapshots:
   yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@4.0.5: {}
