@@ -3,6 +3,7 @@ import { IPC_CHANNELS } from './ipcChannels';
 import { LauncherSettings } from '../../types/launcherSettings';
 import { typedStore } from '../../utils/typedStore';
 import { withIpcHandler } from './withIpcHandler';
+import { validateIpcData } from '../../utils/ipcValidation';
 
 const defaultSettings: LauncherSettings = {
   // UI Settings
@@ -45,7 +46,12 @@ export const setupSettingsHandlers = async (): Promise<{ status: boolean; messag
     ipcMain.on(
       IPC_CHANNELS.SET_SETTINGS,
       withIpcHandler(IPC_CHANNELS.SET_SETTINGS, async (_event, settings: LauncherSettings) => {
-        typedStore.set('settings', settings);
+        const validation = validateIpcData('set-settings', settings);
+        if (!validation.isValid) {
+          throw new Error(`Invalid settings data: ${validation.error}`);
+        }
+
+        typedStore.set('settings', validation.data as LauncherSettings);
         return { status: true, message: 'Settings saved successfully' };
       })
     );

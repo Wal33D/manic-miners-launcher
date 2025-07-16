@@ -36,6 +36,50 @@ const filePathSchema = z.string().refine(
 const versionSchema = z.string().regex(/^[a-zA-Z0-9.-]+$/, 'Version must contain only alphanumeric characters, dots, and hyphens');
 
 /**
+ * Settings validation schema
+ */
+const settingsSchema = z
+  .object({
+    // UI Settings
+    playSoundOnInstall: z.boolean(),
+    autoLaunchAfterInstall: z.boolean(),
+    darkMode: z.boolean(),
+
+    // Game Launch Settings
+    launchMode: z.enum(['steam', 'direct', 'wine']),
+    skipLauncher: z.boolean(),
+    modsEnabled: z.boolean(),
+
+    // Path Settings
+    installPath: z.string(),
+    steamPath: z.string(),
+    winePrefix: z.string(),
+
+    // Steam Settings
+    runThroughSteam: z.boolean(),
+
+    // Update Settings
+    alwaysUpdate: z.boolean(),
+
+    // Graphics Settings
+    dgVoodooEnabled: z.boolean(),
+  })
+  .strict();
+
+/**
+ * Version selection validation schema
+ */
+const versionSelectionSchema = z
+  .object({
+    identifier: versionSchema,
+    name: z.string().optional(),
+    directory: filePathSchema.optional(),
+    size: z.number().optional(),
+    lastModified: z.date().optional(),
+  })
+  .strict();
+
+/**
  * IPC data validation schemas
  */
 export const ipcSchemas = {
@@ -78,6 +122,12 @@ export const ipcSchemas = {
   // External URL
   openExternal: urlSchema,
 
+  // Settings data
+  setSettings: settingsSchema,
+
+  // Version selection data
+  setSelectedVersion: versionSelectionSchema,
+
   // Progress data (from main to renderer)
   progressData: z.object({
     progress: z.number().min(0).max(100).optional(),
@@ -107,6 +157,8 @@ export function validateIpcData(channel: string, data: unknown): ValidationResul
     'update-latest-version': 'updateVersion',
     'create-shortcuts': 'createShortcuts',
     'open-external-url': 'openExternal',
+    'set-settings': 'setSettings',
+    'set-selected-archived-version': 'setSelectedVersion',
   };
 
   const schemaKey = channelToSchema[channel];

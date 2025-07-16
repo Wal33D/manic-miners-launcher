@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 import { validateIpcData, isValidExternalUrl } from '../utils/ipcValidation';
-import type { IpcChannelData, IpcChannelResponse } from '../types/ipcTypes';
 
 type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
 
@@ -59,15 +58,15 @@ const validReceiveChannels: IpcChannel[] = [
 ];
 
 // Type-safe electron API interface
-interface ElectronAPI {
-  send: <T extends IpcChannel>(channel: T, data?: any) => void;
-  receive: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
-  receiveOnce: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
-  removeAllListeners: (channel: IpcChannel) => void;
-  openExternal: (url: string) => void;
-  invoke: <T extends IpcChannel>(channel: T, data?: any) => Promise<any>;
-  platform: NodeJS.Platform;
-}
+// interface _ElectronAPI {
+//   send: <T extends IpcChannel>(channel: T, data?: any) => void;
+//   receive: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
+//   receiveOnce: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
+//   removeAllListeners: (channel: IpcChannel) => void;
+//   openExternal: (url: string) => void;
+//   invoke: <T extends IpcChannel>(channel: T, data?: any) => Promise<any>;
+//   platform: NodeJS.Platform;
+// }
 
 contextBridge.exposeInMainWorld('electronAPI', {
   send: (channel: IpcChannel, data?: any) => {

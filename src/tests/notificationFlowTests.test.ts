@@ -558,7 +558,8 @@ describe('Notification System - User Experience Excellence', () => {
 
       // Simulate time passing and cleanup
       // Wait for duration to expire
-      const removed = manager.clearExpiredNotifications();
+      // const _removed = manager.clearExpiredNotifications();
+      manager.clearExpiredNotifications();
 
       active = manager.getActiveNotifications();
       expect(active.length).to.equal(2); // Both should still be active initially
@@ -581,7 +582,8 @@ describe('Notification System - User Experience Excellence', () => {
       ];
 
       interactions.forEach(interaction => {
-        const notification = manager.addNotification({
+        // const _notification = manager.addNotification({
+        manager.addNotification({
           id: interaction.id,
           type: interaction.type,
           title: `${interaction.type} notification`,

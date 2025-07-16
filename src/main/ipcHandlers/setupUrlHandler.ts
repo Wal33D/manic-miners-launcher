@@ -2,7 +2,6 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { withIpcHandler } from './withIpcHandler';
 import { fetchUrls } from '../../api/fetchUrls';
-import { logger } from '../../utils/logger';
 
 export const setupUrlHandler = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
@@ -11,7 +10,7 @@ export const setupUrlHandler = async (): Promise<{ status: boolean; message: str
   try {
     ipcMain.on(
       IPC_CHANNELS.GET_URLS,
-      withIpcHandler(IPC_CHANNELS.GET_URLS, async event => {
+      withIpcHandler(IPC_CHANNELS.GET_URLS, async _event => {
         const urlResult = await fetchUrls();
         status = true; // Indicates successful setup of the IPC handler.
         return {

@@ -16,6 +16,9 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
       IPC_CHANNELS.VERIFY_AND_REPAIR_INSTALLATION,
       withIpcHandler(IPC_CHANNELS.VERIFY_AND_REPAIR_INSTALLATION, async (event, { version }) => {
         const { directories } = await getDirectories();
+        if (!directories) {
+          throw new Error('Unable to get directories');
+        }
         const installDir = directories.launcherInstallPath;
         const cacheDir = directories.launcherCachePath;
 
@@ -77,8 +80,9 @@ export const setupVerifyRepairHandler = async (): Promise<{ status: boolean; mes
     status = true;
     message = 'Verify and repair handler setup successfully';
   } catch (error) {
-    logger.error('IPC', 'Error setting up verify and repair handler', { error: error.message }, error);
-    message = `Error setting up verify and repair handler: ${error}`;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('IPC', 'Error setting up verify and repair handler', { error: errorMessage }, error instanceof Error ? error : undefined);
+    message = `Error setting up verify and repair handler: ${errorMessage}`;
   }
 
   return { status, message };

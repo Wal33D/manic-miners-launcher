@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import StreamZip from 'node-stream-zip';
-import crypto from 'crypto';
 import { downloadLatestVersion } from './downloadLatestVersion';
 import { logger } from '../utils/logger';
 
@@ -260,15 +259,16 @@ export async function verifyAndRepairInstallation({
           ? `Installation verified and repaired. ${repairsNeeded} files were fixed.`
           : 'Installation verified successfully. All files are correct.',
     };
-  } catch (error) {
-    logger.error('VERIFY', 'Verification/repair error', { error: error.message }, error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('VERIFY', 'Verification/repair error', { error: err.message }, err);
     onProgress({
-      status: `Verification failed: ${error.message}`,
+      status: `Verification failed: ${err.message}`,
       progress: 0,
     });
     return {
       success: false,
-      message: `Verification failed: ${error.message}`,
+      message: `Verification failed: ${err.message}`,
     };
   }
 }

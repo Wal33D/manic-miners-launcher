@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 enum LogLevel {
   DEBUG = 0,
@@ -130,8 +130,8 @@ class Logger {
     };
 
     // Also log to console for immediate visibility
-    const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
-    const levelName = levelNames[level];
+    // const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
+    // const _levelName = levelNames[level];
 
     this.logQueue.push(entry);
     setImmediate(() => this.writeQueueToFile());

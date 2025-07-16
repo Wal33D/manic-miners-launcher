@@ -132,11 +132,15 @@ describe('IPC Handlers Integration Tests', () => {
       });
 
       const progressEvents: ProgressEvent[] = [];
-      ipcMain.on('download-latest-progress', (data: ProgressEvent) => {
-        progressEvents.push(data);
+      ipcMain.on('download-latest-progress', (data: unknown) => {
+        progressEvents.push(data as ProgressEvent);
       });
 
-      const result = await ipcMain.simulateCall('download-latest-version', {
+      // const _result = await ipcMain.simulateCall('download-latest-version', {
+      //   version: 'latest',
+      //   forceDownload: false,
+      // });
+      await ipcMain.simulateCall('download-latest-version', {
         version: 'latest',
         forceDownload: false,
       });

@@ -64,7 +64,7 @@ export const launchExecutable = ({
         });
       }
 
-      resolve({ status: code === 0, message: exitMessage, exitCode: code, veryShortRun });
+      resolve({ status: code === 0, message: exitMessage, exitCode: code ?? undefined, veryShortRun });
     });
 
     child.unref();

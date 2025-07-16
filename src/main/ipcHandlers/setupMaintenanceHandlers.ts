@@ -4,7 +4,6 @@ import path from 'path';
 import { getDirectories } from '../../functions/fetchDirectories';
 import { fetchVersions } from '../../api/fetchVersions';
 import { logger } from '../../utils/logger';
-import { verifyVersion } from '../../functions/verifyVersion';
 import { repairVersion } from '../../functions/repairVersion';
 import { IPC_CHANNELS } from './ipcChannels';
 import { withIpcHandler } from './withIpcHandler';
@@ -16,7 +15,11 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
     ipcMain.on(
       IPC_CHANNELS.DELETE_VERSION,
       withIpcHandler(IPC_CHANNELS.DELETE_VERSION, async (event, versionIdentifier: string) => {
-        const { directories } = await getDirectories();
+        const directoriesResult = await getDirectories();
+        if (!directoriesResult.status || !directoriesResult.directories) {
+          throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+        }
+        const { directories } = directoriesResult;
         const dirPath = path.join(directories.launcherInstallPath, versionIdentifier);
 
         // Check if directory exists
@@ -113,7 +116,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
           const { versions } = await fetchVersions({ versionType: 'archived' });
           const info = versions.find(v => v.identifier === versionIdentifier);
           if (info) {
-            const zipPath = path.join(directories.launcherCachePath, info.filename);
+            const zipPath = path.join(directories!.launcherCachePath, info.filename);
             try {
               await fs.access(zipPath);
               event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {

@@ -2,9 +2,7 @@ import { expect } from 'chai';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import fs from 'fs/promises';
 import path from 'path';
-import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
-import { fetchInstalledVersions } from '../functions/fetchInstalledVersions';
 
 // Component Integration Tests - Ensure Seamless User Experience
 describe('Component Integration Tests - Seamless UX Flow', () => {
@@ -128,12 +126,12 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
       }
     }
 
-    private notifyGlobalStateUpdate(path: string, value: any) {
+    private notifyGlobalStateUpdate(_path: string, _value: any) {
       // Validate state consistency
       this.validateStateConsistency();
     }
 
-    private validateLatestVersionManagerState(state: any) {
+    private validateLatestVersionManagerState(_state: any) {
       // Ensure button states are mutually exclusive
       const activeOperations = Object.values(this.globalState.operations).filter((op: any) => op.active).length;
 
@@ -156,8 +154,8 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
       }
 
       // Ensure required notification properties
-      this.globalState.notifications.forEach(notification => {
-        if (!notification.id || !notification.title || !notification.message) {
+      this.globalState.notifications.forEach(_notification => {
+        if (!_notification.id || !_notification.title || !_notification.message) {
           throw new Error('Notification missing required properties');
         }
       });
@@ -165,7 +163,7 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
 
     private validateStateConsistency() {
       // Ensure game state and operations are consistent
-      const hasActiveOperations = Object.values(this.globalState.operations).some((op: any) => op.active);
+      // const _hasActiveOperations = Object.values(this.globalState.operations).some((op: any) => op.active);
 
       // If download is complete, game should be installed
       if (this.globalState.operations.download.progress === 100 && !this.globalState.operations.download.active) {
@@ -176,7 +174,7 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
     // Validation methods for testing
     validateCrossComponentConsistency(): boolean {
       const latestVersionManager = this.getComponent('LatestVersionManager');
-      const notifications = this.getComponent('GameNotifications');
+      // const _notifications = this.getComponent('GameNotifications');
       const globalState = this.getGlobalState();
 
       // Check that component states align with global state

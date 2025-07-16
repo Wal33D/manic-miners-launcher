@@ -30,7 +30,7 @@ export const verifyVersion = async ({
     const installMessage = installed ? 'Installation found.' : 'Installation not found.';
     const zipMessage = zipDetails.exists ? (zipDetails.sizeMatches ? 'Zip verified.' : 'Zip size mismatch.') : 'Zip missing.';
 
-    const verified = installed && zipDetails.exists && zipDetails.sizeMatches;
+    const verified = installed && zipDetails.exists && (zipDetails.sizeMatches ?? false);
     return { verified, message: `${installMessage} ${zipMessage}` };
   } catch (error: unknown) {
     const err = error as Error;

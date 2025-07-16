@@ -38,7 +38,7 @@ export async function fetchServerData({ routeName = 'launcher.all' }: { routeNam
   try {
     // Get directories asynchronously and safely extract the cache path
     const directoriesResult = await getDirectories();
-    if (!directoriesResult.status) {
+    if (!directoriesResult.status || !directoriesResult.directories) {
       throw new Error(`Failed to get directories: ${directoriesResult.message}`);
     }
     const launcherCachePath = directoriesResult.directories.launcherCachePath;

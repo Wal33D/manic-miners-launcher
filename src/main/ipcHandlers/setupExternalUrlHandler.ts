@@ -14,7 +14,7 @@ export const setupExternalUrlHandler = async (): Promise<{ status: boolean; mess
 
     ipcMain.on(
       'OPEN_EXTERNAL_URL',
-      withIpcHandler('open-external-url-reply', async (event, url: string) => {
+      withIpcHandler('open-external-url-reply', async (_event, url: string) => {
         logger.ipcLog('OPEN_EXTERNAL_URL IPC received', { url });
         if (shell && typeof shell.openExternal === 'function') {
           logger.ipcLog('Opening external URL via main process', { url });
@@ -30,9 +30,10 @@ export const setupExternalUrlHandler = async (): Promise<{ status: boolean; mess
 
     status = true;
     message = 'External URL handler setup successfully';
-  } catch (error) {
-    logger.error('IPC', 'Error setting up external URL handler', { error: error.message }, error);
-    message = `Error setting up external URL handler: ${error}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('IPC', 'Error setting up external URL handler', { error: err.message }, err);
+    message = `Error setting up external URL handler: ${err}`;
   }
 
   return { status, message };

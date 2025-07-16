@@ -5,7 +5,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
 import { fetchInstalledVersions } from '../functions/fetchInstalledVersions';
-import type { Notification, IpcMainEvent, ProgressEvent } from './testTypes';
+import type { Notification, IpcMainEvent } from './testTypes';
 
 // Mock electron API for GUI testing
 class MockElectronAPI extends EventEmitter {
@@ -210,7 +210,7 @@ class GUIStateTracker {
     return { ...this.state };
   }
 
-  validateProgressFlow(operation: string, expectedSteps: string[]) {
+  validateProgressFlow(_operation: string, _expectedSteps: string[]) {
     // This would validate that progress messages follow the expected sequence
     return true; // Simplified for now
   }

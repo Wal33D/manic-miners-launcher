@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { getDirectories } from './fetchDirectories';
 import { fetchVersions } from '../api/fetchVersions';
 import { logger } from '../utils/logger';
@@ -12,7 +12,11 @@ export const deleteVersion = async ({
   updateStatus?: (statusObj: any) => void;
 }): Promise<{ deleted: boolean; message: string }> => {
   try {
-    const { directories } = await getDirectories();
+    const directoriesResult = await getDirectories();
+    if (!directoriesResult.status || !directoriesResult.directories) {
+      throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+    }
+    const { directories } = directoriesResult;
     const dirPath = path.join(directories.launcherInstallPath, versionIdentifier);
 
     // Check if directory exists

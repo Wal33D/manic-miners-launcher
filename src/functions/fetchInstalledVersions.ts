@@ -21,10 +21,10 @@ export const fetchInstalledVersions = async (): Promise<{
     logger.versionLog('Starting fetchInstalledVersions');
 
     const { directories, status: dirStatus, message: dirMessage } = await getDirectories();
-    const launcherInstallPath = directories.launcherInstallPath;
-    if (!dirStatus) {
+    if (!dirStatus || !directories) {
       throw new Error(dirMessage);
     }
+    const launcherInstallPath = directories.launcherInstallPath;
 
     logger.versionLog('Install path determined', { launcherInstallPath });
 
@@ -160,7 +160,7 @@ export const fetchInstalledVersions = async (): Promise<{
         version: v.version,
         directory: v.directory,
         hasExecutable: !!v.executablePath,
-        sizeMB: Math.round(v.installationSize / 1024 / 1024),
+        sizeMB: Math.round((v.installationSize ?? 0) / 1024 / 1024),
       })),
     });
 

@@ -13,7 +13,11 @@ export const repairVersion = async ({
   updateStatus?: (status: import('../types/ipcMessages').ProgressStatus) => void;
 }): Promise<{ repaired: boolean; message: string }> => {
   try {
-    const { directories } = await getDirectories();
+    const directoriesResult = await getDirectories();
+    if (!directoriesResult.status || !directoriesResult.directories) {
+      throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+    }
+    const { directories } = directoriesResult;
 
     const downloadResult = await downloadVersion({
       versionIdentifier,

@@ -9,7 +9,7 @@ export const setupInputPathDialog = async (): Promise<{ status: boolean; message
   try {
     ipcMain.on(
       IPC_CHANNELS.OPEN_DIRECTORY_DIALOG,
-      withIpcHandler(IPC_CHANNELS.DIRECTORY_SELECTED, async event => {
+      withIpcHandler(IPC_CHANNELS.DIRECTORY_SELECTED, async _event => {
         const result = await dialog.showOpenDialog({
           properties: ['openDirectory'],
         });

@@ -3,7 +3,7 @@ import path from 'path';
 import StreamZip from 'node-stream-zip';
 import { fetchVersions } from '../api/fetchVersions';
 import { ensureDirectory } from '../fileUtils/fileOps';
-import { validateUnpackPath, extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
+import { extractZipEntries, flattenSingleSubdirectory } from './unpackHelpers';
 
 export const unpackVersion = async ({
   versionIdentifier,

@@ -10,7 +10,7 @@ export const setupDirectoryHandler = async (): Promise<{ status: boolean; messag
   try {
     ipcMain.on(
       IPC_CHANNELS.GET_DIRECTORIES,
-      withIpcHandler(IPC_CHANNELS.GET_DIRECTORIES, async event => {
+      withIpcHandler(IPC_CHANNELS.GET_DIRECTORIES, async _event => {
         const dirResult = await getDirectories();
         if (!dirResult.status) {
           throw new Error(dirResult.message);

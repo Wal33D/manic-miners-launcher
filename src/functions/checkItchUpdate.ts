@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import StreamZip from 'node-stream-zip';
 import { downloadFile } from './downloadFile';
 import { fetchVersions } from '../api/fetchVersions';
@@ -23,7 +23,11 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
     const lastVersion = typedStore.get('last-known-version');
     if (lastVersion === version) return;
 
-    const { directories } = await getDirectories();
+    const directoriesResult = await getDirectories();
+    if (!directoriesResult.status || !directoriesResult.directories) {
+      throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+    }
+    const { directories } = directoriesResult;
     const installDir = directories.launcherInstallPath;
     const cacheDir = directories.launcherCachePath;
     const installPath = path.join(installDir, identifier);
@@ -49,7 +53,7 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
       filePath,
       expectedSize: info.sizeInBytes,
       expectedMd5: info.md5Hash,
-      updateStatus: updateStatus ? s => updateStatus({ status: s.status || '', progress: s.progress }) : undefined,
+      updateStatus: updateStatus ? s => updateStatus({ status: s.status || '', progress: s.progress ?? 0 }) : undefined,
       initialProgress: 5,
     });
 
@@ -61,7 +65,7 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
       zip,
       targetPath: installPath,
       updateStatus: s => {
-        if (updateStatus) updateStatus({ status: s.status, progress: 40 + (s.progress ?? 0) * 0.6 });
+        if (updateStatus) updateStatus({ status: s.status ?? '', progress: 40 + (s.progress ?? 0) * 0.6 });
       },
     });
     await zip.close();
@@ -69,7 +73,8 @@ export async function checkItchUpdate(updateStatus?: (s: { status: string; progr
 
     typedStore.set('last-known-version', version);
     if (updateStatus) updateStatus({ status: 'Update installed', progress: 100 });
-  } catch (err) {
-    logger.error('UPDATE', 'Failed to check Itch.io update', { error: err.message }, err);
+  } catch (err: unknown) {
+    const error = err as Error;
+    logger.error('UPDATE', 'Failed to check Itch.io update', { error: error.message }, error);
   }
 }

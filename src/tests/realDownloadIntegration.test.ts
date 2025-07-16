@@ -3,7 +3,7 @@ import { describe, it, beforeEach, afterEach } from 'mocha';
 import fs from 'fs/promises';
 import path from 'path';
 import { downloadLatestVersion } from '../functions/downloadLatestVersion';
-import { validateUnpackPath, extractZipEntries, flattenSingleSubdirectory } from '../functions/unpackHelpers';
+import { extractZipEntries, flattenSingleSubdirectory } from '../functions/unpackHelpers';
 import { logger } from '../utils/logger';
 const StreamZip = require('node-stream-zip');
 
@@ -100,8 +100,8 @@ describe('Real Download Integration Tests', () => {
           zip,
           targetPath: latestDir,
           updateStatus: progressStatus => {
-            unpackProgressUpdates.push({ progress: progressStatus.progress, status: progressStatus.status });
-            console.log(`[UNPACK] ${progressStatus.status} - ${progressStatus.progress}%`);
+            unpackProgressUpdates.push({ progress: progressStatus.progress ?? 0, status: progressStatus.status ?? '' });
+            console.log(`[UNPACK] ${progressStatus.status ?? ''} - ${progressStatus.progress ?? 0}%`);
           },
           progressStart: 60,
           progressSpan: 30,

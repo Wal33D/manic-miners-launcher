@@ -1,4 +1,4 @@
-import { IpcMainEvent } from 'electron';
+import { IpcMainEvent, IpcMainInvokeEvent } from 'electron';
 import { logger } from '../../utils/logger';
 
 interface IpcErrorResponse {
@@ -34,6 +34,36 @@ export const withIpcHandler = <TArgs extends unknown[], TResult>(
       );
       const errorResponse: IpcErrorResponse = { status: false, message: err.message };
       event.reply(replyChannel, errorResponse);
+    }
+  };
+};
+
+/**
+ * Wraps an asynchronous IPC invoke handler with standardized try/catch logic.
+ * For use with ipcMain.handle.
+ *
+ * @param channel The channel name for logging purposes.
+ * @param fn The actual handler function to execute.
+ */
+export const withIpcInvokeHandler = <TArgs extends unknown[], TResult>(
+  channel: string,
+  fn: (event: IpcMainInvokeEvent, ...args: TArgs) => Promise<TResult>
+) => {
+  return async (event: IpcMainInvokeEvent, ...args: TArgs): Promise<TResult> => {
+    try {
+      return await fn(event, ...args);
+    } catch (error: unknown) {
+      const err = error as Error;
+      logger.error(
+        'IPC',
+        `IPC invoke handler error on ${channel}`,
+        {
+          channel,
+          error: err.message,
+        },
+        err
+      );
+      throw err; // Re-throw for ipcMain.handle to handle
     }
   };
 };

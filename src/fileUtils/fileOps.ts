@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { IFileDetails, IVerifyFileParams } from './fileUtilsTypes';
 import { logger } from '../utils/logger';
 
@@ -20,8 +20,9 @@ export async function ensureDirectory({ directory }: { directory: string }): Pro
     }
 
     return { created: !existed, existed };
-  } catch (error) {
-    logger.error('FILE_OPS', 'Failed to create/detect directory', { directory, error: error.message }, error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('FILE_OPS', 'Failed to create/detect directory', { directory, error: err.message }, err);
     return { created: false, existed };
   }
 }

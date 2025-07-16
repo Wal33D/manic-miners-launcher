@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { getDirectories } from './fetchDirectories';
 import { logger } from '../utils/logger';
 
@@ -10,7 +10,11 @@ import { logger } from '../utils/logger';
  */
 export const isVersionInstalled = async (versionIdentifier: string): Promise<boolean> => {
   try {
-    const { launcherInstallPath } = (await getDirectories()).directories;
+    const directoriesResult = await getDirectories();
+    if (!directoriesResult.status || !directoriesResult.directories) {
+      throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+    }
+    const { launcherInstallPath } = directoriesResult.directories;
     const versionDirPath = path.join(launcherInstallPath, versionIdentifier);
 
     // Check if the version directory exists
@@ -29,8 +33,9 @@ export const isVersionInstalled = async (versionIdentifier: string): Promise<boo
     } else {
       return false; // Installation is considered absent without executables
     }
-  } catch (error) {
-    logger.error('INSTALL', 'Error checking installation status', { versionIdentifier, error: error.message }, error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('INSTALL', 'Error checking installation status', { versionIdentifier, error: err.message }, err);
     return false; // Return false on error, indicating the version is not installed
   }
 };

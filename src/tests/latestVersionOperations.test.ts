@@ -97,8 +97,8 @@ describe('Latest Version Operations Tests', () => {
       const latestDir = path.join(testDir, 'latest');
 
       // Simulate install process
-      mockAPI.setHandler('download-latest-version', async (options: DownloadOptions) => {
-        expect(options.version).to.equal('latest');
+      mockAPI.setHandler('download-latest-version', async (_options: DownloadOptions) => {
+        expect(_options.version).to.equal('latest');
 
         // Create the installation directory and files
         await fs.mkdir(latestDir, { recursive: true });
@@ -117,8 +117,8 @@ describe('Latest Version Operations Tests', () => {
 
       // Start install
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+      mockAPI.receive('download-latest-progress', (data: unknown) => {
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest' });
@@ -148,8 +148,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const errorUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
-        errorUpdates.push(data);
+      mockAPI.receive('download-latest-progress', (data: unknown) => {
+        errorUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest' });
@@ -166,14 +166,14 @@ describe('Latest Version Operations Tests', () => {
       await fs.mkdir(latestDir, { recursive: true });
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'existing game executable');
 
-      mockAPI.setHandler('download-latest-version', async (options: DownloadOptions) => {
+      mockAPI.setHandler('download-latest-version', async (_options: DownloadOptions) => {
         // Should detect existing installation
         mockAPI.simulateProgress('download-latest-progress', 100, 'Version already installed');
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+      mockAPI.receive('download-latest-progress', (data: unknown) => {
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest', forceDownload: false });
@@ -206,7 +206,7 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: ProgressEvent[] = [];
       mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -237,7 +237,7 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: ProgressEvent[] = [];
       mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -260,7 +260,7 @@ describe('Latest Version Operations Tests', () => {
 
       const errorUpdates: ProgressEvent[] = [];
       mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        errorUpdates.push(data);
+        errorUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -309,7 +309,7 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: ProgressEvent[] = [];
       mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -343,7 +343,7 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: ProgressEvent[] = [];
       mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -362,7 +362,7 @@ describe('Latest Version Operations Tests', () => {
 
       const errorUpdates: ProgressEvent[] = [];
       mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        errorUpdates.push(data);
+        errorUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -405,7 +405,7 @@ describe('Latest Version Operations Tests', () => {
 
       const progressUpdates: ProgressEvent[] = [];
       mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('update-latest-version', { version: 'latest' });
@@ -438,11 +438,11 @@ describe('Latest Version Operations Tests', () => {
       const errorUpdates: ProgressEvent[] = [];
 
       mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data);
+        progressUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.receive('update-error', (data: ProgressEvent) => {
-        errorUpdates.push(data);
+        errorUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.send('update-latest-version', { version: 'latest' });
@@ -480,11 +480,11 @@ describe('Latest Version Operations Tests', () => {
       const updateUpdates: ProgressEvent[] = [];
 
       mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        verifyUpdates.push(data);
+        verifyUpdates.push(data as ProgressEvent);
       });
 
       mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        updateUpdates.push(data);
+        updateUpdates.push(data as ProgressEvent);
       });
 
       // Start both operations

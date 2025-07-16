@@ -3,9 +3,9 @@ import { Version } from '../../api/versionTypes';
 import { IPC_CHANNELS } from './ipcChannels';
 import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
-import { logger } from '../../utils/logger';
 import { typedStore } from '../../utils/typedStore';
 import { withIpcHandler } from './withIpcHandler';
+import { validateIpcData } from '../../utils/ipcValidation';
 
 export const setupVersionHandlers = () => {
   // New separated handlers
@@ -16,56 +16,64 @@ export const setupVersionHandlers = () => {
     })
   );
 
-  ipcMain.on(IPC_CHANNELS.LATEST_VERSION_INFO, async event => {
-    try {
-      const versions = await getLatestVersionDetails();
-      event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, versions);
-    } catch (error) {
-      logger.error('VERSION', 'Error fetching latest version data', { error: error.message }, error);
-      event.reply(IPC_CHANNELS.LATEST_VERSION_INFO, { error: error.message });
-    }
-  });
+  ipcMain.on(
+    IPC_CHANNELS.LATEST_VERSION_INFO,
+    withIpcHandler(IPC_CHANNELS.LATEST_VERSION_INFO, async () => {
+      return await getLatestVersionDetails();
+    })
+  );
 
-  ipcMain.on(IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION, async (event, selectedVersion) => {
-    setSelectedVersion(selectedVersion);
-  });
+  ipcMain.on(
+    IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION,
+    withIpcHandler(IPC_CHANNELS.SET_SELECTED_ARCHIVED_VERSION, async (_event, selectedVersion) => {
+      const validation = validateIpcData('set-selected-archived-version', selectedVersion);
+      if (!validation.isValid) {
+        throw new Error(`Invalid version data: ${validation.error}`);
+      }
 
-  ipcMain.on(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, async event => {
-    const selectedVersion = getSelectedVersion();
-    event.reply(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, selectedVersion);
-  });
+      setSelectedVersion(validation.data as Version);
+      return { success: true };
+    })
+  );
+
+  ipcMain.on(
+    IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION,
+    withIpcHandler(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, async () => {
+      return getSelectedVersion();
+    })
+  );
 };
 
 // Legacy function for backward compatibility
-const getVersionDetails = async () => {
-  const versionData = await fetchVersions({ versionType: 'archived' });
-  const installedVersionsResult = await fetchInstalledVersions();
+// const _getVersionDetails = async () => {
+//   const versionData = await fetchVersions({ versionType: 'archived' });
+//   const installedVersionsResult = await fetchInstalledVersions();
 
-  const enhancedVersions = versionData.versions.map(version => {
-    const installedVersion = installedVersionsResult.installedVersions?.find(v => v.identifier === version.identifier);
-    return {
-      ...version,
-      directory: installedVersion ? installedVersion.directory : undefined,
-    };
-  });
+//   const enhancedVersions = versionData.versions.map(version => {
+//     const installedVersion = installedVersionsResult.installedVersions?.find(v => v.identifier === version.identifier);
+//     return {
+//       ...version,
+//       directory: installedVersion ? installedVersion.directory : undefined,
+//     };
+//   });
 
-  // Add locally-only installed versions (like itch.io downloads) that aren't in server database
-  const serverIdentifiers = new Set(versionData.versions.map(v => v.identifier));
-  const localOnlyVersions = installedVersionsResult.installedVersions?.filter(v => !serverIdentifiers.has(v.identifier)) || [];
-  // Combine enhanced server versions with local-only versions
-  const allVersions = [...enhancedVersions, ...localOnlyVersions];
+//   // Add locally-only installed versions (like itch.io downloads) that aren't in server database
+//   const serverIdentifiers = new Set(versionData.versions.map(v => v.identifier));
+//   const localOnlyVersions = installedVersionsResult.installedVersions?.filter(v => !serverIdentifiers.has(v.identifier)) || [];
+//   // Combine enhanced server versions with local-only versions
+//   const allVersions = [...enhancedVersions, ...localOnlyVersions];
 
-  let defaultVersion = typedStore.get('current-selected-version');
-  if (!defaultVersion || !allVersions.find(v => v.identifier === defaultVersion.identifier)) {
-    defaultVersion = allVersions[0];
-    typedStore.set('current-selected-version', defaultVersion);
-  }
+//   let defaultVersion = typedStore.get('current-selected-version');
+//   if (!defaultVersion || !allVersions.find(v => v.identifier === defaultVersion?.identifier)) {
+//     defaultVersion = allVersions[0];
+//     typedStore.set('current-selected-version', defaultVersion);
+//   }
 
-  return {
-    versions: allVersions,
-    defaultVersion,
-  };
-};
+//   return {
+//     versions: allVersions,
+//     defaultVersion,
+//   };
+// };
 
 // New function for archived versions only (Internet Archive)
 const getArchivedVersionDetails = async () => {
@@ -85,7 +93,7 @@ const getArchivedVersionDetails = async () => {
   const archivedVersions = enhancedVersions;
 
   let defaultVersion = typedStore.get('last-selected-archived-version');
-  if (!defaultVersion || !archivedVersions.find(v => v.identifier === defaultVersion.identifier)) {
+  if (!defaultVersion || !archivedVersions.find(v => v.identifier === defaultVersion?.identifier)) {
     defaultVersion = archivedVersions[0];
     typedStore.set('last-selected-archived-version', defaultVersion);
   }
@@ -121,11 +129,11 @@ const getSelectedVersion = () => {
 };
 
 // New functions for archived versions
-const setSelectedArchivedVersion = (selectedVersion: Version) => {
-  typedStore.set('last-selected-archived-version', selectedVersion);
-};
+// const _setSelectedArchivedVersion = (selectedVersion: Version) => {
+//   typedStore.set('last-selected-archived-version', selectedVersion);
+// };
 
-const getSelectedArchivedVersion = () => {
-  const selectedVersion = typedStore.get('last-selected-archived-version');
-  return selectedVersion;
-};
+// const _getSelectedArchivedVersion = () => {
+//   const selectedVersion = typedStore.get('last-selected-archived-version');
+//   return selectedVersion;
+// };

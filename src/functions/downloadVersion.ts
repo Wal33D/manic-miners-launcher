@@ -110,8 +110,9 @@ export const downloadVersion = async ({
 
       return { downloaded: true, message: result.message };
     }
-  } catch (error) {
-    updateStatus({ status: `Error: ${error.message}`, progress: 60 });
-    return { downloaded: false, message: `Error downloading version: ${error.message}` };
+  } catch (error: unknown) {
+    const err = error as Error;
+    updateStatus({ status: `Error: ${err.message}`, progress: 60 });
+    return { downloaded: false, message: `Error downloading version: ${err.message}` };
   }
 };

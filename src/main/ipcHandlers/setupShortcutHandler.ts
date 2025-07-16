@@ -17,6 +17,9 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
       withIpcHandler('create-shortcuts', async (event, { installPath, options = {} }) => {
         try {
           const { directories } = await getDirectories();
+          if (!directories) {
+            throw new Error('Unable to get directories');
+          }
           const launcherInstallPath = directories.launcherInstallPath;
 
           event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, {
@@ -29,15 +32,15 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
           if (!targetPath) {
             // Try to find the latest version in the install directory
             const latestDir = path.join(launcherInstallPath, 'latest');
-            const legacyPattern = path.join(launcherInstallPath, 'ManicMiners-Baraklava-V*');
+            // const _legacyPattern = path.join(launcherInstallPath, 'ManicMiners-Baraklava-V*');
 
             try {
               await fs.access(latestDir);
               // Look for executable files in the latest directory
               const files = await fs.readdir(latestDir);
               logger.info('SHORTCUT', 'Files found in latest directory', { files, platform: process.platform });
-              const executableExtensions =
-                process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
+              // const _executableExtensions =
+              //   process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
 
               const executableFile = files.find(file => {
                 // Skip files that start with # or .
@@ -78,8 +81,8 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
                 if (legacyDir) {
                   const legacyPath = path.join(launcherInstallPath, legacyDir);
                   const files = await fs.readdir(legacyPath);
-                  const executableExtensions =
-                    process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
+                  // const _executableExtensions =
+                  //   process.platform === 'win32' ? ['.exe'] : process.platform === 'darwin' ? ['.app', ''] : ['', '.AppImage'];
 
                   const executableFile = files.find(file => {
                     // Skip files that start with # or .
@@ -113,7 +116,7 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
                   }
                 }
               } catch (err) {
-                logger.warn('SHORTCUT', 'Could not find legacy installation', { error: err.message });
+                logger.warn('SHORTCUT', 'Could not find legacy installation', { error: err instanceof Error ? err.message : String(err) });
               }
             }
           }
@@ -155,9 +158,10 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
             throw new Error('Failed to create shortcuts');
           }
         } catch (error) {
-          logger.error('SHORTCUT', 'Error creating shortcuts', { error: error.message }, error);
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          logger.error('SHORTCUT', 'Error creating shortcuts', { error: errorMessage }, error instanceof Error ? error : undefined);
           event.sender.send(IPC_CHANNELS.CREATE_SHORTCUTS_ERROR, {
-            message: error.message,
+            message: errorMessage,
           });
           throw error;
         }
@@ -167,8 +171,9 @@ export const setupShortcutHandler = async (): Promise<{ status: boolean; message
     status = true;
     message = 'Shortcut handler setup successfully';
   } catch (error) {
-    logger.error('IPC', 'Error setting up shortcut handler', { error: error.message }, error);
-    message = `Error setting up shortcut handler: ${error}`;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('IPC', 'Error setting up shortcut handler', { error: errorMessage }, error instanceof Error ? error : undefined);
+    message = `Error setting up shortcut handler: ${errorMessage}`;
   }
 
   return { status, message };

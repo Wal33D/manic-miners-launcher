@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as os from 'os';
 const createDesktopShortcut = require('create-desktop-shortcuts');
 
 export const createShortcut = async ({

@@ -39,7 +39,7 @@ export const setupDownloadHandlers = async (): Promise<{ status: boolean; messag
         }
 
         const installedVersions = await fetchInstalledVersions();
-        const newSelectedVersion = installedVersions.installedVersions.find(v => v.identifier === version);
+        const newSelectedVersion = installedVersions.installedVersions?.find(v => v.identifier === version);
 
         if (newSelectedVersion) {
           typedStore.set('current-selected-version', newSelectedVersion);

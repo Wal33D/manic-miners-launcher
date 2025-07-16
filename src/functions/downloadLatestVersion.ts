@@ -1,6 +1,5 @@
-import { BrowserWindow, net, DownloadItem, WebContents, Event } from 'electron';
+import { BrowserWindow, DownloadItem, WebContents, Event } from 'electron';
 import path from 'path';
-import fs from 'fs/promises';
 import { logger } from '../utils/logger';
 
 interface DownloadOptions {
@@ -90,13 +89,12 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
     // Set up download handling
     const fileName = 'ManicMiners-latest.zip';
     const filePath = path.join(targetDirectory, fileName);
-    let downloadCompleted = false;
     let downloadStarted = false;
     let downloadError: string | null = null;
 
     return new Promise((resolve, reject) => {
       // Create a unique download handler for this instance
-      const downloadHandler = (event: Event, item: DownloadItem, webContents: WebContents) => {
+      const downloadHandler = (_event: Event, item: DownloadItem, _webContents: WebContents) => {
         downloadStarted = true;
         onProgress?.({ status: 'Download started...', progress: 35 });
 
@@ -104,7 +102,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
         item.setSavePath(filePath);
 
         // Track download progress
-        item.on('updated', (event: Event, state: string) => {
+        item.on('updated', (_event: Event, state: string) => {
           if (state === 'progressing') {
             const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 35) + 35; // 35-70%
             onProgress?.({
@@ -114,15 +112,14 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
           }
         });
 
-        item.once('done', (event: any, state: string) => {
+        item.once('done', (_event: any, state: string) => {
           // Clean up the download handler
-          browserWindow.webContents.session.removeListener('will-download', downloadHandler);
+          browserWindow!.webContents.session.removeListener('will-download', downloadHandler);
 
           if (state === 'completed') {
             onProgress?.({ status: 'Download completed', progress: 70 });
-            downloadCompleted = true;
-            if (!browserWindow.isDestroyed()) {
-              browserWindow.close();
+            if (!browserWindow!.isDestroyed()) {
+              browserWindow!.close();
             }
             resolve({
               success: true,
@@ -131,8 +128,8 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
             });
           } else {
             downloadError = `Download failed with state: ${state}`;
-            if (!browserWindow.isDestroyed()) {
-              browserWindow.close();
+            if (!browserWindow!.isDestroyed()) {
+              browserWindow!.close();
             }
             reject(new Error(downloadError));
           }
@@ -140,14 +137,14 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
       };
 
       // Set up download handler
-      browserWindow.webContents.session.on('will-download', downloadHandler);
+      browserWindow!.webContents.session.on('will-download', downloadHandler);
 
       // Set a timeout only for download start - once download starts, let it complete
       const timeoutId = setTimeout(() => {
         if (!downloadStarted && !downloadError) {
-          browserWindow.webContents.session.removeListener('will-download', downloadHandler);
-          if (!browserWindow.isDestroyed()) {
-            browserWindow.close();
+          browserWindow!.webContents.session.removeListener('will-download', downloadHandler);
+          if (!browserWindow!.isDestroyed()) {
+            browserWindow!.close();
           }
           reject(new Error('Download did not start within expected time'));
         }

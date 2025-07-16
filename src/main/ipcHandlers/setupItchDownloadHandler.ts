@@ -3,9 +3,9 @@ import { downloadLatestVersion } from '../../functions/downloadLatestVersion';
 import { getDirectories } from '../../functions/fetchDirectories';
 import { withIpcHandler } from './withIpcHandler';
 import { IPC_CHANNELS } from './ipcChannels';
-import path from 'path';
-import fs from 'fs/promises';
-import StreamZip from 'node-stream-zip';
+import * as path from 'path';
+import * as fs from 'fs/promises';
+import * as StreamZip from 'node-stream-zip';
 import { logger } from '../../utils/logger';
 
 export const setupItchDownloadHandler = async (): Promise<{ status: boolean; message: string }> => {
@@ -18,7 +18,11 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
       withIpcHandler(IPC_CHANNELS.DOWNLOAD_LATEST_VERSION, async (event, { version, forceDownload = false }) => {
         logger.downloadLog('Starting latest version download', { version, forceDownload });
 
-        const { directories } = await getDirectories();
+        const directoriesResult = await getDirectories();
+        if (!directoriesResult.status || !directoriesResult.directories) {
+          throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+        }
+        const { directories } = directoriesResult;
         const installDir = directories.launcherInstallPath;
         const identifier = 'latest'; // Use 'latest' as the directory name
         const installPath = path.join(installDir, identifier);
@@ -50,8 +54,9 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             await fs.rename(oldInstallPath, installPath);
             logger.info('INSTALL', 'Migration completed successfully');
           }
-        } catch (error) {
-          logger.warn('INSTALL', 'Migration failed or not needed', { error: error.message });
+        } catch (error: unknown) {
+          const err = error as Error;
+          logger.warn('INSTALL', 'Migration failed or not needed', { error: err.message });
         }
 
         // Check if already installed by looking for executable files
@@ -93,8 +98,9 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           // Remove existing installation for forced re-download
           try {
             await fs.rm(installPath, { recursive: true });
-          } catch (error) {
-            logger.warn('INSTALL', 'Could not remove existing directory', { error: error.message });
+          } catch (error: unknown) {
+            const err = error as Error;
+            logger.warn('INSTALL', 'Could not remove existing directory', { error: err.message });
           }
         }
 
@@ -186,8 +192,9 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
               status: 'Finalizing installation...',
               progress: 98,
             });
-          } catch (error) {
-            logger.warn('INSTALL', 'Could not remove ZIP file', { error: error.message });
+          } catch (error: unknown) {
+            const err = error as Error;
+            logger.warn('INSTALL', 'Could not remove ZIP file', { error: err.message });
           }
 
           // Check if extraction created a subdirectory and flatten if needed
@@ -225,39 +232,41 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           });
 
           return { downloaded: true, message: 'Latest version downloaded and installed successfully from itch.io' };
-        } catch (downloadError) {
+        } catch (downloadError: unknown) {
+          const err = downloadError as Error;
           logger.error(
             'DOWNLOAD',
             'Itch.io download error',
             {
               installPath,
-              error: downloadError.message,
+              error: err.message,
             },
-            downloadError
+            err
           );
 
           // Clean up failed download directory
           try {
             await fs.rm(installPath, { recursive: true });
             logger.downloadLog('Cleaned up failed download directory', { installPath });
-          } catch (cleanupError) {
+          } catch (cleanupError: unknown) {
+            const cleanupErr = cleanupError as Error;
             logger.error(
               'DOWNLOAD',
               'Failed to clean up download directory',
               {
                 installPath,
-                error: cleanupError.message,
+                error: cleanupErr.message,
               },
-              cleanupError
+              cleanupErr
             );
           }
 
           event.sender.send('download-latest-progress', {
-            status: `Download failed: ${downloadError.message}`,
+            status: `Download failed: ${err.message}`,
             progress: 0,
           });
 
-          throw downloadError;
+          throw err;
         }
       })
     );
@@ -266,7 +275,11 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
     ipcMain.on(
       IPC_CHANNELS.DELETE_LATEST_VERSION,
       withIpcHandler('delete-latest-version', async (event, { version }) => {
-        const { directories } = await getDirectories();
+        const directoriesResult = await getDirectories();
+        if (!directoriesResult.status || !directoriesResult.directories) {
+          throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+        }
+        const { directories } = directoriesResult;
         const installDir = directories.launcherInstallPath;
         const identifier = 'latest'; // Use 'latest' as the directory name
         const installPath = path.join(installDir, identifier);
@@ -336,8 +349,9 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
                 // Small delay to make progress visible
                 await new Promise(resolve => setTimeout(resolve, 50));
-              } catch (error) {
-                logger.warn('UNINSTALL', `Could not delete ${filePath}`, { error: error.message });
+              } catch (error: unknown) {
+                const err = error as Error;
+                logger.warn('UNINSTALL', `Could not delete ${filePath}`, { error: err.message });
               }
             }
 
@@ -350,12 +364,14 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
               });
               logger.info('UNINSTALL', `Removed ${dirName} directory`, { dirPath });
               return true;
-            } catch (error) {
-              logger.warn('UNINSTALL', `Could not remove ${dirName} directory`, { error: error.message });
+            } catch (error: unknown) {
+              const err = error as Error;
+              logger.warn('UNINSTALL', `Could not remove ${dirName} directory`, { error: err.message });
               return false;
             }
-          } catch (error) {
-            logger.info('UNINSTALL', `${dirName} directory not found or already removed`);
+          } catch (error: unknown) {
+            const err = error as Error;
+            logger.info('UNINSTALL', `${dirName} directory not found or already removed`, { error: err.message });
             return false;
           }
         };
@@ -388,13 +404,14 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
             });
             return { success: false, message: 'No installation found to remove' };
           }
-        } catch (error) {
-          logger.error('UNINSTALL', 'Error deleting latest version', { error: error.message }, error);
+        } catch (error: unknown) {
+          const err = error as Error;
+          logger.error('UNINSTALL', 'Error deleting latest version', { error: err.message }, err);
           event.sender.send('delete-latest-progress', {
-            status: `Error during uninstall: ${error.message}`,
+            status: `Error during uninstall: ${err.message}`,
             progress: 0,
           });
-          throw new Error(`Failed to uninstall: ${error.message}`);
+          throw new Error(`Failed to uninstall: ${err.message}`);
         }
       })
     );
@@ -402,7 +419,7 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
     // Add update latest version handler
     ipcMain.on(
       IPC_CHANNELS.UPDATE_LATEST_VERSION,
-      withIpcHandler('update-latest-version', async (event, { version }) => {
+      withIpcHandler('update-latest-version', async (event, { version: _version }) => {
         try {
           event.sender.send(IPC_CHANNELS.UPDATE_PROGRESS, {
             status: 'Starting update...',
@@ -410,7 +427,11 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           });
 
           // For latest version updates, we remove existing installation and re-download
-          const { directories } = await getDirectories();
+          const directoriesResult = await getDirectories();
+          if (!directoriesResult.status || !directoriesResult.directories) {
+            throw new Error(`Failed to get directories: ${directoriesResult.message}`);
+          }
+          const { directories } = directoriesResult;
           const installDir = directories.launcherInstallPath;
           const identifier = 'latest';
           const installPath = path.join(installDir, identifier);
@@ -456,21 +477,23 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
           event.sender.send('versions-updated');
 
           return { success: true, message: 'Latest version updated successfully' };
-        } catch (error) {
-          logger.error('INSTALL', 'Error updating latest version', { error: error.message }, error);
+        } catch (error: unknown) {
+          const err = error as Error;
+          logger.error('INSTALL', 'Error updating latest version', { error: err.message }, err);
           event.sender.send(IPC_CHANNELS.UPDATE_ERROR, {
-            message: `Update download failed: ${error.message}`,
+            message: `Update download failed: ${err.message}`,
           });
-          throw new Error(`Update failed: ${error.message}`);
+          throw new Error(`Update failed: ${err.message}`);
         }
       })
     );
 
     status = true;
     message = 'Itch.io download handler setup successfully';
-  } catch (error) {
-    logger.error('IPC', 'Error setting up itch.io download handler', { error: error.message }, error);
-    message = `Error setting up itch.io download handler: ${error}`;
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('IPC', 'Error setting up itch.io download handler', { error: err.message }, err);
+    message = `Error setting up itch.io download handler: ${err.message}`;
   }
 
   return { status, message };

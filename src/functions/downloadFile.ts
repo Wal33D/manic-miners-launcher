@@ -51,7 +51,7 @@ export async function downloadFile({
     const startTime = Date.now();
 
     const progressStream = new Transform({
-      transform(chunk, encoding, callback) {
+      transform(chunk, _encoding, callback) {
         downloadedBytes += chunk.length;
         if (updateStatus) {
           const denominator = totalBytes || expectedSize || downloadedBytes || 1;

@@ -57,9 +57,9 @@ describe('Install Detection Tests', () => {
     // Note: executablePath is added by fetchInstalledVersions, not in base Version type
 
     // Check that the version was properly detected by checking the actual result
-    expect(result.installedVersions[0].identifier).to.equal('latest');
-    expect(result.installedVersions[0].version).to.equal('latest');
-    expect(result.installedVersions[0].executablePath).to.include('ManicMiners.exe');
+    expect(result.installedVersions?.[0]?.identifier).to.equal('latest');
+    expect(result.installedVersions?.[0]?.version).to.equal('latest');
+    expect(result.installedVersions?.[0]?.executablePath).to.include('ManicMiners.exe');
   });
 
   it('should not detect latest version without executable', async () => {

@@ -35,7 +35,7 @@ export const createWindow = (): void => {
   }
 
   // Suppress DevTools autofill-related and GPU console errors
-  mainWindow.webContents.on('console-message', (event, level, message) => {
+  mainWindow.webContents.on('console-message', (event, _level, message) => {
     // Filter out autofill-related DevTools protocol errors
     if (
       message.includes('Autofill.enable') ||

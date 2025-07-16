@@ -1,7 +1,7 @@
 import { stat } from 'fs/promises';
 import { promises as fs } from 'fs';
 import { getDirectories } from '../functions/fetchDirectories';
-import type { EndpointRoutes, EndpointRoutesResponse } from '../types/api';
+import type { EndpointRoutesResponse } from '../types/api';
 
 const SERVER_BASE_URL =
   typeof process !== 'undefined' && process.env?.SERVER_BASE_URL ? process.env.SERVER_BASE_URL : 'https://manic-launcher.vercel.app';
@@ -21,7 +21,7 @@ export async function fetchServerEndpoints({
 
   try {
     const { status: dirStatus, message: dirMessage, directories } = await getDirectories();
-    if (!dirStatus) {
+    if (!dirStatus || !directories) {
       throw new Error(`Directory fetch failed: ${dirMessage}`);
     }
     const launcherCachePath = directories.launcherCachePath;

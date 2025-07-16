@@ -1,4 +1,3 @@
-import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 import { ProgressStatus, DownloadResult, VerificationProgress, VerificationResult, DeleteProgress } from '../../shared-types/ipc';
 import { Version } from '../api/versionTypes';
 import { LauncherSettings } from './launcherSettings';
