@@ -23,6 +23,8 @@ class Logger {
   private logPath: string;
   private maxFileSize = 10 * 1024 * 1024; // 10MB
   private maxBackupFiles = 5;
+  private maxQueueSize = 1000; // Maximum number of log entries in queue
+  private droppedLogCount = 0;
 
   constructor() {
     // Create logs directory in user data path
@@ -133,6 +135,19 @@ class Logger {
     const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
     const levelName = levelNames[level];
 
+    // Check if queue is at capacity
+    if (this.logQueue.length >= this.maxQueueSize) {
+      this.droppedLogCount++;
+
+      // Remove oldest entry to make room for new one
+      this.logQueue.shift();
+
+      // Log dropped message warning (but only occasionally to avoid spam)
+      if (this.droppedLogCount % 100 === 1) {
+        console.warn(`[LOGGER] Log queue at capacity (${this.maxQueueSize}), dropping old entries. Total dropped: ${this.droppedLogCount}`);
+      }
+    }
+
     this.logQueue.push(entry);
     setImmediate(() => this.writeQueueToFile());
   }
@@ -188,11 +203,32 @@ class Logger {
     try {
       await fs.unlink(this.logPath);
       this.logQueue = [];
+      this.droppedLogCount = 0;
     } catch (error) {
       // Log file doesn't exist, ignore
     }
+  }
+
+  // Configuration methods
+  setMaxQueueSize(size: number) {
+    if (size < 100) {
+      throw new Error('Maximum queue size must be at least 100');
+    }
+    this.maxQueueSize = size;
+  }
+
+  getQueueStats() {
+    return {
+      currentQueueSize: this.logQueue.length,
+      maxQueueSize: this.maxQueueSize,
+      droppedLogCount: this.droppedLogCount,
+      isWriting: this.isWriting,
+    };
   }
 }
 
 // Export singleton instance
 export const logger = new Logger();
+
+// Export class for testing
+export { Logger };

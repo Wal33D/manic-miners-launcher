@@ -61,4 +61,21 @@ export const setupLoggingHandler = (): void => {
       return { success: true };
     })
   );
+
+  // Get queue statistics
+  ipcMain.handle(
+    'get-log-queue-stats',
+    withIpcHandler('get-log-queue-stats-reply', async () => {
+      return logger.getQueueStats();
+    })
+  );
+
+  // Configure max queue size
+  ipcMain.handle(
+    'set-max-queue-size',
+    withIpcHandler('set-max-queue-size-reply', async (event, size: number) => {
+      logger.setMaxQueueSize(size);
+      return { success: true, newSize: size };
+    })
+  );
 };
