@@ -18,9 +18,9 @@ const GameVersions = () => {
           {/* Two Column Layout */}
           {!loading && versions.length > 0 ? (
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                {/* Main Game Card - Left Side (2/3 width) */}
-                <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* Main Game Card - Left Side (7/12 width) */}
+                <div className="lg:col-span-7">
                   <ArchivedVersionManager
                     selectedVersion={selectedVersion}
                     onVersionChange={setSelectedVersion}
@@ -28,8 +28,8 @@ const GameVersions = () => {
                   />
                 </div>
 
-                {/* Version List - Right Side (1/3 width) */}
-                <div className="lg:col-span-1">
+                {/* Version List - Right Side (5/12 width) */}
+                <div className="lg:col-span-5">
                   <Card className="mining-surface border-primary/20 shadow-lg">
                     <CardContent className="p-6 flex flex-col">
                       <h3 className="text-lg font-semibold mb-2 text-primary">Available Versions</h3>
@@ -38,7 +38,7 @@ const GameVersions = () => {
                         specific version.
                       </p>
                       <div className="flex-1 min-h-0">
-                        <div className="h-full max-h-[28rem] overflow-y-auto space-y-3 pr-2 py-1">
+                        <div className="h-full max-h-[36rem] overflow-y-auto space-y-3 pr-2 py-1">
                           {versions.map(version => (
                             <div
                               key={version.version}
@@ -88,7 +88,7 @@ const GameVersions = () => {
                                 </div>
 
                                 {/* Description */}
-                                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{version.description}</p>
+                                <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">{version.description}</p>
                               </div>
                             </div>
                           ))}
@@ -106,8 +106,8 @@ const GameVersions = () => {
             </div>
           ) : loading ? (
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="lg:col-span-7">
                   <Card className="mining-surface energy-glow border-primary/20">
                     <CardContent className="p-6">
                       <div className="animate-pulse space-y-4">
@@ -117,7 +117,7 @@ const GameVersions = () => {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-5">
                   <Card className="mining-surface border-primary/20">
                     <CardContent className="p-6">
                       <div className="animate-pulse space-y-3">
