@@ -99,3 +99,6 @@ launcher-gui/dist/index.html
 
 # Claude AI
 .claude/
+
+# Test output
+test_output.json

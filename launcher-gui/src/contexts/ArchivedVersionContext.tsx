@@ -99,9 +99,6 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
 
     // Delete progress listener for archived versions
     const handleDeleteProgress = (data: any) => {
-      console.log('[ArchivedVersionContext] Delete progress received:', data);
-      console.log('[ArchivedVersionContext] Current state - isDeleting:', isDeleting, 'operationType:', operationType);
-
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Uninstalling...');
@@ -111,7 +108,6 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
         }
 
         if (data.progress >= 100) {
-          console.log('[ArchivedVersionContext] Delete completed, cleaning up state');
           setTimeout(() => {
             setIsDeleting(false);
             setOperationType(null);
@@ -157,15 +153,9 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
     };
 
     // Set up all listeners for archived version operations
-    console.log('[ArchivedVersionContext] Setting up IPC listeners for download-progress and delete-progress');
     window.electronAPI.receive('download-progress', handleDownloadProgressEnhanced);
 
-    // Combined delete progress handler with debugging
-    const handleDeleteProgressWithDebug = (data: any) => {
-      console.log('[ArchivedVersionContext] RAW delete-progress event received:', data);
-      handleDeleteProgress(data);
-    };
-    window.electronAPI.receive('delete-progress', handleDeleteProgressWithDebug);
+    window.electronAPI.receive('delete-progress', handleDeleteProgress);
 
     window.electronAPI.receive('download-error', handleDownloadError);
     window.electronAPI.receive('repair-error', handleRepairError);

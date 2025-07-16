@@ -1,4 +1,4 @@
-import { BrowserWindow, net } from 'electron';
+import { BrowserWindow, net, DownloadItem, WebContents, Event } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
 import { logger } from '../utils/logger';
@@ -96,7 +96,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
 
     return new Promise((resolve, reject) => {
       // Create a unique download handler for this instance
-      const downloadHandler = (event: any, item: any, webContents: any) => {
+      const downloadHandler = (event: Event, item: DownloadItem, webContents: WebContents) => {
         downloadStarted = true;
         onProgress?.({ status: 'Download started...', progress: 35 });
 
@@ -104,7 +104,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
         item.setSavePath(filePath);
 
         // Track download progress
-        item.on('updated', (event: any, state: string) => {
+        item.on('updated', (event: Event, state: string) => {
           if (state === 'progressing') {
             const progress = Math.round((item.getReceivedBytes() / item.getTotalBytes()) * 35) + 35; // 35-70%
             onProgress?.({

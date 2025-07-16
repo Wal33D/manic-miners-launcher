@@ -89,13 +89,16 @@ export const ipcSchemas = {
   }),
 };
 
+export interface ValidationResult<T = unknown> {
+  isValid: boolean;
+  data?: T;
+  error?: string;
+}
+
 /**
  * Validates IPC data based on channel type
  */
-export function validateIpcData<T extends keyof typeof ipcSchemas>(
-  channel: string,
-  data: unknown
-): { isValid: boolean; data?: z.infer<(typeof ipcSchemas)[T]>; error?: string } {
+export function validateIpcData(channel: string, data: unknown): ValidationResult {
   // Map channels to schemas
   const channelToSchema: Record<string, keyof typeof ipcSchemas> = {
     'download-version': 'downloadVersion',
@@ -115,12 +118,12 @@ export function validateIpcData<T extends keyof typeof ipcSchemas>(
   const schema = ipcSchemas[schemaKey];
   try {
     const validatedData = schema.parse(data);
-    return { isValid: true, data: validatedData as any };
+    return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         isValid: false,
-        error: error.issues.map((e: any) => e.message).join(', '),
+        error: error.issues.map(e => e.message).join(', '),
       };
     }
     return { isValid: false, error: 'Unknown validation error' };

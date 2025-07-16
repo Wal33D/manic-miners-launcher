@@ -18,8 +18,8 @@ interface PendingRequest<T> {
 }
 
 class ApiCacheService {
-  private cache = new Map<string, CacheEntry<any>>();
-  private pendingRequests = new Map<string, PendingRequest<any>>();
+  private cache = new Map<string, CacheEntry<unknown>>();
+  private pendingRequests = new Map<string, PendingRequest<unknown>>();
   private cleanupInterval?: NodeJS.Timeout;
 
   constructor() {
@@ -37,14 +37,14 @@ class ApiCacheService {
    */
   async get<T>(key: string, fetcher: () => Promise<T>, ttl: number = ENV.CACHE.API_DATA): Promise<T> {
     // Check if we have a valid cached entry
-    const cached = this.cache.get(key);
+    const cached = this.cache.get(key) as CacheEntry<T> | undefined;
     if (cached && this.isValid(cached)) {
       logger.debug('CACHE', 'Cache hit', { key, age: Date.now() - cached.timestamp });
       return cached.data;
     }
 
     // Check if there's already a pending request for this key
-    const pending = this.pendingRequests.get(key);
+    const pending = this.pendingRequests.get(key) as PendingRequest<T> | undefined;
     if (pending && this.isPendingValid(pending)) {
       logger.debug('CACHE', 'Request deduplication', { key });
       return pending.promise;
@@ -58,7 +58,7 @@ class ApiCacheService {
     this.pendingRequests.set(key, {
       promise,
       timestamp: Date.now(),
-    });
+    } as PendingRequest<unknown>);
 
     return promise;
   }
@@ -75,7 +75,7 @@ class ApiCacheService {
         data,
         timestamp: Date.now(),
         ttl,
-      });
+      } as CacheEntry<unknown>);
 
       logger.debug('CACHE', 'Data cached successfully', { key, ttl });
       return data;

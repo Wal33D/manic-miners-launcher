@@ -4,12 +4,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
+import type { ProgressEvent, DownloadOptions } from './testTypes';
 
 // Mock electron IPC for testing
 class MockElectronAPI extends EventEmitter {
   private handlers: Map<string, Function> = new Map();
 
-  send(channel: string, ...args: any[]) {
+  send(channel: string, ...args: unknown[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
       // Simulate async IPC call
@@ -17,7 +18,7 @@ class MockElectronAPI extends EventEmitter {
     }
   }
 
-  receive(channel: string, callback: (...args: any[]) => void) {
+  receive(channel: string, callback: (...args: unknown[]) => void) {
     this.on(channel, callback);
   }
 
@@ -65,7 +66,7 @@ describe('Latest Version Operations Tests', () => {
 
     // Setup mock electron API
     mockAPI = new MockElectronAPI();
-    (global as any).window = {
+    (global as Record<string, unknown>).window = {
       electronAPI: mockAPI,
     };
 
@@ -88,7 +89,7 @@ describe('Latest Version Operations Tests', () => {
     }
 
     // Clean up global mocks
-    delete (global as any).window;
+    delete (global as Record<string, unknown>).window;
   });
 
   describe('Install Operation Tests', () => {
@@ -96,7 +97,7 @@ describe('Latest Version Operations Tests', () => {
       const latestDir = path.join(testDir, 'latest');
 
       // Simulate install process
-      mockAPI.setHandler('download-latest-version', async (options: any) => {
+      mockAPI.setHandler('download-latest-version', async (options: DownloadOptions) => {
         expect(options.version).to.equal('latest');
 
         // Create the installation directory and files
@@ -115,8 +116,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       // Start install
-      const progressUpdates: any[] = [];
-      mockAPI.receive('download-latest-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -146,8 +147,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateError('download-latest-progress', 'Network connection failed');
       });
 
-      const errorUpdates: any[] = [];
-      mockAPI.receive('download-latest-progress', (data: any) => {
+      const errorUpdates: ProgressEvent[] = [];
+      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
         errorUpdates.push(data);
       });
 
@@ -165,13 +166,13 @@ describe('Latest Version Operations Tests', () => {
       await fs.mkdir(latestDir, { recursive: true });
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'existing game executable');
 
-      mockAPI.setHandler('download-latest-version', async (options: any) => {
+      mockAPI.setHandler('download-latest-version', async (options: DownloadOptions) => {
         // Should detect existing installation
         mockAPI.simulateProgress('download-latest-progress', 100, 'Version already installed');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('download-latest-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('download-latest-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -193,7 +194,7 @@ describe('Latest Version Operations Tests', () => {
     });
 
     it('should successfully verify installation', async () => {
-      mockAPI.setHandler('verify-and-repair-installation', async (options: any) => {
+      mockAPI.setHandler('verify-and-repair-installation', async (options: { version: string }) => {
         expect(options.version).to.equal('latest');
 
         // Simulate verification process
@@ -203,8 +204,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateCompletion('verify-repair-progress');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('verify-repair-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -234,8 +235,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateCompletion('verify-repair-progress');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('verify-repair-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -257,8 +258,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateError('verify-repair-progress', 'Unable to connect to download server');
       });
 
-      const errorUpdates: any[] = [];
-      mockAPI.receive('verify-repair-progress', (data: any) => {
+      const errorUpdates: ProgressEvent[] = [];
+      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
         errorUpdates.push(data);
       });
 
@@ -289,7 +290,7 @@ describe('Latest Version Operations Tests', () => {
     it('should successfully uninstall latest version', async () => {
       const latestDir = path.join(testDir, 'latest');
 
-      mockAPI.setHandler('delete-latest-version', async (options: any) => {
+      mockAPI.setHandler('delete-latest-version', async (options: { version: string }) => {
         expect(options.version).to.equal('latest');
 
         // Simulate deletion process with file-by-file progress
@@ -306,8 +307,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateCompletion('delete-latest-progress');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('delete-latest-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -340,8 +341,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateProgress('delete-latest-progress', 100, 'No installation found to remove');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('delete-latest-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -359,8 +360,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateError('delete-latest-progress', 'Permission denied for some files');
       });
 
-      const errorUpdates: any[] = [];
-      mockAPI.receive('delete-latest-progress', (data: any) => {
+      const errorUpdates: ProgressEvent[] = [];
+      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
         errorUpdates.push(data);
       });
 
@@ -385,7 +386,7 @@ describe('Latest Version Operations Tests', () => {
     it('should successfully update latest version', async () => {
       const latestDir = path.join(testDir, 'latest');
 
-      mockAPI.setHandler('update-latest-version', async (options: any) => {
+      mockAPI.setHandler('update-latest-version', async (options: { version: string }) => {
         expect(options.version).to.equal('latest');
 
         // Simulate update process (remove old, download new)
@@ -402,8 +403,8 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateCompletion('update-progress');
       });
 
-      const progressUpdates: any[] = [];
-      mockAPI.receive('update-progress', (data: any) => {
+      const progressUpdates: ProgressEvent[] = [];
+      mockAPI.receive('update-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
@@ -433,14 +434,14 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateError('update-error', 'Update download failed: Server unavailable');
       });
 
-      const progressUpdates: any[] = [];
-      const errorUpdates: any[] = [];
+      const progressUpdates: ProgressEvent[] = [];
+      const errorUpdates: ProgressEvent[] = [];
 
-      mockAPI.receive('update-progress', (data: any) => {
+      mockAPI.receive('update-progress', (data: ProgressEvent) => {
         progressUpdates.push(data);
       });
 
-      mockAPI.receive('update-error', (data: any) => {
+      mockAPI.receive('update-error', (data: ProgressEvent) => {
         errorUpdates.push(data);
       });
 
@@ -450,8 +451,8 @@ describe('Latest Version Operations Tests', () => {
 
       expect(errorUpdates.length).to.be.greaterThan(0);
       expect(errorUpdates[0]).to.exist;
-      const errorMessage =
-        typeof errorUpdates[0] === 'string' ? errorUpdates[0] : errorUpdates[0].message || JSON.stringify(errorUpdates[0]);
+      const errorEvent = errorUpdates[0] as ProgressEvent;
+      const errorMessage = typeof errorEvent === 'string' ? errorEvent : errorEvent.status || JSON.stringify(errorEvent);
       expect(errorMessage).to.include('Server unavailable');
     });
   });
@@ -475,14 +476,14 @@ describe('Latest Version Operations Tests', () => {
         mockAPI.simulateCompletion('update-progress');
       });
 
-      const verifyUpdates: any[] = [];
-      const updateUpdates: any[] = [];
+      const verifyUpdates: ProgressEvent[] = [];
+      const updateUpdates: ProgressEvent[] = [];
 
-      mockAPI.receive('verify-repair-progress', (data: any) => {
+      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
         verifyUpdates.push(data);
       });
 
-      mockAPI.receive('update-progress', (data: any) => {
+      mockAPI.receive('update-progress', (data: ProgressEvent) => {
         updateUpdates.push(data);
       });
 

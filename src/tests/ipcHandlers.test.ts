@@ -5,12 +5,13 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
 import { fetchInstalledVersions } from '../functions/fetchInstalledVersions';
+import type { IpcMainEvent, ProgressEvent, DownloadOptions } from './testTypes';
 
 // Mock dependencies for IPC handler testing
 class MockIpcMain extends EventEmitter {
   private handlers: Map<string, Function> = new Map();
 
-  on(channel: string, handler: (...args: any[]) => void): this {
+  on(channel: string, handler: (...args: unknown[]) => void): this {
     this.handlers.set(channel, handler);
     super.on(channel, handler);
     return this;
@@ -26,12 +27,12 @@ class MockIpcMain extends EventEmitter {
   }
 
   // Test helper to simulate IPC calls
-  async simulateCall(channel: string, ...args: any[]) {
+  async simulateCall(channel: string, ...args: unknown[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
-      const mockEvent = {
+      const mockEvent: IpcMainEvent = {
         sender: {
-          send: (replyChannel: string, data: any) => {
+          send: (replyChannel: string, data: unknown) => {
             this.emit(replyChannel, data);
           },
         },
@@ -56,7 +57,7 @@ const mockElectron = {
 };
 
 // Mock the required modules
-(global as any).mockElectron = mockElectron;
+(global as Record<string, unknown>).mockElectron = mockElectron;
 
 describe('IPC Handlers Integration Tests', () => {
   let testDir: string;
@@ -108,7 +109,7 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'existing executable');
 
       // Mock the download handler
-      ipcMain.on('download-latest-version', async (event, options) => {
+      ipcMain.on('download-latest-version', async (event: IpcMainEvent, options: DownloadOptions) => {
         const installPath = path.join(testDir, 'latest');
 
         // Check if already installed
@@ -122,7 +123,7 @@ describe('IPC Handlers Integration Tests', () => {
               status: 'Version already installed',
               progress: 100,
             });
-            event.sender.send('versions-updated');
+            event.sender.send('versions-updated', {});
             return { downloaded: true, message: 'Version already installed' };
           }
         } catch (error) {
@@ -130,8 +131,8 @@ describe('IPC Handlers Integration Tests', () => {
         }
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('download-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('download-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
@@ -152,7 +153,7 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'old executable');
 
       // Mock the download handler with force download
-      ipcMain.on('download-latest-version', async (event, options) => {
+      ipcMain.on('download-latest-version', async (event: IpcMainEvent, options: DownloadOptions) => {
         const installPath = path.join(testDir, 'latest');
 
         if (options.forceDownload) {
@@ -175,12 +176,12 @@ describe('IPC Handlers Integration Tests', () => {
             status: 'Installation completed successfully',
             progress: 100,
           });
-          event.sender.send('versions-updated');
+          event.sender.send('versions-updated', {});
         }
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('download-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('download-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
@@ -211,7 +212,7 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.writeFile(path.join(assetsDir, 'texture.png'), 'texture');
 
       // Mock the delete handler
-      ipcMain.on('delete-latest-version', async (event, options) => {
+      ipcMain.on('delete-latest-version', async (event: IpcMainEvent, options: { version: string }) => {
         const installPath = path.join(testDir, 'latest');
 
         try {
@@ -285,7 +286,7 @@ describe('IPC Handlers Integration Tests', () => {
             status: 'Uninstall completed successfully',
             progress: 100,
           });
-          event.sender.send('versions-updated');
+          event.sender.send('versions-updated', {});
 
           return { success: true, message: 'Latest version uninstalled successfully' };
         } catch (error) {
@@ -297,8 +298,8 @@ describe('IPC Handlers Integration Tests', () => {
         }
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('delete-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('delete-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
@@ -325,7 +326,7 @@ describe('IPC Handlers Integration Tests', () => {
     it('should handle non-existent installation gracefully', async () => {
       // Don't create any installation
 
-      ipcMain.on('delete-latest-version', async (event, options) => {
+      ipcMain.on('delete-latest-version', async (event: IpcMainEvent, options: { version: string }) => {
         const installPath = path.join(testDir, 'latest');
 
         try {
@@ -340,8 +341,8 @@ describe('IPC Handlers Integration Tests', () => {
         }
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('delete-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('delete-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
@@ -361,7 +362,7 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.mkdir(latestDir, { recursive: true });
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'old version');
 
-      ipcMain.on('update-latest-version', async (event, options) => {
+      ipcMain.on('update-latest-version', async (event: IpcMainEvent, options: { version: string }) => {
         const installPath = path.join(testDir, 'latest');
 
         event.sender.send('update-progress', {
@@ -396,13 +397,13 @@ describe('IPC Handlers Integration Tests', () => {
           status: 'Update completed successfully',
           progress: 100,
         });
-        event.sender.send('versions-updated');
+        event.sender.send('versions-updated', {});
 
         return { success: true, message: 'Latest version updated successfully' };
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('update-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('update-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
@@ -433,7 +434,7 @@ describe('IPC Handlers Integration Tests', () => {
       await fs.mkdir(latestDir, { recursive: true });
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'game executable');
 
-      ipcMain.on('request-latest-version-information', async event => {
+      ipcMain.on('request-latest-version-information', async (event: IpcMainEvent) => {
         try {
           const result = await fetchInstalledVersions();
 
@@ -443,13 +444,13 @@ describe('IPC Handlers Integration Tests', () => {
         } catch (error) {
           event.sender.send('request-latest-version-information', {
             versions: [],
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       });
 
-      const responseEvents: any[] = [];
-      ipcMain.on('latest-version-information-response', data => {
+      const responseEvents: Array<{ versions: unknown[]; error?: string }> = [];
+      ipcMain.on('latest-version-information-response', (data: { versions: unknown[]; error?: string }) => {
         responseEvents.push(data);
       });
 
@@ -459,14 +460,14 @@ describe('IPC Handlers Integration Tests', () => {
       const response = responseEvents[responseEvents.length - 1];
       expect(response.versions).to.be.an('array');
       expect(response.versions.length).to.equal(1);
-      expect(response.versions[0].identifier).to.equal('latest');
-      expect(response.versions[0].directory).to.include('latest');
+      expect((response.versions[0] as any).identifier).to.equal('latest');
+      expect((response.versions[0] as any).directory).to.include('latest');
     });
 
     it('should return empty versions when no installation exists', async () => {
       // Don't create any installation
 
-      ipcMain.on('request-latest-version-information', async event => {
+      ipcMain.on('request-latest-version-information', async (event: IpcMainEvent) => {
         try {
           const result = await fetchInstalledVersions();
 
@@ -476,13 +477,13 @@ describe('IPC Handlers Integration Tests', () => {
         } catch (error) {
           event.sender.send('request-latest-version-information', {
             versions: [],
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       });
 
-      const responseEvents: any[] = [];
-      ipcMain.on('latest-version-information-response', data => {
+      const responseEvents: Array<{ versions: unknown[]; error?: string }> = [];
+      ipcMain.on('latest-version-information-response', (data: { versions: unknown[]; error?: string }) => {
         responseEvents.push(data);
       });
 
@@ -496,7 +497,7 @@ describe('IPC Handlers Integration Tests', () => {
 
   describe('Error Handling Tests', () => {
     it('should handle permission errors gracefully', async () => {
-      ipcMain.on('delete-latest-version', async (event, options) => {
+      ipcMain.on('delete-latest-version', async (event: IpcMainEvent, options: { version: string }) => {
         // Simulate permission error
         event.sender.send('delete-latest-progress', {
           status: 'Error during uninstall: Permission denied',
@@ -505,22 +506,22 @@ describe('IPC Handlers Integration Tests', () => {
         throw new Error('Failed to uninstall: Permission denied');
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('delete-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('delete-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
       try {
         await ipcMain.simulateCall('delete-latest-version', { version: 'latest' });
       } catch (error) {
-        expect(error.message).to.include('Permission denied');
+        expect((error as Error).message).to.include('Permission denied');
       }
 
       expect(progressEvents.some(event => event.status.includes('Permission denied'))).to.be.true;
     });
 
     it('should handle network errors during download', async () => {
-      ipcMain.on('download-latest-version', async (event, options) => {
+      ipcMain.on('download-latest-version', async (event: IpcMainEvent, options: DownloadOptions) => {
         event.sender.send('download-latest-progress', {
           status: 'Getting latest version from itch.io...',
           progress: 5,
@@ -534,15 +535,15 @@ describe('IPC Handlers Integration Tests', () => {
         throw new Error('Download failed: Network connection timeout');
       });
 
-      const progressEvents: any[] = [];
-      ipcMain.on('download-latest-progress', data => {
+      const progressEvents: ProgressEvent[] = [];
+      ipcMain.on('download-latest-progress', (data: ProgressEvent) => {
         progressEvents.push(data);
       });
 
       try {
         await ipcMain.simulateCall('download-latest-version', { version: 'latest' });
       } catch (error) {
-        expect(error.message).to.include('Network connection timeout');
+        expect((error as Error).message).to.include('Network connection timeout');
       }
 
       expect(progressEvents.some(event => event.status.includes('Network connection timeout'))).to.be.true;

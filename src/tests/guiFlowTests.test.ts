@@ -5,6 +5,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
 import { fetchInstalledVersions } from '../functions/fetchInstalledVersions';
+import type { Notification, IpcMainEvent, ProgressEvent } from './testTypes';
 
 // Mock electron API for GUI testing
 class MockElectronAPI extends EventEmitter {
@@ -14,17 +15,17 @@ class MockElectronAPI extends EventEmitter {
     isDownloading: false,
     isLaunching: false,
     downloadProgress: 0,
-    currentNotifications: [] as any[],
+    currentNotifications: [] as Notification[],
   };
 
-  send(channel: string, ...args: any[]) {
+  send(channel: string, ...args: unknown[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
       setTimeout(() => handler(...args), 10);
     }
   }
 
-  receive(channel: string, callback: (...args: any[]) => void) {
+  receive(channel: string, callback: (...args: unknown[]) => void) {
     this.on(channel, callback);
   }
 
@@ -101,10 +102,10 @@ class MockElectronAPI extends EventEmitter {
   }
 
   // Simulate IPC call
-  async simulateCall(channel: string, ...args: any[]) {
+  async simulateCall(channel: string, ...args: unknown[]) {
     const handler = this.handlers.get(channel);
     if (handler) {
-      await handler({ sender: { send: (responseChannel: string, data: any) => this.emit(responseChannel, data) } }, ...args);
+      await handler({ sender: { send: (responseChannel: string, data: unknown) => this.emit(responseChannel, data) } }, ...args);
     }
   }
 }
@@ -122,7 +123,7 @@ class GUIStateTracker {
     deleteProgress: 0,
     updateProgress: 0,
     verifyProgress: 0,
-    currentNotifications: [] as any[],
+    currentNotifications: [] as Notification[],
     buttonStates: {
       installEnabled: true,
       launchEnabled: false,
@@ -197,7 +198,7 @@ class GUIStateTracker {
     };
   }
 
-  addNotification(notification: any) {
+  addNotification(notification: Notification) {
     this.state.currentNotifications.push(notification);
   }
 
@@ -295,7 +296,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
   describe('Initial State and Installation Detection', () => {
     it('should display correct initial state when game is not installed', async () => {
       // Simulate fresh installation check
-      mockAPI.setHandler('request-latest-version-information', async (event: any) => {
+      mockAPI.setHandler('request-latest-version-information', async (event: IpcMainEvent) => {
         const result = await fetchInstalledVersions();
         event.sender.send('latest-version-information-response', {
           versions: result.installedVersions || [],
@@ -324,7 +325,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       await fs.mkdir(latestDir, { recursive: true });
       await fs.writeFile(path.join(latestDir, 'ManicMiners.exe'), 'game executable');
 
-      mockAPI.setHandler('request-latest-version-information', async (event: any) => {
+      mockAPI.setHandler('request-latest-version-information', async (event: IpcMainEvent) => {
         const result = await fetchInstalledVersions();
         event.sender.send('latest-version-information-response', {
           versions: result.installedVersions || [],
@@ -411,9 +412,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateOperationState('download', true, 45, 'Downloading...');
 
       // Simulate download error at 45%
-      const errorNotification = {
+      const errorNotification: Notification = {
         id: 'download-error-1',
-        type: 'error',
+        type: 'error' as const,
         title: 'Download Failed',
         message: 'Connection to server lost. Click to retry.',
         persistent: true,
@@ -448,9 +449,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       expect(state.buttonStates.dropdownEnabled).to.be.false;
 
       // Simulate launch phases
-      const launchNotification = {
+      const launchNotification: Notification = {
         id: 'launch-1',
-        type: 'info',
+        type: 'info' as const,
         title: 'Launching Game',
         message: 'Starting Manic Miners...',
         duration: 3000,
@@ -476,9 +477,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateOperationState('launch', true);
 
       // Simulate launch error
-      const errorNotification = {
+      const errorNotification: Notification = {
         id: 'launch-error-1',
-        type: 'error',
+        type: 'error' as const,
         title: 'Launch Failed',
         message: 'Game files may be corrupted. Try verify & repair.',
         persistent: true,
@@ -531,9 +532,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       // Complete update
       guiState.updateOperationState('update', false);
 
-      const successNotification = {
+      const successNotification: Notification = {
         id: 'update-success-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Update Complete',
         message: 'Manic Miners has been updated to the latest version!',
         duration: 5000,
@@ -579,9 +580,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       // Complete verification with success
       guiState.updateOperationState('verify', false);
 
-      const successNotification = {
+      const successNotification: Notification = {
         id: 'verify-success-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Verification Complete',
         message: 'All game files are intact and ready to play!',
         duration: 4000,
@@ -599,9 +600,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateOperationState('verify', true, 100, 'Verification complete');
 
       // Simulate issues found
-      const repairNotification = {
+      const repairNotification: Notification = {
         id: 'verify-issues-1',
-        type: 'warning',
+        type: 'warning' as const,
         title: 'Issues Found',
         message: '3 corrupted files detected. Starting automatic repair...',
         persistent: true,
@@ -627,9 +628,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateOperationState('verify', false);
       guiState.removeNotification('verify-issues-1');
 
-      const repairSuccessNotification = {
+      const repairSuccessNotification: Notification = {
         id: 'repair-success-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Repair Complete',
         message: 'All issues have been fixed. Game is ready to play!',
         duration: 5000,
@@ -675,9 +676,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateOperationState('delete', false);
       guiState.updateInstallationState(false);
 
-      const uninstallNotification = {
+      const uninstallNotification: Notification = {
         id: 'uninstall-success-1',
-        type: 'info',
+        type: 'info' as const,
         title: 'Uninstall Complete',
         message: 'Manic Miners has been completely removed from your system.',
         duration: 4000,
@@ -700,9 +701,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       guiState.updateInstallationState(false);
       guiState.updateOperationState('download', true, 30, 'Downloading...');
 
-      const downloadNotification = {
+      const downloadNotification: Notification = {
         id: 'download-persistent-1',
-        type: 'info',
+        type: 'info' as const,
         title: 'Download in Progress',
         message: 'Downloading Manic Miners... 30% complete',
         persistent: true,
@@ -745,9 +746,9 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
       expect(state.buttonStates.deleteEnabled).to.be.false;
 
       // Attempt to start update while verifying (should be prevented)
-      const conflictNotification = {
+      const conflictNotification: Notification = {
         id: 'operation-conflict-1',
-        type: 'warning',
+        type: 'warning' as const,
         title: 'Operation in Progress',
         message: 'Please wait for verification to complete before starting another operation.',
         duration: 3000,
@@ -791,7 +792,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
               { label: 'Check Disk Space', action: 'check_disk' },
               { label: 'Choose Different Location', action: 'change_path' },
             ],
-          },
+          } as Notification,
         },
         {
           error: 'permission_denied',
@@ -805,7 +806,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
               { label: 'Run as Administrator', action: 'elevate' },
               { label: 'Choose Different Location', action: 'change_path' },
             ],
-          },
+          } as Notification,
         },
         {
           error: 'network_timeout',
@@ -819,7 +820,7 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
               { label: 'Retry Download', action: 'retry' },
               { label: 'Check Connection', action: 'check_network' },
             ],
-          },
+          } as Notification,
         },
       ];
 
@@ -844,15 +845,15 @@ describe('GUI Flow Tests - Impressive User Experience', () => {
 
       // Simulate multiple cascading errors (should handle gracefully)
       const errors = [
-        { id: 'error-1', title: 'Download Failed', type: 'error' },
-        { id: 'error-2', title: 'Retry Failed', type: 'error' },
-        { id: 'error-3', title: 'Network Issue', type: 'warning' },
+        { id: 'error-1', title: 'Download Failed', type: 'error' as const },
+        { id: 'error-2', title: 'Retry Failed', type: 'error' as const },
+        { id: 'error-3', title: 'Network Issue', type: 'warning' as const },
       ];
 
       for (const error of errors) {
         guiState.addNotification({
           id: error.id,
-          type: error.type as any,
+          type: error.type as 'error' | 'warning',
           title: error.title,
           message: 'Details about the error...',
           persistent: true,

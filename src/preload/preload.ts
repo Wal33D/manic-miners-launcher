@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC_CHANNELS } from '../main/ipcHandlers/ipcChannels';
 import { validateIpcData, isValidExternalUrl } from '../utils/ipcValidation';
+import type { IpcChannelData, IpcChannelResponse } from '../types/ipcTypes';
 
 type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
 
@@ -62,6 +63,17 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.CREATE_SHORTCUTS_PROGRESS, // Add new channel for shortcut creation progress
 ];
 
+// Type-safe electron API interface
+interface ElectronAPI {
+  send: <T extends IpcChannel>(channel: T, data?: any) => void;
+  receive: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
+  receiveOnce: <T extends IpcChannel>(channel: T, func: (data: any) => void) => void;
+  removeAllListeners: (channel: IpcChannel) => void;
+  openExternal: (url: string) => void;
+  invoke: <T extends IpcChannel>(channel: T, data?: any) => Promise<any>;
+  platform: NodeJS.Platform;
+}
+
 contextBridge.exposeInMainWorld('electronAPI', {
   send: (channel: IpcChannel, data?: any) => {
     if (!validSendChannels.includes(channel)) {
@@ -79,14 +91,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     ipcRenderer.send(channel, validation.data || data);
   },
-  receive: (channel: IpcChannel, func: (...args: any[]) => void) => {
+  receive: (channel: IpcChannel, func: (data: any) => void) => {
     if (validReceiveChannels.includes(channel)) {
-      ipcRenderer.on(channel, (_event, ...args) => func(...args));
+      ipcRenderer.on(channel, (_event, data) => func(data));
     }
   },
-  receiveOnce: (channel: IpcChannel, func: (...args: any[]) => void) => {
+  receiveOnce: (channel: IpcChannel, func: (data: any) => void) => {
     if (validReceiveChannels.includes(channel)) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
+      ipcRenderer.once(channel, (_event, data) => func(data));
     }
   },
   removeAllListeners: (channel: IpcChannel) => {
@@ -104,6 +116,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Opening external URL via IPC to main process
     // Always use IPC since shell is not available in preload context
     ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL_URL, url);
+  },
+  invoke: async (channel: IpcChannel, data?: any) => {
+    // Validate data if validation exists for this channel
+    const validation = validateIpcData(channel, data);
+    if (!validation.isValid) {
+      throw new Error(`Invalid IPC data for channel ${channel}: ${validation.error}`);
+    }
+
+    return ipcRenderer.invoke(channel, validation.data || data);
   },
   platform: process.platform,
 });

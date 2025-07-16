@@ -20,8 +20,18 @@ export interface StoreSchema {
     height: number;
   };
 
-  // Add other store keys as discovered
-  [key: string]: any;
+  // Window state
+  'window-maximized'?: boolean;
+
+  // Installation paths
+  'selected-install-path'?: string;
+
+  // Download state
+  'download-progress'?: {
+    version: string;
+    progress: number;
+    status: string;
+  };
 }
 
 // Create a typed interface for our store
@@ -36,5 +46,39 @@ interface TypedElectronStore extends ElectronStore<StoreSchema> {
   readonly path: string;
 }
 
-// Export a singleton instance of the store with proper typing
-export const typedStore = new ElectronStore<StoreSchema>() as TypedElectronStore;
+// Create the store instance with default values
+const storeDefaults: Partial<StoreSchema> = {
+  'current-selected-version': null,
+  'last-selected-archived-version': null,
+  'last-known-version': null,
+  settings: {
+    // UI Settings
+    playSoundOnInstall: true,
+    autoLaunchAfterInstall: false,
+    darkMode: true,
+
+    // Game Launch Settings
+    launchMode: 'steam' as const,
+    skipLauncher: false,
+    modsEnabled: false,
+
+    // Path Settings
+    installPath: '',
+    steamPath: '',
+    winePrefix: '',
+
+    // Steam Settings
+    runThroughSteam: false,
+
+    // Update Settings
+    alwaysUpdate: false,
+
+    // Graphics Settings
+    dgVoodooEnabled: false,
+  },
+};
+
+// Export a properly typed store instance without type casting
+export const typedStore: TypedElectronStore = new ElectronStore<StoreSchema>({
+  defaults: storeDefaults,
+}) as TypedElectronStore;

@@ -4,9 +4,29 @@ import { LauncherSettings } from '../../types/launcherSettings';
 import { typedStore } from '../../utils/typedStore';
 
 const defaultSettings: LauncherSettings = {
+  // UI Settings
   playSoundOnInstall: true,
   autoLaunchAfterInstall: false,
   darkMode: true,
+
+  // Game Launch Settings
+  launchMode: 'steam',
+  skipLauncher: false,
+  modsEnabled: false,
+
+  // Path Settings
+  installPath: '',
+  steamPath: '',
+  winePrefix: '',
+
+  // Steam Settings
+  runThroughSteam: false,
+
+  // Update Settings
+  alwaysUpdate: false,
+
+  // Graphics Settings
+  dgVoodooEnabled: false,
 };
 
 export const setupSettingsHandlers = async (): Promise<{ status: boolean; message: string }> => {

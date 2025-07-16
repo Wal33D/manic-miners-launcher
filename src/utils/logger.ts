@@ -13,7 +13,7 @@ interface LogEntry {
   level: LogLevel;
   category: string;
   message: string;
-  data?: any;
+  data?: unknown;
   stack?: string;
 }
 
@@ -119,7 +119,7 @@ class Logger {
     }
   }
 
-  private log(level: LogLevel, category: string, message: string, data?: any, error?: Error) {
+  private log(level: LogLevel, category: string, message: string, data?: unknown, error?: Error) {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -132,42 +132,41 @@ class Logger {
     // Also log to console for immediate visibility
     const levelNames = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
     const levelName = levelNames[level];
-    console.log(`[${levelName}] [${category}] ${message}`, data || '');
 
     this.logQueue.push(entry);
     setImmediate(() => this.writeQueueToFile());
   }
 
-  debug(category: string, message: string, data?: any) {
+  debug(category: string, message: string, data?: unknown) {
     this.log(LogLevel.DEBUG, category, message, data);
   }
 
-  info(category: string, message: string, data?: any) {
+  info(category: string, message: string, data?: unknown) {
     this.log(LogLevel.INFO, category, message, data);
   }
 
-  warn(category: string, message: string, data?: any) {
+  warn(category: string, message: string, data?: unknown) {
     this.log(LogLevel.WARN, category, message, data);
   }
 
-  error(category: string, message: string, data?: any, error?: Error) {
+  error(category: string, message: string, data?: unknown, error?: Error) {
     this.log(LogLevel.ERROR, category, message, data, error);
   }
 
   // Specific logging methods for different categories
-  downloadLog(message: string, data?: any) {
+  downloadLog(message: string, data?: unknown) {
     this.info('DOWNLOAD', message, data);
   }
 
-  installLog(message: string, data?: any) {
+  installLog(message: string, data?: unknown) {
     this.info('INSTALL', message, data);
   }
 
-  versionLog(message: string, data?: any) {
+  versionLog(message: string, data?: unknown) {
     this.info('VERSION', message, data);
   }
 
-  ipcLog(message: string, data?: any) {
+  ipcLog(message: string, data?: unknown) {
     this.info('IPC', message, data);
   }
 

@@ -98,18 +98,15 @@ export function GameVersionSelector() {
     if (!selectedVersionData || !window.electronAPI) return;
 
     if (isVersionInstalled(selectedVersionData.version)) {
-      console.log('[GameVersionSelector] Launching game:', selectedVersionData.identifier);
       window.electronAPI.send('launch-game', selectedVersionData.identifier);
     } else {
       if (!installPath) return;
-      console.log('[GameVersionSelector] Starting download:', selectedVersionData.identifier);
       setIsDownloading(true);
       window.electronAPI.send('download-version', {
         version: selectedVersionData.identifier,
         downloadPath: installPath,
       });
       window.electronAPI.receiveOnce('download-version', (result: any) => {
-        console.log('[GameVersionSelector] Download result:', result);
         if (result?.error) {
           setIsDownloading(false);
         }
@@ -120,18 +117,10 @@ export function GameVersionSelector() {
 
   const handleDelete = () => {
     if (!selectedVersionData || !window.electronAPI) return;
-    console.log('[GameVersionSelector] Starting delete:', selectedVersionData.identifier);
-    console.log('[GameVersionSelector] Current ArchivedVersion state:', {
-      isDeleting,
-      operationType,
-      operationProgress,
-      currentVersionId,
-    });
     setIsDeleting(true);
 
     // Listen for deletion result
     window.electronAPI.receiveOnce('delete-version', (result: any) => {
-      console.log('[GameVersionSelector] Delete result:', result);
       if (result?.error) {
         setIsDeleting(false);
       }
@@ -143,12 +132,10 @@ export function GameVersionSelector() {
 
   const handleRepair = async () => {
     if (!selectedVersionData || !window.electronAPI) return;
-    console.log('[GameVersionSelector] Starting repair:', selectedVersionData.identifier);
     setIsRepairing(true);
 
     // Listen for repair result
     window.electronAPI.receiveOnce('repair-version', (result: any) => {
-      console.log('[GameVersionSelector] Repair result:', result);
       if (result?.error) {
         setIsRepairing(false);
       }

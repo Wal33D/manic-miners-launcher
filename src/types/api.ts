@@ -3,9 +3,9 @@
 // Re-export shared types
 export { Version, VersionsResponse } from '../../shared-types';
 
-// Routes Types (Used by fetchServerEndpoints.ts)
-// This is different from the shared Routes type - it's for endpoint mapping
-export interface Routes {
+// Endpoint Routes Types (Used by fetchServerEndpoints.ts)
+// This maps API endpoint names to their URLs
+export interface EndpointRoutes {
   comments: string;
   images: string;
   levels: string;
@@ -19,4 +19,4 @@ export interface Routes {
   [key: string]: string;
 }
 
-export type RoutesResponse = Routes;
+export type EndpointRoutesResponse = EndpointRoutes;
