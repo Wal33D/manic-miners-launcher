@@ -96,3 +96,6 @@ src/renderer/assets/
 out/
 /launcher-gui/dist/assets
 launcher-gui/dist/index.html
+
+# Claude AI
+.claude/
