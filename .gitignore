@@ -87,8 +87,7 @@ typings/
 .webpack/
 
 # Generated GUI assets
-src/renderer/assets/index.js
-src/renderer/assets/index.css
+src/renderer/assets/
 
 # Vite
 .vite/
