@@ -41,6 +41,32 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
     // Wait a moment for page to fully load
     await new Promise(resolve => setTimeout(resolve, 2000));
 
+    // Set up IPC for logging from browser context
+    browserWindow.webContents.on('ipc-message', (_event, channel, ...args) => {
+      if (channel === 'FRONTEND_LOG') {
+        const [logData] = args;
+        logger.debug(`BROWSER:${logData.category}`, logData.message, logData.data);
+      }
+    });
+
+    // Inject logging functionality using the existing FRONTEND_LOG channel
+    await browserWindow.webContents.executeJavaScript(`
+      window.logToBrowser = (level, category, message, data) => {
+        try {
+          const logData = {
+            category,
+            message,
+            data,
+            level,
+            timestamp: Date.now()
+          };
+          require('electron').ipcRenderer.send('FRONTEND_LOG', logData);
+        } catch (e) {
+          console.log('Fallback log:', level, category, message, data);
+        }
+      };
+    `);
+
     // Find and click the download button
     const clickResult = await browserWindow.webContents.executeJavaScript(`
       (function() {
@@ -59,7 +85,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
         for (const selector of selectors) {
           const btn = document.querySelector(selector);
           if (btn) {
-            logger.debug('DOWNLOAD', 'Found download button with selector', { selector });
+            window.logToBrowser('debug', 'DOWNLOAD', 'Found download button with selector', { selector });
             btn.click();
             return true;
           }
@@ -69,7 +95,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
         const allButtons = document.querySelectorAll('button, a, .button');
         for (const btn of allButtons) {
           if (btn.textContent && btn.textContent.toLowerCase().includes('download')) {
-            logger.debug('DOWNLOAD', 'Found download button by text', { text: btn.textContent });
+            window.logToBrowser('debug', 'DOWNLOAD', 'Found download button by text', { text: btn.textContent });
             btn.click();
             return true;
           }

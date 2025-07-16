@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ChevronDown } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { Progress } from '@/components/ui/progress';
 import { logger } from '@/utils/frontendLogger';
@@ -98,6 +98,7 @@ export function ArchivedVersionManager({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [installPath, setInstallPath] = useState<string>('');
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Version management state
   const [versions, setVersions] = useState<GameVersion[]>([]);
@@ -300,8 +301,72 @@ export function ArchivedVersionManager({
             </div>
           </div>
           <CardDescription className="text-base mt-4">
-            <div className="h-32 overflow-y-scroll border border-border/50 rounded-md p-3 bg-muted/30">
-              <p className="text-sm leading-relaxed">{selectedVersionData.description}</p>
+            <div className="border border-border/50 rounded-md p-4 bg-muted/30 space-y-3">
+              {/* Extract key highlights if available */}
+              {selectedVersionData.description && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold text-foreground">Release Notes</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                      className="h-6 px-2 text-xs"
+                    >
+                      {isDescriptionExpanded ? (
+                        <>
+                          <ChevronUp className="w-3 h-3 mr-1" />
+                          Show Less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3 h-3 mr-1" />
+                          Show More
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Description content */}
+                  <div
+                    className={`relative text-sm leading-relaxed text-muted-foreground overflow-hidden transition-all duration-300 ${isDescriptionExpanded ? 'max-h-none' : 'max-h-20'}`}
+                  >
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      {selectedVersionData.description.split('\n').map((paragraph, index) => {
+                        if (paragraph.trim() === '') return null;
+
+                        // Handle lists and bullet points
+                        if (paragraph.trim().startsWith('-')) {
+                          return (
+                            <ul key={index} className="list-disc list-inside space-y-1 my-2">
+                              {paragraph
+                                .split('\n')
+                                .filter(line => line.trim().startsWith('-'))
+                                .map((item, itemIndex) => (
+                                  <li key={itemIndex} className="text-sm">
+                                    {item.trim().substring(1).trim()}
+                                  </li>
+                                ))}
+                            </ul>
+                          );
+                        }
+
+                        // Handle regular paragraphs
+                        return (
+                          <p key={index} className="mb-3 last:mb-0">
+                            {paragraph.trim()}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Fade overlay when collapsed */}
+                  {!isDescriptionExpanded && (
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-muted/30 to-transparent pointer-events-none" />
+                  )}
+                </div>
+              )}
             </div>
           </CardDescription>
         </CardHeader>

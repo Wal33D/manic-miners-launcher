@@ -117,8 +117,8 @@ describe('Latest Version Operations Tests', () => {
 
       // Start install
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: unknown) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('download-latest-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest' });
@@ -148,8 +148,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const errorUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: unknown) => {
-        errorUpdates.push(data as ProgressEvent);
+      mockAPI.receive('download-latest-progress', (...args: unknown[]) => {
+        errorUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest' });
@@ -172,8 +172,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('download-latest-progress', (data: unknown) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('download-latest-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('download-latest-version', { version: 'latest', forceDownload: false });
@@ -205,8 +205,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('verify-repair-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -236,8 +236,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('verify-repair-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -259,8 +259,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const errorUpdates: ProgressEvent[] = [];
-      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        errorUpdates.push(data as ProgressEvent);
+      mockAPI.receive('verify-repair-progress', (...args: unknown[]) => {
+        errorUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('verify-and-repair-installation', { version: 'latest' });
@@ -308,8 +308,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('delete-latest-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -342,8 +342,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('delete-latest-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -361,8 +361,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const errorUpdates: ProgressEvent[] = [];
-      mockAPI.receive('delete-latest-progress', (data: ProgressEvent) => {
-        errorUpdates.push(data as ProgressEvent);
+      mockAPI.receive('delete-latest-progress', (...args: unknown[]) => {
+        errorUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('delete-latest-version', { version: 'latest' });
@@ -404,8 +404,8 @@ describe('Latest Version Operations Tests', () => {
       });
 
       const progressUpdates: ProgressEvent[] = [];
-      mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('update-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('update-latest-version', { version: 'latest' });
@@ -437,12 +437,12 @@ describe('Latest Version Operations Tests', () => {
       const progressUpdates: ProgressEvent[] = [];
       const errorUpdates: ProgressEvent[] = [];
 
-      mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        progressUpdates.push(data as ProgressEvent);
+      mockAPI.receive('update-progress', (...args: unknown[]) => {
+        progressUpdates.push(args[0] as ProgressEvent);
       });
 
-      mockAPI.receive('update-error', (data: ProgressEvent) => {
-        errorUpdates.push(data as ProgressEvent);
+      mockAPI.receive('update-error', (...args: unknown[]) => {
+        errorUpdates.push(args[0] as ProgressEvent);
       });
 
       mockAPI.send('update-latest-version', { version: 'latest' });
@@ -479,12 +479,12 @@ describe('Latest Version Operations Tests', () => {
       const verifyUpdates: ProgressEvent[] = [];
       const updateUpdates: ProgressEvent[] = [];
 
-      mockAPI.receive('verify-repair-progress', (data: ProgressEvent) => {
-        verifyUpdates.push(data as ProgressEvent);
+      mockAPI.receive('verify-repair-progress', (...args: unknown[]) => {
+        verifyUpdates.push(args[0] as ProgressEvent);
       });
 
-      mockAPI.receive('update-progress', (data: ProgressEvent) => {
-        updateUpdates.push(data as ProgressEvent);
+      mockAPI.receive('update-progress', (...args: unknown[]) => {
+        updateUpdates.push(args[0] as ProgressEvent);
       });
 
       // Start both operations
