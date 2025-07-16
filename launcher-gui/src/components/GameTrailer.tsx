@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Play } from 'lucide-react';
 import { getApiUrl, ENV } from '@/config/environment';
 import { logger } from '@/utils/frontendLogger';
-import { LoadingState } from '@/components/ui/loading-state';
 
 interface Video {
   id: string;

@@ -1,5 +1,4 @@
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, Star } from 'lucide-react';
 import { GameVersion } from '@/types/game';
 
 interface VersionDetailsProps {

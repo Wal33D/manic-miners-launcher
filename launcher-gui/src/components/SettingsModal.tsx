@@ -6,9 +6,31 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Settings, Folder, Download, Volume2, Monitor, Gamepad2 } from 'lucide-react';
+import { Settings, Folder, Download, Monitor, Gamepad2 } from 'lucide-react';
 import { logger } from '@/utils/frontendLogger';
-import { useFocusTrap } from '@/hooks/useFocusTrap';
+
+// Define the Directories type inline for the settings modal
+interface Directories {
+  launcherInstallPath: string;
+  launcherCachePath: string;
+  launcherLogsPath: string;
+  levelsPath: string;
+  levelsBackupPath: string;
+  logsPath: string;
+  configPath: string;
+  configIniPath: string;
+  saveGamesPath: string;
+  LRRPath: string;
+  profilesPath: string;
+  minersPath: string;
+  backupSavesPath: string;
+}
+
+interface DirectoriesResponse {
+  status: boolean;
+  message: string;
+  directories?: Directories;
+}
 
 interface SettingsModalProps {
   open: boolean;
@@ -28,7 +50,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     if (!window.electronAPI) return;
 
     window.electronAPI.send('get-directories');
-    window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+    window.electronAPI.receiveOnce('get-directories', (dirResult: DirectoriesResponse) => {
       if (dirResult?.status) {
         setInstallPath(dirResult.directories.launcherInstallPath);
       }
@@ -63,7 +85,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const handleReset = () => {
     if (window.electronAPI) {
       window.electronAPI.send('get-directories');
-      window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      window.electronAPI.receiveOnce('get-directories', (dirResult: DirectoriesResponse) => {
         if (dirResult?.status) {
           setInstallPath(dirResult.directories.launcherInstallPath);
         } else {

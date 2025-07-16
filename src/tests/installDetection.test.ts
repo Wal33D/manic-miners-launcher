@@ -25,7 +25,7 @@ describe('Install Detection Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(testDir, { recursive: true });
-    } catch (error) {
+    } catch (_error) {
       // Ignore cleanup errors
     }
 

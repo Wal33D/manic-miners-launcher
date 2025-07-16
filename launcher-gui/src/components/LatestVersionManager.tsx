@@ -3,13 +3,11 @@ import { useLatestVersion } from '@/contexts/LatestVersionContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, Settings, ChevronDown, ExternalLink } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ExternalLink } from 'lucide-react';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { logger } from '@/utils/frontendLogger';
 import { useAssets } from '@/hooks/useAssets';
-import { useIpcListener } from '@/hooks/useIpcListener';
 
 /**
  * Manages the latest version of Manic Miners including download, installation, and launching
@@ -45,7 +43,7 @@ export function LatestVersionManager() {
   const [isCreatingShortcuts, setIsCreatingShortcuts] = useState(false);
 
   // State for version information - latest version is always "latest"
-  const [latestVersion, setLatestVersion] = useState({
+  const [latestVersion] = useState({
     version: 'latest', // Use 'latest' instead of hardcoded version
     title: 'ManicMiners',
     displayName: 'Manic Miners (Latest)',
@@ -56,7 +54,6 @@ export function LatestVersionManager() {
     experimental: false,
     coverImage: getAssetUrl('manic-miners-cover-image.png'),
   });
-  const [isLoadingVersion, setIsLoadingVersion] = useState(false);
 
   // Note: Removed itch.io data.json fetch due to CSP restrictions and limited usefulness
 
@@ -79,14 +76,14 @@ export function LatestVersionManager() {
       let responseReceived = false;
 
       // Set up listener first
-      const handleVersionInfo = (data: any) => {
+      const handleVersionInfo = (data: { versions?: GameVersion[]; error?: string }) => {
         responseReceived = true;
         setIsCheckingInstallation(false);
 
         if (data?.versions) {
           // Look for installed version matching our latest version
           const identifier = 'latest'; // Use 'latest' as the identifier
-          const installedVersion = data.versions.find((v: any) => v.identifier === identifier && v.directory);
+          const installedVersion = data.versions.find((v: GameVersion) => v.identifier === identifier && v.directory);
           setIsInstalled(!!installedVersion);
           logger.stateLog('LatestVersionManager', 'Installation check result', {
             isInstalled: !!installedVersion,
@@ -183,7 +180,7 @@ export function LatestVersionManager() {
       };
 
       // Listen for completion
-      window.electronAPI.receive('download-latest-progress', (progressData: any) => {
+      window.electronAPI.receive('download-latest-progress', (progressData: { status?: string; progress?: number }) => {
         if (progressData.progress >= 100) {
           setIsDownloading(false);
           cleanupDownload();
@@ -191,7 +188,7 @@ export function LatestVersionManager() {
       });
 
       // Listen for errors
-      window.electronAPI.receive('download-latest-error', (error: any) => {
+      window.electronAPI.receive('download-latest-error', (error: { message?: string }) => {
         logger.error('LatestVersionManager', 'Download error', { error });
         setIsDownloading(false);
         cleanupDownload();
@@ -290,7 +287,7 @@ export function LatestVersionManager() {
         };
 
         // Listen for completion
-        window.electronAPI.receive('create-shortcuts-progress', (progressData: any) => {
+        window.electronAPI.receive('create-shortcuts-progress', (progressData: { status?: string; progress?: number }) => {
           if (progressData.progress >= 100) {
             setIsCreatingShortcuts(false);
             cleanupShortcuts();
@@ -312,7 +309,7 @@ export function LatestVersionManager() {
         });
 
         // Listen for shortcut creation errors
-        window.electronAPI.receive('create-shortcuts-error', (error: any) => {
+        window.electronAPI.receive('create-shortcuts-error', (error: { message?: string }) => {
           setIsCreatingShortcuts(false);
           cleanupShortcuts();
 

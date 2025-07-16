@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { logger } from '@/utils/frontendLogger';
+import { ProgressStatus } from '@/types/api';
 
 interface ArchivedVersionContextType {
   // Operation states
@@ -55,7 +56,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
     if (!window.electronAPI) return;
 
     // Enhanced download progress listener to handle both download and repair
-    const handleDownloadProgressEnhanced = (data: any) => {
+    const handleDownloadProgressEnhanced = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         // Check if this is a repair operation based on current state
         if (isRepairing) {
@@ -98,7 +99,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
     };
 
     // Delete progress listener for archived versions
-    const handleDeleteProgress = (data: any) => {
+    const handleDeleteProgress = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Uninstalling...');
@@ -125,7 +126,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
     };
 
     // Error handlers
-    const handleDownloadError = (error: any) => {
+    const handleDownloadError = (error: unknown) => {
       logger.error('ArchivedVersionContext', 'Download error', { error });
       setIsDownloading(false);
       setOperationType(null);
@@ -134,7 +135,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
       setCurrentVersionId(null);
     };
 
-    const handleRepairError = (error: any) => {
+    const handleRepairError = (error: unknown) => {
       logger.error('ArchivedVersionContext', 'Repair error', { error });
       setIsRepairing(false);
       setOperationType(null);
@@ -143,7 +144,7 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
       setCurrentVersionId(null);
     };
 
-    const handleDeleteError = (error: any) => {
+    const handleDeleteError = (error: unknown) => {
       logger.error('ArchivedVersionContext', 'Delete error', { error });
       setIsDeleting(false);
       setOperationType(null);

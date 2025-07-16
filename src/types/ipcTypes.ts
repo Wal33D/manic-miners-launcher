@@ -74,7 +74,7 @@ export type IpcChannelResponse<T extends keyof IpcChannelResponseMap> = IpcChann
 export type IpcHandler<T extends keyof IpcChannelDataMap> = (event: Electron.IpcMainEvent, data: IpcChannelData<T>) => void | Promise<void>;
 
 // Typed IPC invoke handler function
-export type IpcInvokeHandler<T extends keyof IpcChannelDataMap, R = any> = (
+export type IpcInvokeHandler<T extends keyof IpcChannelDataMap, R = unknown> = (
   event: Electron.IpcMainInvokeEvent,
   data: IpcChannelData<T>
 ) => R | Promise<R>;

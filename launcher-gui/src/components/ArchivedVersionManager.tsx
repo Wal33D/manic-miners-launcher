@@ -1,19 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useArchivedVersion } from '@/contexts/ArchivedVersionContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { Progress } from '@/components/ui/progress';
 import { logger } from '@/utils/frontendLogger';
-import { useAssets } from '@/hooks/useAssets';
 import { getApiUrl, ENV } from '@/config/environment';
 import { sortByVersion } from '@/utils/version';
 
 import { GameVersion } from '@/types/game';
-import type { Version, VersionsResponse } from '@/types/api';
+import type { VersionsResponse } from '@/types/api';
 
 interface ArchivedVersionManagerProps {
   selectedVersion?: string;
@@ -75,8 +74,6 @@ export function ArchivedVersionManager({
   onVersionChange: externalOnVersionChange,
   externalVersionControl = false,
 }: ArchivedVersionManagerProps = {}) {
-  const { getAssetUrl } = useAssets();
-
   // Use context for persistent state
   const {
     isDownloading,
@@ -88,7 +85,6 @@ export function ArchivedVersionManager({
     operationProgress,
     operationStatus,
     operationType,
-    currentVersionId,
     installedVersions,
     setInstalledVersions,
   } = useArchivedVersion();
@@ -135,14 +131,14 @@ export function ArchivedVersionManager({
     if (window.electronAPI) {
       // Handle directories
       window.electronAPI.send('get-directories');
-      window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      window.electronAPI.receiveOnce('get-directories', (dirResult: { status: boolean; directories: { launcherInstallPath: string } }) => {
         if (dirResult?.status) {
           setInstallPath(dirResult.directories.launcherInstallPath);
         }
       });
 
       // Set up persistent listener for version information updates
-      const handleVersionUpdate = (data: any) => {
+      const handleVersionUpdate = (data: { versions: GameVersion[]; defaultVersion?: GameVersion }) => {
         if (data?.versions) {
           // All versions from this endpoint are archived versions only
           const sorted = sortByVersion(data.versions);
@@ -154,7 +150,7 @@ export function ArchivedVersionManager({
               setSelectedVersion(sorted[0].version);
             }
           }
-          const installed = new Set<string>(sorted.filter((v: any) => v.directory).map((v: any) => v.version));
+          const installed = new Set<string>(sorted.filter((v: GameVersion) => v.directory).map((v: GameVersion) => v.version));
           setInstalledVersions(installed);
         }
         setLoading(false);
@@ -195,7 +191,7 @@ export function ArchivedVersionManager({
         version: selectedVersionData.identifier,
         downloadPath: installPath,
       });
-      window.electronAPI.receiveOnce('download-version', (result: any) => {
+      window.electronAPI.receiveOnce('download-version', (result: { error?: string }) => {
         if (result?.error) {
           setIsDownloading(false);
         }
@@ -209,7 +205,7 @@ export function ArchivedVersionManager({
     setIsDeleting(true);
 
     // Listen for deletion result
-    window.electronAPI.receiveOnce('delete-version', (result: any) => {
+    window.electronAPI.receiveOnce('delete-version', (result: { error?: string }) => {
       if (result?.error) {
         setIsDeleting(false);
       }
@@ -225,7 +221,7 @@ export function ArchivedVersionManager({
     setIsRepairing(true);
 
     // Listen for repair result
-    window.electronAPI.receiveOnce('repair-version', (result: any) => {
+    window.electronAPI.receiveOnce('repair-version', (result: { error?: string }) => {
       if (result?.error) {
         setIsRepairing(false);
       }

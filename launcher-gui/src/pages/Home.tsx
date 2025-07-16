@@ -3,21 +3,13 @@ import { GameTrailer } from '@/components/GameTrailer';
 import { NewsPanel } from '@/components/NewsPanel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, Star, Gamepad2, Download, Users, AlertTriangle, Monitor, FolderOpen, ExternalLink } from 'lucide-react';
+import { Info, Star, AlertTriangle } from 'lucide-react';
 import { useAssets } from '@/hooks/useAssets';
 
 const Home = () => {
   const { getAssetUrl } = useAssets();
 
-  // Get asset URLs from endpoint
-  const backgroundImage = getAssetUrl('manic-miners-background.jpg');
-  const logoImage = getAssetUrl('manic-miners.png');
-  const lmsImage = getAssetUrl('manic-miners-lms.png');
-  const supportStationImage = getAssetUrl('manic-miners-supportstation.png');
-  const teleportStationImage = getAssetUrl('manic-miners-teleportstation.png');
-  const toolStoreImage = getAssetUrl('manic-miners-toolstore.png');
-  const coverImage = getAssetUrl('manic-miners-cover-image.png');
-  const altImage = getAssetUrl('manic-miners-alt.png');
+  // Get asset URLs from endpoint (removed unused variables to reduce ESLint warnings)
   return (
     <div className="h-full flex flex-col overflow-y-auto relative">
       <div className="container mx-auto p-6 flex-1 min-h-0">

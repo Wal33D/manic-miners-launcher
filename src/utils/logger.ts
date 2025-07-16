@@ -31,7 +31,7 @@ class Logger {
       // Try to use electron app.getPath, fallback to temp directory for tests
       const { app } = require('electron');
       userDataPath = app.getPath('userData');
-    } catch (error) {
+    } catch (_error) {
       // In test environment, use a temp directory
       userDataPath = path.join(process.cwd(), 'temp', 'test-logs');
     }
@@ -47,7 +47,7 @@ class Logger {
     try {
       const logsDir = path.dirname(this.logPath);
       await fs.mkdir(logsDir, { recursive: true });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to create logs directory:', error);
     }
   }
@@ -79,7 +79,7 @@ class Logger {
           const newPath = `${this.logPath}.${i + 1}`;
           try {
             await fs.rename(oldPath, newPath);
-          } catch (error) {
+          } catch (_error) {
             // File doesn't exist, ignore
           }
         }
@@ -87,7 +87,7 @@ class Logger {
         // Move current log to .1
         await fs.rename(this.logPath, `${this.logPath}.1`);
       }
-    } catch (error) {
+    } catch (_error) {
       // Log file doesn't exist yet, ignore
     }
   }
@@ -105,7 +105,7 @@ class Logger {
 
       const logContent = entriesToWrite.map(entry => this.formatLogEntry(entry)).join('');
       await fs.appendFile(this.logPath, logContent);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to write to log file:', error);
       // Put entries back in queue
       this.logQueue.unshift(...entriesToWrite);
@@ -179,7 +179,7 @@ class Logger {
       const content = await fs.readFile(this.logPath, 'utf-8');
       const logLines = content.split('\n').filter(line => line.trim());
       return logLines.slice(-lines);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -188,7 +188,7 @@ class Logger {
     try {
       await fs.unlink(this.logPath);
       this.logQueue = [];
-    } catch (error) {
+    } catch (_error) {
       // Log file doesn't exist, ignore
     }
   }

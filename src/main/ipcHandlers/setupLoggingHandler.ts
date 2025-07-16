@@ -6,7 +6,7 @@ import { withIpcInvokeHandler } from './withIpcHandler';
 interface FrontendLogData {
   category: string;
   message: string;
-  data?: any;
+  data?: unknown;
   level: 'info' | 'warn' | 'error' | 'debug';
   timestamp: number;
 }

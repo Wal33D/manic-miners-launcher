@@ -7,6 +7,24 @@ import { useArchivedVersion } from '@/contexts/ArchivedVersionContext';
 import { GameVersion } from '@/types/game';
 import type { VersionsResponse } from '@/types/api';
 
+// Response type for archived versions with enhanced data
+interface ArchivedVersionsResponse {
+  versions: GameVersion[];
+  defaultVersion?: GameVersion;
+  status?: boolean;
+  message?: string;
+}
+
+// Directory response type
+interface DirectoriesResponse {
+  status: boolean;
+  message: string;
+  directories?: {
+    launcherInstallPath: string;
+    [key: string]: string;
+  };
+}
+
 /**
  * Hook for managing archived versions data and selection
  */
@@ -44,14 +62,14 @@ export function useArchivedVersions() {
     // For Electron, use the API calls if available
     if (window.electronAPI) {
       window.electronAPI.send('get-directories');
-      window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      window.electronAPI.receiveOnce('get-directories', (dirResult: DirectoriesResponse) => {
         if (dirResult?.status) {
           setInstallPath(dirResult.directories.launcherInstallPath);
         }
       });
 
       window.electronAPI.send('request-archived-versions-information');
-      window.electronAPI.receiveOnce('request-archived-versions-information', (data: any) => {
+      window.electronAPI.receiveOnce('request-archived-versions-information', (data: ArchivedVersionsResponse) => {
         if (data?.versions) {
           // All versions from this endpoint are archived versions only
           const sorted = sortByVersion(data.versions);
@@ -61,7 +79,7 @@ export function useArchivedVersions() {
           } else if (sorted.length > 0) {
             setSelectedVersion(sorted[0].version);
           }
-          const installed = new Set<string>(sorted.filter((v: any) => v.directory).map((v: any) => v.version));
+          const installed = new Set<string>(sorted.filter((v: GameVersion) => v.directory).map((v: GameVersion) => v.version));
           setInstalledVersions(installed);
         }
         setLoading(false);

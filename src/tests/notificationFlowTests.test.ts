@@ -22,7 +22,7 @@ describe('Notification System - User Experience Excellence', () => {
   afterEach(async () => {
     try {
       await fs.rm(testDir, { recursive: true });
-    } catch (error) {
+    } catch (_error) {
       // Ignore cleanup errors
     }
 

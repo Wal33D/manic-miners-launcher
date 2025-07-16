@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { MessageSquare, ThumbsUp, ThumbsDown, Calendar } from 'lucide-react';
-import type { Comment, CommentsResponse } from '@/types/api';
+import type { CommentsResponse } from '@/types/api';
 import { logger } from '@/utils/frontendLogger';
 import { getApiUrl, ENV } from '@/config/environment';
 import { LoadingState } from '@/components/ui/loading-state';
@@ -49,7 +48,7 @@ export function Comments() {
   }
 
   if (error) {
-    return <ErrorState title="Failed to Load Comments" message={error} onRetry={fetchComments} showRetry={true} />;
+    return <ErrorState title="Failed to Load Comments" message={error} onRetry={() => window.location.reload()} showRetry={true} />;
   }
 
   return (

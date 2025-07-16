@@ -19,7 +19,7 @@ export const setupPlaySoundHandler = async (): Promise<{ status: boolean; messag
         logger.ipcLog('Playing sound effect', { soundPath });
 
         return new Promise<{ success: boolean }>((resolve, reject) => {
-          soundPlayer.play(soundPath, (err: any) => {
+          soundPlayer.play(soundPath, (err: Error | null) => {
             if (err) {
               logger.error('SOUND', 'Failed to play sound', { soundPath, error: err.message });
               reject(new Error(`Failed to play sound: ${err.message}`));

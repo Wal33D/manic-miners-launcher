@@ -26,14 +26,14 @@ if (process.env.FETCH_TIMEOUT_MS) {
 
 interface FetchResult {
   status: boolean;
-  data?: any;
+  data?: unknown;
   message: string;
 }
 
 export async function fetchServerData({ routeName = 'launcher.all' }: { routeName?: string }): Promise<FetchResult> {
   let message = 'Failed to fetch data.';
   let status = false;
-  let data: any;
+  let data: unknown;
 
   try {
     // Get directories asynchronously and safely extract the cache path

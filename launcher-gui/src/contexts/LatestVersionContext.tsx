@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { logger } from '@/utils/frontendLogger';
+import { ProgressStatus } from '@/types/api';
 
 interface LatestVersionContextType {
   // Operation states
@@ -59,7 +60,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     if (!window.electronAPI) return;
 
     // Download progress listener
-    const handleDownloadProgress = (data: any) => {
+    const handleDownloadProgress = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Downloading...');
@@ -79,7 +80,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     };
 
     // Update progress listener
-    const handleUpdateProgress = (data: any) => {
+    const handleUpdateProgress = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Updating...');
@@ -97,7 +98,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     };
 
     // Verify/repair progress listener
-    const handleVerifyProgress = (data: any) => {
+    const handleVerifyProgress = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Verifying...');
@@ -115,7 +116,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     };
 
     // Delete progress listener
-    const handleDeleteProgress = (data: any) => {
+    const handleDeleteProgress = (data: ProgressStatus) => {
       if (data.progress !== undefined) {
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Uninstalling...');
@@ -134,7 +135,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     };
 
     // Error handlers
-    const handleDownloadError = (error: any) => {
+    const handleDownloadError = (error: unknown) => {
       logger.error('LatestVersionContext', 'Download error', { error });
       setIsDownloading(false);
       setOperationType(null);
@@ -142,7 +143,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
       setOperationStatus('');
     };
 
-    const handleUpdateError = (error: any) => {
+    const handleUpdateError = (error: unknown) => {
       logger.error('LatestVersionContext', 'Update error', { error });
       setIsUpdating(false);
       setOperationType(null);
@@ -150,7 +151,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
       setOperationStatus('');
     };
 
-    const handleVerifyError = (error: any) => {
+    const handleVerifyError = (error: unknown) => {
       logger.error('LatestVersionContext', 'Verify error', { error });
       setIsVerifying(false);
       setOperationType(null);
@@ -158,7 +159,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
       setOperationStatus('');
     };
 
-    const handleDeleteError = (error: any) => {
+    const handleDeleteError = (error: unknown) => {
       logger.error('LatestVersionContext', 'Delete error', { error });
       setIsDeleting(false);
       setOperationType(null);

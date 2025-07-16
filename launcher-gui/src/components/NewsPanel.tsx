@@ -4,9 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, Calendar, ThumbsUp, ThumbsDown, ExternalLink } from 'lucide-react';
-import type { NewsItem, NewsResponse, Comment, CommentsResponse } from '@/types/api';
+import type { NewsItem, CommentsResponse } from '@/types/api';
 import { fetchWithValidation, NewsResponseSchema, CommentsResponseSchema } from '@/utils/validation';
-import { z } from 'zod';
 import { getApiUrl, ENV } from '@/config/environment';
 
 export const NewsPanel = React.memo(function NewsPanel() {

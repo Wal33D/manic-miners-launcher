@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Link, ExternalLink, FolderOpen, CheckCircle, AlertCircle } from 'lucide-react';
+import { ProgressStatus } from '@/types/api';
+import { logger } from '@/utils/frontendLogger';
 
 export function ShortcutManager() {
   const [isCreating, setIsCreating] = useState(false);
@@ -26,7 +28,7 @@ export function ShortcutManager() {
 
     try {
       // Listen for completion only (progress is handled globally)
-      window.electronAPI.receive('create-shortcuts-progress', (progressData: any) => {
+      window.electronAPI.receive('create-shortcuts-progress', (progressData: ProgressStatus) => {
         if (progressData.progress >= 100) {
           setIsCreating(false);
           setLastResult({

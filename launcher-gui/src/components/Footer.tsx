@@ -4,6 +4,7 @@ import { Globe, MessageSquare, Users, Play, Facebook, HelpCircle, Mail } from 'l
 import { InlineError } from '@/components/ui/error-state';
 import { api } from '@/services/api';
 import type { UrlData } from '@/types/api';
+import { logger } from '@/utils/frontendLogger';
 
 const iconMap = {
   Website: Globe,
@@ -23,7 +24,7 @@ export const Footer = React.memo(function Footer() {
     api
       .getUrls()
       .then(data => setUrls(data))
-      .catch(error => {
+      .catch(() => {
         setError('Failed to load social links');
       });
   }, []);

@@ -128,7 +128,7 @@ describe('IPC Handlers Integration Tests', () => {
             event.sender.send('versions-updated', {});
             return { downloaded: true, message: 'Version already installed' };
           }
-        } catch (error) {
+        } catch (_error) {
           // Installation doesn't exist, proceed with download
         }
         return { downloaded: false, message: 'Download started' };
@@ -173,7 +173,7 @@ describe('IPC Handlers Integration Tests', () => {
               status: 'Removing existing installation...',
               progress: 5,
             });
-          } catch (error) {
+          } catch (_error) {
             // Ignore errors
           }
 
@@ -278,7 +278,7 @@ describe('IPC Handlers Integration Tests', () => {
                 status: `Deleted: ${path.basename(filePath)}`,
                 progress,
               });
-            } catch (error) {
+            } catch (_error) {
               // Continue on error
             }
           }
@@ -290,7 +290,7 @@ describe('IPC Handlers Integration Tests', () => {
               status: 'Removed latest directory',
               progress: 95,
             });
-          } catch (error) {
+          } catch (_error) {
             // Directory might not be empty
           }
 
@@ -301,7 +301,7 @@ describe('IPC Handlers Integration Tests', () => {
           event.sender.send('versions-updated', {});
 
           return { success: true, message: 'Latest version uninstalled successfully' };
-        } catch (error) {
+        } catch (_error) {
           event.sender.send('delete-latest-progress', {
             status: 'No installation found to remove',
             progress: 100,
@@ -346,7 +346,7 @@ describe('IPC Handlers Integration Tests', () => {
         try {
           await fs.access(installPath);
           // Installation exists logic...
-        } catch (error) {
+        } catch (_error) {
           event.sender.send('delete-latest-progress', {
             status: 'No installation found to remove',
             progress: 100,
@@ -394,7 +394,7 @@ describe('IPC Handlers Integration Tests', () => {
             status: 'Removing existing installation...',
             progress: 5,
           });
-        } catch (error) {
+        } catch (_error) {
           // Directory doesn't exist
         }
 
@@ -459,10 +459,10 @@ describe('IPC Handlers Integration Tests', () => {
           event.sender.send('latest-version-information-response', {
             versions: result.installedVersions || [],
           });
-        } catch (error) {
+        } catch (_error) {
           event.sender.send('request-latest-version-information', {
             versions: [],
-            error: (error as Error).message,
+            error: (_error as Error).message,
           });
         }
       });
@@ -493,10 +493,10 @@ describe('IPC Handlers Integration Tests', () => {
           event.sender.send('latest-version-information-response', {
             versions: result.installedVersions || [],
           });
-        } catch (error) {
+        } catch (_error) {
           event.sender.send('request-latest-version-information', {
             versions: [],
-            error: (error as Error).message,
+            error: (_error as Error).message,
           });
         }
       });
@@ -534,8 +534,8 @@ describe('IPC Handlers Integration Tests', () => {
 
       try {
         await ipcMain.simulateCall('delete-latest-version', { version: 'latest' });
-      } catch (error) {
-        expect((error as Error).message).to.include('Permission denied');
+      } catch (_error) {
+        expect((_error as Error).message).to.include('Permission denied');
       }
 
       expect(progressEvents.some(event => event.status.includes('Permission denied'))).to.be.true;
@@ -565,8 +565,8 @@ describe('IPC Handlers Integration Tests', () => {
 
       try {
         await ipcMain.simulateCall('download-latest-version', { version: 'latest' });
-      } catch (error) {
-        expect((error as Error).message).to.include('Network connection timeout');
+      } catch (_error) {
+        expect((_error as Error).message).to.include('Network connection timeout');
       }
 
       expect(progressEvents.some(event => event.status.includes('Network connection timeout'))).to.be.true;

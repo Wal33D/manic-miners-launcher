@@ -94,7 +94,7 @@ export function useFocusTrap(
     };
 
     // Handle focus leaving the container
-    const handleFocusOut = (event: FocusEvent) => {
+    const handleFocusOut = () => {
       // Use setTimeout to check focus after the focus event has completed
       setTimeout(() => {
         if (!container.contains(document.activeElement)) {

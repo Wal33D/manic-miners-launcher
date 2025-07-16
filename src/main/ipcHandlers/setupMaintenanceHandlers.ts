@@ -92,7 +92,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
 
             // Small delay to make progress visible
             await new Promise(resolve => setTimeout(resolve, 30));
-          } catch (error: any) {
+          } catch (error: unknown) {
             logger.warn('DELETE', `Could not delete ${filePath}`, { error: error.message });
           }
         }
@@ -106,7 +106,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
             fileName: versionIdentifier,
           });
           logger.info('DELETE', `Removed ${versionIdentifier} directory`, { dirPath });
-        } catch (error: any) {
+        } catch (error: unknown) {
           logger.warn('DELETE', `Could not remove ${versionIdentifier} directory`, { error: error.message });
         }
 

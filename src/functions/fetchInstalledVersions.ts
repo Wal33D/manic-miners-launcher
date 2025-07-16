@@ -62,7 +62,7 @@ export const fetchInstalledVersions = async (): Promise<{
 
       if (versionMap.has(dir)) {
         // Update existing version object from server database
-        const versionInfo: any = versionMap.get(dir);
+        const versionInfo: { version: string; identifier: string } | undefined = versionMap.get(dir);
         versionInfo.directory = fullDirPath;
         versionInfo.executablePath = exeFiles[0] || '';
         versionInfo.installationSize = totalSize;

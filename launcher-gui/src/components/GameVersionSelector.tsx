@@ -11,7 +11,7 @@ import { sortByVersion } from '@/utils/version';
 import { useArchivedVersion } from '@/contexts/ArchivedVersionContext';
 
 import { GameVersion } from '@/types/game';
-import type { Version, VersionsResponse } from '@/types/api';
+import type { VersionsResponse } from '@/types/api';
 
 export function GameVersionSelector() {
   const [versions, setVersions] = useState<GameVersion[]>([]);
@@ -30,7 +30,6 @@ export function GameVersionSelector() {
     operationProgress,
     operationStatus,
     operationType,
-    currentVersionId,
     installedVersions,
     setInstalledVersions,
   } = useArchivedVersion();
@@ -60,28 +59,31 @@ export function GameVersionSelector() {
     // For Electron, use the API calls if available
     if (window.electronAPI) {
       window.electronAPI.send('get-directories');
-      window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
+      window.electronAPI.receiveOnce('get-directories', (dirResult: { status: boolean; directories: { launcherInstallPath: string } }) => {
         if (dirResult?.status) {
           setInstallPath(dirResult.directories.launcherInstallPath);
         }
       });
 
       window.electronAPI.send('request-archived-versions-information');
-      window.electronAPI.receiveOnce('request-archived-versions-information', (data: any) => {
-        if (data?.versions) {
-          // All versions from this endpoint are archived versions only
-          const sorted = sortByVersion(data.versions);
-          setVersions(sorted);
-          if (data.defaultVersion) {
-            setSelectedVersion(data.defaultVersion.version);
-          } else if (sorted.length > 0) {
-            setSelectedVersion(sorted[0].version);
+      window.electronAPI.receiveOnce(
+        'request-archived-versions-information',
+        (data: { versions: GameVersion[]; defaultVersion?: GameVersion }) => {
+          if (data?.versions) {
+            // All versions from this endpoint are archived versions only
+            const sorted = sortByVersion(data.versions);
+            setVersions(sorted);
+            if (data.defaultVersion) {
+              setSelectedVersion(data.defaultVersion.version);
+            } else if (sorted.length > 0) {
+              setSelectedVersion(sorted[0].version);
+            }
+            const installed = new Set<string>(sorted.filter((v: GameVersion) => v.directory).map((v: GameVersion) => v.version));
+            setInstalledVersions(installed);
           }
-          const installed = new Set<string>(sorted.filter((v: any) => v.directory).map((v: any) => v.version));
-          setInstalledVersions(installed);
+          setLoading(false);
         }
-        setLoading(false);
-      });
+      );
     } else {
       // For web preview, fetch from the API
       fetchVersions();
@@ -106,7 +108,7 @@ export function GameVersionSelector() {
         version: selectedVersionData.identifier,
         downloadPath: installPath,
       });
-      window.electronAPI.receiveOnce('download-version', (result: any) => {
+      window.electronAPI.receiveOnce('download-version', (result: { error?: string }) => {
         if (result?.error) {
           setIsDownloading(false);
         }
@@ -120,7 +122,7 @@ export function GameVersionSelector() {
     setIsDeleting(true);
 
     // Listen for deletion result
-    window.electronAPI.receiveOnce('delete-version', (result: any) => {
+    window.electronAPI.receiveOnce('delete-version', (result: { error?: string }) => {
       if (result?.error) {
         setIsDeleting(false);
       }
@@ -135,7 +137,7 @@ export function GameVersionSelector() {
     setIsRepairing(true);
 
     // Listen for repair result
-    window.electronAPI.receiveOnce('repair-version', (result: any) => {
+    window.electronAPI.receiveOnce('repair-version', (result: { error?: string }) => {
       if (result?.error) {
         setIsRepairing(false);
       }
@@ -253,13 +255,7 @@ export function GameVersionSelector() {
                 isDownloading={isDownloading}
                 isRepairing={isRepairing}
                 isDeleting={isDeleting}
-                isCurrentVersion={
-                  selectedVersionData &&
-                  currentVersionId &&
-                  (selectedVersionData.identifier === currentVersionId ||
-                    currentVersionId.includes(selectedVersionData.identifier) ||
-                    selectedVersionData.identifier.includes(currentVersionId))
-                }
+                isCurrentVersion={false}
               />
             </CardContent>
           </Card>
@@ -333,13 +329,7 @@ export function GameVersionSelector() {
                 isDownloading={isDownloading}
                 isRepairing={isRepairing}
                 isDeleting={isDeleting}
-                isCurrentVersion={
-                  selectedVersionData &&
-                  currentVersionId &&
-                  (selectedVersionData.identifier === currentVersionId ||
-                    currentVersionId.includes(selectedVersionData.identifier) ||
-                    selectedVersionData.identifier.includes(currentVersionId))
-                }
+                isCurrentVersion={false}
               />
             </CardContent>
           </Card>

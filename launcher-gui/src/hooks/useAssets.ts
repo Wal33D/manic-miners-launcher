@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { ImagesResponse, Assets } from '@/types/api';
+import type { Assets } from '@/types/api';
 import { ENV, getApiUrl } from '@/config/environment';
 
 const SERVER_BASE_URL = ENV.API_BASE_URL;
@@ -41,7 +41,7 @@ export function useAssets() {
 
         // Map each image to its cloudinary URL or internal URL
         for (const [filename, imageData] of Object.entries(data.images)) {
-          processedAssets[filename] = (imageData as any).cloudinaryUrl || (imageData as any).internalUrl;
+          processedAssets[filename] = imageData.cloudinaryUrl || imageData.internalUrl;
         }
 
         // Add mappings for common asset names that might not match exactly
@@ -59,7 +59,7 @@ export function useAssets() {
         // Apply mappings
         for (const [alias, actualName] of Object.entries(assetMappings)) {
           if (data.images[actualName]) {
-            processedAssets[alias] = (data.images[actualName] as any).cloudinaryUrl || (data.images[actualName] as any).internalUrl;
+            processedAssets[alias] = data.images[actualName].cloudinaryUrl || data.images[actualName].internalUrl;
           }
         }
 

@@ -9,7 +9,7 @@ export const deleteVersion = async ({
   updateStatus,
 }: {
   versionIdentifier: string;
-  updateStatus?: (statusObj: any) => void;
+  updateStatus?: (statusObj: { status: string; progress: number }) => void;
 }): Promise<{ deleted: boolean; message: string }> => {
   try {
     const directoriesResult = await getDirectories();
@@ -81,7 +81,7 @@ export const deleteVersion = async ({
             await fs.unlink(filePath);
             return { path: filePath, type: 'file', success: true };
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           logger.warn('DELETE', `Could not delete ${filePath}`, { error: error.message });
           return { path: filePath, type: 'error', success: false, error: error.message };
         }
@@ -116,7 +116,7 @@ export const deleteVersion = async ({
         fileName: versionIdentifier,
       });
       logger.info('DELETE', `Removed ${versionIdentifier} directory`, { dirPath });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.warn('DELETE', `Could not remove ${versionIdentifier} directory`, { error: error.message });
     }
 

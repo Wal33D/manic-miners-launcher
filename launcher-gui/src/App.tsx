@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -8,8 +7,6 @@ import { LauncherHeader } from '@/components/LauncherHeader';
 import { Footer } from '@/components/Footer';
 import { LatestVersionProvider } from '@/contexts/LatestVersionContext';
 import { ArchivedVersionProvider } from '@/contexts/ArchivedVersionContext';
-
-import { logger } from './utils/frontendLogger';
 
 // Direct imports for Electron compatibility
 import Index from './pages/Index';

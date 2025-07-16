@@ -22,7 +22,7 @@ export const createShortcut = async ({
     const shortcutPath = path.join(startPath, name);
 
     // Prepare cross-platform shortcut configuration
-    const shortcutConfig: any = {};
+    const shortcutConfig: Record<string, unknown> = {};
 
     if (process.platform === 'win32') {
       shortcutConfig.windows = {

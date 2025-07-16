@@ -138,7 +138,7 @@ export async function downloadLatestVersion(options: DownloadOptions): Promise<I
           }
         });
 
-        item.once('done', (_event: any, state: string) => {
+        item.once('done', (_event: Event, state: string) => {
           // Clean up the download handler
           browserWindow!.webContents.session.removeListener('will-download', downloadHandler);
 
