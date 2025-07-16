@@ -60,34 +60,47 @@ export const deleteVersion = async ({
       fileName: versionIdentifier,
     });
 
-    // Delete files one by one with progress updates
-    for (let i = 0; i < allFiles.length; i++) {
-      const filePath = allFiles[i];
+    // Delete files in batches of 10 with progress updates
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < allFiles.length; i += BATCH_SIZE) {
+      const batch = allFiles.slice(i, i + BATCH_SIZE);
       const progress = Math.floor((i / totalFiles) * 70) + 10; // 10-80% range
 
-      try {
-        const stat = await fs.stat(filePath);
-        if (stat.isDirectory()) {
-          await fs.rmdir(filePath);
-          updateStatus?.({
-            status: `Removed directory: ${path.basename(filePath)}`,
-            progress,
-            fileName: versionIdentifier,
-          });
-        } else {
-          await fs.unlink(filePath);
-          updateStatus?.({
-            status: `Deleted: ${path.basename(filePath)}`,
-            progress,
-            fileName: versionIdentifier,
-          });
+      // Process batch concurrently
+      const batchPromises = batch.map(async filePath => {
+        try {
+          const stat = await fs.stat(filePath);
+          if (stat.isDirectory()) {
+            await fs.rmdir(filePath);
+            return { path: filePath, type: 'directory', success: true };
+          } else {
+            await fs.unlink(filePath);
+            return { path: filePath, type: 'file', success: true };
+          }
+        } catch (error: any) {
+          logger.warn('DELETE', `Could not delete ${filePath}`, { error: error.message });
+          return { path: filePath, type: 'error', success: false, error: error.message };
         }
+      });
 
-        // Small delay to make progress visible
-        await new Promise(resolve => setTimeout(resolve, 30));
-      } catch (error: any) {
-        logger.warn('DELETE', `Could not delete ${filePath}`, { error: error.message });
+      const results = await Promise.all(batchPromises);
+
+      // Report progress for the batch
+      const successfulDeletions = results.filter(r => r.success);
+      if (successfulDeletions.length > 0) {
+        const lastFile = successfulDeletions[successfulDeletions.length - 1];
+        const statusText =
+          lastFile.type === 'directory' ? `Removed directory: ${path.basename(lastFile.path)}` : `Deleted: ${path.basename(lastFile.path)}`;
+
+        updateStatus?.({
+          status: `${statusText} (${i + successfulDeletions.length}/${totalFiles})`,
+          progress,
+          fileName: versionIdentifier,
+        });
       }
+
+      // Small delay to make progress visible
+      await new Promise(resolve => setTimeout(resolve, 5));
     }
 
     // Remove the main directory

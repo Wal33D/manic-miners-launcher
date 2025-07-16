@@ -76,19 +76,22 @@ const FAQ = () => {
           {/* Launcher Info */}
           <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
             <CardContent className="p-6">
-              <p className="text-center text-muted-foreground">
-                <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience in homage to
-                Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - feel free to contribute
-                on{' '}
-                <Button
-                  variant="link"
-                  className="p-0 h-auto text-muted-foreground underline"
-                  onClick={() => window.open('https://github.com/Wal33D/manic-miners-launcher', '_blank')}
-                >
-                  GitHub
-                </Button>
-                !
-              </p>
+              <div className="text-center text-muted-foreground">
+                <p>
+                  <strong>About This Launcher:</strong> This launcher was built by Wal33D to enhance the ManicMiners experience in homage to
+                  Baraklava's hard work on creating this amazing Rock Raiders remake. This is an open source project - feel free to
+                  contribute on{' '}
+                  <a
+                    href="https://github.com/Wal33D/manic-miners-launcher"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground underline hover:text-primary transition-colors"
+                  >
+                    GitHub
+                  </a>
+                  !
+                </p>
+              </div>
             </CardContent>
           </Card>
 

@@ -115,12 +115,12 @@ export function validateIpcData<T extends keyof typeof ipcSchemas>(
   const schema = ipcSchemas[schemaKey];
   try {
     const validatedData = schema.parse(data);
-    return { isValid: true, data: validatedData };
+    return { isValid: true, data: validatedData as any };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         isValid: false,
-        error: error.errors.map(e => e.message).join(', '),
+        error: error.issues.map((e: any) => e.message).join(', '),
       };
     }
     return { isValid: false, error: 'Unknown validation error' };

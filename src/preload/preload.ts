@@ -51,6 +51,7 @@ const validReceiveChannels: IpcChannel[] = [
   IPC_CHANNELS.SET_SETTINGS,
   IPC_CHANNELS.VERIFY_VERSION,
   IPC_CHANNELS.DELETE_VERSION,
+  IPC_CHANNELS.DELETE_PROGRESS,
   IPC_CHANNELS.REPAIR_VERSION,
   IPC_CHANNELS.DOWNLOAD_LATEST_PROGRESS, // Add new channel for itch.io download progress
   IPC_CHANNELS.VERIFY_REPAIR_PROGRESS, // Add new channel for verification progress

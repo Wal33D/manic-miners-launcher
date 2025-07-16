@@ -29,7 +29,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
         logger.info('DELETE', `Starting uninstall of ${versionIdentifier}`);
 
         // Send initial progress
-        event.sender.send('delete-progress', {
+        event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
           status: `Scanning ${versionIdentifier} installation...`,
           progress: 5,
           fileName: versionIdentifier,
@@ -58,7 +58,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
 
         logger.info('DELETE', `Found ${totalFiles} items to delete in ${versionIdentifier}`);
 
-        event.sender.send('delete-progress', {
+        event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
           status: `Removing ${totalFiles} files from ${versionIdentifier}...`,
           progress: 10,
           fileName: versionIdentifier,
@@ -73,14 +73,14 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
             const stat = await fs.stat(filePath);
             if (stat.isDirectory()) {
               await fs.rmdir(filePath);
-              event.sender.send('delete-progress', {
+              event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
                 status: `Removed directory: ${path.basename(filePath)}`,
                 progress,
                 fileName: versionIdentifier,
               });
             } else {
               await fs.unlink(filePath);
-              event.sender.send('delete-progress', {
+              event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
                 status: `Deleted: ${path.basename(filePath)}`,
                 progress,
                 fileName: versionIdentifier,
@@ -97,7 +97,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
         // Remove the main directory
         try {
           await fs.rmdir(dirPath);
-          event.sender.send('delete-progress', {
+          event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
             status: `Removed ${versionIdentifier} directory`,
             progress: 85,
             fileName: versionIdentifier,
@@ -116,7 +116,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
             const zipPath = path.join(directories.launcherCachePath, info.filename);
             try {
               await fs.access(zipPath);
-              event.sender.send('delete-progress', {
+              event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
                 status: `Removing cached file: ${info.filename}`,
                 progress: 90,
                 fileName: versionIdentifier,
@@ -132,7 +132,7 @@ export const setupMaintenanceHandlers = async (): Promise<{ status: boolean; mes
           // ignore if version info cannot be fetched
         }
 
-        event.sender.send('delete-progress', {
+        event.sender.send(IPC_CHANNELS.DELETE_PROGRESS, {
           status: 'Uninstall completed successfully',
           progress: 100,
           fileName: versionIdentifier,

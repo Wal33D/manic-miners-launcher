@@ -117,15 +117,12 @@ export const ArchivedVersionProvider: React.FC<ArchivedVersionProviderProps> = (
             setOperationType(null);
             setOperationProgress(0);
             setOperationStatus('');
-            // Remove the version from installed versions
-            if (data.fileName) {
-              setInstalledVersions(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(data.fileName);
-                return newSet;
-              });
-            }
             setCurrentVersionId(null);
+
+            // Trigger a refresh of version information to update installed status
+            if (window.electronAPI) {
+              window.electronAPI.send('request-archived-versions-information');
+            }
           }, 1000);
         }
       }

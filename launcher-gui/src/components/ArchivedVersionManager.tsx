@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ExternalLink, ChevronDown } from 'lucide-react';
+import { Play, Download, RotateCcw, Check, Trash2, RefreshCw, ChevronDown } from 'lucide-react';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
 import { Progress } from '@/components/ui/progress';
 import { logger } from '@/utils/frontendLogger';
@@ -48,7 +48,18 @@ export function VersionSelector({ versions, selectedVersion, onVersionChange, in
           {versions.map(version => (
             <SelectItem key={version.version} value={version.version}>
               <div className="flex items-center justify-between w-full">
-                <span>{version.displayName}</span>
+                <div className="flex items-center gap-2">
+                  <span>{version.displayName}</span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-xs ${
+                      version.experimental
+                        ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                        : 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    }`}
+                  >
+                    {version.experimental ? 'Exp' : 'Stable'}
+                  </span>
+                </div>
                 {installedVersions.has(version.version) && <Check className="w-4 h-4 ml-2 text-green-500" />}
               </div>
             </SelectItem>
@@ -85,7 +96,6 @@ export function ArchivedVersionManager({
   // Local state for UI-only concerns
   const [isLaunching, setIsLaunching] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isCreatingShortcuts, setIsCreatingShortcuts] = useState(false);
   const [loading, setLoading] = useState(true);
   const [installPath, setInstallPath] = useState<string>('');
 
@@ -122,6 +132,7 @@ export function ArchivedVersionManager({
 
     // For Electron, use the API calls if available
     if (window.electronAPI) {
+      // Handle directories
       window.electronAPI.send('get-directories');
       window.electronAPI.receiveOnce('get-directories', (dirResult: any) => {
         if (dirResult?.status) {
@@ -129,8 +140,8 @@ export function ArchivedVersionManager({
         }
       });
 
-      window.electronAPI.send('request-archived-versions-information');
-      window.electronAPI.receiveOnce('request-archived-versions-information', (data: any) => {
+      // Set up persistent listener for version information updates
+      const handleVersionUpdate = (data: any) => {
         if (data?.versions) {
           // All versions from this endpoint are archived versions only
           const sorted = sortByVersion(data.versions);
@@ -146,7 +157,18 @@ export function ArchivedVersionManager({
           setInstalledVersions(installed);
         }
         setLoading(false);
-      });
+      };
+
+      // Set up persistent listener
+      window.electronAPI.receive('request-archived-versions-information', handleVersionUpdate);
+
+      // Request initial data
+      window.electronAPI.send('request-archived-versions-information');
+
+      // Cleanup listener on unmount
+      return () => {
+        window.electronAPI.removeAllListeners('request-archived-versions-information');
+      };
     } else {
       // For web preview, fetch from the API
       fetchVersions();
@@ -212,26 +234,9 @@ export function ArchivedVersionManager({
     window.electronAPI.send('repair-version', selectedVersionData.identifier);
   };
 
-  const handleCreateShortcuts = async () => {
-    if (!selectedVersionData || !window.electronAPI) return;
-    setIsCreatingShortcuts(true);
-
-    // Create shortcuts for this specific version
-    window.electronAPI.send('create-shortcuts', {
-      version: selectedVersionData.identifier,
-      options: {
-        createExeShortcut: true,
-        createDirShortcut: false,
-      },
-    });
-
-    // Reset state after delay
-    setTimeout(() => setIsCreatingShortcuts(false), 2000);
-  };
-
   if (loading) {
     return (
-      <Card className="mining-surface energy-glow border-primary/20">
+      <Card className="mining-surface border-primary/20">
         <CardHeader className="pb-6">
           <div className="animate-pulse space-y-3">
             <div className="h-6 bg-muted rounded w-1/3"></div>
@@ -260,7 +265,7 @@ export function ArchivedVersionManager({
 
   return (
     <>
-      <Card className="mining-surface energy-glow border-primary/20 shadow-lg overflow-hidden">
+      <Card className="mining-surface border-primary/20 shadow-lg overflow-hidden">
         {/* Cover Image Section (optional) */}
         {selectedVersionData.coverImage && (
           <div className="relative h-64 overflow-hidden">
@@ -285,76 +290,65 @@ export function ArchivedVersionManager({
                 <Badge variant="secondary" className="text-xs">
                   v{selectedVersionData.version}
                 </Badge>
+                <Badge variant={selectedVersionData.experimental ? 'destructive' : 'default'} className="text-xs">
+                  {selectedVersionData.experimental ? 'Experimental' : 'Stable'}
+                </Badge>
                 <span>Released {selectedVersionData.releaseDate}</span>
                 <span>•</span>
                 <span>{selectedVersionData.size}</span>
               </div>
             </div>
           </div>
-          <CardDescription className="text-base mt-2 space-y-2">
-            <p className="text-muted-foreground">
-              Access previous releases and stable versions of Manic Miners. Perfect for compatibility testing or if you prefer a specific
-              version.
-            </p>
-            <div className="h-16 overflow-y-auto">
-              <p>{selectedVersionData.description}</p>
+          <CardDescription className="text-base mt-4">
+            <div className="h-32 overflow-y-scroll border border-border/50 rounded-md p-3 bg-muted/30">
+              <p className="text-sm leading-relaxed">{selectedVersionData.description}</p>
             </div>
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {/* Action Buttons */}
-          <div className="space-y-3">
-            {!isVersionInstalled ? (
-              <Button onClick={handleInstallOrLaunch} disabled={isDownloading || isRepairing || isDeleting} className="w-full" size="lg">
-                <Download className="w-4 h-4 mr-2" />
-                {isDownloading ? 'Installing...' : 'Install Game'}
-              </Button>
-            ) : (
-              <div className="space-y-2">
-                <Button
-                  onClick={handleInstallOrLaunch}
-                  disabled={isLaunching || isRepairing || isDeleting || isDownloading}
-                  className="w-full"
-                  size="lg"
-                >
+          <div className="space-y-2">
+            <Button
+              onClick={handleInstallOrLaunch}
+              disabled={isDownloading || isRepairing || isDeleting || (isVersionInstalled && isLaunching)}
+              className="w-full"
+              size="lg"
+            >
+              {isVersionInstalled ? (
+                <>
                   <Play className="w-5 h-5 mr-2" />
                   {isLaunching ? 'Launching...' : 'Launch Game'}
-                </Button>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" />
+                  {isDownloading ? 'Installing...' : 'Install Game'}
+                </>
+              )}
+            </Button>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRepair}
-                    disabled={isDownloading || isRepairing || isDeleting || isLaunching || isCreatingShortcuts}
-                  >
-                    <RotateCcw className="w-4 h-4 mr-1" />
-                    {isRepairing ? 'Verifying...' : 'Verify'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCreateShortcuts}
-                    disabled={isDownloading || isRepairing || isDeleting || isLaunching || isCreatingShortcuts}
-                    title="Create desktop and application shortcuts"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-1" />
-                    {isCreatingShortcuts ? 'Creating...' : 'Shortcuts'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowDeleteModal(true)}
-                    disabled={isDownloading || isRepairing || isDeleting || isLaunching || isCreatingShortcuts}
-                    className="text-destructive hover:text-destructive col-span-2"
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Uninstall
-                  </Button>
-                </div>
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRepair}
+                disabled={!isVersionInstalled || isDownloading || isRepairing || isDeleting || isLaunching}
+              >
+                <RotateCcw className="w-4 h-4 mr-1" />
+                {isRepairing ? 'Verifying...' : 'Verify'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowDeleteModal(true)}
+                disabled={!isVersionInstalled || isDownloading || isRepairing || isDeleting || isLaunching}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Uninstall
+              </Button>
+            </div>
           </div>
 
           {/* Progress Display */}
@@ -377,11 +371,28 @@ export function ArchivedVersionManager({
           )}
 
           {/* Status Messages */}
-          {isVersionInstalled && !isDownloading && !isRepairing && !isDeleting && !operationType && (
-            <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3">
-              <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
-                <Check className="w-4 h-4" />
-                Ready to play! {selectedVersionData.displayName} is installed and ready to launch.
+          {!isDownloading && !isRepairing && !isDeleting && !operationType && (
+            <div
+              className={`rounded-lg border p-3 ${
+                isVersionInstalled ? 'bg-green-500/10 border-green-500/20' : 'bg-yellow-500/10 border-yellow-500/20'
+              }`}
+            >
+              <p
+                className={`text-sm flex items-center gap-2 ${
+                  isVersionInstalled ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'
+                }`}
+              >
+                {isVersionInstalled ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Ready to play! {selectedVersionData.displayName} is installed and ready to launch.
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    {selectedVersionData.displayName} is not installed yet. Click "Install Game" to get started.
+                  </>
+                )}
               </p>
             </div>
           )}
@@ -390,13 +401,13 @@ export function ArchivedVersionManager({
 
       {/* Delete Confirmation Modal */}
       <ConfirmationModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
         onConfirm={handleDelete}
         title="Uninstall Game Version"
         description={`Are you sure you want to uninstall ${selectedVersionData.displayName}? This will remove all game files and cannot be undone.`}
         confirmText="Uninstall"
-        confirmVariant="destructive"
+        variant="destructive"
       />
     </>
   );

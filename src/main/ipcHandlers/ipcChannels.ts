@@ -28,6 +28,7 @@ export const IPC_CHANNELS = {
   WINDOW_EXIT: 'window-exit',
   VERIFY_VERSION: 'verify-version',
   DELETE_VERSION: 'delete-version',
+  DELETE_PROGRESS: 'delete-progress',
   REPAIR_VERSION: 'repair-version',
   DELETE_LATEST_VERSION: 'delete-latest-version',
   UPDATE_LATEST_VERSION: 'update-latest-version',

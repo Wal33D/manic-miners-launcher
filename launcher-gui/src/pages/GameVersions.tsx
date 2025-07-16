@@ -38,36 +38,57 @@ const GameVersions = () => {
                         specific version.
                       </p>
                       <div className="flex-1 min-h-0">
-                        <div className="h-full max-h-96 overflow-y-auto space-y-2 pr-2">
+                        <div className="h-full max-h-[28rem] overflow-y-auto space-y-3 pr-2 py-1">
                           {versions.map(version => (
                             <div
                               key={version.version}
                               onClick={() => !isOperationRunning && setSelectedVersion(version.version)}
                               className={`
-                                p-3 rounded-lg border cursor-pointer transition-all duration-200
+                                p-3 mx-1 rounded-lg border cursor-pointer transition-all duration-200 group
                                 ${
                                   selectedVersion === version.version
-                                    ? 'border-primary bg-primary/10 shadow-md'
-                                    : 'border-border bg-background hover:border-primary/50 hover:bg-muted/50'
+                                    ? 'border-primary bg-primary/10 shadow-md ring-1 ring-primary/20'
+                                    : 'border-border bg-card hover:border-primary/50 hover:shadow-sm'
                                 }
-                                ${isOperationRunning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02]'}
+                                ${isOperationRunning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01]'}
                               `}
                             >
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="font-medium text-sm">{version.displayName}</span>
+                              <div className="space-y-2.5">
+                                {/* Header with version name and status */}
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="min-w-0 flex-1">
+                                    <h4 className="font-semibold text-sm text-foreground truncate">{version.displayName}</h4>
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                      <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-secondary/80 text-secondary-foreground">
+                                        v{version.version}
+                                      </span>
+                                      <span
+                                        className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+                                          version.experimental
+                                            ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                                            : 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                                        }`}
+                                      >
+                                        {version.experimental ? 'Experimental' : 'Stable'}
+                                      </span>
+                                    </div>
+                                  </div>
+
                                   {installedVersions.has(version.version) && (
-                                    <div className="flex items-center gap-1">
-                                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                      <span className="text-xs text-green-600 dark:text-green-400">Installed</span>
+                                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/20">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                      <span className="text-xs font-medium text-green-700 dark:text-green-400">Installed</span>
                                     </div>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                  <span className="bg-secondary px-2 py-1 rounded">v{version.version}</span>
-                                  <span>{version.releaseDate}</span>
+
+                                {/* Metadata */}
+                                <div className="flex items-center text-xs text-muted-foreground">
+                                  <span>Released {version.releaseDate}</span>
                                 </div>
-                                <p className="text-xs text-muted-foreground line-clamp-2">{version.description}</p>
+
+                                {/* Description */}
+                                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{version.description}</p>
                               </div>
                             </div>
                           ))}
