@@ -11,12 +11,12 @@ interface LatestVersionContextType {
   setIsVerifying: (value: boolean) => void;
   isDeleting: boolean;
   setIsDeleting: (value: boolean) => void;
-  
+
   // Progress tracking
   operationProgress: number;
   operationStatus: string;
   operationType: 'download' | 'update' | 'verify' | 'delete' | null;
-  
+
   // Installation status
   isInstalled: boolean;
   setIsInstalled: (value: boolean) => void;
@@ -44,12 +44,12 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
   const [isUpdating, setIsUpdating] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   // Progress tracking
   const [operationProgress, setOperationProgress] = useState(0);
   const [operationStatus, setOperationStatus] = useState('');
   const [operationType, setOperationType] = useState<'download' | 'update' | 'verify' | 'delete' | null>(null);
-  
+
   // Installation status
   const [isInstalled, setIsInstalled] = useState(false);
   const [isCheckingInstallation, setIsCheckingInstallation] = useState(true);
@@ -64,7 +64,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Downloading...');
         setOperationType('download');
-        
+
         if (data.progress >= 100) {
           setTimeout(() => {
             setIsDownloading(false);
@@ -84,7 +84,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Updating...');
         setOperationType('update');
-        
+
         if (data.progress >= 100) {
           setTimeout(() => {
             setIsUpdating(false);
@@ -102,7 +102,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Verifying...');
         setOperationType('verify');
-        
+
         if (data.progress >= 100) {
           setTimeout(() => {
             setIsVerifying(false);
@@ -120,7 +120,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
         setOperationProgress(data.progress);
         setOperationStatus(data.status || 'Uninstalling...');
         setOperationType('delete');
-        
+
         if (data.progress >= 100) {
           setTimeout(() => {
             setIsDeleting(false);
@@ -171,7 +171,7 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     window.electronAPI.receive('update-progress', handleUpdateProgress);
     window.electronAPI.receive('verify-repair-progress', handleVerifyProgress);
     window.electronAPI.receive('delete-latest-progress', handleDeleteProgress);
-    
+
     window.electronAPI.receive('download-latest-error', handleDownloadError);
     window.electronAPI.receive('update-error', handleUpdateError);
     window.electronAPI.receive('verify-repair-error', handleVerifyError);
@@ -188,12 +188,12 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
       window.electronAPI.removeAllListeners('update-progress');
       window.electronAPI.removeAllListeners('verify-repair-progress');
       window.electronAPI.removeAllListeners('delete-latest-progress');
-      
+
       window.electronAPI.removeAllListeners('download-latest-error');
       window.electronAPI.removeAllListeners('update-error');
       window.electronAPI.removeAllListeners('verify-repair-error');
       window.electronAPI.removeAllListeners('delete-latest-error');
-      
+
       window.electronAPI.removeAllListeners('versions-updated');
     };
   }, []);
@@ -216,9 +216,5 @@ export const LatestVersionProvider: React.FC<LatestVersionProviderProps> = ({ ch
     setIsCheckingInstallation,
   };
 
-  return (
-    <LatestVersionContext.Provider value={value}>
-      {children}
-    </LatestVersionContext.Provider>
-  );
+  return <LatestVersionContext.Provider value={value}>{children}</LatestVersionContext.Provider>;
 };

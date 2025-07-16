@@ -20,17 +20,10 @@ const queryClient = new QueryClient();
 
 // Layout component that includes header, footer, and notifications
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {children}
-    </div>
-  );
+  return <div className="h-screen bg-background flex flex-col overflow-hidden">{children}</div>;
 };
 
 const App = () => {
-
-
-
   // Create router with future flags enabled
   const router = createHashRouter(
     [

@@ -163,12 +163,12 @@ export const setupItchDownloadHandler = async (): Promise<{ status: boolean; mes
 
           // Extract all files at once (much faster)
           await zip.extract(null, installPath);
-          
+
           event.sender.send('download-latest-progress', {
             status: 'Extraction complete, closing archive...',
             progress: 95,
           });
-          
+
           await zip.close();
 
           logger.downloadLog('Extraction completed successfully', { installPath });

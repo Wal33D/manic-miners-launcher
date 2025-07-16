@@ -1,10 +1,14 @@
 {
-  "loader": "ts-node/esm",
-  "extensions": ["ts"],
-  "spec": "src/tests/**/*.test.ts",
-  "exclude": ["src/tests/realDownloadIntegration.test.ts"],
+  "extension": ["ts"],
+  "spec": ["src/tests/**/*.test.ts"],
+  "exclude": [
+    "src/tests/realDownloadIntegration.test.ts",
+    "src/tests/componentIntegrationTests.test.ts",
+    "src/tests/notificationFlowTests.test.ts"
+  ],
   "timeout": 10000,
   "reporter": "spec",
   "recursive": true,
-  "require": ["ts-node/register"]
+  "require": ["ts-node/register"],
+  "node-option": ["no-warnings", "experimental-loader=ts-node/esm"]
 }

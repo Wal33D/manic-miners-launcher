@@ -30,7 +30,8 @@ export const Footer = React.memo(function Footer() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.getUrls()
+    api
+      .getUrls()
       .then(data => setUrls(data))
       .catch(error => {
         setError('Failed to load social links');
@@ -38,7 +39,7 @@ export const Footer = React.memo(function Footer() {
   }, []);
 
   if (!urls && !error) return null;
-  
+
   if (error) {
     return (
       <footer className="border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -48,7 +49,7 @@ export const Footer = React.memo(function Footer() {
       </footer>
     );
   }
-  
+
   if (!urls) return null;
 
   return (
@@ -67,7 +68,7 @@ export const Footer = React.memo(function Footer() {
                   rel="noopener noreferrer"
                   onClick={e => {
                     e.preventDefault();
-                    
+
                     if (window.electronAPI?.openExternal) {
                       try {
                         window.electronAPI.openExternal(url);

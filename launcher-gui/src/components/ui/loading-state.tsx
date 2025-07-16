@@ -17,12 +17,7 @@ interface LoadingStateProps {
  * Consistent loading state component for use throughout the application
  * Provides different loading variants for different contexts
  */
-export function LoadingState({ 
-  message = 'Loading...', 
-  variant = 'spinner',
-  rows = 3,
-  className = ''
-}: LoadingStateProps) {
+export function LoadingState({ message = 'Loading...', variant = 'spinner', rows = 3, className = '' }: LoadingStateProps) {
   if (variant === 'skeleton') {
     return (
       <div className={`space-y-3 ${className}`}>

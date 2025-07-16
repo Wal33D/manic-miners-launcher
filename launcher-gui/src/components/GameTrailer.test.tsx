@@ -33,9 +33,9 @@ describe('GameTrailer', () => {
 
   it('should render loading state initially', () => {
     mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-    
+
     render(<GameTrailer />);
-    
+
     // Check for the loading card structure
     expect(screen.getByText('Game Trailer')).toBeInTheDocument();
     expect(screen.getByText('Watch the official launch trailer')).toBeInTheDocument();
@@ -68,9 +68,9 @@ describe('GameTrailer', () => {
       ok: true,
       json: () => Promise.resolve(mockVideos),
     } as Response);
-    
+
     render(<GameTrailer />);
-    
+
     await waitFor(() => {
       const iframe = screen.getByTitle('Manic Miners Trailer');
       expect(iframe).toBeInTheDocument();
@@ -94,9 +94,9 @@ describe('GameTrailer', () => {
       ok: true,
       json: () => Promise.resolve(mockVideos),
     } as Response);
-    
+
     render(<GameTrailer />);
-    
+
     await waitFor(() => {
       const iframe = screen.getByTitle('Manic Miners Trailer');
       expect(iframe).toBeInTheDocument();
@@ -106,9 +106,9 @@ describe('GameTrailer', () => {
 
   it('should handle API errors gracefully', async () => {
     mockFetch.mockRejectedValue(new Error('Network error'));
-    
+
     render(<GameTrailer />);
-    
+
     await waitFor(() => {
       const iframe = screen.getByTitle('Manic Miners Trailer');
       expect(iframe).toBeInTheDocument();
@@ -121,9 +121,9 @@ describe('GameTrailer', () => {
       ok: true,
       json: () => Promise.resolve([]),
     } as Response);
-    
+
     render(<GameTrailer />);
-    
+
     await waitFor(() => {
       const iframe = screen.getByTitle('Manic Miners Trailer');
       expect(iframe).toBeInTheDocument();
@@ -147,9 +147,9 @@ describe('GameTrailer', () => {
       ok: true,
       json: () => Promise.resolve(mockVideos),
     } as Response);
-    
+
     render(<GameTrailer />);
-    
+
     await waitFor(() => {
       const iframe = screen.getByTitle('Manic Miners Trailer');
       expect(iframe).toHaveAttribute('allowFullScreen');
@@ -185,9 +185,9 @@ describe('GameTrailer', () => {
         ok: true,
         json: () => Promise.resolve(mockVideos),
       } as Response);
-      
+
       const { unmount } = render(<GameTrailer />);
-      
+
       await waitFor(() => {
         const iframe = screen.getByTitle('Manic Miners Trailer');
         expect(iframe).toHaveAttribute('src', `https://www.youtube.com/embed/${testCase.expectedId}`);

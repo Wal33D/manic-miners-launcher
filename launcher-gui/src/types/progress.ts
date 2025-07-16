@@ -49,8 +49,4 @@ export interface ShortcutProgressData extends ProgressData {
 /**
  * Union type for all progress data types
  */
-export type AnyProgressData = 
-  | DownloadProgressData 
-  | DeleteProgressData 
-  | VerifyProgressData 
-  | ShortcutProgressData;
+export type AnyProgressData = DownloadProgressData | DeleteProgressData | VerifyProgressData | ShortcutProgressData;

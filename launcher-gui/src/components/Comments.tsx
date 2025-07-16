@@ -49,14 +49,7 @@ export function Comments() {
   }
 
   if (error) {
-    return (
-      <ErrorState 
-        title="Failed to Load Comments"
-        message={error}
-        onRetry={fetchComments}
-        showRetry={true}
-      />
-    );
+    return <ErrorState title="Failed to Load Comments" message={error} onRetry={fetchComments} showRetry={true} />;
   }
 
   return (

@@ -74,13 +74,7 @@ export function LevelBrowser() {
   }
 
   if (error) {
-    return (
-      <ErrorState 
-        title="Failed to Load Levels" 
-        message={error}
-        onRetry={fetchLevels}
-      />
-    );
+    return <ErrorState title="Failed to Load Levels" message={error} onRetry={fetchLevels} />;
   }
 
   return (

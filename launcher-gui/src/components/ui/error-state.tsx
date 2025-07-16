@@ -24,21 +24,21 @@ interface ErrorStateProps {
  * Consistent error state component for use throughout the application
  * Provides user-friendly error messages with actionable options
  */
-export function ErrorState({ 
+export function ErrorState({
   title = 'Something went wrong',
   message = 'An unexpected error occurred. Please try again.',
   showRetry = true,
   onRetry,
   showHome = false,
   variant = 'error',
-  className = ''
+  className = '',
 }: ErrorStateProps) {
   const navigate = useNavigate();
-  
+
   const iconColor = {
     error: 'text-destructive',
     warning: 'text-yellow-600',
-    info: 'text-blue-600'
+    info: 'text-blue-600',
   }[variant];
 
   return (
@@ -77,13 +77,7 @@ export function ErrorState({
 /**
  * Inline error message for form fields or small areas
  */
-export function InlineError({ 
-  message,
-  className = '' 
-}: { 
-  message: string;
-  className?: string;
-}) {
+export function InlineError({ message, className = '' }: { message: string; className?: string }) {
   return (
     <div className={`flex items-center gap-2 text-sm text-destructive ${className}`}>
       <AlertTriangle className="h-4 w-4" />

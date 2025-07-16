@@ -75,18 +75,14 @@ export const VersionsResponseSchema = z.object({
 /**
  * Validates API response data against a schema
  * Logs validation errors and returns validated data or null
- * 
+ *
  * @template T
  * @param {unknown} data - Data to validate
  * @param {z.ZodSchema<T>} schema - Zod schema to validate against
  * @param {string} apiName - Name of the API for logging
  * @returns {T | null} Validated data or null if validation fails
  */
-export function validateApiResponse<T>(
-  data: unknown,
-  schema: z.ZodSchema<T>,
-  apiName: string
-): T | null {
+export function validateApiResponse<T>(data: unknown, schema: z.ZodSchema<T>, apiName: string): T | null {
   try {
     return schema.parse(data);
   } catch (error) {
@@ -102,21 +98,17 @@ export function validateApiResponse<T>(
 
 /**
  * Safe fetch wrapper that validates API responses
- * 
+ *
  * @template T
  * @param {string} url - URL to fetch
  * @param {z.ZodSchema<T>} schema - Schema to validate response
  * @param {string} apiName - Name of the API for logging
  * @returns {Promise<T | null>} Validated data or null
  */
-export async function fetchWithValidation<T>(
-  url: string,
-  schema: z.ZodSchema<T>,
-  apiName: string
-): Promise<T | null> {
+export async function fetchWithValidation<T>(url: string, schema: z.ZodSchema<T>, apiName: string): Promise<T | null> {
   try {
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       logger.error('API_FETCH', `${apiName} fetch failed`, {
         status: response.status,
@@ -124,7 +116,7 @@ export async function fetchWithValidation<T>(
       });
       return null;
     }
-    
+
     const data = await response.json();
     return validateApiResponse(data, schema, apiName);
   } catch (error) {

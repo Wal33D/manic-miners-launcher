@@ -37,8 +37,8 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
 
   // Mock Component State Management System
   class ComponentStateManager {
-    private components: Map<string, any> = new Map();
-    private globalState = {
+    public components: Map<string, any> = new Map();
+    public globalState = {
       notifications: [] as any[],
       currentPage: 'home',
       operations: {
@@ -124,7 +124,7 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
       if (name === 'LatestVersionManager') {
         this.validateLatestVersionManagerState(state);
       } else if (name === 'GameNotifications') {
-        this.validateNotificationState(state);
+        this.validateNotificationState();
       }
     }
 
@@ -149,7 +149,7 @@ describe('Component Integration Tests - Seamless UX Flow', () => {
       });
     }
 
-    private validateNotificationState(state: any) {
+    private validateNotificationState() {
       // Ensure notification limits
       if (this.globalState.notifications.length > 10) {
         throw new Error('Too many active notifications');

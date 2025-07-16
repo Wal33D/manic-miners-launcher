@@ -2,7 +2,7 @@ import { Loader } from 'lucide-react';
 
 /**
  * Loading component displayed while lazy-loaded pages are being fetched
- * 
+ *
  * @component
  * @returns {JSX.Element} Centered loading spinner
  */

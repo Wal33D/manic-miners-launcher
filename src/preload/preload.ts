@@ -98,7 +98,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
       console.error('Invalid or unsafe URL:', url);
       return;
     }
-    
+
     // Opening external URL via IPC to main process
     // Always use IPC since shell is not available in preload context
     ipcRenderer.send(IPC_CHANNELS.OPEN_EXTERNAL_URL, url);

@@ -2,8 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFocusTrap } from './useFocusTrap';
-import { useRef, useState } from 'react';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 // Test component that uses the hook
 function TestComponent({ isActive = true }: { isActive?: boolean }) {
@@ -45,28 +44,28 @@ describe('useFocusTrap', () => {
 
   it('should focus first focusable element when activated', () => {
     render(<TestComponent />);
-    
+
     const firstButton = screen.getByTestId('first-button');
     expect(firstButton).toHaveFocus();
   });
 
   it('should trap focus within container when tabbing forward', async () => {
     render(<TestWithOutsideElements />);
-    
+
     const firstButton = screen.getByTestId('first-button');
     const textInput = screen.getByTestId('text-input');
     const secondButton = screen.getByTestId('second-button');
-    
+
     expect(firstButton).toHaveFocus();
-    
+
     // Tab to text input
     await user.tab();
     expect(textInput).toHaveFocus();
-    
+
     // Tab to second button
     await user.tab();
     expect(secondButton).toHaveFocus();
-    
+
     // Tab should wrap to first button
     await user.tab();
     expect(firstButton).toHaveFocus();
@@ -74,21 +73,21 @@ describe('useFocusTrap', () => {
 
   it('should trap focus within container when tabbing backward', async () => {
     render(<TestWithOutsideElements />);
-    
+
     const firstButton = screen.getByTestId('first-button');
     const secondButton = screen.getByTestId('second-button');
-    
+
     expect(firstButton).toHaveFocus();
-    
+
     // Shift+Tab should wrap to last element
     await user.tab({ shift: true });
     expect(secondButton).toHaveFocus();
-    
+
     // Continue tabbing backward
     await user.tab({ shift: true });
     const textInput = screen.getByTestId('text-input');
     expect(textInput).toHaveFocus();
-    
+
     await user.tab({ shift: true });
     expect(firstButton).toHaveFocus();
   });
@@ -101,19 +100,19 @@ describe('useFocusTrap', () => {
         <button data-testid="outside-after">Outside After</button>
       </div>
     );
-    
+
     const outsideBefore = screen.getByTestId('outside-before');
     const outsideAfter = screen.getByTestId('outside-after');
-    
+
     // Focus should start normally, not forced to trap
     outsideBefore.focus();
     expect(outsideBefore).toHaveFocus();
-    
+
     // Tab should work normally
     await user.tab();
     const firstButton = screen.getByTestId('first-button');
     expect(firstButton).toHaveFocus();
-    
+
     // Continue tabbing should reach outside elements
     await user.tab();
     await user.tab();
@@ -172,13 +171,8 @@ describe('useFocusTrap', () => {
       return (
         <div ref={containerRef}>
           <button data-testid="first-button">First</button>
-          {showExtraButton && (
-            <button data-testid="extra-button">Extra</button>
-          )}
-          <button 
-            data-testid="toggle-button"
-            onClick={() => setShowExtraButton(!showExtraButton)}
-          >
+          {showExtraButton && <button data-testid="extra-button">Extra</button>}
+          <button data-testid="toggle-button" onClick={() => setShowExtraButton(!showExtraButton)}>
             Toggle
           </button>
         </div>
@@ -186,23 +180,23 @@ describe('useFocusTrap', () => {
     }
 
     render(<DynamicComponent />);
-    
+
     const firstButton = screen.getByTestId('first-button');
     const toggleButton = screen.getByTestId('toggle-button');
-    
+
     expect(firstButton).toHaveFocus();
-    
+
     // Tab to toggle button
     await user.tab();
     expect(toggleButton).toHaveFocus();
-    
+
     // Add extra button
     await user.click(toggleButton);
-    
+
     // Focus trap should now include the new button
     await user.tab();
     expect(firstButton).toHaveFocus();
-    
+
     await user.tab();
     const extraButton = screen.getByTestId('extra-button');
     expect(extraButton).toHaveFocus();

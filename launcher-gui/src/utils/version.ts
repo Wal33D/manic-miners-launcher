@@ -20,13 +20,13 @@ export function parseVersion(version: string): number[] {
 export function compareVersions(a: string, b: string): number {
   const aParts = parseVersion(a);
   const bParts = parseVersion(b);
-  
+
   for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
     const numA = aParts[i] || 0;
     const numB = bParts[i] || 0;
     if (numA !== numB) return numB - numA; // Descending order (newer first)
   }
-  
+
   return 0;
 }
 

@@ -26,18 +26,18 @@ describe.skip('useFocusTrap', () => {
 
   it('returns a ref that can be attached to a container', () => {
     const { result } = renderHook(() => useFocusTrap(true));
-    
+
     expect(result.current).toBeDefined();
     expect(result.current.current).toBeNull();
   });
 
   it('focuses first focusable element when active', () => {
     const { result } = renderHook(() => useFocusTrap(true));
-    
+
     // Attach ref to container
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
     // Re-render to trigger effect
@@ -49,18 +49,14 @@ describe.skip('useFocusTrap', () => {
   });
 
   it('focuses initial focus element when specified', () => {
-    const { result } = renderHook(() => 
-      useFocusTrap(true, { initialFocus: '#input1' })
-    );
-    
+    const { result } = renderHook(() => useFocusTrap(true, { initialFocus: '#input1' }));
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
-    const { rerender } = renderHook(() => 
-      useFocusTrap(true, { initialFocus: '#input1' })
-    );
+    const { rerender } = renderHook(() => useFocusTrap(true, { initialFocus: '#input1' }));
     rerender();
 
     expect(document.activeElement?.id).toBe('input1');
@@ -68,32 +64,28 @@ describe.skip('useFocusTrap', () => {
 
   it('calls onEscape when Escape key is pressed', () => {
     const onEscape = vi.fn();
-    const { result } = renderHook(() => 
-      useFocusTrap(true, { onEscape })
-    );
-    
+    const { result } = renderHook(() => useFocusTrap(true, { onEscape }));
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
-    const { rerender } = renderHook(() => 
-      useFocusTrap(true, { onEscape })
-    );
+    const { rerender } = renderHook(() => useFocusTrap(true, { onEscape }));
     rerender();
 
     // Simulate Escape key press
     fireEvent.keyDown(container, { key: 'Escape' });
-    
+
     expect(onEscape).toHaveBeenCalledTimes(1);
   });
 
   it('cycles focus forward on Tab', () => {
     const { result } = renderHook(() => useFocusTrap(true));
-    
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
     const { rerender } = renderHook(() => useFocusTrap(true));
@@ -121,10 +113,10 @@ describe.skip('useFocusTrap', () => {
 
   it('cycles focus backward on Shift+Tab', () => {
     const { result } = renderHook(() => useFocusTrap(true));
-    
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
     const { rerender } = renderHook(() => useFocusTrap(true));
@@ -148,14 +140,13 @@ describe.skip('useFocusTrap', () => {
     expect(document.activeElement?.id).toBe('outside');
 
     // Activate focus trap
-    const { result, rerender } = renderHook(
-      ({ active }) => useFocusTrap(active, { returnFocus: true }),
-      { initialProps: { active: true } }
-    );
-    
+    const { result, rerender } = renderHook(({ active }) => useFocusTrap(active, { returnFocus: true }), {
+      initialProps: { active: true },
+    });
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
     rerender({ active: true });
@@ -178,14 +169,13 @@ describe.skip('useFocusTrap', () => {
     document.body.appendChild(outsideButton);
     outsideButton.focus();
 
-    const { result, rerender } = renderHook(
-      ({ active }) => useFocusTrap(active, { returnFocus: false }),
-      { initialProps: { active: true } }
-    );
-    
+    const { result, rerender } = renderHook(({ active }) => useFocusTrap(active, { returnFocus: false }), {
+      initialProps: { active: true },
+    });
+
     Object.defineProperty(result.current, 'current', {
       writable: true,
-      value: container
+      value: container,
     });
 
     rerender({ active: true });

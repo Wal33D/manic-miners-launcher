@@ -18,7 +18,7 @@ interface State {
 /**
  * Error boundary component that catches JavaScript errors in child components
  * Displays a user-friendly error message and allows recovery
- * 
+ *
  * @component
  * @example
  * <ErrorBoundary>
@@ -71,21 +71,15 @@ export class ErrorBoundary extends Component<Props, State> {
                 <AlertTriangle className="w-6 h-6 text-destructive" />
                 <CardTitle className="text-destructive">Something went wrong</CardTitle>
               </div>
-              <CardDescription>
-                An unexpected error occurred. The error has been logged.
-              </CardDescription>
+              <CardDescription>An unexpected error occurred. The error has been logged.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Error Details:</p>
-                  <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-32">
-                    {this.state.error.toString()}
-                  </pre>
+                  <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-32">{this.state.error.toString()}</pre>
                   {this.state.errorInfo && (
-                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-32">
-                      {this.state.errorInfo.componentStack}
-                    </pre>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-32">{this.state.errorInfo.componentStack}</pre>
                   )}
                 </div>
               )}
@@ -94,11 +88,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Try Again
                 </Button>
-                <Button 
-                  onClick={() => window.location.reload()} 
-                  variant="outline"
-                  className="flex-1"
-                >
+                <Button onClick={() => window.location.reload()} variant="outline" className="flex-1">
                   Reload Page
                 </Button>
               </div>
@@ -114,15 +104,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
 /**
  * Higher-order component that wraps a component with an error boundary
- * 
+ *
  * @param {React.ComponentType} Component - Component to wrap
  * @param {ReactNode} fallback - Optional custom fallback UI
  * @returns {React.ComponentType} Wrapped component
  */
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  fallback?: ReactNode
-) {
+export function withErrorBoundary<P extends object>(Component: React.ComponentType<P>, fallback?: ReactNode) {
   return (props: P) => (
     <ErrorBoundary fallback={fallback}>
       <Component {...props} />

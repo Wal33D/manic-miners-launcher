@@ -1,15 +1,7 @@
 import { ENV, getApiUrl } from '@/config/environment';
 import { logger } from '@/utils/frontendLogger';
 import { apiCache, cacheKeys } from './apiCache';
-import type { 
-  UrlData, 
-  NewsItem, 
-  NewsResponse, 
-  CommentsResponse, 
-  VideosResponse, 
-  VersionsResponse,
-  ImagesResponse 
-} from '@/types/api';
+import type { UrlData, NewsItem, NewsResponse, CommentsResponse, VideosResponse, VersionsResponse, ImagesResponse } from '@/types/api';
 
 /**
  * Base API error class
@@ -30,7 +22,7 @@ export class ApiError extends Error {
  */
 async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = getApiUrl(endpoint);
-  
+
   try {
     const response = await fetch(url, {
       ...options,
@@ -45,24 +37,20 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
     });
 
     if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        `API request failed: ${response.statusText}`,
-        endpoint
-      );
+      throw new ApiError(response.status, `API request failed: ${response.statusText}`, endpoint);
     }
 
     const data = await response.json();
     return data as T;
   } catch (error) {
     if (error instanceof ApiError) {
-      logger.error('API', `API Error: ${error.message}`, { 
-        status: error.status, 
-        endpoint: error.endpoint 
+      logger.error('API', `API Error: ${error.message}`, {
+        status: error.status,
+        endpoint: error.endpoint,
       });
       throw error;
     }
-    
+
     logger.error('API', 'Network error', { endpoint, error });
     throw new ApiError(0, 'Network error - please check your connection', endpoint);
   }
@@ -157,22 +145,22 @@ export const api = {
      * Invalidate specific cache entries
      */
     invalidate: (key: string) => apiCache.invalidate(key),
-    
+
     /**
      * Invalidate all news-related cache
      */
     invalidateNews: () => apiCache.invalidatePattern(/^api:news/),
-    
+
     /**
      * Invalidate all version-related cache
      */
     invalidateVersions: () => apiCache.invalidatePattern(/^api:versions/),
-    
+
     /**
      * Clear all API cache
      */
     clear: () => apiCache.clear(),
-    
+
     /**
      * Get cache statistics
      */

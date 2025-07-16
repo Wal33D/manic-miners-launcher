@@ -24,19 +24,18 @@ class ApiCacheService {
 
   constructor() {
     // Cleanup expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000
+    );
   }
 
   /**
    * Get data from cache or execute the fetcher function
    */
-  async get<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttl: number = ENV.CACHE.API_DATA
-  ): Promise<T> {
+  async get<T>(key: string, fetcher: () => Promise<T>, ttl: number = ENV.CACHE.API_DATA): Promise<T> {
     // Check if we have a valid cached entry
     const cached = this.cache.get(key);
     if (cached && this.isValid(cached)) {
@@ -54,7 +53,7 @@ class ApiCacheService {
     // Create new request
     logger.debug('CACHE', 'Cache miss - fetching data', { key });
     const promise = this.executeRequest(key, fetcher, ttl);
-    
+
     // Store pending request for deduplication
     this.pendingRequests.set(key, {
       promise,
@@ -67,14 +66,10 @@ class ApiCacheService {
   /**
    * Execute the actual request and handle caching
    */
-  private async executeRequest<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttl: number
-  ): Promise<T> {
+  private async executeRequest<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<T> {
     try {
       const data = await fetcher();
-      
+
       // Cache the successful result
       this.cache.set(key, {
         data,
@@ -159,10 +154,10 @@ class ApiCacheService {
     }
 
     if (cleaned > 0) {
-      logger.debug('CACHE', 'Cleanup completed', { 
-        cleaned, 
-        cacheSize: this.cache.size, 
-        pendingSize: this.pendingRequests.size 
+      logger.debug('CACHE', 'Cleanup completed', {
+        cleaned,
+        cacheSize: this.cache.size,
+        pendingSize: this.pendingRequests.size,
       });
     }
   }

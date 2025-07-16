@@ -47,7 +47,12 @@
       "Bash(true)",
       "Bash(NODE_ENV=development pnpm run generate:assets)",
       "Bash(NODE_ENV=development npm run generate:assets)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(HUSKY=0 git commit -m \"feat: remove notifications and enhance latest version UI\n\n- Removed entire notification system (GameNotifications component and all references)\n- Created NOTIFICATION_REFERENCE.md to preserve notification design for future use\n- Enhanced Latest Version section with inline progress display during operations\n- Created LatestVersionContext to persist operation state across navigation\n- Adjusted download/extraction progress distribution:\n  - Navigation/itch.io: 5-35% (was 5-50%)\n  - Download: 35-70% (was 50-70%)\n  - Extraction: 70-95% (was 96-98%)\n  - Cleanup: 96-100%\n- Fixed archived version uninstall to show file-by-file deletion progress\n- Added proper progress tracking for ZIP file deletion to save disk space\n- Disabled Launch button during all operations (including uninstall)\n- Progress now persists when navigating between pages\n\nThe Latest Version card now shows operation progress directly in the UI with progress bars and status messages, providing better user feedback without popup notifications.\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\")",
+      "Bash(npx ts-mocha:*)",
+      "Bash(TS_NODE_PROJECT=./tsconfig.test.json npx ts-node -e \"console.log(''Test'')\")",
+      "Bash(npx mocha:*)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

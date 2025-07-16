@@ -28,9 +28,9 @@ describe('NewsPanel', () => {
 
   it('should render loading state initially', () => {
     mockApiGetNews.mockImplementation(() => new Promise(() => {})); // Never resolves
-    
+
     render(<NewsPanel />);
-    
+
     expect(screen.getByText('Loading news...')).toBeInTheDocument();
   });
 
@@ -55,9 +55,9 @@ describe('NewsPanel', () => {
     };
 
     mockApiGetNews.mockResolvedValue(mockNews);
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Test News 1')).toBeInTheDocument();
       expect(screen.getByText('Test News 2')).toBeInTheDocument();
@@ -86,9 +86,9 @@ describe('NewsPanel', () => {
     ];
 
     mockApiGetNews.mockResolvedValue(mockNews);
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Legacy News 1')).toBeInTheDocument();
       expect(screen.getByText('Legacy News 2')).toBeInTheDocument();
@@ -100,9 +100,9 @@ describe('NewsPanel', () => {
 
   it('should handle empty news array', async () => {
     mockApiGetNews.mockResolvedValue({ news: [] });
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('No news available')).toBeInTheDocument();
     });
@@ -110,9 +110,9 @@ describe('NewsPanel', () => {
 
   it('should handle API errors gracefully', async () => {
     mockApiGetNews.mockRejectedValue(new Error('Network error'));
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Failed to load news')).toBeInTheDocument();
     });
@@ -132,9 +132,9 @@ describe('NewsPanel', () => {
     };
 
     mockApiGetNews.mockResolvedValue(mockNews);
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Date Test News')).toBeInTheDocument();
     });
@@ -155,9 +155,9 @@ describe('NewsPanel', () => {
     };
 
     mockApiGetNews.mockResolvedValue(mockNews);
-    
+
     render(<NewsPanel />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('News Item 1')).toBeInTheDocument();
     });

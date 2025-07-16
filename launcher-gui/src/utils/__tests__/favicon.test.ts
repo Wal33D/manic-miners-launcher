@@ -8,32 +8,29 @@ describe('updateFavicon', () => {
   let mockCreateElement: any;
   let mockAppendChild: any;
   let mockQuerySelectorAll: any;
-  
+
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
-    
+
     // Mock DOM methods
     mockCreateElement = vi.fn(() => ({
       rel: '',
       type: '',
-      href: ''
+      href: '',
     }));
     mockAppendChild = vi.fn();
-    mockQuerySelectorAll = vi.fn(() => [
-      { remove: vi.fn() },
-      { remove: vi.fn() }
-    ]);
-    
+    mockQuerySelectorAll = vi.fn(() => [{ remove: vi.fn() }, { remove: vi.fn() }]);
+
     // Setup document mocks
     document.createElement = mockCreateElement;
     document.head.appendChild = mockAppendChild;
     document.querySelectorAll = mockQuerySelectorAll;
-    
+
     // Mock console.error to avoid test output noise
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
-  
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -43,28 +40,28 @@ describe('updateFavicon', () => {
       images: {
         'manic-miners-basic.ico': {
           cloudinaryUrl: 'https://cloudinary.com/favicon.ico',
-          internalUrl: 'https://internal.com/favicon.ico'
-        }
-      }
+          internalUrl: 'https://internal.com/favicon.ico',
+        },
+      },
     };
-    
+
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockImages
+      json: async () => mockImages,
     });
-    
+
     await updateFavicon();
-    
+
     // Should remove existing favicon links
     expect(mockQuerySelectorAll).toHaveBeenCalledWith("link[rel*='icon']");
-    
+
     // Should create new favicon links
     expect(mockCreateElement).toHaveBeenCalledWith('link');
     expect(mockCreateElement).toHaveBeenCalledTimes(2); // icon and shortcut icon
-    
+
     // Should append new links
     expect(mockAppendChild).toHaveBeenCalledTimes(2);
-    
+
     // Check that the correct URL was used
     const createdLinks = mockCreateElement.mock.results;
     expect(createdLinks[0].value.href).toBe('https://cloudinary.com/favicon.ico');
@@ -74,32 +71,29 @@ describe('updateFavicon', () => {
     const mockImages = {
       images: {
         'manic-miners-basic.ico': {
-          internalUrl: 'https://internal.com/favicon.ico'
-        }
-      }
+          internalUrl: 'https://internal.com/favicon.ico',
+        },
+      },
     };
-    
+
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockImages
+      json: async () => mockImages,
     });
-    
+
     await updateFavicon();
-    
+
     const createdLinks = mockCreateElement.mock.results;
     expect(createdLinks[0].value.href).toBe('https://internal.com/favicon.ico');
   });
 
   it('should handle API errors gracefully', async () => {
     (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
-    
+
     await updateFavicon();
-    
-    expect(console.error).toHaveBeenCalledWith(
-      'Failed to update favicon:',
-      expect.any(Error)
-    );
-    
+
+    expect(console.error).toHaveBeenCalledWith('Failed to update favicon:', expect.any(Error));
+
     // Should not create any links
     expect(mockCreateElement).not.toHaveBeenCalled();
   });
@@ -107,11 +101,11 @@ describe('updateFavicon', () => {
   it('should handle non-ok response gracefully', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       ok: false,
-      status: 404
+      status: 404,
     });
-    
+
     await updateFavicon();
-    
+
     // Should not create any links
     expect(mockCreateElement).not.toHaveBeenCalled();
   });
@@ -119,11 +113,11 @@ describe('updateFavicon', () => {
   it('should handle missing images data gracefully', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({})
+      json: async () => ({}),
     });
-    
+
     await updateFavicon();
-    
+
     // Should not create any links
     expect(mockCreateElement).not.toHaveBeenCalled();
   });
@@ -132,18 +126,18 @@ describe('updateFavicon', () => {
     const mockImages = {
       images: {
         'manic-miners-alt-icon.ico': {
-          cloudinaryUrl: 'https://cloudinary.com/alt-favicon.ico'
-        }
-      }
+          cloudinaryUrl: 'https://cloudinary.com/alt-favicon.ico',
+        },
+      },
     };
-    
+
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockImages
+      json: async () => mockImages,
     });
-    
+
     await updateFavicon();
-    
+
     const createdLinks = mockCreateElement.mock.results;
     expect(createdLinks[0].value.href).toBe('https://cloudinary.com/alt-favicon.ico');
   });

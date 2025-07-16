@@ -44,9 +44,7 @@ describe('ApiCache', () => {
     it('should respect TTL and refetch expired data', async () => {
       const mockData1 = { test: 'data1' };
       const mockData2 = { test: 'data2' };
-      const fetcher = vi.fn()
-        .mockResolvedValueOnce(mockData1)
-        .mockResolvedValueOnce(mockData2);
+      const fetcher = vi.fn().mockResolvedValueOnce(mockData1).mockResolvedValueOnce(mockData2);
 
       // First fetch
       const result1 = await apiCache.get('test-key', fetcher, 100); // 100ms TTL
@@ -66,16 +64,10 @@ describe('ApiCache', () => {
   describe('request deduplication', () => {
     it('should deduplicate concurrent requests', async () => {
       const mockData = { test: 'data' };
-      const fetcher = vi.fn().mockImplementation(() => 
-        new Promise(resolve => setTimeout(() => resolve(mockData), 100))
-      );
+      const fetcher = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockData), 100)));
 
       // Start multiple concurrent requests
-      const promises = [
-        apiCache.get('test-key', fetcher),
-        apiCache.get('test-key', fetcher),
-        apiCache.get('test-key', fetcher),
-      ];
+      const promises = [apiCache.get('test-key', fetcher), apiCache.get('test-key', fetcher), apiCache.get('test-key', fetcher)];
 
       const results = await Promise.all(promises);
 
@@ -87,9 +79,7 @@ describe('ApiCache', () => {
   describe('error handling', () => {
     it('should not cache failed requests', async () => {
       const error = new Error('Network error');
-      const fetcher = vi.fn()
-        .mockRejectedValueOnce(error)
-        .mockResolvedValueOnce({ test: 'success' });
+      const fetcher = vi.fn().mockRejectedValueOnce(error).mockResolvedValueOnce({ test: 'success' });
 
       // First request should fail
       await expect(apiCache.get('test-key', fetcher)).rejects.toThrow('Network error');
@@ -128,7 +118,7 @@ describe('ApiCache', () => {
       // News keys should be invalidated
       await apiCache.get('api:news:1', fetcher);
       await apiCache.get('api:news:2', fetcher);
-      
+
       // Other key should still be cached
       await apiCache.get('api:other', fetcher);
 

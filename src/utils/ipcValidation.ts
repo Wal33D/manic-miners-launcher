@@ -3,24 +3,27 @@ import { z } from 'zod';
 /**
  * URL validation for external links
  */
-const urlSchema = z.string().url().refine(
-  (url) => {
-    try {
-      const parsed = new URL(url);
-      // Only allow safe protocols
-      return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
-    } catch {
-      return false;
-    }
-  },
-  { message: 'Invalid or unsafe URL protocol' }
-);
+const urlSchema = z
+  .string()
+  .url()
+  .refine(
+    url => {
+      try {
+        const parsed = new URL(url);
+        // Only allow safe protocols
+        return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
+      } catch {
+        return false;
+      }
+    },
+    { message: 'Invalid or unsafe URL protocol' }
+  );
 
 /**
  * File path validation (basic checks to prevent path traversal)
  */
 const filePathSchema = z.string().refine(
-  (path) => {
+  path => {
     // Prevent path traversal attacks
     return !path.includes('..') && !path.includes('~') && path.length < 500;
   },
@@ -30,10 +33,7 @@ const filePathSchema = z.string().refine(
 /**
  * Version identifier validation
  */
-const versionSchema = z.string().regex(
-  /^[a-zA-Z0-9.-]+$/,
-  'Version must contain only alphanumeric characters, dots, and hyphens'
-);
+const versionSchema = z.string().regex(/^[a-zA-Z0-9.-]+$/, 'Version must contain only alphanumeric characters, dots, and hyphens');
 
 /**
  * IPC data validation schemas
@@ -46,14 +46,18 @@ export const ipcSchemas = {
   }),
 
   // Launch game data
-  launchGame: z.object({
-    identifier: versionSchema,
-  }).or(versionSchema), // Allow string or object
+  launchGame: z
+    .object({
+      identifier: versionSchema,
+    })
+    .or(versionSchema), // Allow string or object
 
   // Delete version data
-  deleteVersion: z.object({
-    identifier: versionSchema,
-  }).or(versionSchema),
+  deleteVersion: z
+    .object({
+      identifier: versionSchema,
+    })
+    .or(versionSchema),
 
   // Update version data
   updateVersion: z.object({
@@ -63,10 +67,12 @@ export const ipcSchemas = {
   // Create shortcuts data
   createShortcuts: z.object({
     version: versionSchema.optional(),
-    options: z.object({
-      createExeShortcut: z.boolean().optional(),
-      createDirShortcut: z.boolean().optional(),
-    }).optional(),
+    options: z
+      .object({
+        createExeShortcut: z.boolean().optional(),
+        createDirShortcut: z.boolean().optional(),
+      })
+      .optional(),
   }),
 
   // External URL
@@ -89,11 +95,11 @@ export const ipcSchemas = {
 export function validateIpcData<T extends keyof typeof ipcSchemas>(
   channel: string,
   data: unknown
-): { isValid: boolean; data?: z.infer<typeof ipcSchemas[T]>; error?: string } {
+): { isValid: boolean; data?: z.infer<(typeof ipcSchemas)[T]>; error?: string } {
   // Map channels to schemas
   const channelToSchema: Record<string, keyof typeof ipcSchemas> = {
     'download-version': 'downloadVersion',
-    'launch-game': 'launchGame', 
+    'launch-game': 'launchGame',
     'delete-version': 'deleteVersion',
     'update-latest-version': 'updateVersion',
     'create-shortcuts': 'createShortcuts',
@@ -112,9 +118,9 @@ export function validateIpcData<T extends keyof typeof ipcSchemas>(
     return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { 
-        isValid: false, 
-        error: error.errors.map(e => e.message).join(', ') 
+      return {
+        isValid: false,
+        error: error.errors.map(e => e.message).join(', '),
       };
     }
     return { isValid: false, error: 'Unknown validation error' };

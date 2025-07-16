@@ -57,23 +57,15 @@ describe('sortByVersion', () => {
     ];
 
     const sorted = sortByVersion(versions);
-    
-    expect(sorted.map(v => v.version)).toEqual([
-      '2.0.0',
-      '1.5.0',
-      '1.0.1',
-      '1.0.0',
-    ]);
+
+    expect(sorted.map(v => v.version)).toEqual(['2.0.0', '1.5.0', '1.0.1', '1.0.0']);
   });
 
   it('preserves original array', () => {
-    const versions = [
-      { version: '1.0.0' },
-      { version: '2.0.0' },
-    ];
+    const versions = [{ version: '1.0.0' }, { version: '2.0.0' }];
 
     const sorted = sortByVersion(versions);
-    
+
     expect(sorted).not.toBe(versions);
     expect(versions[0].version).toBe('1.0.0'); // Original unchanged
   });
@@ -88,15 +80,10 @@ describe('sortByVersion', () => {
   });
 
   it('handles complex version numbers', () => {
-    const versions = [
-      { version: '1.0.0-alpha' },
-      { version: '1.0.0' },
-      { version: '0.9.9' },
-      { version: '2.0.0-beta.1' },
-    ];
+    const versions = [{ version: '1.0.0-alpha' }, { version: '1.0.0' }, { version: '0.9.9' }, { version: '2.0.0-beta.1' }];
 
     const sorted = sortByVersion(versions);
-    
+
     // Note: Our simple parser doesn't handle pre-release versions specially
     // It will parse '1.0.0-alpha' as '1.0.0'
     expect(sorted[0].version).toBe('2.0.0-beta.1');

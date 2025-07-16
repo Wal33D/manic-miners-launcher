@@ -17,12 +17,8 @@ export const NewsPanel = React.memo(function NewsPanel() {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const data = await fetchWithValidation(
-        getApiUrl(ENV.API_ENDPOINTS.NEWS),
-        NewsResponseSchema,
-        'News'
-      );
-      
+      const data = await fetchWithValidation(getApiUrl(ENV.API_ENDPOINTS.NEWS), NewsResponseSchema, 'News');
+
       if (data) {
         // Handle different API response formats
         if (Array.isArray(data)) {
@@ -51,12 +47,8 @@ export const NewsPanel = React.memo(function NewsPanel() {
     };
 
     const fetchComments = async () => {
-      const data = await fetchWithValidation(
-        getApiUrl(ENV.API_ENDPOINTS.COMMENTS),
-        CommentsResponseSchema,
-        'Comments'
-      );
-      
+      const data = await fetchWithValidation(getApiUrl(ENV.API_ENDPOINTS.COMMENTS), CommentsResponseSchema, 'Comments');
+
       setCommentsData(data || { count: 0, comments: [] });
       setCommentsLoading(false);
     };

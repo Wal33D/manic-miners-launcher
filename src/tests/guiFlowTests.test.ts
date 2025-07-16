@@ -111,7 +111,7 @@ class MockElectronAPI extends EventEmitter {
 
 // GUI Component State Tracker
 class GUIStateTracker {
-  private state = {
+  public state = {
     isInstalled: false,
     isDownloading: false,
     isLaunching: false,

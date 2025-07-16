@@ -12,7 +12,7 @@ let cachedAssets: Assets | null = null;
 /**
  * Custom hook for managing and caching asset URLs from the API
  * Provides a centralized way to access all image and media assets
- * 
+ *
  * @returns {Object} Hook return object
  * @returns {Object} returns.assets - Map of asset names to URLs
  * @returns {Function} returns.getAssetUrl - Function to get URL for a specific asset
@@ -101,7 +101,7 @@ export function useAssets() {
   /**
    * Gets the URL for a specific asset by name
    * Falls back to direct endpoint URL if asset not found in cache
-   * 
+   *
    * @param {string} assetName - Name of the asset file
    * @returns {string} URL for the asset
    */

@@ -13,13 +13,13 @@ import { useIpcListener } from '@/hooks/useIpcListener';
 
 /**
  * Manages the latest version of Manic Miners including download, installation, and launching
- * 
+ *
  * @component
  * @returns {JSX.Element} Latest version management UI
  */
 export function LatestVersionManager() {
   const { getAssetUrl } = useAssets();
-  
+
   // Use context for persistent state
   const {
     isInstalled,
@@ -38,7 +38,7 @@ export function LatestVersionManager() {
     operationStatus,
     operationType,
   } = useLatestVersion();
-  
+
   // Local state for UI-only concerns
   const [isLaunching, setIsLaunching] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -441,7 +441,12 @@ export function LatestVersionManager() {
               </Button>
             ) : (
               <div className="space-y-2">
-                <Button onClick={handleLaunch} disabled={isLaunching || isVerifying || isUpdating || isDeleting} className="w-full" size="lg">
+                <Button
+                  onClick={handleLaunch}
+                  disabled={isLaunching || isVerifying || isUpdating || isDeleting}
+                  className="w-full"
+                  size="lg"
+                >
                   <Play className="w-5 h-5 mr-2" />
                   {isLaunching ? 'Launching...' : 'Launch Game'}
                 </Button>
@@ -500,9 +505,7 @@ export function LatestVersionManager() {
                   {operationType === 'verify' && 'Verifying Installation'}
                   {operationType === 'delete' && 'Uninstalling Game'}
                 </span>
-                <span className="text-sm text-muted-foreground">
-                  {operationProgress.toFixed(0)}%
-                </span>
+                <span className="text-sm text-muted-foreground">{operationProgress.toFixed(0)}%</span>
               </div>
               <Progress value={operationProgress} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">{operationStatus}</p>

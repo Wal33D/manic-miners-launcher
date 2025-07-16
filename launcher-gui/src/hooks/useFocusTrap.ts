@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 /**
  * Custom hook for trapping focus within a container (e.g., modal, dialog)
  * Implements focus management for accessibility
- * 
+ *
  * @param isActive - Whether the focus trap is active
  * @param options - Configuration options
  * @returns Ref to attach to the container element
@@ -23,7 +23,7 @@ export function useFocusTrap(
     if (!isActive || !containerRef.current) return;
 
     const container = containerRef.current;
-    
+
     // Store the currently focused element
     previousActiveElement.current = document.activeElement as HTMLElement;
 
@@ -38,9 +38,7 @@ export function useFocusTrap(
         '[tabindex]:not([tabindex="-1"])',
       ].join(', ');
 
-      return Array.from(
-        container.querySelectorAll<HTMLElement>(focusableSelectors)
-      ).filter(el => {
+      return Array.from(container.querySelectorAll<HTMLElement>(focusableSelectors)).filter(el => {
         // Filter out elements that are not visible
         return el.offsetParent !== null;
       });
