@@ -74,7 +74,12 @@ export async function downloadFile({
     });
 
     const fileStream = fs.createWriteStream(filePath);
-    const readable = Readable.fromWeb(response.body as any);
+    // Node.js 16+ supports converting Web ReadableStream to Node.js Readable
+    // However, TypeScript types don't properly reflect this cross-platform compatibility
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
+    const readable = Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0]);
     await new Promise<void>((resolve, reject) => {
       readable
         .pipe(progressStream)

@@ -5,29 +5,16 @@ import { fetchVersions } from '../../api/fetchVersions';
 import { fetchInstalledVersions } from '../../functions/fetchInstalledVersions';
 import { logger } from '../../utils/logger';
 import { typedStore } from '../../utils/typedStore';
+import { withIpcHandler } from './withIpcHandler';
 
 export const setupVersionHandlers = () => {
-  // Legacy handler for backward compatibility
-  ipcMain.on(IPC_CHANNELS.ALL_VERSION_INFO, async event => {
-    try {
-      const versions = await getVersionDetails();
-      event.reply(IPC_CHANNELS.ALL_VERSION_INFO, versions);
-    } catch (error) {
-      logger.error('VERSION', 'Error fetching version data', { error: error.message }, error);
-      event.reply(IPC_CHANNELS.ALL_VERSION_INFO, { error: error.message });
-    }
-  });
-
   // New separated handlers
-  ipcMain.on(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, async event => {
-    try {
-      const versions = await getArchivedVersionDetails();
-      event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, versions);
-    } catch (error) {
-      logger.error('VERSION', 'Error fetching archived version data', { error: error.message }, error);
-      event.reply(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, { error: error.message });
-    }
-  });
+  ipcMain.on(
+    IPC_CHANNELS.ARCHIVED_VERSIONS_INFO,
+    withIpcHandler(IPC_CHANNELS.ARCHIVED_VERSIONS_INFO, async () => {
+      return await getArchivedVersionDetails();
+    })
+  );
 
   ipcMain.on(IPC_CHANNELS.LATEST_VERSION_INFO, async event => {
     try {
@@ -46,16 +33,6 @@ export const setupVersionHandlers = () => {
   ipcMain.on(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, async event => {
     const selectedVersion = getSelectedVersion();
     event.reply(IPC_CHANNELS.GET_SELECTED_ARCHIVED_VERSION, selectedVersion);
-  });
-
-  // Legacy handlers for backward compatibility
-  ipcMain.on(IPC_CHANNELS.SET_SELECTED_VERSION, async (event, selectedVersion) => {
-    setSelectedVersion(selectedVersion);
-  });
-
-  ipcMain.on(IPC_CHANNELS.GET_SELECTED_VERSION, async event => {
-    const selectedVersion = getSelectedVersion();
-    event.reply(IPC_CHANNELS.GET_SELECTED_VERSION, selectedVersion);
   });
 };
 

@@ -32,11 +32,6 @@ export interface IpcChannelDataMap {
   'show-game-folder': string; // version identifier
   'create-shortcuts': string; // version identifier
 
-  // Legacy (for backward compatibility)
-  'set-selected-version': Version;
-  'get-selected-version': void;
-  'request-version-information': void;
-
   // Logging
   'get-log-file-path': void;
   'log-to-file': { level: string; category: string; message: string; data?: unknown };
@@ -68,11 +63,6 @@ export interface IpcChannelResponseMap {
   'update-not-available': void;
   'update-error': { error: string };
   'versions-updated': void;
-
-  // Legacy responses
-  'set-selected-version': Version | null;
-  'get-selected-version': Version | null;
-  'request-version-information': { allVersions: Version[]; installedVersions: Version[]; currentVersion: Version | null };
 }
 
 // Type helper for getting the data type for a channel

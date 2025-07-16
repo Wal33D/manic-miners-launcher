@@ -57,7 +57,31 @@ export interface NewsResponse {
   news: News[];
 }
 
-// Assets types
+// Video types
+export interface VideoInfo {
+  id: string;
+  url: string;
+  name: string;
+  description: string;
+  internalUrl?: string | null;
+  cloudinaryUrl?: string | null;
+}
+
+export type VideosResponse = VideoInfo[];
+
+// Image types
+export interface CloudinaryAssetMap {
+  [filename: string]: {
+    cloudinaryUrl: string;
+    internalUrl: string;
+  };
+}
+
+export interface ImagesResponse {
+  images: CloudinaryAssetMap;
+}
+
+// Assets types (generic)
 export interface Assets {
   [key: string]: string;
 }

@@ -1,7 +1,6 @@
 export const IPC_CHANNELS = {
   LAUNCH_GAME: 'launch-game',
   VERSIONS_UPDATED: 'versions-updated',
-  ALL_VERSION_INFO: 'request-version-information',
 
   // Archived versions (Internet Archive only)
   ARCHIVED_VERSIONS_INFO: 'request-archived-versions-information',
@@ -10,10 +9,6 @@ export const IPC_CHANNELS = {
 
   // Latest version (itch.io only)
   LATEST_VERSION_INFO: 'request-latest-version-information',
-
-  // Legacy channels for backward compatibility
-  SET_SELECTED_VERSION: 'set-selected-version',
-  GET_SELECTED_VERSION: 'get-selected-version',
 
   DOWNLOAD_VERSION: 'download-version',
   DOWNLOAD_PROGRESS: 'download-progress',

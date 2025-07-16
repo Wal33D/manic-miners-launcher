@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
 import { LauncherSettings } from '../../types/launcherSettings';
 import { typedStore } from '../../utils/typedStore';
+import { withIpcHandler } from './withIpcHandler';
 
 const defaultSettings: LauncherSettings = {
   // UI Settings
@@ -34,14 +35,20 @@ export const setupSettingsHandlers = async (): Promise<{ status: boolean; messag
   let message = '';
 
   try {
-    ipcMain.on(IPC_CHANNELS.GET_SETTINGS, event => {
-      const settings = typedStore.get('settings') || defaultSettings;
-      event.reply(IPC_CHANNELS.GET_SETTINGS, settings);
-    });
+    ipcMain.on(
+      IPC_CHANNELS.GET_SETTINGS,
+      withIpcHandler(IPC_CHANNELS.GET_SETTINGS, async () => {
+        return typedStore.get('settings') || defaultSettings;
+      })
+    );
 
-    ipcMain.on(IPC_CHANNELS.SET_SETTINGS, (_event, settings: LauncherSettings) => {
-      typedStore.set('settings', settings);
-    });
+    ipcMain.on(
+      IPC_CHANNELS.SET_SETTINGS,
+      withIpcHandler(IPC_CHANNELS.SET_SETTINGS, async (_event, settings: LauncherSettings) => {
+        typedStore.set('settings', settings);
+        return { status: true, message: 'Settings saved successfully' };
+      })
+    );
 
     message = 'Settings handlers set up successfully.';
     status = true;

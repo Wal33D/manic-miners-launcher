@@ -25,8 +25,8 @@ export const VideoSchema = z.object({
   url: z.string(),
   name: z.string(),
   description: z.string(),
-  internalUrl: z.string(),
-  cloudinaryUrl: z.string(),
+  internalUrl: z.string().optional().nullable(),
+  cloudinaryUrl: z.string().optional().nullable(),
 });
 
 export const VersionSchema = z.object({
