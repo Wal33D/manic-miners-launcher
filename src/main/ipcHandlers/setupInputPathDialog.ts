@@ -1,30 +1,29 @@
 import { ipcMain, dialog } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
+import { withIpcHandler } from './withIpcHandler';
 
 export const setupInputPathDialog = async (): Promise<{ status: boolean; message: string }> => {
   let message = '';
   let status = false;
 
   try {
-    ipcMain.on(IPC_CHANNELS.OPEN_DIRECTORY_DIALOG, async event => {
-      try {
+    ipcMain.on(
+      IPC_CHANNELS.OPEN_DIRECTORY_DIALOG,
+      withIpcHandler(IPC_CHANNELS.DIRECTORY_SELECTED, async event => {
         const result = await dialog.showOpenDialog({
           properties: ['openDirectory'],
         });
 
         if (!result.canceled && result.filePaths.length > 0) {
-          event.reply(IPC_CHANNELS.DIRECTORY_SELECTED, result.filePaths[0]);
           message = 'Directory selected successfully.';
           status = true;
+          return result.filePaths[0];
         } else {
           message = 'Directory selection was canceled or no directory was selected.';
+          throw new Error('Directory selection was canceled or no directory was selected.');
         }
-      } catch (error: unknown) {
-        const err = error as Error;
-        message = `Failed to open directory dialog: ${err.message}`;
-        event.reply('directory-selection-error', message);
-      }
-    });
+      })
+    );
 
     status = true; // If we reach here, it means ipcMain handler was set up without error.
     message = 'Directory dialog handler setup successfully.';

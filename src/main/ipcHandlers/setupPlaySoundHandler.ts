@@ -1,5 +1,6 @@
 import { ipcMain, app } from 'electron';
 import { IPC_CHANNELS } from './ipcChannels';
+import { withIpcHandler } from './withIpcHandler';
 import player from 'play-sound';
 import path from 'path';
 import { logger } from '../../utils/logger';
@@ -11,20 +12,24 @@ export const setupPlaySoundHandler = async (): Promise<{ status: boolean; messag
   let status = false;
 
   try {
-    ipcMain.on(IPC_CHANNELS.PLAY_SOUND, () => {
-      try {
+    ipcMain.on(
+      IPC_CHANNELS.PLAY_SOUND,
+      withIpcHandler('play-sound-reply', async () => {
         const soundPath = path.join(app.getAppPath(), 'assets', 'success.mp3');
         logger.ipcLog('Playing sound effect', { soundPath });
-        soundPlayer.play(soundPath, (err: any) => {
-          if (err) {
-            logger.error('SOUND', 'Failed to play sound', { soundPath, error: err.message });
-          }
+
+        return new Promise<{ success: boolean }>((resolve, reject) => {
+          soundPlayer.play(soundPath, (err: any) => {
+            if (err) {
+              logger.error('SOUND', 'Failed to play sound', { soundPath, error: err.message });
+              reject(new Error(`Failed to play sound: ${err.message}`));
+            } else {
+              resolve({ success: true });
+            }
+          });
         });
-      } catch (error: unknown) {
-        const err = error as Error;
-        logger.error('SOUND', 'Failed to play sound', { error: err.message }, err);
-      }
-    });
+      })
+    );
 
     message = 'Play sound handler set up successfully.';
     status = true;
